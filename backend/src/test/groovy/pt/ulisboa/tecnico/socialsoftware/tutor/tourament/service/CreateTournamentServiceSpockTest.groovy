@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tourament.service
-import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import spock.lang.Specification
 
 class CreateTournamentServiceSpockTest extends Specification {
 
-    def adminService
+    def TournamentService
 
     def setup(){
-        adminService = new AdministrationService()
+        TournamentService = new TournamentService()
     }
 
     def "student creates a tournament"() {

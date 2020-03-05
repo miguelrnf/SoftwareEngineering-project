@@ -64,10 +64,4 @@ public class AdministrationService {
             throw new TutorException(COURSE_TYPE_NOT_DEFINED);
         }
     }
-    private void createNewTournament(){
-
-    }
-
-
-
 }
