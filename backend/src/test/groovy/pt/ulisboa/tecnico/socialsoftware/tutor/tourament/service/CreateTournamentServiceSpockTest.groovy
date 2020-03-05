@@ -1,8 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.administration.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.tourament.service
 import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
 import spock.lang.Specification
 
-class CreateTournamentServiceTest extends Specification {
+class CreateTournamentServiceSpockTest extends Specification {
 
     def adminService
 
