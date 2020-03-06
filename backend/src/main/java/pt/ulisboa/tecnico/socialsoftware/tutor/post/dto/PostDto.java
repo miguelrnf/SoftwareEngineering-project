@@ -5,6 +5,9 @@ public class PostDto {
     private PostQuestionDto question;
     private Boolean postStatus;
 
+    public PostDto() {
+    }
+
     public PostDto(PostQuestionDto question, Boolean postStatus) {
         this.question = question;
         this.postStatus = postStatus;

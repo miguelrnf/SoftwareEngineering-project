@@ -7,6 +7,9 @@ public class PostQuestionDto {
     private String question;
     private String studentQuestion;
 
+    public PostQuestionDto() {
+    }
+
     public PostQuestionDto(int qid, int uid, String question, String studentQuestion) {
         this.qid = qid;
         this.uid = uid;
