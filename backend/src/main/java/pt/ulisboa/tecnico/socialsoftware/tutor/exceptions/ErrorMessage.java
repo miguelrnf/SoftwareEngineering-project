@@ -55,7 +55,10 @@ public enum ErrorMessage {
 
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    //new errors for posts
+    USER_HAS_NOT_ANSWERED("You have not answered the given question");
 
     public final String label;
 

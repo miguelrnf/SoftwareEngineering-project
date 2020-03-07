@@ -54,13 +54,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(VALID_STUDENT_QUESTION)
-        and: "a valid postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        def result = postService.submitPost(postDto)
+        def result = postService.submitPost(postQuestionDto)
 
         then: "the returned data is correct"
         result.question.qid == VALID_QID
@@ -74,13 +70,9 @@ class SubmitPostTest extends Specification {
         // the post is created without a question and submitted
         given: "a null postQuestionDto"
         def postQuestionDto = null
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -94,13 +86,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(VALID_STUDENT_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -114,13 +102,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(EMPTY_QUESTION)
         postQuestionDto.setStudentQuestion(EMPTY_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -134,13 +118,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(VALID_STUDENT_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -154,13 +134,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(TOO_MANY_CHARS)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -174,13 +150,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(EMPTY_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -194,13 +166,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(EMPTY_QUESTION)
         postQuestionDto.setStudentQuestion(VALID_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -214,13 +182,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(INVALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(VALID_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
@@ -234,13 +198,9 @@ class SubmitPostTest extends Specification {
         postQuestionDto.setUid(VALID_UID)
         postQuestionDto.setQuestion(VALID_QUESTION)
         postQuestionDto.setStudentQuestion(VALID_QUESTION)
-        and: "a postDto"
-        def postDto = new PostDto()
-        postDto.setQuestion(postQuestionDto)
-        postDto.setPostStatus(true)
 
         when:
-        postService.submitPost(postDto)
+        postService.submitPost(postQuestionDto)
 
         then:
         thrown(TutorException)
