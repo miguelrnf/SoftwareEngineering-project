@@ -14,7 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
@@ -77,9 +76,6 @@ class SubmitPostTest extends Specification {
 
     @Autowired
     UserRepository userRepository
-
-    @Autowired
-    OptionRepository optionRepository
 
     @Shared
     def VALID_Q
@@ -237,7 +233,7 @@ class SubmitPostTest extends Specification {
     @TestConfiguration
     static class CourseServiceImplTestContextConfiguration {
         @Bean
-        PostService courseService() {
+        PostService postService() {
             return new PostService()
         }
     }
