@@ -29,7 +29,7 @@ public class Suggestion {
     @ManyToMany(mappedBy = "questions")
     private Set<Topic> _topicsList = new HashSet<>();
 
-
+    @Column(name = "changed_status", columnDefinition = "boolean default false")
     private Boolean _changed = false;
 
     @Column(columnDefinition = "JUSTIFICATION")
