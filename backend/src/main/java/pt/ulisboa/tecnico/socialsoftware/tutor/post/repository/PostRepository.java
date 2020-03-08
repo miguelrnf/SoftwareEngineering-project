@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -15,5 +16,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Integer getMaxPostNumber();
 
     @Query(value = "SELECT * FROM posts p WHERE p.key = key", nativeQuery = true)
-    Post findByKey(Integer key);
+    Optional<Post> findByKey(Integer key);
 }

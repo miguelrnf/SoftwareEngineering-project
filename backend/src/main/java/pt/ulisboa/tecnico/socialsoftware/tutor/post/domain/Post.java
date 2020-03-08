@@ -76,4 +76,5 @@ public class Post {
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
+
 }
