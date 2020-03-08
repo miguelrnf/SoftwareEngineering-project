@@ -22,8 +22,7 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_HAS_NOT_ANSWERED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class PostService {
@@ -45,23 +44,49 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto submitPost(PostQuestionDto postQuestionDto) {
-        //Check if question exists
         Integer questionKey = postQuestionDto.getQuestion().getKey();
-        Question question = questionRepository.findByKey(questionKey)
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
-        //Check if user answered question
         String username = postQuestionDto.getUser().getUsername();
-        User user = userRepository.findByUsername(username);
-        user.getQuizAnswers().stream().map(x -> x.getQuestionAnswers()
-                .stream().filter(y -> y.getQuizQuestion().getQuestion().getKey().equals(questionKey)))
-                .findAny().orElseThrow(() -> new TutorException(USER_HAS_NOT_ANSWERED, questionKey));
-        //Get last post key
-        int maxPostNumber = postRepository.getMaxPostNumber() == null ? 0
-                : postRepository.getMaxPostNumber() + 1;
+        User user = checkIfUserExists(username);
+
+        checkIfUserHasRoleStudent(user);
+        Question question = checkIfQuestionExists(questionKey);
+        checkIfUserAnsweredQuestion(questionKey, user);
+        int maxPostNumber = getMaxPostNumber();
 
         Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto));
         post.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(post);
         return new PostDto(post);
     }
+
+    private User checkIfUserExists(String username) {
+        User u = userRepository.findByUsername(username);
+        if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
+        return u;
+    }
+
+    private int getMaxPostNumber() {
+        return postRepository.getMaxPostNumber() == null ? 0
+                    : postRepository.getMaxPostNumber() + 1;
+    }
+
+    private void checkIfUserAnsweredQuestion(Integer questionKey, User user) {
+        user.getQuizAnswers().stream().map(x -> x.getQuestionAnswers()
+                .stream().filter(y -> y.getQuizQuestion().getQuestion().getKey().equals(questionKey)))
+                .findAny().orElseThrow(() -> new TutorException(USER_HAS_NOT_ANSWERED, questionKey));
+    }
+
+    private void checkIfUserHasRoleStudent(User user) {
+        System.out.println('-' * 100);
+        System.out.println(user.getRole());
+        System.out.println(user.getRole().compareTo(User.Role.STUDENT));
+        System.out.println('-' * 100);
+        if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    }
+
+    private Question checkIfQuestionExists(Integer questionKey) {
+        return questionRepository.findByKey(questionKey)
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
+    }
+
 }

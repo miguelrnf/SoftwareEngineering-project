@@ -19,8 +19,7 @@ public class Post {
     @Column(unique=true, nullable = false)
     private Integer key;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post_question_id")
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "post", orphanRemoval = true)
     private PostQuestion question;
 
     @Column(name = "post_status", columnDefinition = "boolean default true")
