@@ -59,6 +59,8 @@ public class PostService {
         return new PostDto(post);
     }
 
+
+
     private User checkIfUserExists(String username) {
         User u = userRepository.findByUsername(username);
         if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
@@ -88,5 +90,4 @@ public class PostService {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
     }
-
 }

@@ -134,6 +134,7 @@ class SubmitPostTest extends Specification {
     def setup() {
         given: "a course"
         def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+
         and: "a question"
         def question = new Question()
         question.setKey(VALID_KEY)
@@ -141,20 +142,24 @@ class SubmitPostTest extends Specification {
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
+
         and: "a quiz"
         def quiz = new Quiz()
         def quizQuestion = new QuizQuestion()
         quizQuestion.setQuestion(question)
         quiz.setKey(VALID_KEY)
         quiz.addQuizQuestion(quizQuestion)
+
         and: "a quiz answer"
         def user = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
         def quizAnswer = new QuizAnswer(user, quiz)
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setQuizQuestion()
         quizAnswer.addQuestionAnswer()
+
         and: "a user that answered the question"
         user.addQuizAnswer(quizAnswer)
+
         and: "a user with the role teacher"
         def userT = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
 
