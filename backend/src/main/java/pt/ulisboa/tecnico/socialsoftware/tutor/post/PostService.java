@@ -59,6 +59,32 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto deletePost(PostDto toDelete) {
+        User user = checkIfUserExists(toDelete.getQuestion().getUser().getUsername());
+        Post post = checkIfPostExists(toDelete.getKey());
+        checkIfUserOwnsPost(user, post);
+
+        entityManager.remove(post);
+        return new PostDto(post);
+    }
+
+    private void checkIfUserOwnsPost(User user, Post post) {
+        user.getPostQuestions().stream().filter(x -> x.getPost() == post)
+                .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
+    }
+
+    private Post checkIfPostExists(Integer key) {
+        System.out.println("-----------");
+        System.out.println(key);
+        System.out.println(postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key)));
+        System.out.println("-----------");
+        return postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key));
+    }
+
     private User checkIfUserExists(String username) {
         User u = userRepository.findByUsername(username);
         if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
@@ -77,10 +103,6 @@ public class PostService {
     }
 
     private void checkIfUserHasRoleStudent(User user) {
-        System.out.println('-' * 100);
-        System.out.println(user.getRole());
-        System.out.println(user.getRole().compareTo(User.Role.STUDENT));
-        System.out.println('-' * 100);
         if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
 
@@ -88,5 +110,4 @@ public class PostService {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
     }
-
 }
