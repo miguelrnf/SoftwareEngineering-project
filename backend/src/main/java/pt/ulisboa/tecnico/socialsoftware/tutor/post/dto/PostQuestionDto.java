@@ -1,49 +1,47 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
+
 public class PostQuestionDto {
-    private int id;
-    private int qid;
-    private int uid;
-    private String question;
+    private Integer id;
+    private QuestionDto question;
+    private UserDto user;
     private String studentQuestion;
 
-    public PostQuestionDto(int qid, int uid, String question, String studentQuestion) {
-        this.qid = qid;
-        this.uid = uid;
-        this.question = question;
-        this.studentQuestion = studentQuestion;
+    public PostQuestionDto() {
     }
 
-    public int getId() {
+    public PostQuestionDto(PostQuestion pq) {
+        this.id = pq.getId();
+        this.question = new QuestionDto(pq.getQuestion());
+        this.user = new UserDto(pq.getUser());
+        this.studentQuestion = pq.getStudentQuestion();
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getQid() {
-        return qid;
-    }
-
-    public void setQid(int qid) {
-        this.qid = qid;
-    }
-
-    public int getUid() {
-        return uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
-
-    public String getQuestion() {
+    public QuestionDto getQuestion() {
         return question;
     }
 
-    public void setQuestion(String question) {
+    public void setQuestion(QuestionDto question) {
         this.question = question;
+    }
+
+    public UserDto getUser() {
+        return user;
+    }
+
+    public void setUser(UserDto user) {
+        this.user = user;
     }
 
     public String getStudentQuestion() {

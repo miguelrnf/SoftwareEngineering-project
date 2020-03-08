@@ -1,13 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+
 public class PostDto {
-    private int id;
+    private Integer id;
+    private Integer key;
     private PostQuestionDto question;
     private Boolean postStatus;
 
-    public PostDto(PostQuestionDto question, Boolean postStatus) {
-        this.question = question;
-        this.postStatus = postStatus;
+    public PostDto() {
+    }
+
+    public PostDto(Post p) {
+        this.id = p.getId();
+        this.key = p.getKey();
+        this.question = new PostQuestionDto(p.getQuestion());
+        this.postStatus = p.getPostStatus();
     }
 
     public int getId() {
@@ -16,6 +24,14 @@ public class PostDto {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Integer getKey() {
+        return key;
+    }
+
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public PostQuestionDto getQuestion() {
