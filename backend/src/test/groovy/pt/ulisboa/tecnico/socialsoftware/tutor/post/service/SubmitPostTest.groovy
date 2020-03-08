@@ -236,7 +236,7 @@ class SubmitPostTest extends Specification {
     }
 
     @TestConfiguration
-    static class CourseServiceImplTestContextConfiguration {
+    static class PostServiceImplTestContextConfiguration {
         @Bean
         PostService postService() {
             return new PostService()

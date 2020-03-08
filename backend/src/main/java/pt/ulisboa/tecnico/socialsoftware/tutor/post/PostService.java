@@ -78,6 +78,10 @@ public class PostService {
     }
 
     private Post checkIfPostExists(Integer key) {
+        System.out.println("-----------");
+        System.out.println(key);
+        System.out.println(postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key)));
+        System.out.println("-----------");
         return postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key));
     }
 

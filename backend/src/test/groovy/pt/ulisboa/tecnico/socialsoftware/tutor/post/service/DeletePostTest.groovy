@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -16,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 @DataJpaTest
 class DeletePostTest extends Specification {
@@ -25,7 +27,7 @@ class DeletePostTest extends Specification {
     public static final int VALID_KEY_NOT_SAVED = 2
     public static final int VALID_KEY_NOT_ANSWERED = 3
     public static final int INVALID_KEY = -1
-    public static final int VALID_ID = 1
+    public static final int VALID_ID_1 = 1
     public static final String VALID_NAME_1 = "Ben Dover"
     public static final String VALID_NAME_2 = "Mike Litoris"
     public static final String VALID_USERNAME_1 = "BenDover69"
@@ -50,10 +52,19 @@ class DeletePostTest extends Specification {
     def VALID_Q
 
     @Shared
+    def VALID_U
+
+    @Shared
     def VALID_PQ
 
     @Shared
-    def VALID_U
+    def INVALID_P_KEY
+
+    @Shared
+    def INVALID_P_NOT_SAVED
+
+    @Shared
+    def INVALID_P_NOT_ANSWERED
 
     def setupSpec() {
         given: "a valid question"
@@ -66,7 +77,7 @@ class DeletePostTest extends Specification {
 
         and:"a valid user"
         VALID_U = new User()
-        VALID_U.setId(VALID_ID)
+        VALID_U.setId(VALID_ID_1)
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME_1)
 
@@ -74,22 +85,42 @@ class DeletePostTest extends Specification {
         VALID_PQ = new PostQuestion()
         VALID_PQ.setQuestion(VALID_Q)
         VALID_PQ.setUser(VALID_U)
+        VALID_PQ.setStudentQuestion(VALID_STUDENT_QUESTION)
 
         and: "a valid post"
-        VALID_P = new Post(VALID_KEY, VALID_PQ)
+        VALID_P = new Post()
+        VALID_P.setKey(VALID_KEY)
+        VALID_P.setQuestion(VALID_PQ)
+
+        and: "a post with an invalid key"
+        INVALID_P_KEY = new Post()
+        INVALID_P_KEY.setKey(INVALID_KEY)
+        INVALID_P_KEY.setQuestion(VALID_PQ)
+
+        and: "a post that was not saved"
+        INVALID_P_NOT_SAVED = new Post()
+        INVALID_P_NOT_SAVED.setKey(VALID_KEY_NOT_SAVED)
+        INVALID_P_NOT_SAVED.setQuestion(VALID_PQ)
+
+        and: "a post that was not answered"
+        INVALID_P_NOT_ANSWERED = new Post()
+        INVALID_P_NOT_ANSWERED.setKey(VALID_KEY_NOT_ANSWERED)
+        INVALID_P_NOT_ANSWERED.setQuestion(VALID_PQ)
     }
 
     def setup() {
-        given: "a valid questions"
+        given: "a valid question"
         def question = new Question()
         question.setKey(VALID_KEY)
         question.setContent(VALID_QUESTION)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
+
         and: "two valid users"
         def user1 = new User(VALID_NAME_1, VALID_USERNAME_1, 1, User.Role.STUDENT)
         def user2 = new User(VALID_NAME_2, VALID_USERNAME_2, 2, User.Role.STUDENT)
+
         and: "two valid postQuestions"
         def postQuestion1 = new PostQuestion()
         postQuestion1.setQuestion(question)
@@ -99,9 +130,14 @@ class DeletePostTest extends Specification {
         postQuestion2.setQuestion(question)
         postQuestion2.setUser(user2)
         postQuestion2.setStudentQuestion(VALID_STUDENT_QUESTION)
+
         and: "two valid posts"
         def post1 = new Post(VALID_KEY, postQuestion1)
         def post2 = new Post(VALID_KEY_NOT_ANSWERED, postQuestion2)
+        postQuestion1.setPost(post1)
+        postQuestion2.setPost(post2)
+        user1.addPostQuestion(postQuestion1)
+        user2.addPostQuestion(postQuestion2)
 
         then: "add to repository"
         userRepository.save(user1)
@@ -111,35 +147,39 @@ class DeletePostTest extends Specification {
         postRepository.save(post2)
     }
 
+    @Unroll
     def "valid deletion"() {
         when:
-        def result = postService.deletePost(postKey)
+        def result = postService.deletePost(new PostDto(tocheck))
 
         then:
-        result == expected
+        result.getKey() == expected.getKey()
+        result.getQuestion().getQuestion().getKey() == expected.getQuestion().getQuestion().getKey()
+        result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
 
         where:
-        postKey                |   expected
-        VALID_KEY              |   VALID_P
+        tocheck                 |   expected
+        VALID_P as Post         |   VALID_P as Post
     }
 
+    @Unroll
     def "invalid deletions"() {
         when:
-        postService.deletePost(postKey)
+        postService.deletePost(new PostDto(tocheck as Post))
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        postKey                 |   expected
-        INVALID_KEY             |   ErrorMessage.INVALID_POST.label
-        VALID_KEY_NOT_SAVED     |   ErrorMessage.INVALID_POST.label
-        VALID_KEY_NOT_ANSWERED  |   ErrorMessage.NOT_YOUR_POST.label
+        tocheck                 |   expected
+        INVALID_P_KEY           |   ErrorMessage.INVALID_POST.label
+        INVALID_P_NOT_SAVED     |   ErrorMessage.INVALID_POST.label
+        INVALID_P_NOT_ANSWERED  |   ErrorMessage.NOT_YOUR_POST.label
     }
 
     @TestConfiguration
-    static class CourseServiceImplTestContextConfiguration {
+    static class PostServiceImplTestContextConfiguration {
         @Bean
         PostService postService() {
             return new PostService()
