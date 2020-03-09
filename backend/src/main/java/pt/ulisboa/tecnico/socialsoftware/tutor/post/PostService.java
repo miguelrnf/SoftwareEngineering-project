@@ -87,6 +87,24 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto changeStatus(PostDto postDto, UserDto userDto) {
+        Post post = checkIfPostExists(postDto.getKey());
+        User user = checkIfUserExists(userDto.getUsername());
+        if(!checkIfUserHasRoleTeacher(user))
+            checkIfUserOwnsPost(user, post);
+
+        post.changePostStatus();
+        return new PostDto(post);
+    }
+
+    private boolean checkIfUserHasRoleTeacher(User user) {
+        return user.getRole().compareTo(User.Role.TEACHER) == 0;
+    }
+
     private void checkIfUserOwnsPost(User user, Post post) {
         user.getPostQuestions().stream().filter(x -> x.getPost() == post)
                 .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
