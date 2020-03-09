@@ -21,6 +21,9 @@ public class Post {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private PostQuestion question;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "post_answer", orphanRemoval = true)
+    private PostQuestion answer;
+
     @Column(name = "post_status", columnDefinition = "boolean default true")
     private Boolean postStatus;
 
@@ -58,6 +61,14 @@ public class Post {
 
     public void setQuestion(PostQuestion question) {
         this.question = question;
+    }
+
+    public PostQuestion getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(PostQuestion answer) {
+        this.answer = answer;
     }
 
     public Boolean getPostStatus() {
