@@ -146,9 +146,9 @@ class ChangePostStatusTest extends Specification {
         result.getPostStatus() != expected.getPostStatus()
 
         where:
-        u                               |       expected
-        VALID_U as User                 |       VALID_P as Post
-        VALID_U_TEACHER as User         |       VALID_P as Post
+        u                               ||       expected
+        VALID_U as User                 ||       VALID_P as Post
+        VALID_U_TEACHER as User         ||       VALID_P as Post
     }
 
     @Unroll
@@ -161,8 +161,8 @@ class ChangePostStatusTest extends Specification {
         result.message == expected
 
         where:
-        u                                |       expected
-        INVALID_U_NOT_OWNER as User      |       ErrorMessage.NOT_YOUR_POST.label
+        u                                ||       expected
+        INVALID_U_NOT_OWNER as User      ||       ErrorMessage.NOT_YOUR_POST.label
     }
 
     @TestConfiguration

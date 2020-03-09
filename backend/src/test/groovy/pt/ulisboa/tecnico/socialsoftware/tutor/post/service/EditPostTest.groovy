@@ -26,20 +26,15 @@ import spock.lang.Unroll
 
 @DataJpaTest
 class EditPostTest extends Specification {
-
-    public static final String COURSE_NAME = 'TECNICO'
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
     public static final String EMPTY_QUESTION = ''
     public static final int VALID_KEY = 1
-    public static final int INVALID_KEY = -1
     public static final int VALID_ID = 1
-    public static final int INVALID_ID = -1
     public static final String VALID_NAME_1 = "Ben Dover"
     public static final String VALID_USERNAME_1 = "BenDover69"
     public static final String VALID_NAME_2 = "Mickey"
     public static final String VALID_USERNAME_2 = "Mickey123"
-    public static final String VALID_USERNAME_TEACHER = "something"
     public static final String TOO_MANY_CHARS =
             '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -197,8 +192,8 @@ class EditPostTest extends Specification {
         result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
 
         where:
-        user            | expected
-        VALID_U as User | VALID_P as Post
+        user            || expected
+        VALID_U as User || VALID_P as Post
     }
     @Unroll
     def "invalid edit"() {
@@ -210,10 +205,10 @@ class EditPostTest extends Specification {
         result.message == expected
 
         where:
-        user                        | post                       | expected
-        INVALID_U_NOT_OWNER as User | VALID_P as Post            | ErrorMessage.NOT_YOUR_POST.label
-        VALID_U as User             | INVALID_P_TOO_LONG as Post | ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
-        VALID_U as User             | INVALID_P_BLANK as Post    | ErrorMessage.NO_STUDENT_QUESTION.label
+        user                        | post                       || expected
+        INVALID_U_NOT_OWNER as User | VALID_P as Post            || ErrorMessage.NOT_YOUR_POST.label
+        VALID_U as User             | INVALID_P_TOO_LONG as Post || ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
+        VALID_U as User             | INVALID_P_BLANK as Post    || ErrorMessage.NO_STUDENT_QUESTION.label
 
     }
 

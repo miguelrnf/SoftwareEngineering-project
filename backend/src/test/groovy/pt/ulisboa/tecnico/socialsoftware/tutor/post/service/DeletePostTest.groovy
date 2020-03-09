@@ -158,8 +158,8 @@ class DeletePostTest extends Specification {
         result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
 
         where:
-        tocheck                 |   expected
-        VALID_P as Post         |   VALID_P as Post
+        tocheck                 ||   expected
+        VALID_P as Post         ||   VALID_P as Post
     }
 
     @Unroll
@@ -172,10 +172,10 @@ class DeletePostTest extends Specification {
         result.message == expected
 
         where:
-        tocheck                 |   expected
-        INVALID_P_KEY           |   ErrorMessage.INVALID_POST.label
-        INVALID_P_NOT_SAVED     |   ErrorMessage.INVALID_POST.label
-        INVALID_P_NOT_ANSWERED  |   ErrorMessage.NOT_YOUR_POST.label
+        tocheck                 ||   expected
+        INVALID_P_KEY           ||   ErrorMessage.INVALID_POST.label
+        INVALID_P_NOT_SAVED     ||   ErrorMessage.INVALID_POST.label
+        INVALID_P_NOT_ANSWERED  ||   ErrorMessage.NOT_YOUR_POST.label
     }
 
     @TestConfiguration

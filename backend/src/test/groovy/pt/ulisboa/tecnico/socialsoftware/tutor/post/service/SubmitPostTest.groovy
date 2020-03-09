@@ -208,10 +208,10 @@ class SubmitPostTest extends Specification {
 
 
         where:
-        q         |       sq                  |       u                 |      expected
-        VALID_Q   |   EMPTY_QUESTION          |   VALID_U               |   ErrorMessage.NO_STUDENT_QUESTION.label
-        VALID_Q   |   TOO_MANY_CHARS          |   VALID_U               |   ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
-        INVALID_Q |   VALID_STUDENT_QUESTION  |   VALID_U               |   ErrorMessage.QUESTION_NOT_FOUND.label.toString().replace("%d", "-1")
+        q         |       sq                  |       u                 ||      expected
+        VALID_Q   |   EMPTY_QUESTION          |   VALID_U               ||   ErrorMessage.NO_STUDENT_QUESTION.label
+        VALID_Q   |   TOO_MANY_CHARS          |   VALID_U               ||   ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
+        INVALID_Q |   VALID_STUDENT_QUESTION  |   VALID_U               ||   ErrorMessage.QUESTION_NOT_FOUND.label.toString().replace("%d", "-1")
 
     }
 
@@ -229,9 +229,9 @@ class SubmitPostTest extends Specification {
         result.message == expected
 
         where:
-        q         |       sq                  |       u                 |      expected
-        VALID_Q   |   VALID_STUDENT_QUESTION  |   INVALID_U_UNAME       |   ErrorMessage.USERNAME_NOT_FOUND.label
-        VALID_Q   |   VALID_STUDENT_QUESTION  |   INVALID_U_ROLE        |   ErrorMessage.USER_HAS_WRONG_ROLE.label
+        q         |       sq                  |       u                 ||      expected
+        VALID_Q   |   VALID_STUDENT_QUESTION  |   INVALID_U_UNAME       ||   ErrorMessage.USERNAME_NOT_FOUND.label
+        VALID_Q   |   VALID_STUDENT_QUESTION  |   INVALID_U_ROLE        ||   ErrorMessage.USER_HAS_WRONG_ROLE.label
 
     }
 
