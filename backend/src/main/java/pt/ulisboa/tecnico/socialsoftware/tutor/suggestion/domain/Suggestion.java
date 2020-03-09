@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -28,8 +29,25 @@ public class Suggestion {
     @Column(columnDefinition = "TEXT")
     private String _questionStr;
 
-    @ManyToMany(mappedBy = "questions")
-    private Set<Topic> _topicsList = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "topic_conjunction_id")
+    private TopicConjunction _topicsList;
+
+    public TopicConjunction get_topicsList() {
+        return _topicsList;
+    }
+
+    public void set_topicsList(TopicConjunction _topicsList) {
+        this._topicsList = _topicsList;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 
     @Column(name = "changed_status", columnDefinition = "boolean default false")
     private Boolean _changed = false;
@@ -46,12 +64,11 @@ public class Suggestion {
     @Enumerated(EnumType.STRING)
     private Suggestion.Status status = Suggestion.Status.TOAPPROVE;
 
-    /*
+
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-     */
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -92,13 +109,6 @@ public class Suggestion {
         this._questionStr = _questionStr;
     }
 
-    public Set<Topic> get_topicsList() {
-        return _topicsList;
-    }
-
-    public void set_topicsList(Set<Topic> _topicsList) {
-        this._topicsList = _topicsList;
-    }
 
     public Boolean get_changed() {
         return _changed;
