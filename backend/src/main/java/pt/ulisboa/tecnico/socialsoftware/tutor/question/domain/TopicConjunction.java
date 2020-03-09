@@ -1,5 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -16,6 +21,17 @@ public class TopicConjunction {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunction")
+    private Set<Suggestion> _suggestions = new HashSet<>();
+
+    public TopicConjunction() {
+    }
+
+    public TopicConjunction(Course c, TopicConjunctionDto dto) {
+        this.id = dto.getId();
+        this.topics = dto.getTopics().stream().map(x -> new Topic(c, x)).collect(Collectors.toSet());
+    }
+
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
@@ -30,6 +46,14 @@ public class TopicConjunction {
 
     public Set<Topic> getTopics() {
         return topics;
+    }
+
+    public Set<Suggestion> get_suggestions() {
+        return _suggestions;
+    }
+
+    public void set_suggestions(Set<Suggestion> _suggestions) {
+        this._suggestions = _suggestions;
     }
 
     public Assessment getAssessment() {
