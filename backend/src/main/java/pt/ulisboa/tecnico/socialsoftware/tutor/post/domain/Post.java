@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
         }
 )
 public class Post {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,7 +18,7 @@ public class Post {
     @Column(unique=true, nullable = false)
     private Integer key;
 
-    @OneToOne(cascade = CascadeType.ALL,mappedBy = "post", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private PostQuestion question;
 
     @Column(name = "post_status", columnDefinition = "boolean default true")
@@ -77,4 +76,7 @@ public class Post {
         this.creationDate = creationDate;
     }
 
+    public void changePostStatus() {
+        this.postStatus = !this.postStatus;
+    }
 }
