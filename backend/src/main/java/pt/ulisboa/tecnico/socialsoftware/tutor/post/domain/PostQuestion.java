@@ -35,24 +35,27 @@ public class PostQuestion {
 
     public PostQuestion(Question q, User u, PostQuestionDto pq) {
         final int MAX_LENGTH = 1024;
-        checkPostQuestionConsistency(pq, MAX_LENGTH);
+        checkPostQuestionConsistency(pq.getStudentQuestion(), MAX_LENGTH);
         this.question = q;
         this.user = u;
         this.studentQuestion = pq.getStudentQuestion();
     }
 
-    private void checkPostQuestionConsistency(PostQuestionDto pq, int length) {
-        if(pq.getStudentQuestion().trim().isEmpty())
+    private void checkPostQuestionConsistency(String sq, int length) {
+        if(sq == null)
             throw new TutorException(ErrorMessage.NO_STUDENT_QUESTION);
-        if(pq.getStudentQuestion().trim().length() > length)
+        if(sq.trim().isEmpty())
+            throw new TutorException(ErrorMessage.NO_STUDENT_QUESTION);
+        if(sq.trim().length() > length)
             throw new TutorException(ErrorMessage.STUDENT_QUESTION_TOO_LONG);
+
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -77,6 +80,11 @@ public class PostQuestion {
     }
 
     public void setStudentQuestion(String studentQuestion) {
+        this.studentQuestion = studentQuestion;
+    }
+
+    public void update(String studentQuestion) {
+        checkPostQuestionConsistency(studentQuestion, 1024);
         this.studentQuestion = studentQuestion;
     }
 

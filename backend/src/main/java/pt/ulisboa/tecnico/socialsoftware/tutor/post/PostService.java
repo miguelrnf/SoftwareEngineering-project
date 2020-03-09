@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -59,6 +60,20 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto editPost(PostDto toEdit, UserDto userDto) {
+        User user = checkIfUserExists(userDto.getUsername());
+        Post post = checkIfPostExists(toEdit.getKey());
+        String question = post.getQuestion().getStudentQuestion();
+        checkIfUserOwnsPost(user, post);
+
+        post.getQuestion().update(question);
+        return new PostDto(post);
+    }
+
     private User checkIfUserExists(String username) {
         User u = userRepository.findByUsername(username);
         if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
@@ -88,5 +103,15 @@ public class PostService {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
     }
+
+    private Post checkIfPostExists(Integer key) {
+        return postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key));
+    }
+
+    private void checkIfUserOwnsPost(User user, Post post) {
+        user.getPostQuestions().stream().filter(x -> x.getPost() == post)
+                .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
+    }
+
 
 }

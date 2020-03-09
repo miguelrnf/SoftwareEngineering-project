@@ -352,6 +352,10 @@ public class User implements UserDetails {
         }
     }
 
+    public void addPostQuestion(PostQuestion postQuestion) {
+        this.postQuestions.add(postQuestion);
+    }
+
     public void addQuizAnswer(QuizAnswer quizAnswer) {
         this.quizAnswers.add(quizAnswer);
     }
