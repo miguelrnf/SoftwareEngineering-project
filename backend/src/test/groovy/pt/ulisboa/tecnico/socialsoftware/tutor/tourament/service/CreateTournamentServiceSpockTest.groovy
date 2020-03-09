@@ -5,11 +5,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
@@ -112,6 +110,39 @@ class CreateTournamentServiceSpockTest extends Specification {
        result.quiz.getTitle() == TITLE
        result.quiz.getScramble()
        result.quiz.getVersion() == VERSION
+    }
+
+    def "null user creates a tournament"() {
+        given: "a null user"
+        def user = null
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
+
+        and: "a quizz"
+        quiz = new QuizDto()
+        quiz.setKey(1)
+        quiz.setTitle(TITLE)
+        quiz.setScramble(true)
+        quiz.setAvailableDate(availableDate.format(formatter))
+        quiz.setConclusionDate(conclusionDate.format(formatter))
+        quiz.setSeries(1)
+        quiz.setVersion(VERSION)
+
+        and: "tournamment dto"
+        tournamentDto = new TournamentDto()
+        tournamentDto.setKey(1)
+        tournamentDto.setOwner(user)
+        tournamentDto.setTitle(TITLE)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto.setQuiz(quiz)
+
+        when:
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == TOURNAMENT_NOT_CONSISTENT
     }
 
 
