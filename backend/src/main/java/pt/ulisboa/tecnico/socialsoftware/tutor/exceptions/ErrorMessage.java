@@ -55,7 +55,15 @@ public enum ErrorMessage {
 
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    //new errors for posts
+    USER_HAS_NOT_ANSWERED("You have not answered the given question"),
+    USER_HAS_WRONG_ROLE("You do not have the required roll for this action"),
+    NO_STUDENT_QUESTION("You cannot submit a post without a writing a question"),
+    STUDENT_QUESTION_TOO_LONG("Your question is too long"),
+    INVALID_POST("The specified post does not exist"),
+    NOT_YOUR_POST("You do not have permission to change somebody else's post");
 
     public final String label;
 
