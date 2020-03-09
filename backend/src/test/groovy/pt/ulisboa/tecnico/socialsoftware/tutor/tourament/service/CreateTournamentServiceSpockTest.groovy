@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -31,7 +32,9 @@ class CreateTournamentServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
-    static final USERNAME = 'username'
+    static final USERNAME_1 = 'username1'
+    static final USERNAME_2 = 'username2'
+    static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
     static final VERSION = 'A'
     static final NAME = 'name'
@@ -48,54 +51,118 @@ class CreateTournamentServiceSpockTest extends Specification {
     @Autowired
     TournamentService tournamentService
 
+    @Shared
     def tournamentDto
+
+    @Shared
     def course
+
+    @Shared
     def courseExecution
+
+    @Shared
     def creationDate
+
+    @Shared
     def availableDate
+
+    @Shared
     def conclusionDate
+
+    @Shared
     def quiz
+
+    @Shared
     def formatter
 
-    def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
+    @Shared
+    def TEACHER
 
+    @Shared
+    def ADMIN
+
+    @Shared
+    def STUDENT
+
+    @Shared
+    def NLL_USERNAME
+
+
+    def setupSpec() {
+
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        given: "a quiz"
+        quiz = new QuizDto()
+        quiz.setKey(1)
+        quiz.setType(Quiz.QuizType.PROPOSED)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
+        quiz.setTitle(TITLE)
+        quiz.setScramble(true)
+        quiz.setAvailableDate(availableDate.format(formatter))
+        quiz.setConclusionDate(conclusionDate.format(formatter))
+        quiz.setSeries(1)
+        quiz.setVersion(VERSION)
+
+        and: "a tournamentDto"
+        tournamentDto = new TournamentDto()
+        tournamentDto.setId(1)
+        tournamentDto.setKey(1)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto.setQuiz(quiz)
+
+        and: "a user with the role teacher"
+        TEACHER = new User()
+        TEACHER.setId(3)
+        TEACHER.setRole(User.Role.TEACHER)
+        TEACHER.setUsername(USERNAME_2)
+
+        and: "a user with the role admin"
+        ADMIN = new User()
+        ADMIN.setId(2)
+        ADMIN.setRole(User.Role.ADMIN)
+        ADMIN.setUsername(USERNAME_3)
+
+        and: "a user with the role student"
+        STUDENT = new User()
+        STUDENT.setId(1)
+        STUDENT.setRole(User.Role.STUDENT)
+        STUDENT.setUsername(USERNAME_1)
+
+        and: "a user with the null username"
+        NLL_USERNAME = new User()
+        NLL_USERNAME.setId(1)
+        NLL_USERNAME.setRole(User.Role.STUDENT)
+        NLL_USERNAME.setUsername(null)
+    }
+
+    def setup() {
+        given: "a course and a course execution"
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+
+        and: "a user with the role student"
+        def userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
+
+        def userT = new User('name', USERNAME_2, 2, User.Role.TEACHER)
+
+        def userA = new User('name', USERNAME_3, 3, User.Role.ADMIN)
+
+
+        then:"add to repository"
+        courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
+        userRepository.save(userS)
+        userRepository.save(userT)
+        userRepository.save(userA)
 
     }
 
     def "student creates a tournament"() {
-       given:"a student"
-       def user = new User('name', USERNAME, 1, User.Role.STUDENT)
-       user.setId(1)
-       userRepository.save(user)
-       def userDto = new UserDto(user)
-       and:"a quizz"
-       quiz = new QuizDto()
-       quiz.setKey(1)
-       quiz.setType(Quiz.QuizType.PROPOSED)
-       creationDate = LocalDateTime.now()
-       availableDate = LocalDateTime.now()
-       conclusionDate = LocalDateTime.now().plusDays(1)
-       quiz.setTitle(TITLE)
-       quiz.setScramble(true)
-       quiz.setAvailableDate(availableDate.format(formatter))
-       quiz.setConclusionDate(conclusionDate.format(formatter))
-       quiz.setSeries(1)
-       quiz.setVersion(VERSION)
-
-       and:"tournamment dto"
-       tournamentDto = new TournamentDto()
-       tournamentDto.setId(1)
-       tournamentDto.setKey(1)
-       tournamentDto.setOwner(userDto)
+       given:
+       tournamentDto.setOwner(new UserDto(STUDENT))
        tournamentDto.setTitle(TITLE)
-       tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
-       tournamentDto.setQuiz(quiz)
-       println(tournamentDto.dump())
 
        when:
        def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
@@ -113,29 +180,9 @@ class CreateTournamentServiceSpockTest extends Specification {
     }
 
     def "null user creates a tournament"() {
-        given: "a null user"
-        def user = null
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
-
-        and: "a quizz"
-        quiz = new QuizDto()
-        quiz.setKey(1)
-        quiz.setTitle(TITLE)
-        quiz.setScramble(true)
-        quiz.setAvailableDate(availableDate.format(formatter))
-        quiz.setConclusionDate(conclusionDate.format(formatter))
-        quiz.setSeries(1)
-        quiz.setVersion(VERSION)
-
-        and: "tournamment dto"
-        tournamentDto = new TournamentDto()
-        tournamentDto.setKey(1)
-        tournamentDto.setOwner(user)
+        given: "a null user and a quiz"
+        tournamentDto.setOwner(null)
         tournamentDto.setTitle(TITLE)
-        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto.setQuiz(quiz)
 
         when:
         tournamentService.createTournament(courseExecution.getId(), tournamentDto)
@@ -147,33 +194,11 @@ class CreateTournamentServiceSpockTest extends Specification {
 
 
     @Unroll
-    def "invalid arguments: role=#role | name=#name | username=#courseName | title=#title || errorMessage=#errorMessage "() {
-        given:"a user"
-        def user = new User(name , username, 1, role)
-        user.setId(1)
-        userRepository.save(user)
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
-        def userDto = new UserDto(user)
-
-        and:"a quizz"
-        quiz = new QuizDto()
-        quiz.setKey(1)
-        quiz.setTitle(TITLE)
-        quiz.setScramble(true)
-        quiz.setAvailableDate(availableDate.format(formatter))
-        quiz.setConclusionDate(conclusionDate.format(formatter))
-        quiz.setSeries(1)
-        quiz.setVersion(VERSION)
-
-        and:"tournamment dto"
-        tournamentDto = new TournamentDto()
-        tournamentDto.setKey(1)
-        tournamentDto.setOwner(userDto)
+    def "invalid arguments: user=#user | title=#title || errorMessage=#errorMessage "() {
+        given:
+        tournamentDto.setOwner(new UserDto(user as User))
         tournamentDto.setTitle(title)
-        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto.setQuiz(quiz)
+
 
         when:
         tournamentService.createTournament(courseExecution.getId(), tournamentDto)
@@ -183,12 +208,12 @@ class CreateTournamentServiceSpockTest extends Specification {
         error.errorMessage == errorMessage
 
         where:
-        role              | name | username | title || errorMessage
-        User.Role.TEACHER | NAME | USERNAME | TITLE || TOURNAMENT_PERMISSION
-        User.Role.ADMIN   | NAME | USERNAME | TITLE || TOURNAMENT_PERMISSION
-        User.Role.STUDENT | NAME |   null   | TITLE || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | NAME | USERNAME | null  || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | NAME | USERNAME | '  '  || TOURNAMENT_NOT_CONSISTENT
+             user     | title || errorMessage
+            TEACHER   | TITLE || TOURNAMENT_PERMISSION
+             ADMIN    | TITLE || TOURNAMENT_PERMISSION
+         NLL_USERNAME | TITLE || TOURNAMENT_NOT_CONSISTENT
+            STUDENT   | null  || TOURNAMENT_NOT_CONSISTENT
+            STUDENT   | '  '  || TOURNAMENT_NOT_CONSISTENT
     }
 
     @TestConfiguration
