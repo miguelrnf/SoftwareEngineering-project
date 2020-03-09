@@ -1,40 +1,64 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "tournaments",
+       indexes = {
+        @Index(name = "tournament_indx_0", columnList = "key")
+       }
+)
 public class Tournament {
 
     public enum TournamentStatus {
         CREATED, OPEN, CLOSED, CANCELED
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(unique=true, nullable = false)
     private Integer key;
+
+    @Column(nullable = false)
     private String title;
+
+    @Enumerated(EnumType.STRING)
     private TournamentStatus status;
-    private QuizDto quiz;
-    private UserDto owner;
+
+    @OneToOne
+    private Quiz quiz;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User owner;
+
+    @ManyToOne
+    @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
+
+    @ManyToMany(mappedBy = "tournaments")
     private Set<User> enrolledStudents = new HashSet<>();
 
     public Tournament(){
 
     }
 
-    public Tournament(TournamentDto tournamentDto){
-        this.id = tournamentDto.getId();
+    public Tournament(TournamentDto tournamentDto, User user){
+
         this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
         this.status = tournamentDto.getStatus();
-        this.quiz = tournamentDto.getQuiz();
-        this.owner = tournamentDto.getOwner();
+        this.quiz = new Quiz(tournamentDto.getQuiz());
+        this.owner = user;
     }
 
     public Integer getId() {
@@ -45,7 +69,6 @@ public class Tournament {
         return key;
     }
 
-
     public String getTitle() {
         return title;
     }
@@ -54,11 +77,11 @@ public class Tournament {
         return status;
     }
 
-    public QuizDto getQuiz() {
+    public Quiz getQuiz() {
         return quiz;
     }
 
-    public UserDto getOwner() {
+    public User getOwner() {
         return owner;
     }
 
@@ -82,11 +105,11 @@ public class Tournament {
         this.status = status;
     }
 
-    public void setQuiz(QuizDto quiz) {
+    public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
     }
 
-    public void setOwner(UserDto owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 
@@ -104,7 +127,7 @@ public class Tournament {
 
     @Override
     public String toString() {
-        return "Tournament{" +
+        return "Tournament {" +
                 "id=" + id +
                 ", key=" + key +
                 ", title='" + title + '\'' +

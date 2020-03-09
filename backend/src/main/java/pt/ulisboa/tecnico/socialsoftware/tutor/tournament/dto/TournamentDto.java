@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -25,9 +24,14 @@ public class TournamentDto implements Serializable {
         this.id = tournament.getId();
         this.key = tournament.getKey();
         setTitle(tournament.getTitle());
-        this.status = tournament.getStatus();
-        this.quiz = tournament.getQuiz();
-        this.owner = tournament.getOwner();
+
+        this.status = Tournament.TournamentStatus.CREATED;
+
+        if (tournament.getStatus() != null){
+            this.status = tournament.getStatus();
+        }
+        this.quiz = new QuizDto(tournament.getQuiz(), true);
+        this.owner = new UserDto(tournament.getOwner());
 
     }
 

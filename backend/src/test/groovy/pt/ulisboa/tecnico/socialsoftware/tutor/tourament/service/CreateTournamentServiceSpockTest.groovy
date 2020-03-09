@@ -1,20 +1,29 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tourament.service
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@DataJpaTest
 class CreateTournamentServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
@@ -23,24 +32,34 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final TITLE = 'first tournament'
     static final VERSION = 'A'
 
-    def TournamentService
+    @Autowired
+    UserRepository userRepository
+
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
+    TournamentService tournamentService
+
     def tournamentDto
     def course
     def courseExecution
-    def formatter
     def creationDate
     def availableDate
     def conclusionDate
     def quiz
+    def formatter
 
     def setup() {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        TournamentService = new TournamentService()
-
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecution.setId(1)
+        courseExecutionRepository.save(courseExecution)
 
     }
 
@@ -49,14 +68,16 @@ class CreateTournamentServiceSpockTest extends Specification {
        def user = new User('name', USERNAME, 1, User.Role.STUDENT)
        user.setId(1)
        user.setKey(1)
+       userRepository.save(user)
        def userDto = new UserDto(user)
        and:"a quizz"
        quiz = new QuizDto()
        quiz.setKey(1)
-       quiz.setTitle(TITLE)
+       quiz.setType(Quiz.QuizType.PROPOSED)
        creationDate = LocalDateTime.now()
        availableDate = LocalDateTime.now()
        conclusionDate = LocalDateTime.now().plusDays(1)
+       quiz.setTitle(TITLE)
        quiz.setScramble(true)
        quiz.setAvailableDate(availableDate.format(formatter))
        quiz.setConclusionDate(conclusionDate.format(formatter))
@@ -71,39 +92,36 @@ class CreateTournamentServiceSpockTest extends Specification {
        tournamentDto.setTitle(TITLE)
        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
        tournamentDto.setQuiz(quiz)
+       println(tournamentDto.dump())
 
        when:
-       def result = TournamentService.createTournament(courseExecution.getId(), tournamentDto)
+       def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
        then:"the return data are correct"
-       result.id == 1
+       result.id != null
        result.key == 1
        result.owner.getName() == 'name'
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE
        result.status == Tournament.TournamentStatus.CREATED
        result.quiz.getTitle() == TITLE
-       result.quiz.getScramble() == true
+       result.quiz.getScramble()
        result.quiz.getVersion() == VERSION
     }
 
     def "create a tournament with no title"() {
         given:"a student"
-        def user = new User('name', USERNAME, 1, User.Role.TEACHER)
+        def user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.setId(1)
         user.setKey(1)
+        userRepository.save(user)
         def userDto = new UserDto(user)
 
         and:"a quizz"
         quiz = new QuizDto()
         quiz.setKey(1)
         quiz.setTitle(TITLE)
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
-        quiz.setAvailableDate(availableDate.format(formatter))
-        quiz.setConclusionDate(conclusionDate.format(formatter))
         quiz.setSeries(1)
         quiz.setVersion(VERSION)
 
@@ -116,7 +134,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setQuiz(quiz)
 
         when:
-        TournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
@@ -125,18 +143,19 @@ class CreateTournamentServiceSpockTest extends Specification {
 
     def "create a tournament with blank title"() {
         given:"a student"
-        def user = new User('name', USERNAME, 1, User.Role.TEACHER)
+        def user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.setId(1)
         user.setKey(1)
+        userRepository.save(user)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
         def userDto = new UserDto(user)
 
         and:"a quizz"
         quiz = new QuizDto()
         quiz.setKey(1)
         quiz.setTitle(TITLE)
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
         quiz.setAvailableDate(availableDate.format(formatter))
         quiz.setConclusionDate(conclusionDate.format(formatter))
@@ -153,7 +172,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setQuiz(quiz)
 
         when:
-        TournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
@@ -162,19 +181,20 @@ class CreateTournamentServiceSpockTest extends Specification {
     }
 
     def "teacher creates a tournament"() {
-        given:"a student"
+        given:"a teacher"
         def user = new User('name', USERNAME, 1, User.Role.TEACHER)
         user.setId(1)
         user.setKey(1)
+        userRepository.save(user)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
         def userDto = new UserDto(user)
 
         and:"a quizz"
         quiz = new QuizDto()
         quiz.setKey(1)
         quiz.setTitle(TITLE)
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
         quiz.setAvailableDate(availableDate.format(formatter))
         quiz.setConclusionDate(conclusionDate.format(formatter))
@@ -183,7 +203,6 @@ class CreateTournamentServiceSpockTest extends Specification {
 
         and:"tournamment dto"
         tournamentDto = new TournamentDto()
-        tournamentDto.setId(1)
         tournamentDto.setKey(1)
         tournamentDto.setOwner(userDto)
         tournamentDto.setTitle(" ")
@@ -191,7 +210,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setQuiz(quiz)
 
         when:
-        TournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
@@ -199,19 +218,20 @@ class CreateTournamentServiceSpockTest extends Specification {
     }
 
     def "admin creates a tournament"() {
-        given:"a student"
-        def user = new User('name', USERNAME, 1, User.Role.TEACHER)
+        given:"a admin"
+        def user = new User('name', USERNAME, 1, User.Role.ADMIN)
         user.setId(1)
         user.setKey(1)
+        userRepository.save(user)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
         def userDto = new UserDto(user)
 
         and:"a quizz"
         quiz = new QuizDto()
         quiz.setKey(1)
         quiz.setTitle(TITLE)
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
         quiz.setAvailableDate(availableDate.format(formatter))
         quiz.setConclusionDate(conclusionDate.format(formatter))
@@ -228,10 +248,52 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setQuiz(quiz)
 
         when:
-        TournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_PERMISSION
+    }
+
+    def "null user creates a tournament"() {
+        given:"a null user"
+        def user = null
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
+
+        and:"a quizz"
+        quiz = new QuizDto()
+        quiz.setKey(1)
+        quiz.setTitle(TITLE)
+        quiz.setScramble(true)
+        quiz.setAvailableDate(availableDate.format(formatter))
+        quiz.setConclusionDate(conclusionDate.format(formatter))
+        quiz.setSeries(1)
+        quiz.setVersion(VERSION)
+
+        and:"tournamment dto"
+        tournamentDto = new TournamentDto()
+        tournamentDto.setKey(1)
+        tournamentDto.setOwner(user)
+        tournamentDto.setTitle(TITLE)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto.setQuiz(quiz)
+
+        when:
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NOT_CONSISTENT
+    }
+
+    @TestConfiguration
+    static class TournamentServiceImplTestContextConfiguration {
+
+        @Bean
+        TournamentService tournamentService() {
+            return new TournamentService()
+        }
     }
 }
