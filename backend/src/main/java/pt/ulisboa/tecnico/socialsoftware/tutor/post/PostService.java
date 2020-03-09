@@ -77,6 +77,19 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto editPost(PostDto toEdit, UserDto userDto) {
+        User user = checkIfUserExists(userDto.getUsername());
+        Post post = checkIfPostExists(toEdit.getKey());
+        checkIfUserOwnsPost(user, post);
+
+        post.getQuestion().update(toEdit.getQuestion().getStudentQuestion());
+        return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changeStatus(PostDto postDto, UserDto userDto) {
         Post post = checkIfPostExists(postDto.getKey());
         User user = checkIfUserExists(userDto.getUsername());

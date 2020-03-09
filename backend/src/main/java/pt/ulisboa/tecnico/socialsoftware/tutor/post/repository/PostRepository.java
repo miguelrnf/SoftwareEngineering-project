@@ -18,3 +18,4 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query(value = "SELECT * FROM posts p WHERE p.key = :key", nativeQuery = true)
     Optional<Post> findByKey(Integer key);
 }
+
