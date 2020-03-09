@@ -64,6 +64,7 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_PERMISSION);
         }
 
+
         if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank()){
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
         }
