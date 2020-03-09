@@ -67,10 +67,9 @@ public class PostService {
     public PostDto editPost(PostDto toEdit, UserDto userDto) {
         User user = checkIfUserExists(userDto.getUsername());
         Post post = checkIfPostExists(toEdit.getKey());
-        String question = post.getQuestion().getStudentQuestion();
         checkIfUserOwnsPost(user, post);
 
-        post.getQuestion().update(question);
+        post.getQuestion().update(toEdit.getQuestion().getStudentQuestion());
         return new PostDto(post);
     }
 

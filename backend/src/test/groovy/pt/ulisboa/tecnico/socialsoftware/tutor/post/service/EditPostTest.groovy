@@ -91,6 +91,18 @@ class EditPostTest extends Specification {
     @Shared
     def VALID_P
 
+    @Shared
+    def INVALID_PQ_TOO_LONG
+
+    @Shared
+    def INVALID_PQ_BLANK
+
+    @Shared
+    def INVALID_P_TOO_LONG
+
+    @Shared
+    def INVALID_P_BLANK
+
 
     def setupSpec() {
 
@@ -122,6 +134,25 @@ class EditPostTest extends Specification {
 
         and: "a valid post"
         VALID_P = new Post(VALID_KEY, VALID_PQ)
+
+        and: "an invalid postQuestion: too long"
+        INVALID_PQ_TOO_LONG = new PostQuestion()
+        INVALID_PQ_TOO_LONG.setQuestion(VALID_Q)
+        INVALID_PQ_TOO_LONG.setUser(VALID_U)
+        INVALID_PQ_TOO_LONG.setStudentQuestion(TOO_MANY_CHARS)
+
+        and: "an invalid postQuestion: blank"
+        INVALID_PQ_BLANK = new PostQuestion()
+        INVALID_PQ_BLANK.setQuestion(VALID_Q)
+        INVALID_PQ_BLANK.setUser(VALID_U)
+        INVALID_PQ_BLANK.setStudentQuestion(EMPTY_QUESTION)
+
+        and: "an invalid post: too long"
+        INVALID_P_TOO_LONG = new Post(VALID_KEY, INVALID_PQ_TOO_LONG)
+
+        and: "an invalid post: blank"
+        INVALID_P_BLANK = new Post(VALID_KEY, INVALID_PQ_BLANK)
+
     }
 
     def setup() {
@@ -172,15 +203,17 @@ class EditPostTest extends Specification {
     @Unroll
     def "invalid edit"() {
         when:
-        postService.editPost(new PostDto(VALID_P), new UserDto(user))
+        postService.editPost(new PostDto(post), new UserDto(user))
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        user                         | expected
-        INVALID_U_NOT_OWNER as User  | ErrorMessage.NOT_YOUR_POST.label
+        user                        | post                       | expected
+        INVALID_U_NOT_OWNER as User | VALID_P as Post            | ErrorMessage.NOT_YOUR_POST.label
+        VALID_U as User             | INVALID_P_TOO_LONG as Post | ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
+        VALID_U as User             | INVALID_P_BLANK as Post    | ErrorMessage.NO_STUDENT_QUESTION.label
 
     }
 
