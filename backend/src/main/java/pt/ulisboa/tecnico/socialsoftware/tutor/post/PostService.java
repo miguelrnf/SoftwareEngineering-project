@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
@@ -137,5 +138,9 @@ public class PostService {
     private Question checkIfQuestionExists(Integer questionKey) {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
+    }
+
+    public PostAnswerDto answerQuestion(PostAnswerDto o) {
+        return null;
     }
 }
