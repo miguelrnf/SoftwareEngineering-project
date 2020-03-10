@@ -25,10 +25,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
 
 
 @DataJpaTest
@@ -37,11 +33,8 @@ class AddTournamentServiceSpockTest extends Specification{
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final USERNAME_1 = 'username1'
-    static final USERNAME_2 = 'username2'
-    static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
     static final VERSION = 'A'
-    static final NAME = 'name'
 
     @Autowired
     UserRepository userRepository

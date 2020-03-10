@@ -43,6 +43,7 @@ public enum ErrorMessage {
 
     TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
     TOURNAMENT_PERMISSION("Only student's can create tournaments"),
+    TOURNAMENT_LIST_EMPTY("No tournaments found"),
 
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me

@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -77,6 +78,10 @@ public class TournamentService {
         entityManager.persist(tournament);
 
         return new TournamentDto(tournament);
+    }
+
+    public List<TournamentDto> listTournaments(int executionId){
+        return null;
     }
 
 }
