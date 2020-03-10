@@ -45,6 +45,7 @@ public class Tournament {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
+
     @ManyToMany(mappedBy = "tournaments")
     private Set<User> enrolledStudents = new HashSet<>();
 
