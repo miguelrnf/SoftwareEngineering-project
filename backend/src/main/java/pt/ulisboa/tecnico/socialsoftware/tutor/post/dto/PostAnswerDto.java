@@ -16,7 +16,6 @@ public class PostAnswerDto {
         this.id = pa.getId();
         this.user = new UserDto(pa.getUser());
         this.teacherAnswer = pa.getTeacherAnswer();
-        this.post = new PostDto(pa.getPost());
     }
 
     public Integer getId() {

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
@@ -11,12 +12,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 @DataJpaTest
 class SubmitPostAnswerTest extends Specification {
@@ -62,6 +66,9 @@ class SubmitPostAnswerTest extends Specification {
 
     @Autowired
     UserRepository userRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def VALID_P
@@ -116,6 +123,7 @@ class SubmitPostAnswerTest extends Specification {
         VALID_PA = new PostAnswer()
         VALID_PA.setUser(VALID_U)
         VALID_PA.setTeacherAnswer(VALID_TEACHER_ANSWER)
+        VALID_PA.setPost(VALID_P)
 
         and: "a user with the role student"
         INVALID_U_NOT_TEACHER = new User()
@@ -127,16 +135,19 @@ class SubmitPostAnswerTest extends Specification {
         INVALID_PA_TOO_LONG = new PostAnswer()
         INVALID_PA_TOO_LONG.setUser(VALID_U)
         INVALID_PA_TOO_LONG.setTeacherAnswer(TOO_MANY_CHARS)
+        INVALID_PA_TOO_LONG.setPost(VALID_P)
 
         and: "an empty post answer"
         INVALID_PA_EMPTY = new PostAnswer()
         INVALID_PA_EMPTY.setUser(VALID_U)
         INVALID_PA_EMPTY.setTeacherAnswer(EMPTY_QUESTION)
+        INVALID_PA_EMPTY.setPost(VALID_P)
 
         and: "a post answer submitted by a user with the role student"
         INVALID_PA_NOT_TEACHER = new PostAnswer()
         INVALID_PA_NOT_TEACHER.setUser(INVALID_U_NOT_TEACHER)
         INVALID_PA_NOT_TEACHER.setTeacherAnswer(VALID_TEACHER_ANSWER)
+        INVALID_PA_NOT_TEACHER.setPost(VALID_P)
     }
 
     def setup() {
@@ -165,27 +176,34 @@ class SubmitPostAnswerTest extends Specification {
         user2.addPostQuestion(postQuestion1)
 
         then: "add to repository"
+        questionRepository.save(question)
         userRepository.save(user1)
         userRepository.save(user2)
         postRepository.save(post1)
     }
 
+    @Unroll
     def "a valid submission"() {
         when:
-        def result = postService.answerQuestion(new PostAnswerDto(pa))
+        def dto = new PostAnswerDto(pa)
+        dto.setPost(new PostDto(pa.getPost()))
+        def result = postService.answerQuestion(dto)
 
         then:
-        result.getUser().getUsername() == expected.getUser().getUsername()
-        result.getTeacherAnswer() == expected.getTeacherAnswer()
+        result.getAnswer().getUser().getUsername() == expected.getUser().getUsername()
+        result.getAnswer().getTeacherAnswer() == expected.getTeacherAnswer()
 
         where:
         pa                       ||      expected
         VALID_PA as PostAnswer   ||  VALID_PA as PostAnswer
     }
 
+    @Unroll
     def "invalid fields"() {
         when:
-        postService.answerQuestion(new PostAnswerDto(pa))
+        def dto = new PostAnswerDto(pa)
+        dto.setPost(new PostDto(pa.getPost()))
+        postService.answerQuestion(dto)
 
         then:
         def result = thrown(TutorException)

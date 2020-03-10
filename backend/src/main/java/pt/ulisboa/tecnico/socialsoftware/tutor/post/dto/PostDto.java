@@ -18,7 +18,7 @@ public class PostDto {
         this.id = p.getId();
         this.key = p.getKey();
         this.question = new PostQuestionDto(p.getQuestion());
-        this.answer = new PostAnswerDto(p.getAnswer());
+        this.answer = p.getAnswer() != null ? new PostAnswerDto(p.getAnswer()) : null;
         this.postStatus = p.getPostStatus();
         this.discussStatus = p.getDiscussStatus();
     }

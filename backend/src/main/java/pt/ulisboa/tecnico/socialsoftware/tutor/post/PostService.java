@@ -95,9 +95,11 @@ public class PostService {
     public PostDto changeStatus(PostDto postDto, UserDto userDto) {
         Post post = checkIfPostExists(postDto.getKey());
         User user = checkIfUserExists(userDto.getUsername());
-        if(!checkIfUserHasRoleTeacher(user))
+        try {
+            checkIfUserHasRoleTeacher(user);
+        } catch(TutorException e) {
             checkIfUserOwnsPost(user, post);
-
+        }
         post.changePostStatus();
         return new PostDto(post);
     }
@@ -114,10 +116,6 @@ public class PostService {
         PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
         post.setAnswer(answer);
         return new PostDto(post);
-    }
-
-    private boolean checkIfUserHasRoleTeacher(User user) {
-        return user.getRole().compareTo(User.Role.TEACHER) == 0;
     }
 
     private void checkIfUserOwnsPost(User user, Post post) {
@@ -148,6 +146,10 @@ public class PostService {
 
     private void checkIfUserHasRoleStudent(User user) {
         if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    }
+
+    private void checkIfUserHasRoleTeacher(User user) {
+        if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
 
     private Question checkIfQuestionExists(Integer questionKey) {
