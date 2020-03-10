@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
@@ -90,7 +91,7 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changeStatus(PostDto postDto, UserDto userDto) {
+    public PostDto changePostStatus(PostDto postDto, UserDto userDto) {
         Post post = checkIfPostExists(postDto.getKey());
         User user = checkIfUserExists(userDto.getUsername());
         if(!checkIfUserHasRoleTeacher(user))
@@ -99,6 +100,22 @@ public class PostService {
         post.changePostStatus();
         return new PostDto(post);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto changeDiscussStatus(PostDto postDto, UserDto userDto) {
+        Post post = checkIfPostExists(postDto.getKey());
+        User user = checkIfUserExists(userDto.getUsername());
+        checkIfUserOwnsPost(user, post);
+        checkIfAnswered(post);
+
+        post.changeDiscussStatus();
+        return new PostDto(post);
+    }
+
+
 
     private boolean checkIfUserHasRoleTeacher(User user) {
         return user.getRole().compareTo(User.Role.TEACHER) == 0;
@@ -117,6 +134,11 @@ public class PostService {
         User u = userRepository.findByUsername(username);
         if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
         return u;
+    }
+
+    private PostAnswer checkIfAnswered(Post post) {
+        if(post.getAnswer() == null){throw new TutorException(NO_ANSWER);}
+        return post.getAnswer();
     }
 
     private int getMaxPostNumber() {

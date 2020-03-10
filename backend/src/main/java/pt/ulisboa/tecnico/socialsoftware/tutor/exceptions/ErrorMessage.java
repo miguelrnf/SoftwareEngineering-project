@@ -63,7 +63,10 @@ public enum ErrorMessage {
     NO_STUDENT_QUESTION("You cannot submit a post without a writing a question"),
     STUDENT_QUESTION_TOO_LONG("Your question is too long"),
     INVALID_POST("The specified post does not exist"),
-    NOT_YOUR_POST("You do not have permission to change somebody else's post");
+    NOT_YOUR_POST("You do not have permission to change somebody else's post"),
+    NO_ANSWER("No answer was given by a teacher"),
+    INVALID_ANSWER_BLANK("The answer written is invalid because it is empty"),
+    INVALID_ANSWER_TOO_LONG("The answer given is too long");
 
     public final String label;
 

@@ -21,8 +21,8 @@ public class Post {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private PostQuestion question;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "post_answer", orphanRemoval = true)
-    private PostQuestion answer;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
+    private PostAnswer answer;
 
     @Column(name = "post_status", columnDefinition = "boolean default true")
     private Boolean postStatus;
@@ -67,11 +67,11 @@ public class Post {
         this.question = question;
     }
 
-    public PostQuestion getAnswer() {
+    public PostAnswer getAnswer() {
         return answer;
     }
 
-    public void setAnswer(PostQuestion answer) {
+    public void setAnswer(PostAnswer answer) {
         this.answer = answer;
     }
 
@@ -99,7 +99,12 @@ public class Post {
         this.creationDate = creationDate;
     }
 
+
     public void changePostStatus() {
         this.postStatus = !this.postStatus;
+    }
+
+    public void changeDiscussStatus() {
+        this.discussStatus = !this.discussStatus;
     }
 }

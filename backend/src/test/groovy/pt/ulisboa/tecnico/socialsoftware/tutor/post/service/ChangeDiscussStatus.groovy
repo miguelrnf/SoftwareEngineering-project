@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
@@ -21,10 +22,12 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @DataJpaTest
-class ChangePostStatusTest extends Specification {
+class ChangeDiscussStatus extends Specification{
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
+    public static final String VALID_ANSWER = 'I am a valid answer'
     public static final int VALID_KEY = 1
+    public static final int VALID_KEY_2 = 2
     public static final int VALID_ID_1 = 1
     public static final int VALID_ID_2 = 2
     public static final int VALID_ID_3 = 3
@@ -54,16 +57,29 @@ class ChangePostStatusTest extends Specification {
     def VALID_Q
 
     @Shared
+    def VALID_Q_2
+
+    @Shared
+    def VALID_PA
+
+    @Shared
+    def VALID_PQ
+
+    @Shared
+    def VALID_PQ_2
+
+    @Shared
     def VALID_U
 
     @Shared
     def VALID_U_TEACHER
 
     @Shared
-    def VALID_PQ
+    def INVALID_U_NOT_OWNER
 
     @Shared
-    def INVALID_U_NOT_OWNER
+    def VALID_P_NO_ANSWER
+
 
     def setupSpec() {
         given: "a valid question"
@@ -74,9 +90,9 @@ class ChangePostStatusTest extends Specification {
         VALID_Q.setNumberOfAnswers(2)
         VALID_Q.setNumberOfCorrect(1)
 
-        and: "a valid user"
+        and: "a valid user who is the owner"
         VALID_U = new User()
-        VALID_U.setId(VALID_ID_1)
+        VALID_U.setKey(VALID_KEY)
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME_1)
 
@@ -91,18 +107,39 @@ class ChangePostStatusTest extends Specification {
         VALID_PQ.setQuestion(VALID_Q)
         VALID_PQ.setUser(VALID_U)
         VALID_PQ.setStudentQuestion(VALID_STUDENT_QUESTION)
+        VALID_U.addPostQuestion(VALID_PQ)
 
-        and: "a valid post"
+        and: "a valid postQuestion"
+        VALID_PQ_2 = new PostQuestion()
+        VALID_PQ_2.setQuestion(VALID_Q)
+        VALID_PQ_2.setUser(VALID_U)
+        VALID_PQ_2.setStudentQuestion(VALID_STUDENT_QUESTION)
+        VALID_U.addPostQuestion(VALID_PQ_2)
+
+        and: "a valid postAnswer"
+        VALID_PA = new PostAnswer()
+        VALID_PA.setUser(VALID_U_TEACHER)
+        VALID_PA.setTeacherAnswer(VALID_ANSWER)
+
+        and: "a valid post with no answer"
+        VALID_P_NO_ANSWER = new Post()
+        VALID_P_NO_ANSWER.setKey(VALID_KEY)
+        VALID_P_NO_ANSWER.setQuestion(VALID_PQ_2)
+
+        and: "a valid post with an answer"
         VALID_P = new Post()
-        VALID_P.setKey(VALID_KEY)
+        VALID_P.setKey(VALID_KEY_2)
         VALID_P.setQuestion(VALID_PQ)
+        VALID_P.setAnswer(VALID_PA)
 
         and: "a valid user that does not own the post"
         INVALID_U_NOT_OWNER = new User()
         INVALID_U_NOT_OWNER.setId(VALID_ID_3)
         INVALID_U_NOT_OWNER.setRole(User.Role.STUDENT)
         INVALID_U_NOT_OWNER.setUsername(VALID_USERNAME_3)
+
     }
+
 
     def setup() {
         given: "a valid question"
@@ -124,45 +161,74 @@ class ChangePostStatusTest extends Specification {
         postQuestion1.setUser(user1)
         postQuestion1.setStudentQuestion(VALID_STUDENT_QUESTION)
 
-        and: "a valid post"
-        def post1 = new Post(VALID_KEY, postQuestion1)
-        postQuestion1.setPost(post1)
+        and: "a valid postQuestion"
+        def postQuestion2 = new PostQuestion()
+        postQuestion2.setQuestion(question)
+        postQuestion2.setUser(user1)
+        postQuestion2.setStudentQuestion(VALID_STUDENT_QUESTION)
+
+        and: "a valid postAnswer"
+        def postAnswer1 = new PostAnswer()
+        postAnswer1.setUser(user2)
+        postAnswer1.setTeacherAnswer(VALID_ANSWER)
+
+        and: "a valid post no answer"
+        def postNo = new Post(VALID_KEY, postQuestion2)
+        postQuestion2.setPost(postNo)
+        user1.addPostQuestion(postQuestion2)
+
+        and: "a valid post with an answer"
+        def postAnswered = new Post(VALID_KEY_2, postQuestion1)
+        def answer = new PostAnswer(user2, VALID_ANSWER)
+        postQuestion1.setPost(postAnswered)
         user1.addPostQuestion(postQuestion1)
+        answer.setTeacherAnswer(VALID_ANSWER)
+        postAnswered.setAnswer(answer)
 
         then: "add to repository"
+        println(user1.dump())
         userRepository.save(user1)
         userRepository.save(user2)
         userRepository.save(user3)
         questionRepository.save(question)
-        postRepository.save(post1)
+        postRepository.save(postNo)
+        postRepository.save(postAnswered)
+
     }
 
+
     @Unroll
-    def "valid status change"() {
+    def "valid discuss status"() {
         when:
-        def result = postService.changePostStatus(new PostDto(VALID_P), new UserDto(u))
+        def result = postService.changeDiscussStatus(new PostDto(post), new UserDto(user))
 
         then:
-        result.getPostStatus() != expected.getPostStatus()
+        result.getDiscussStatus() != expected.getDiscussStatus()
 
         where:
-        u                               ||       expected
-        VALID_U as User                 ||       VALID_P as Post
-        VALID_U_TEACHER as User         ||       VALID_P as Post
+        user                 | post                    ||       expected
+        VALID_U as User      | VALID_P as Post         ||       VALID_P as Post
+
+
     }
 
     @Unroll
-    def "invalid status change"() {
+    def "invalid discuss status"() {
         when:
-        postService.changePostStatus(new PostDto(VALID_P), new UserDto(u))
+        postService.changeDiscussStatus(new PostDto(post), new UserDto(user))
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        u                                ||       expected
-        INVALID_U_NOT_OWNER as User      ||       ErrorMessage.NOT_YOUR_POST.label
+        user                            | post                       || expected
+        VALID_U as User                 | VALID_P_NO_ANSWER as Post  || ErrorMessage.NO_ANSWER.label
+        INVALID_U_NOT_OWNER as User     | VALID_P as Post            || ErrorMessage.NOT_YOUR_POST.label
+
+
+
+
     }
 
     @TestConfiguration
@@ -172,4 +238,9 @@ class ChangePostStatusTest extends Specification {
             return new PostService()
         }
     }
+
+
+
+
+
 }
