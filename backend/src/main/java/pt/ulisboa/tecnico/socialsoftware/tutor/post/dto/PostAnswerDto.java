@@ -12,6 +12,7 @@ public class PostAnswerDto {
     private Integer id;
     private UserDto user;
     private String teacherAnswer;
+    private PostDto post;
 
     public PostAnswerDto(PostAnswer pa) {
         this.id = pa.getId();
@@ -43,5 +44,11 @@ public class PostAnswerDto {
         this.teacherAnswer = teacherAnswer;
     }
 
+    public PostDto getPost() {
+        return post;
+    }
 
+    public void setPost(PostDto post) {
+        this.post = post;
+    }
 }

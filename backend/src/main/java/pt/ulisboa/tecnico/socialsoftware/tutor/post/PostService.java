@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
@@ -55,7 +56,7 @@ public class PostService {
         checkIfUserAnsweredQuestion(questionKey, user);
         int maxPostNumber = getMaxPostNumber();
 
-        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto));
+        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
         post.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(post);
         return new PostDto(post);
@@ -94,9 +95,11 @@ public class PostService {
     public PostDto changePostStatus(PostDto postDto, UserDto userDto) {
         Post post = checkIfPostExists(postDto.getKey());
         User user = checkIfUserExists(userDto.getUsername());
-        if(!checkIfUserHasRoleTeacher(user))
+        try {
+            checkIfUserHasRoleTeacher(user);
+        } catch(TutorException e) {
             checkIfUserOwnsPost(user, post);
-
+        }
         post.changePostStatus();
         return new PostDto(post);
     }
@@ -115,12 +118,23 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto answerQuestion(PostAnswerDto answerDto) {
+        Post post = checkIfPostExists(answerDto.getPost().getKey());
+        User user = checkIfUserExists(answerDto.getUser().getUsername());
+        checkIfUserHasRoleTeacher(user);
+
+        PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
+        post.setAnswer(answer);
+        return new PostDto(post);
+    }
 
 
     private boolean checkIfUserHasRoleTeacher(User user) {
         return user.getRole().compareTo(User.Role.TEACHER) == 0;
-    }
-
     private void checkIfUserOwnsPost(User user, Post post) {
         user.getPostQuestions().stream().filter(x -> x.getPost() == post)
                 .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
@@ -154,6 +168,10 @@ public class PostService {
 
     private void checkIfUserHasRoleStudent(User user) {
         if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    }
+
+    private void checkIfUserHasRoleTeacher(User user) {
+        if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
 
     private Question checkIfQuestionExists(Integer questionKey) {

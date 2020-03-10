@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "post_questions")
@@ -30,15 +31,22 @@ public class PostQuestion {
     @Column(name = "students_question")
     private String studentQuestion;
 
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
+
+    @Column(name = "is_edited", columnDefinition = "boolean default false")
+    private Boolean isEdited;
+
     public PostQuestion() {
     }
 
-    public PostQuestion(Question q, User u, PostQuestionDto pq) {
+    public PostQuestion(Question q, User u, String sq) {
         final int MAX_LENGTH = 1024;
-        checkPostQuestionConsistency(pq.getStudentQuestion(), MAX_LENGTH);
+        checkPostQuestionConsistency(sq, MAX_LENGTH);
         this.question = q;
         this.user = u;
-        this.studentQuestion = pq.getStudentQuestion();
+        this.studentQuestion = sq;
+        this.isEdited = false;
     }
 
     private void checkPostQuestionConsistency(String sq, int length) {
@@ -94,5 +102,21 @@ public class PostQuestion {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Boolean getEdited() {
+        return isEdited;
+    }
+
+    public void setEdited(Boolean edited) {
+        isEdited = edited;
     }
 }

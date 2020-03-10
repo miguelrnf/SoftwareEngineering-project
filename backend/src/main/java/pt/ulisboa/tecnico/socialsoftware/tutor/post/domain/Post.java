@@ -99,7 +99,6 @@ public class Post {
         this.creationDate = creationDate;
     }
 
-
     public void changePostStatus() {
         this.postStatus = !this.postStatus;
     }
