@@ -97,10 +97,23 @@ public class PostService {
         User user = checkIfUserExists(userDto.getUsername());
         try {
             checkIfUserHasRoleTeacher(user);
-        } catch(TutorException e) {
+        } catch (TutorException e) {
             checkIfUserOwnsPost(user, post);
         }
         post.changePostStatus();
+        return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto editAnswer(PostAnswerDto toAnswer, UserDto userDto) {
+        User user = checkIfUserExists(userDto.getUsername());
+        Post post = checkIfPostExists(toAnswer.getPost().getKey());
+        
+        checkIfUserHasRoleTeacher(user);
+        post.getAnswer().update(toAnswer.getTeacherAnswer());;
         return new PostDto(post);
     }
 
@@ -126,12 +139,12 @@ public class PostService {
         Post post = checkIfPostExists(answerDto.getPost().getKey());
         User user = checkIfUserExists(answerDto.getUser().getUsername());
         checkIfUserHasRoleTeacher(user);
-
+      
         PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
         post.setAnswer(answer);
         return new PostDto(post);
     }
-
+  
     private void checkIfUserOwnsPost(User user, Post post) {
         user.getPostQuestions().stream().filter(x -> x.getPost() == post)
                 .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
