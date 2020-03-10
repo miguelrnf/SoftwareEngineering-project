@@ -1,9 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import org.springframework.data.annotation.Transient;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +14,18 @@ public class TournamentDto implements Serializable {
 
     private Integer id;
     private Integer key;
+    private Integer numberOfQuestions;
+    private String creationDate = null;
+    private String availableDate = null;
+    private String conclusionDate = null;
+    private AssessmentDto assessmentDto;
     private String title;
-    private QuizDto quiz;
     private UserDto owner;
     private Tournament.TournamentStatus status;
     private List<UserDto> enrolledStudents = new ArrayList<>();
+
+    @Transient
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public TournamentDto(){
     }
@@ -30,8 +40,18 @@ public class TournamentDto implements Serializable {
         if (tournament.getStatus() != null){
             this.status = tournament.getStatus();
         }
-        this.quiz = new QuizDto(tournament.getQuiz(), true);
+
         this.owner = new UserDto(tournament.getOwner());
+
+        if (tournament.getCreationDate() != null)
+            this.creationDate = tournament.getCreationDate().format(formatter);
+        if (tournament.getAvailableDate() != null)
+            this.availableDate = tournament.getAvailableDate().format(formatter);
+        if (tournament.getConclusionDate() != null)
+            this.conclusionDate = tournament.getConclusionDate().format(formatter);
+
+        this.numberOfQuestions = tournament.getNumberOfQuestions();
+        this.assessmentDto = new AssessmentDto(tournament.getAssessment());
 
     }
 
@@ -59,14 +79,6 @@ public class TournamentDto implements Serializable {
         this.title = title;
     }
 
-    public QuizDto getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(QuizDto quiz) {
-        this.quiz = quiz;
-    }
-
     public UserDto getOwner() {
         return owner;
     }
@@ -83,8 +95,61 @@ public class TournamentDto implements Serializable {
         this.status = status;
     }
 
-    public List<UserDto> getEnrolledStudents() {
-        return enrolledStudents;
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getAvailableDate() {
+        return availableDate;
+    }
+
+    public void setAvailableDate(String availableDate) {
+        this.availableDate = availableDate;
+    }
+
+    public String getConclusionDate() {
+        return conclusionDate;
+    }
+
+    public void setConclusionDate(String conclusionDate) {
+        this.conclusionDate = conclusionDate;
+    }
+
+    public void setEnrolledStudents(List<UserDto> enrolledStudents) {
+        this.enrolledStudents = enrolledStudents;
+    }
+
+    public LocalDateTime getCreationDateDate() {
+        if (getCreationDate() == null || getCreationDate().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(getCreationDate(), formatter);
+    }
+
+    public LocalDateTime getAvailableDateDate() {
+        if (getAvailableDate() == null || getAvailableDate().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(getAvailableDate(), formatter);
+    }
+
+    public LocalDateTime getConclusionDateDate() {
+        if (getConclusionDate() == null || getConclusionDate().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(getConclusionDate(), formatter);
+    }
+
+    public Integer getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
+
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
+        this.numberOfQuestions = numberOfQuestions;
     }
 
     @Override
@@ -92,11 +157,16 @@ public class TournamentDto implements Serializable {
         return "TournamentDto{" +
                 "id=" + id +
                 ", key=" + key +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", creationDate='" + creationDate + '\'' +
+                ", availableDate='" + availableDate + '\'' +
+                ", conclusionDate='" + conclusionDate + '\'' +
+                ", assessmentDto=" + assessmentDto +
                 ", title='" + title + '\'' +
-                ", quiz=" + quiz +
                 ", owner=" + owner +
                 ", status=" + status +
                 ", enrolledStudents=" + enrolledStudents +
+                ", formatter=" + formatter +
                 '}';
     }
 }

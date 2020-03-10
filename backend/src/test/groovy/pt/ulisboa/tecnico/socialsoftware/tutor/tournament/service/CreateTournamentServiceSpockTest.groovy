@@ -9,8 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
@@ -36,8 +35,9 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final USERNAME_2 = 'username2'
     static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
-    static final VERSION = 'A'
-    static final NAME = 'name'
+    static final NUMQUESTIONS = 3
+    static final DATENOW = LocalDateTime.now()
+    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
 
     @Autowired
     UserRepository userRepository
@@ -50,6 +50,9 @@ class CreateTournamentServiceSpockTest extends Specification {
 
     @Autowired
     TournamentService tournamentService
+
+    @Autowired
+    AssessmentRepository assessmentRepository
 
     @Shared
     def tournamentDto
@@ -70,9 +73,6 @@ class CreateTournamentServiceSpockTest extends Specification {
     def conclusionDate
 
     @Shared
-    def quiz
-
-    @Shared
     def formatter
 
     @Shared
@@ -91,26 +91,19 @@ class CreateTournamentServiceSpockTest extends Specification {
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        given: "a quiz"
-        quiz = new QuizDto()
-        quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.PROPOSED)
+
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
-        quiz.setTitle(TITLE)
-        quiz.setScramble(true)
-        quiz.setAvailableDate(availableDate.format(formatter))
-        quiz.setConclusionDate(conclusionDate.format(formatter))
-        quiz.setSeries(1)
-        quiz.setVersion(VERSION)
 
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
         tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto.setQuiz(quiz)
+        tournamentDto.setAvailableDate(DATENOW.format(formatter))
+        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto.setNumberOfQuestions(NUMQUESTIONS);
 
         and: "a user with the role teacher"
         TEACHER = new User()
@@ -174,13 +167,10 @@ class CreateTournamentServiceSpockTest extends Specification {
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE
        result.status == Tournament.TournamentStatus.CREATED
-       result.quiz.getTitle() == TITLE
-       result.quiz.getScramble()
-       result.quiz.getVersion() == VERSION
     }
 
     def "null user creates a tournament"() {
-        given: "a null user and a quiz"
+        given: "a null user"
         tournamentDto.setOwner(null)
         tournamentDto.setTitle(TITLE)
 

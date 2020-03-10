@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -33,6 +35,9 @@ public class TournamentService {
     @Autowired
     private TournamentRepository tournamentRepository;
 
+    @Autowired
+    private AssessmentRepository assessmentRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -45,7 +50,7 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto createTournament(int executionId, TournamentDto tournamentDto){
+    public TournamentDto createTournament(int executionId, TournamentDto tournamentDto, int assessmentId){
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         if (tournamentDto.getKey() == null) {
             tournamentDto.setKey(getMaxTournamentKey() + 1);
@@ -68,7 +73,10 @@ public class TournamentService {
         if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank()){
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
         }
-        Tournament tournament = new Tournament(tournamentDto, user);
+
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
+
+        Tournament tournament = new Tournament(tournamentDto, user, assessment);
         courseExecution.addTournament(tournament);
         tournament.setCourseExecution(courseExecution);
 

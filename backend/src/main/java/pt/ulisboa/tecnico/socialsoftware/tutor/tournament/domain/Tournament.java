@@ -1,13 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_CONSISTENT;
 
 @Entity
 @Table(name = "tournaments",
@@ -31,11 +36,24 @@ public class Tournament {
     @Column(nullable = false)
     private String title;
 
+    @Column(unique=false, nullable = false)
+    private Integer numberOfQuestions;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
+
+    @Column(name = "available_date")
+    private LocalDateTime availableDate;
+
+    @Column(name = "conclusion_date")
+    private LocalDateTime conclusionDate;
+
     @Enumerated(EnumType.STRING)
     private TournamentStatus status;
 
-    @OneToOne
-    private Quiz quiz;
+    @ManyToOne
+    @JoinColumn(name = "assessment_id")
+    Assessment assessment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -45,7 +63,6 @@ public class Tournament {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-
     @ManyToMany(mappedBy = "tournaments")
     private Set<User> enrolledStudents = new HashSet<>();
 
@@ -53,13 +70,17 @@ public class Tournament {
 
     }
 
-    public Tournament(TournamentDto tournamentDto, User user){
+    public Tournament(TournamentDto tournamentDto, User user, Assessment assessment){
 
         this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
         this.status = tournamentDto.getStatus();
-        this.quiz = new Quiz(tournamentDto.getQuiz());
+        this.creationDate = tournamentDto.getCreationDateDate();
+        setAvailableDate(tournamentDto.getAvailableDateDate());
+        setConclusionDate(tournamentDto.getConclusionDateDate());
         this.owner = user;
+        this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
+        this.assessment = assessment;
     }
 
     public Integer getId() {
@@ -76,10 +97,6 @@ public class Tournament {
 
     public TournamentStatus getStatus() {
         return status;
-    }
-
-    public Quiz getQuiz() {
-        return quiz;
     }
 
     public User getOwner() {
@@ -106,10 +123,6 @@ public class Tournament {
         this.status = status;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
     public void setOwner(User owner) {
         this.owner = owner;
     }
@@ -126,14 +139,77 @@ public class Tournament {
         this.courseExecution = courseExecution;
     }
 
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getAvailableDate() {
+        return availableDate;
+    }
+
+    public void setAvailableDate(LocalDateTime availableDate) {
+        checkAvailableDate(availableDate);
+        this.availableDate = availableDate;
+    }
+
+    public LocalDateTime getConclusionDate() {
+        return conclusionDate;
+    }
+
+    public void setConclusionDate(LocalDateTime conclusionDate) {
+        checkConclusionDate(conclusionDate);
+        this.conclusionDate = conclusionDate;
+    }
+
+    private void checkAvailableDate(LocalDateTime availableDate) {
+        if (availableDate == null) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+        }
+        if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+        }
+    }
+
+    private void checkConclusionDate(LocalDateTime conclusionDate) {
+        if (conclusionDate != null &&
+                availableDate != null &&
+                conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
+        }
+    }
+
+    public Integer getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
+
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
+        this.numberOfQuestions = numberOfQuestions;
+    }
+
+    public Assessment getAssessment() {
+        return assessment;
+    }
+
+    public void setAssessment(Assessment assessment) {
+        this.assessment = assessment;
+    }
+
     @Override
     public String toString() {
-        return "Tournament {" +
+        return "Tournament{" +
                 "id=" + id +
                 ", key=" + key +
                 ", title='" + title + '\'' +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", creationDate=" + creationDate +
+                ", availableDate=" + availableDate +
+                ", conclusionDate=" + conclusionDate +
                 ", status=" + status +
-                ", quiz=" + quiz +
+                ", assessment=" + assessment +
                 ", owner=" + owner +
                 ", courseExecution=" + courseExecution +
                 ", enrolledStudents=" + enrolledStudents +
