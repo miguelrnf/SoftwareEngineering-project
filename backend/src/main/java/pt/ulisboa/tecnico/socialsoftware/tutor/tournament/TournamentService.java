@@ -51,7 +51,7 @@ public class TournamentService {
             tournamentDto.setKey(getMaxTournamentKey() + 1);
         }
         if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null){
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Onwer");
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Owner");
         }
 
         User user = userRepository.findByUsername(tournamentDto.getOwner().getUsername());
@@ -69,7 +69,9 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
         }
         Tournament tournament = new Tournament(tournamentDto, user);
+        courseExecution.addTournament(tournament);
         tournament.setCourseExecution(courseExecution);
+
 
 
         entityManager.persist(tournament);
