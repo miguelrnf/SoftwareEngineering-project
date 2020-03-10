@@ -132,9 +132,6 @@ public class PostService {
         return new PostDto(post);
     }
 
-
-    private boolean checkIfUserHasRoleTeacher(User user) {
-        return user.getRole().compareTo(User.Role.TEACHER) == 0;
     private void checkIfUserOwnsPost(User user, Post post) {
         user.getPostQuestions().stream().filter(x -> x.getPost() == post)
                 .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));

@@ -46,15 +46,6 @@ public class PostAnswer {
         this.isEdited = false;
     }
 
-    private void checkPostAnswerConsistency(String ta, int length) {
-        if(ta == null)
-            throw new TutorException(ErrorMessage.NO_ANSWER);
-        if(ta.trim().isEmpty())
-            throw new TutorException(ErrorMessage.INVALID_ANSWER_BLANK);
-        if(ta.trim().length() > length)
-            throw new TutorException(ErrorMessage.INVALID_ANSWER_TOO_LONG);
-    }
-
     public Integer getId() {
         return id;
     }
