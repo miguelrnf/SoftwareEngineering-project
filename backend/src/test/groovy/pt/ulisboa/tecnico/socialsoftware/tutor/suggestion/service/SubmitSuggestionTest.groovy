@@ -1,37 +1,27 @@
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
-
-
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @DataJpaTest
-class SubmitSuggestionTest extends Specification{
+class SubmitSuggestionTest extends Specification {
     public static final String COURSE_NAME = 'TECNICO'
     public static final String VALID_SUGGESTION = 'This is a valid suggestion'
     public static final String VALID_STUDENT_SUGGESTION = 'I am asking a valid Suggestion'
@@ -41,6 +31,7 @@ class SubmitSuggestionTest extends Specification{
     public static final int VALID_ID = 1
     public static final int INVALID_ID = -1
     public static final String VALID_NAME = "Ben Dover"
+    public static final String VALID_NAME_TOPIC = "Spock"
     public static final String VALID_USERNAME = "BenDover69"
     public static final String VALID_USERNAME_TEACHER = "something"
     public static final String TOO_MANY_CHARS = '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
@@ -102,6 +93,12 @@ class SubmitSuggestionTest extends Specification{
     @Shared
     def INVALID_U_ROLE
 
+    @Shared
+    def VALID_TOPIC
+
+    @Shared
+    def VALID_TOPIC_LIST
+
     def setupSpec() {
         given: "a valid Suggestion"
         VALID_S = new SuggestionDto()
@@ -136,9 +133,59 @@ class SubmitSuggestionTest extends Specification{
         INVALID_U_UNAME = new User()
         INVALID_U_UNAME.setId(VALID_ID)
         INVALID_U_UNAME.setRole(User.Role.STUDENT)
+
+        and: "a valid topic"
+        VALID_TOPIC = new Topic()
+        VALID_TOPIC.setCourse(COURSE_NAME)
+        VALID_TOPIC.setId(VALID_ID)
+        VALID_TOPIC.setName(VALID_NAME_TOPIC)
+
+        and: "a valid list of topics"
+        VALID_TOPIC_LIST = new TopicConjunction()
+        VALID_TOPIC_LIST.addTopic(VALID_TOPIC)
     }
 
     def setup() {
+        given: "a course"
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        and: "a suggestion"
+        def suggestion = new Suggestion();
+        suggestion.setKey(VALID_KEY)
+        suggestion.set_questionStr(VALID_SUGGESTION)
+        and: "a user with the role STUDENT"
+        def user = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+        then: "add to repository"
+        courseRepository.save(course)
+        questionRepository.save(suggestion)
+        userRepository.save(user)
+    }
 
+    @Unroll
+    def "valid submission"() {
+        when:
+        def pq = new SuggestionDto()
+        pq.set_questionStr(sq)
+        pq.set_student(new UserDto(u as User))
+        pq.set_topicsList(new TopicConjunctionDto(t as TopicConjunction))
+
+        then:
+        def result = SuggestionService.submitSuggestion(pq)
+        result.get_topicsList() == pq.get_topicsList()
+        result.get_questionStr() == pq.get_questionStr()
+        result.get_student().getUsername() == pq.get_student().getUsername()
+
+
+        where:
+        t                | sq                       | u
+        VALID_TOPIC_LIST | VALID_STUDENT_SUGGESTION | VALID_U
+
+    }
+
+    @TestConfiguration
+    static class SuggestionServiceImplTestContextConfiguration {
+        @Bean
+        SuggestionService suggestionService() {
+            return new SuggestionService()
+        }
     }
 }

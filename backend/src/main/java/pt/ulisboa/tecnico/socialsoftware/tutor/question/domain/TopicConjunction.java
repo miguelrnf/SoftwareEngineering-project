@@ -21,7 +21,7 @@ public class TopicConjunction {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunction")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "topics", fetch=FetchType.LAZY, orphanRemoval=true)
     private Set<Suggestion> _suggestions = new HashSet<>();
 
     public TopicConjunction() {

@@ -15,9 +15,13 @@ import java.util.Set;
 @Table(
         name = "suggestions",
         indexes = {
-                @Index(name = "question_indx_0", columnList = "key")
+                @Index(name = "sugg_indx_0", columnList = "key")
         })
 public class Suggestion {
+    public enum Status {
+        TOAPPROVE, APPROVED, REJECTED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int _id;
@@ -31,39 +35,30 @@ public class Suggestion {
 
     @ManyToOne
     @JoinColumn(name = "topic_conjunction_id")
-    private TopicConjunction _topicsList;
+    private TopicConjunction topics;
 
-    public TopicConjunction get_topicsList() {
-        return _topicsList;
-    }
-
-    public void set_topicsList(TopicConjunction _topicsList) {
-        this._topicsList = _topicsList;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
 
     @Column(name = "changed_status", columnDefinition = "boolean default false")
-    private Boolean _changed = false;
+    private Boolean _changed;
 
-    @Column(columnDefinition = "JUSTIFICATION")
+    @Column(name = "justification")
     private String _justification;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    public enum Status {
-        TOAPPROVE, APPROVED, REJECTED
-    }
-    @Enumerated(EnumType.STRING)
-    private Suggestion.Status status = Suggestion.Status.TOAPPROVE;
 
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.TOAPPROVE;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -71,7 +66,7 @@ public class Suggestion {
 
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "user_id")
     private User _student;
 
     public Suggestion() {
@@ -83,8 +78,24 @@ public class Suggestion {
         this._student=student;
         //this.creationDate=date;
         this._questionStr=questionStr;
+        this._changed = false;
+
+    }
+    public TopicConjunction get_topicsList() {
+        return topics;
     }
 
+    public void set_topicsList(TopicConjunction t) {
+        this.topics = t;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
     public int get_id() {
         return _id;
     }
@@ -132,14 +143,6 @@ public class Suggestion {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public User get_student() {

@@ -29,7 +29,7 @@ public class SuggestionDto {
     public SuggestionDto(Suggestion suggestion) {
         this._id= suggestion.get_id();
         this.key=suggestion.getKey();
-        this._topicsList = suggestion.get_topicsList().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+        this._topicsList = suggestion.get_topicsList().getTopics().stream().map(TopicDto::new).collect(Collectors.toList());
 
         this._changed=suggestion.get_changed();
         this._justification=suggestion.get_justification();
