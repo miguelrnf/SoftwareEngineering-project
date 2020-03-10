@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
@@ -11,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository
 import spock.lang.Specification
 
+@DataJpaTest
 class CreateSuggestionTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
@@ -43,7 +45,7 @@ class CreateSuggestionTest extends Specification{
 
     }
     def "valid suggestion"(){
-
+        expect:false
     }
 
     def "create a suggestion with invalid fields"(){
@@ -65,8 +67,8 @@ class CreateSuggestionTest extends Specification{
     static class SuggestionServiceImplTestContextConfiguration {
 
         @Bean
-        pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService suggestionService() {
-            return new pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService()
+        SuggestionService suggestionService() {
+            return new SuggestionService()
         }
     }
 }
