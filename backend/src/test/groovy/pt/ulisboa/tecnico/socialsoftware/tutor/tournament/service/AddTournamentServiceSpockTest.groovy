@@ -67,9 +67,6 @@ class AddTournamentServiceSpockTest extends Specification{
     def conclusionDate
 
     @Shared
-    def quiz
-
-    @Shared
     def formatter
 
     @Shared
@@ -79,25 +76,15 @@ class AddTournamentServiceSpockTest extends Specification{
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         given: "a quiz"
-        quiz = new QuizDto()
-        quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.PROPOSED)
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
-        quiz.setTitle(TITLE)
-        quiz.setScramble(true)
-        quiz.setAvailableDate(availableDate.format(formatter))
-        quiz.setConclusionDate(conclusionDate.format(formatter))
-        quiz.setSeries(1)
-        quiz.setVersion(VERSION)
 
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
         tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto.setQuiz(quiz)
 
         and: "a user with the role student"
         STUDENT = new User()
@@ -138,9 +125,6 @@ class AddTournamentServiceSpockTest extends Specification{
         result.owner.getRole() == User.Role.STUDENT
         result.title == TITLE
         result.status == Tournament.TournamentStatus.CREATED
-        result.quiz.getTitle() == TITLE
-        result.quiz.getScramble()
-        result.quiz.getVersion() == VERSION
 
         def tourntest = new TournamentDto(courseExecution.getTournaments().getAt(0))
 

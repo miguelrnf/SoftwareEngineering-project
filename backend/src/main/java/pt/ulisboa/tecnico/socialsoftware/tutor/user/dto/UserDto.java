@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class UserDto implements Serializable {
     private int id;
@@ -71,5 +72,29 @@ public class UserDto implements Serializable {
                 ", role=" + role +
                 ", creationDate=" + creationDate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserDto userDto = (UserDto) o;
+
+        if (id != userDto.id) return false;
+        if (!Objects.equals(username, userDto.username)) return false;
+        if (!Objects.equals(name, userDto.name)) return false;
+        if (role != userDto.role) return false;
+        return Objects.equals(creationDate, userDto.creationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (role != null ? role.hashCode() : 0);
+        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        return result;
     }
 }

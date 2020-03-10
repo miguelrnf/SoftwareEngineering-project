@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,9 +34,6 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private TournamentStatus status;
 
-    @OneToOne
-    private Quiz quiz;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
@@ -59,7 +55,6 @@ public class Tournament {
         this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
         this.status = tournamentDto.getStatus();
-        this.quiz = new Quiz(tournamentDto.getQuiz());
         this.owner = user;
     }
 
@@ -77,10 +72,6 @@ public class Tournament {
 
     public TournamentStatus getStatus() {
         return status;
-    }
-
-    public Quiz getQuiz() {
-        return quiz;
     }
 
     public User getOwner() {
@@ -107,10 +98,6 @@ public class Tournament {
         this.status = status;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
     public void setOwner(User owner) {
         this.owner = owner;
     }
@@ -134,7 +121,6 @@ public class Tournament {
                 ", key=" + key +
                 ", title='" + title + '\'' +
                 ", status=" + status +
-                ", quiz=" + quiz +
                 ", owner=" + owner +
                 ", courseExecution=" + courseExecution +
                 ", enrolledStudents=" + enrolledStudents +
