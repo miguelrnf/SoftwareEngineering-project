@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
@@ -55,7 +56,7 @@ public class PostService {
         checkIfUserAnsweredQuestion(questionKey, user);
         int maxPostNumber = getMaxPostNumber();
 
-        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto));
+        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
         post.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(post);
         return new PostDto(post);
@@ -101,6 +102,20 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto answerQuestion(PostAnswerDto answerDto) {
+        Post post = checkIfPostExists(answerDto.getPost().getKey());
+        User user = checkIfUserExists(answerDto.getUser().getUsername());
+        checkIfUserHasRoleTeacher(user);
+
+        PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
+        post.setAnswer(answer);
+        return new PostDto(post);
+    }
+
     private boolean checkIfUserHasRoleTeacher(User user) {
         return user.getRole().compareTo(User.Role.TEACHER) == 0;
     }
@@ -138,9 +153,5 @@ public class PostService {
     private Question checkIfQuestionExists(Integer questionKey) {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
-    }
-
-    public PostAnswerDto answerQuestion(PostAnswerDto o) {
-        return null;
     }
 }

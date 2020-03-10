@@ -1,6 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -36,9 +39,20 @@ public class PostAnswer {
     }
 
     public PostAnswer(User user, String teacherAnswer) {
+        final int MAX_LENGTH = 1024;
+        checkPostAnswerConsistency(teacherAnswer, MAX_LENGTH);
         this.user = user;
         this.teacherAnswer = teacherAnswer;
         this.isEdited = false;
+    }
+
+    private void checkPostAnswerConsistency(String ta, int length) {
+        if(ta == null)
+            throw new TutorException(ErrorMessage.NO_ANSWER);
+        if(ta.trim().isEmpty())
+            throw new TutorException(ErrorMessage.INVALID_ANSWER_BLANK);
+        if(ta.trim().length() > length)
+            throw new TutorException(ErrorMessage.INVALID_ANSWER_TOO_LONG);
     }
 
     public Integer getId() {

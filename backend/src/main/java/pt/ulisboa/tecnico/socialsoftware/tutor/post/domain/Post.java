@@ -102,4 +102,6 @@ public class Post {
     public void changePostStatus() {
         this.postStatus = !this.postStatus;
     }
+
+
 }

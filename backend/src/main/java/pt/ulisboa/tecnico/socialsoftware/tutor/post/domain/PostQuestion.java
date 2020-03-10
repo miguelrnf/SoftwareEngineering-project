@@ -40,12 +40,12 @@ public class PostQuestion {
     public PostQuestion() {
     }
 
-    public PostQuestion(Question q, User u, PostQuestionDto pq) {
+    public PostQuestion(Question q, User u, String sq) {
         final int MAX_LENGTH = 1024;
-        checkPostQuestionConsistency(pq.getStudentQuestion(), MAX_LENGTH);
+        checkPostQuestionConsistency(sq, MAX_LENGTH);
         this.question = q;
         this.user = u;
-        this.studentQuestion = pq.getStudentQuestion();
+        this.studentQuestion = sq;
         this.isEdited = false;
     }
 
