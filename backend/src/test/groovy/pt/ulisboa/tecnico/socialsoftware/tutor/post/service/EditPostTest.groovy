@@ -10,7 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -92,13 +94,6 @@ class EditPostTest extends Specification {
     @Shared
     def INVALID_PQ_BLANK
 
-    @Shared
-    def INVALID_P_TOO_LONG
-
-    @Shared
-    def INVALID_P_BLANK
-
-
     def setupSpec() {
 
         given: "a valid question"
@@ -129,25 +124,21 @@ class EditPostTest extends Specification {
 
         and: "a valid post"
         VALID_P = new Post(VALID_KEY, VALID_PQ)
+        VALID_PQ.setPost(VALID_P)
 
         and: "an invalid postQuestion: too long"
         INVALID_PQ_TOO_LONG = new PostQuestion()
         INVALID_PQ_TOO_LONG.setQuestion(VALID_Q)
         INVALID_PQ_TOO_LONG.setUser(VALID_U)
         INVALID_PQ_TOO_LONG.setStudentQuestion(TOO_MANY_CHARS)
+        INVALID_PQ_TOO_LONG.setPost(VALID_P)
 
         and: "an invalid postQuestion: blank"
         INVALID_PQ_BLANK = new PostQuestion()
         INVALID_PQ_BLANK.setQuestion(VALID_Q)
         INVALID_PQ_BLANK.setUser(VALID_U)
         INVALID_PQ_BLANK.setStudentQuestion(EMPTY_QUESTION)
-
-        and: "an invalid post: too long"
-        INVALID_P_TOO_LONG = new Post(VALID_KEY, INVALID_PQ_TOO_LONG)
-
-        and: "an invalid post: blank"
-        INVALID_P_BLANK = new Post(VALID_KEY, INVALID_PQ_BLANK)
-
+        INVALID_PQ_BLANK.setPost(VALID_P)
     }
 
     def setup() {
@@ -184,7 +175,9 @@ class EditPostTest extends Specification {
     @Unroll
     def "valid edit"() {
         when:
-        def result = postService.editPost(new PostDto(VALID_P), new UserDto(user))
+        def dto = new PostQuestionDto(pq)
+        dto.setPost(new PostDto(pq.getPost()))
+        def result = postService.editPost(dto, new UserDto(user))
 
         then:
         result.getKey() == expected.getKey()
@@ -192,24 +185,26 @@ class EditPostTest extends Specification {
         result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
 
         where:
-        user            || expected
-        VALID_U as User || VALID_P as Post
+        pq                          |   user            || expected
+        VALID_PQ as PostQuestion    |   VALID_U as User || VALID_P as Post
     }
+
     @Unroll
     def "invalid edit"() {
         when:
-        postService.editPost(new PostDto(post), new UserDto(user))
+        def dto = new PostQuestionDto(pq)
+        dto.setPost(new PostDto(pq.getPost()))
+        postService.editPost(dto, new UserDto(user))
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        user                        | post                       || expected
-        INVALID_U_NOT_OWNER as User | VALID_P as Post            || ErrorMessage.NOT_YOUR_POST.label
-        VALID_U as User             | INVALID_P_TOO_LONG as Post || ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
-        VALID_U as User             | INVALID_P_BLANK as Post    || ErrorMessage.NO_STUDENT_QUESTION.label
-
+        user                        | pq                                    || expected
+        INVALID_U_NOT_OWNER as User | VALID_PQ as PostQuestion              || ErrorMessage.NOT_YOUR_POST.label
+        VALID_U as User             | INVALID_PQ_TOO_LONG as PostQuestion   || ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
+        VALID_U as User             | INVALID_PQ_BLANK as PostQuestion      || ErrorMessage.NO_STUDENT_QUESTION.label
     }
 
     @TestConfiguration
