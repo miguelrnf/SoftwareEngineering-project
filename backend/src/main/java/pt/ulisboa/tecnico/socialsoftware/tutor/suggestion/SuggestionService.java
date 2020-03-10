@@ -9,4 +9,6 @@ public class SuggestionService {
     public SuggestionDto submitSuggestion(SuggestionDto s){
         return s;
     }
+
+
 }
