@@ -70,6 +70,7 @@ public class PostService {
         checkIfUserOwnsPost(user, post);
 
         entityManager.remove(post);
+        orphanRemoval(post);
         return new PostDto(post);
     }
 
@@ -100,6 +101,15 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto viewPost(Integer key) {
+        Post post = checkIfPostExists(key);
+        return new PostDto(post);
+    }
+
     private boolean checkIfUserHasRoleTeacher(User user) {
         return user.getRole().compareTo(User.Role.TEACHER) == 0;
     }
@@ -119,6 +129,7 @@ public class PostService {
         return u;
     }
 
+
     private int getMaxPostNumber() {
         return postRepository.getMaxPostNumber() == null ? 0
                     : postRepository.getMaxPostNumber() + 1;
@@ -137,5 +148,12 @@ public class PostService {
     private Question checkIfQuestionExists(Integer questionKey) {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
+    }
+
+    private void orphanRemoval(Post post) {
+        post.getQuestion().setPost(null);
+        if(post.getComments() != null)
+            post.getComments().forEach(x -> x.setPost(null));
+        post.setComments(null);
     }
 }
