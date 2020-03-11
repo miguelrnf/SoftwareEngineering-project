@@ -21,6 +21,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 
 @DataJpaTest
 class CreateSuggestionTest extends Specification{
@@ -153,7 +155,7 @@ class CreateSuggestionTest extends Specification{
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-        sug.set_topicsList(l as TopicConjunctionDto)
+        sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
         sug.set_student(new UserDto(u as User))
 
         then:
@@ -164,7 +166,7 @@ class CreateSuggestionTest extends Specification{
         s                  |l                   |u       ||expected
         SUGGESTION_CONTENT | INVALID_TOPIC_LIST |VALID_U ||ErrorMessage.EMPTY_TOPICS.label
         TOO_MANY_CHARS     | VALID_TOPIC_LIST   |VALID_U ||ErrorMessage.SUGGESTION_TOO_LONG.label
-        EMPTY_SUGGESTION   | VALID_TOPIC_LIST   |VALID_U ||ErrorMessage.SUGGESTION_TOO_LONG.label
+        EMPTY_SUGGESTION   | VALID_TOPIC_LIST   |VALID_U ||ErrorMessage.SUGGESTION_EMPTY.label
 
 
     }
@@ -177,7 +179,7 @@ class CreateSuggestionTest extends Specification{
         sug.set_student(new UserDto(u as User))
 
         then:
-        def result = suggestionService.createSuggestion(sug)
+        def result = suggestionService.createSuggestion(course.getId(), sug)
         result.get_questionStr() == sug.get_questionStr()
         result.get_topicsList() == sug.get_topicsList()
         result.get_student() == sug.get_student()
@@ -192,7 +194,7 @@ class CreateSuggestionTest extends Specification{
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-        sug.set_topicsList(l as TopicConjunctionDto)
+        sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
         sug.set_student(new UserDto(u as User))
 
         then:
@@ -208,12 +210,12 @@ class CreateSuggestionTest extends Specification{
     def "create two suggestions"(){
         when: "are created two questions"
         def sug = new SuggestionDto()
-        sug.set_questionStr(s as String)
-        sug.set_topicsList(l as TopicConjunctionDto)
-        sug.set_student(new UserDto(u as User))
-        suggestionService.createQuestion(course,sug)
+        sug.set_questionStr(SUGGESTION_CONTENT)
+        sug.set_topicsList(new TopicConjunctionDto(VALID_TOPIC_LIST))
+        sug.set_student(new UserDto(VALID_U))
+        suggestionService.createSuggestion(course.getId(),sug)
         sug.setKey(null)
-        suggestionService.createQuestion(course,sug)
+        suggestionService.createSuggestion(course.getId(),sug)
 
         then: "to sugestions are created with the correct numbers"
         suggestionRepository.count() == 2L

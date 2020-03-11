@@ -55,7 +55,13 @@ public enum ErrorMessage {
 
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    USER_HAS_WRONG_ROLE("User has wrong role"),
+    SUGGESTION_TOO_LONG("Suggestion is too long"),
+    SUGGESTION_EMPTY("Empty suggestion"),
+    EMPTY_TOPICS("No topics");
+
 
     public final String label;
 
