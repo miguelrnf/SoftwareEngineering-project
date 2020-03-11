@@ -150,21 +150,13 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto redirect(PostDto postDto1, PostDto postDto2, UserDto userDto) {
-        System.out.println("*************************************************************");
-        System.out.println(postDto1.getKey());
-        System.out.println(postDto2.getKey());
-        System.out.println("*************************************************************");
         Post postNotAnswered = checkIfPostExists(postDto1.getKey());
         Post postAnswered = checkIfPostExists(postDto2.getKey());
         PostAnswer answer = checkIfAnswered(postAnswered);
         User user = checkIfUserExists(userDto.getUsername());
         checkIfUserHasRoleTeacher(user);
-        if(!postDto1.getQuestion().getQuestion().getKey().equals(postDto2.getQuestion().getQuestion().getKey())){
-            throw new TutorException(DIFFERENT_QUESTION);
-        }
-        if(postDto2.getQuestion() == null){
-            throw new TutorException(NO_ANSWER);
-        }
+        checkIfPostsHaveSameQuestion(postDto1, postDto2);
+
         postNotAnswered.setAnswer(answer);
         postNotAnswered.setDiscussStatus(false);
         postNotAnswered.setPostStatus(true);
@@ -172,6 +164,13 @@ public class PostService {
             throw new TutorException(ERROR_WHILE_REDIRECTING);
         }
         return new PostDto(postNotAnswered);
+    }
+
+    private void checkIfPostsHaveSameQuestion(PostDto postDto1, PostDto postDto2) {
+        if(postDto2.getQuestion() == null)
+            throw new TutorException(NO_ANSWER);
+         if(!postDto1.getQuestion().getQuestion().getKey().equals(postDto2.getQuestion().getQuestion().getKey()))
+             throw new TutorException(DIFFERENT_QUESTION);
     }
 
     private void checkIfUserOwnsPost(User user, Post post) {
