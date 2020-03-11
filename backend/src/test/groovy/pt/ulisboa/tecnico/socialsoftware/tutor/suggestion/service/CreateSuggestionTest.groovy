@@ -8,10 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -100,6 +97,9 @@ class CreateSuggestionTest extends Specification{
     def VALID_TOPIC
 
     @Shared
+    def VALID_TOPIC_DTO
+
+    @Shared
     def VALID_TOPIC_LIST
 
     @Shared
@@ -126,18 +126,6 @@ class CreateSuggestionTest extends Specification{
         INVALID_U_UNAME.setId(VALID_ID)
         INVALID_U_UNAME.setRole(User.Role.STUDENT)
 
-        and: "a valid topic"
-        VALID_TOPIC = new Topic()
-        //VALID_TOPIC.setCourse(COURSE_NAME)
-        VALID_TOPIC.setId(VALID_ID)
-        VALID_TOPIC.setName(VALID_NAME_TOPIC)
-
-        and: "a valid list of topics"
-        VALID_TOPIC_LIST = new HashSet<Topic>();
-        VALID_TOPIC_LIST.add(VALID_TOPIC)
-
-        and: "a invalid list of topics"
-        INVALID_TOPIC_LIST = new HashSet<Topic>();
 
         and: "a valid user - STUDENT "
         VALID_U = new User()
@@ -159,18 +147,29 @@ class CreateSuggestionTest extends Specification{
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
 
-        and:
-        def topic = new Topic();
-        topic.setName(VALID_NAME_TOPIC)
-        topic.setCourse(course)
+        and: "a valid topicDto"
+        VALID_TOPIC_DTO = new TopicDto()
+        VALID_TOPIC_DTO.setId(VALID_ID)
+        VALID_TOPIC_DTO.setName(VALID_NAME_TOPIC)
+
+        and: "a valid topic"
+        VALID_TOPIC = new Topic(course, VALID_TOPIC_DTO)
 
 
-                then: "add to repository"
+        and: "a valid list of topics"
+        VALID_TOPIC_LIST = new HashSet<Topic>();
+        VALID_TOPIC_LIST.add(VALID_TOPIC)
+
+        and: "a invalid list of topics"
+        INVALID_TOPIC_LIST = new HashSet<Topic>();
+
+
+        then: "add to repository"
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
         userRepository.save(userT)
-        topicRepository.save(topic)
+        topicRepository.save(VALID_TOPIC)
 
     }
 
@@ -181,8 +180,9 @@ class CreateSuggestionTest extends Specification{
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
 
-        List<TopicDto> topicsDto = new ArrayList<>();
-        for (t in l){
+        List<TopicDto> topicsDto = new ArrayList<>()
+
+        for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
 
@@ -197,10 +197,9 @@ class CreateSuggestionTest extends Specification{
         result.message == expected
 
         where:
-        s                  |l                   |u       ||expected
-        SUGGESTION_CONTENT | INVALID_TOPIC_LIST |VALID_U ||ErrorMessage.EMPTY_TOPICS.label
-        TOO_MANY_CHARS     | VALID_TOPIC_LIST   |VALID_U ||ErrorMessage.SUGGESTION_TOO_LONG.label
-        EMPTY_SUGGESTION   | VALID_TOPIC_LIST   |VALID_U ||ErrorMessage.SUGGESTION_EMPTY.label
+        s                  |u       ||expected
+        TOO_MANY_CHARS     |VALID_U ||ErrorMessage.SUGGESTION_TOO_LONG.label
+        EMPTY_SUGGESTION   |VALID_U ||ErrorMessage.SUGGESTION_EMPTY.label
 
 
     }
@@ -223,13 +222,13 @@ class CreateSuggestionTest extends Specification{
         then:
         def result = suggestionService.createSuggestion(courseExecution.getId(), sug)
         result.get_questionStr() == sug.get_questionStr()
-        result.get_topicsList() == sug.get_topicsList()
-        result.get_student() == sug.get_student()
+        result.get_topicsList().size() == sug.get_topicsList().size()
+        result.get_student().getUsername() == sug.get_student().getUsername()
 
 
         where:
-        s                  |l                   |u
-        SUGGESTION_CONTENT |VALID_TOPIC_LIST    |VALID_U
+        s                  |l               |u
+        SUGGESTION_CONTENT |VALID_TOPIC_LIST|VALID_U
     }
     @Unroll
     def "invalid users"(){
@@ -277,7 +276,6 @@ class CreateSuggestionTest extends Specification{
 
         then: "to sugestions are created with the correct numbers"
         suggestionRepository.count() == 2L
-        //comparar keys
     }
 
     @TestConfiguration

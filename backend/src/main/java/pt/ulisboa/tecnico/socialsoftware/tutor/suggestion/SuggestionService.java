@@ -99,8 +99,11 @@ public class SuggestionService {
         if (newTopics.isEmpty()){
             throw new TutorException(EMPTY_TOPICS);
         }
+        System.out.println(topicRepository.count());
+        System.out.println("--------------------------------------------------------------");
+        System.out.println(topicRepository.findTopicByName(courseId, suggestionDto.get_topicsList().get(0).getName()));
 
-        newTopics.stream().filter(topic -> topicRepository.findTopicByName(courseId, topic.getName()) == null)
+        newTopics.stream().filter(topic -> topicRepository.findTopicByName(courseId, topic.getName()) != null )
                 .findAny().orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND));
 
 
