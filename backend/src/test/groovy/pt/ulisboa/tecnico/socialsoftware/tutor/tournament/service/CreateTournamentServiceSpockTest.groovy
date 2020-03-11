@@ -37,7 +37,6 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
     static final VERSION = 'A'
-    static final NAME = 'name'
 
     @Autowired
     UserRepository userRepository
@@ -110,7 +109,6 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setId(1)
         tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto.setQuiz(quiz)
 
         and: "a user with the role teacher"
         TEACHER = new User()
@@ -174,9 +172,6 @@ class CreateTournamentServiceSpockTest extends Specification {
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE
        result.status == Tournament.TournamentStatus.CREATED
-       result.quiz.getTitle() == TITLE
-       result.quiz.getScramble()
-       result.quiz.getVersion() == VERSION
     }
 
     def "null user creates a tournament"() {

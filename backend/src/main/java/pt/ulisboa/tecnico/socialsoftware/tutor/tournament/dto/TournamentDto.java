@@ -12,7 +12,6 @@ public class TournamentDto implements Serializable {
     private Integer id;
     private Integer key;
     private String title;
-    private QuizDto quiz;
     private UserDto owner;
     private Tournament.TournamentStatus status;
     private List<UserDto> enrolledStudents = new ArrayList<>();
@@ -30,7 +29,6 @@ public class TournamentDto implements Serializable {
         if (tournament.getStatus() != null){
             this.status = tournament.getStatus();
         }
-        this.quiz = new QuizDto(tournament.getQuiz(), true);
         this.owner = new UserDto(tournament.getOwner());
 
     }
@@ -59,14 +57,6 @@ public class TournamentDto implements Serializable {
         this.title = title;
     }
 
-    public QuizDto getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(QuizDto quiz) {
-        this.quiz = quiz;
-    }
-
     public UserDto getOwner() {
         return owner;
     }
@@ -93,7 +83,6 @@ public class TournamentDto implements Serializable {
                 "id=" + id +
                 ", key=" + key +
                 ", title='" + title + '\'' +
-                ", quiz=" + quiz +
                 ", owner=" + owner +
                 ", status=" + status +
                 ", enrolledStudents=" + enrolledStudents +

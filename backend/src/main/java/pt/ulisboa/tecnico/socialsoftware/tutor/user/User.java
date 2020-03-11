@@ -295,6 +295,10 @@ public class User implements UserDetails, Importable {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
     }
 
+    public void addTournament(Tournament tournament){
+        tournaments.add(tournament);
+    }
+
     public void increaseNumberOfQuizzes(Quiz.QuizType type) {
         switch (type) {
             case PROPOSED:
