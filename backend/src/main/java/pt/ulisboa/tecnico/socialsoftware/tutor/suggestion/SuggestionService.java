@@ -11,8 +11,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
@@ -24,6 +28,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -65,6 +72,8 @@ public class SuggestionService {
         User user = checkIfUserExists(username);
         checkIfUserHasRoleStudent(user);
 
+        Set<Topic> topics = checkIfTopicExists(courseId, suggestionDto);
+
         if (suggestionDto.getKey() == null) {
             int maxQuestionNumber = suggestionRepository.getMaxSuggestionNumber() != null ?
                     suggestionRepository.getMaxSuggestionNumber() : 0;
@@ -73,6 +82,7 @@ public class SuggestionService {
 
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
         suggestion.setCreationDate(LocalDateTime.now());
+        suggestion.set_topicsList(topics);
         this.entityManager.persist(suggestion);
         return new SuggestionDto(suggestion);
     }
@@ -83,6 +93,20 @@ public class SuggestionService {
         return u;
     }
 
+    private  Set<Topic> checkIfTopicExists(int courseId, SuggestionDto suggestionDto) {
+        List<TopicDto> newTopics = suggestionDto.get_topicsList();
+
+        if (newTopics.isEmpty()){
+            throw new TutorException(EMPTY_TOPICS);
+        }
+
+        newTopics.stream().filter(topic -> topicRepository.findTopicByName(courseId, topic.getName()) == null)
+                .findAny().orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND));
+
+
+        return newTopics.stream().map(topic -> topicRepository.findTopicByName(courseId, topic.getName()))
+                .collect(Collectors.toSet());
+    }
 
     private void checkIfUserHasRoleStudent(User user) {
         if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);

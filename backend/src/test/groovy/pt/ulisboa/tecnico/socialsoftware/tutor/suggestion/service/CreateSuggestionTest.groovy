@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto
@@ -23,6 +24,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import spock.lang.Unroll
 
 @DataJpaTest
 class CreateSuggestionTest extends Specification{
@@ -131,11 +133,11 @@ class CreateSuggestionTest extends Specification{
         VALID_TOPIC.setName(VALID_NAME_TOPIC)
 
         and: "a valid list of topics"
-        VALID_TOPIC_LIST = new TopicConjunction()
-        VALID_TOPIC_LIST.addTopic(VALID_TOPIC)
+        VALID_TOPIC_LIST = new HashSet<Topic>();
+        VALID_TOPIC_LIST.add(VALID_TOPIC)
 
         and: "a invalid list of topics"
-        INVALID_TOPIC_LIST = new TopicConjunction()
+        INVALID_TOPIC_LIST = new HashSet<Topic>();
 
         and: "a valid user - STUDENT "
         VALID_U = new User()
@@ -143,22 +145,52 @@ class CreateSuggestionTest extends Specification{
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME)
     }
+
     def setup(){
+        given:
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
 
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
+        and: "a user with the role teacher"
+        def userT = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
+
+        and: "a user with the role student"
+        def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+
+        and:
+        def topic = new Topic();
+        topic.setName(VALID_NAME_TOPIC)
+        topic.setCourse(course)
+
+
+                then: "add to repository"
+        courseRepository.save(course)
+        courseExecutionRepository.save(courseExecution)
+        userRepository.save(userS)
+        userRepository.save(userT)
+        topicRepository.save(topic)
+
     }
+
+    @Unroll
     def "create a suggestion with invalid fields"(){
+        println(topicRepository.findAll().dump())
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-        sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in l){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
         sug.set_student(new UserDto(u as User))
 
-        suggestionService.createSuggestion(course.getId(), sug)
+        suggestionService.createSuggestion(courseExecution.getId(), sug)
 
         then:
         def result = thrown(TutorException)
@@ -173,15 +205,23 @@ class CreateSuggestionTest extends Specification{
 
     }
 
+    @Unroll
     def "valid suggestion"(){
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-        sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in l){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
         sug.set_student(new UserDto(u as User))
 
         then:
-        def result = suggestionService.createSuggestion(course.getId(), sug)
+        def result = suggestionService.createSuggestion(courseExecution.getId(), sug)
         result.get_questionStr() == sug.get_questionStr()
         result.get_topicsList() == sug.get_topicsList()
         result.get_student() == sug.get_student()
@@ -191,14 +231,21 @@ class CreateSuggestionTest extends Specification{
         s                  |l                   |u
         SUGGESTION_CONTENT |VALID_TOPIC_LIST    |VALID_U
     }
-
+    @Unroll
     def "invalid users"(){
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-        sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in l){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
         sug.set_student(new UserDto(u as User))
-        suggestionService.createSuggestion(course.getId(), sug)
+        suggestionService.createSuggestion(courseExecution.getId(), sug)
 
         then:
         def result = thrown(TutorException)
@@ -210,15 +257,23 @@ class CreateSuggestionTest extends Specification{
         SUGGESTION_CONTENT   |   VALID_TOPIC_LIST        |   INVALID_U_ROLE        |   ErrorMessage.USER_HAS_WRONG_ROLE.label
     }
 
+    @Unroll
     def "create two suggestions"(){
         when: "are created two questions"
         def sug = new SuggestionDto()
         sug.set_questionStr(SUGGESTION_CONTENT)
-        sug.set_topicsList(new TopicConjunctionDto(VALID_TOPIC_LIST))
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
         sug.set_student(new UserDto(VALID_U))
-        suggestionService.createSuggestion(course.getId(),sug)
+        suggestionService.createSuggestion(courseExecution.getId(),sug)
         sug.setKey(null)
-        suggestionService.createSuggestion(course.getId(),sug)
+        suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         then: "to sugestions are created with the correct numbers"
         suggestionRepository.count() == 2L

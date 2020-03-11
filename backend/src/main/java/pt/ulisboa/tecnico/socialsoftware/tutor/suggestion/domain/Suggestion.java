@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -39,10 +40,8 @@ public class Suggestion {
     @Column(columnDefinition = "TEXT")
     private String _questionStr;
 
-    @ManyToOne
-    @JoinColumn(name = "topic_conjunction_id")
-    private TopicConjunction topics;
-
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "suggestions")
+    private Set<Topic> topics = new HashSet<>();
 
     @Column(name = "changed_status", columnDefinition = "boolean default false")
     private Boolean _changed;
@@ -54,17 +53,9 @@ public class Suggestion {
     private LocalDateTime creationDate;
 
 
-
     @Enumerated(EnumType.STRING)
     private Status status = Status.TOAPPROVE;
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -87,20 +78,28 @@ public class Suggestion {
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
-        String str = suggestionDto.getCreationDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        this.creationDate = LocalDateTime.parse(str, formatter);
 
-        this.status = Suggestion.Status.valueOf(suggestionDto.getStatus());
+        String str = suggestionDto.getCreationDate();
+        if( str != null){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            this.creationDate = LocalDateTime.parse(str, formatter);}
+
+        this.status = Status.TOAPPROVE;
         this.courseExecution = courseExecution;
 
         courseExecution.addSuggestion(this);
 
     }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     private void checkConsistentSuggestion(SuggestionDto suggestionDto) {
-        if (suggestionDto.get_topicsList().isEmpty()){
-            throw new TutorException(EMPTY_TOPICS);
-        }
         if (suggestionDto.get_questionStr().trim().length() == 0 ){
             throw new TutorException(SUGGESTION_EMPTY);
         }
@@ -109,11 +108,11 @@ public class Suggestion {
         }
     }
 
-    public TopicConjunction get_topicsList() {
+    public Set<Topic> get_topicsList() {
         return topics;
     }
 
-    public void set_topicsList(TopicConjunction t) {
+    public void set_topicsList(Set<Topic> t) {
         this.topics = t;
     }
 

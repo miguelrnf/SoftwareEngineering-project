@@ -31,7 +31,7 @@ public class SuggestionDto {
     public SuggestionDto(Suggestion suggestion) {
         this._id= suggestion.get_id();
         this.key=suggestion.getKey();
-        this._topicsList = suggestion.get_topicsList().getTopics().stream().map(TopicDto::new).collect(Collectors.toList());
+        this._topicsList = suggestion.get_topicsList().stream().map(TopicDto::new).collect(Collectors.toList());
 
         this._changed=suggestion.get_changed();
         this._justification=suggestion.get_justification();
@@ -73,8 +73,8 @@ public class SuggestionDto {
         return _topicsList;
     }
 
-    public void set_topicsList(TopicConjunctionDto _topicsList) {
-        this._topicsList = _topicsList.getTopics();
+    public void set_topicsList(List<TopicDto> _topicsList) {
+        this._topicsList = _topicsList;
     }
 
     public Boolean get_changed() {
