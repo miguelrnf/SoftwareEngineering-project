@@ -79,12 +79,12 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto editPost(PostDto toEdit, UserDto userDto) {
+    public PostDto editPost(PostQuestionDto toEdit, UserDto userDto) {
         User user = checkIfUserExists(userDto.getUsername());
-        Post post = checkIfPostExists(toEdit.getKey());
+        Post post = checkIfPostExists(toEdit.getPost().getKey());
         checkIfUserOwnsPost(user, post);
 
-        post.getQuestion().update(toEdit.getQuestion().getStudentQuestion());
+        post.getQuestion().update(toEdit.getStudentQuestion());
         return new PostDto(post);
     }
 
@@ -113,7 +113,7 @@ public class PostService {
         Post post = checkIfPostExists(toAnswer.getPost().getKey());
 
         checkIfUserHasRoleTeacher(user);
-        post.getAnswer().update(toAnswer.getTeacherAnswer());;
+        post.getAnswer().update(toAnswer.getTeacherAnswer());
         return new PostDto(post);
     }
 
