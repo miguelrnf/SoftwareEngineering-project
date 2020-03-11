@@ -158,6 +158,8 @@ class CreateSuggestionTest extends Specification{
         sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
         sug.set_student(new UserDto(u as User))
 
+        suggestionService.createSuggestion(course.getId(), sug)
+
         then:
         def result = thrown(TutorException)
         result.message == expected
@@ -196,6 +198,7 @@ class CreateSuggestionTest extends Specification{
         sug.set_questionStr(s as String)
         sug.set_topicsList(new TopicConjunctionDto(l as TopicConjunction))
         sug.set_student(new UserDto(u as User))
+        suggestionService.createSuggestion(course.getId(), sug)
 
         then:
         def result = thrown(TutorException)

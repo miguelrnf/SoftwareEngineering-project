@@ -1,15 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(
@@ -61,8 +67,8 @@ public class Suggestion {
     }
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "course_execution_id")
+    private CourseExecution courseExecution;
 
 
     @ManyToOne
@@ -72,14 +78,37 @@ public class Suggestion {
     public Suggestion() {
     }
 
-    public Suggestion(Integer key, User student, String questionStr ) {
-        this.key=key;
-        this._student=student;
-        //this.creationDate=date;
-        this._questionStr=questionStr;
+    public Suggestion(CourseExecution courseExecution, User user, SuggestionDto suggestionDto) {
+        checkConsistentSuggestion(suggestionDto);
+
+        this.key= suggestionDto.getKey();
+        this._student= user;
+
+        this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
+        this._justification = "";
+        String str = suggestionDto.getCreationDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        this.creationDate = LocalDateTime.parse(str, formatter);
+
+        this.status = Suggestion.Status.valueOf(suggestionDto.getStatus());
+        this.courseExecution = courseExecution;
+
+        courseExecution.addSuggestion(this);
 
     }
+    private void checkConsistentSuggestion(SuggestionDto suggestionDto) {
+        if (suggestionDto.get_topicsList().isEmpty()){
+            throw new TutorException(EMPTY_TOPICS);
+        }
+        if (suggestionDto.get_questionStr().trim().length() == 0 ){
+            throw new TutorException(SUGGESTION_EMPTY);
+        }
+        if (suggestionDto.get_questionStr().trim().length() > 500 ){
+            throw new TutorException(SUGGESTION_TOO_LONG);
+        }
+    }
+
     public TopicConjunction get_topicsList() {
         return topics;
     }
@@ -88,12 +117,12 @@ public class Suggestion {
         this.topics = t;
     }
 
-    public Course getCourse() {
-        return course;
+    public CourseExecution getCourse() {
+        return courseExecution;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourse(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
     }
     public int get_id() {
         return _id;
