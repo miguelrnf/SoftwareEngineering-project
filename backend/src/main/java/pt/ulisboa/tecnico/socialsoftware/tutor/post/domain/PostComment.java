@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -36,6 +37,12 @@ public class PostComment {
 
     @Column(name = "content")
     private String comment;
+
+    @ManyToOne
+    private PostComment parent;
+
+    @OneToMany(mappedBy = "parent")
+    private Set<PostComment> children;
 
     public PostComment() {
     }
