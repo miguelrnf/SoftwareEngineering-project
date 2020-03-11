@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -26,6 +27,9 @@ public class Post {
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
+    private Set<PostComment> comments;
 
     public Post() {
     }
