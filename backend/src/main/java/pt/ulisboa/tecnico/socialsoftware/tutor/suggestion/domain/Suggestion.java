@@ -1,15 +1,22 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(
@@ -33,10 +40,8 @@ public class Suggestion {
     @Column(columnDefinition = "TEXT")
     private String _questionStr;
 
-    @ManyToOne
-    @JoinColumn(name = "topic_conjunction_id")
-    private TopicConjunction topics;
-
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "suggestions")
+    private Set<Topic> topics = new HashSet<>();
 
     @Column(name = "changed_status", columnDefinition = "boolean default false")
     private Boolean _changed;
@@ -48,21 +53,13 @@ public class Suggestion {
     private LocalDateTime creationDate;
 
 
-
     @Enumerated(EnumType.STRING)
     private Status status = Status.TOAPPROVE;
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "course_execution_id")
+    private CourseExecution courseExecution;
 
 
     @ManyToOne
@@ -72,29 +69,59 @@ public class Suggestion {
     public Suggestion() {
     }
 
-    public Suggestion(Integer key, Integer id, User student, String questionStr ) {
-        this._id=id;
-        this.key=key;
-        this._student=student;
-        //this.creationDate=date;
-        this._questionStr=questionStr;
+    public Suggestion(CourseExecution courseExecution, User user, SuggestionDto suggestionDto) {
+        checkConsistentSuggestion(suggestionDto);
+
+        this.key= suggestionDto.getKey();
+        this._student= user;
+
+        this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
+        this._justification = "";
+
+        String str = suggestionDto.getCreationDate();
+        if( str != null){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            this.creationDate = LocalDateTime.parse(str, formatter);}
+
+        this.status = Status.TOAPPROVE;
+        this.courseExecution = courseExecution;
+
+        courseExecution.addSuggestion(this);
 
     }
-    public TopicConjunction get_topicsList() {
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    private void checkConsistentSuggestion(SuggestionDto suggestionDto) {
+        if (suggestionDto.get_questionStr().trim().length() == 0 ){
+            throw new TutorException(SUGGESTION_EMPTY);
+        }
+        if (suggestionDto.get_questionStr().trim().length() > 500 ){
+            throw new TutorException(SUGGESTION_TOO_LONG);
+        }
+    }
+
+    public Set<Topic> get_topicsList() {
         return topics;
     }
 
-    public void set_topicsList(TopicConjunction t) {
+    public void set_topicsList(Set<Topic> t) {
         this.topics = t;
     }
 
-    public Course getCourse() {
-        return course;
+    public CourseExecution getCourse() {
+        return courseExecution;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourse(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
     }
     public int get_id() {
         return _id;
