@@ -108,4 +108,21 @@ public class TournamentService {
         return user;
     }
 
+    public void unrollStudent(String username, int tournamentId){
+        User user = findUsername(username);
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED){
+            throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
+        }
+
+        if(!tournament.getEnrolledStudents().contains(user)){
+            throw new TutorException(UNABLE_TO_UNROLL, user.getUsername());
+        }
+
+        tournament.getEnrolledStudents().remove(user);
+        user.getTournaments().remove(tournament);
+
+    }
+
 }
