@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class TournamentDto implements Serializable {
 
@@ -14,7 +12,6 @@ public class TournamentDto implements Serializable {
     private String title;
     private UserDto owner;
     private Tournament.TournamentStatus status;
-    private List<UserDto> enrolledStudents = new ArrayList<>();
 
     public TournamentDto(){
     }
@@ -30,7 +27,6 @@ public class TournamentDto implements Serializable {
             this.status = tournament.getStatus();
         }
         this.owner = new UserDto(tournament.getOwner());
-
     }
 
     public Integer getId() {
@@ -73,10 +69,6 @@ public class TournamentDto implements Serializable {
         this.status = status;
     }
 
-    public List<UserDto> getEnrolledStudents() {
-        return enrolledStudents;
-    }
-
     @Override
     public String toString() {
         return "TournamentDto{" +
@@ -85,7 +77,6 @@ public class TournamentDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", owner=" + owner +
                 ", status=" + status +
-                ", enrolledStudents=" + enrolledStudents +
                 '}';
     }
 }
