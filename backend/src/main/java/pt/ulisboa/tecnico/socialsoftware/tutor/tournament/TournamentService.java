@@ -20,6 +20,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -52,6 +56,14 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(int executionId, TournamentDto tournamentDto, int assessmentId){
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+
+
+        System.out.println("=======================");
+        System.out.println(courseExecution.getAssessments().toString());
+        System.out.println("=======================");
+
         if (tournamentDto.getKey() == null) {
             tournamentDto.setKey(getMaxTournamentKey() + 1);
         }
@@ -69,17 +81,43 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_PERMISSION);
         }
 
-
         if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank()){
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
         }
 
-        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
+        List<Assessment> assessmentL = assessmentRepository.findByExecutionCourseId(executionId).stream().filter(a -> a.getId() == assessmentId).collect(Collectors.toList());
+
+        if (assessmentL.isEmpty()){
+            throw new TutorException(ASSESSMENT_NOT_FOUND, assessmentId);
+        }
+
+        Assessment assessment = assessmentL.get(0);
 
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
+
+        if(!courseExecution.getAssessments().contains(assessment)){
+            throw new TutorException(ASSESSMENT_NOT_FOUND, assessmentId);
+        }
+
+        if(assessment.getTopicConjunctions().isEmpty()){
+            throw new TutorException(TOPIC_CONJUNCTION_NOT_FOUND);
+        }
+
         courseExecution.addTournament(tournament);
         tournament.setCourseExecution(courseExecution);
 
+        if(tournamentDto.getConclusionDate() == null || tournamentDto.getAvailableDate() == null){
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Date");
+        }
+
+        if (tournamentDto.getCreationDate() == null) {
+            tournament.setCreationDate(LocalDateTime.now());
+        } else {
+            tournament.setCreationDate(LocalDateTime.parse(tournamentDto.getCreationDate(), formatter));
+        }
+
+        tournament.setAvailableDate(LocalDateTime.parse(tournamentDto.getAvailableDate(), formatter));
+        tournament.setConclusionDate(LocalDateTime.parse(tournamentDto.getConclusionDate(), formatter));
 
 
         entityManager.persist(tournament);

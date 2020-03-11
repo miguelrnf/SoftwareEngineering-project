@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_CONSISTENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
 
 @Entity
 @Table(name = "tournaments",
@@ -167,10 +167,10 @@ public class Tournament {
 
     private void checkAvailableDate(LocalDateTime availableDate) {
         if (availableDate == null) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
         if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }
 
@@ -178,7 +178,7 @@ public class Tournament {
         if (conclusionDate != null &&
                 availableDate != null &&
                 conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
         }
     }
 

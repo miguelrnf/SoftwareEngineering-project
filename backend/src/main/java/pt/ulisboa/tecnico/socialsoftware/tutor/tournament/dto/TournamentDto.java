@@ -152,6 +152,14 @@ public class TournamentDto implements Serializable {
         this.numberOfQuestions = numberOfQuestions;
     }
 
+    public AssessmentDto getAssessmentDto() {
+        return assessmentDto;
+    }
+
+    public void setAssessmentDto(AssessmentDto assessmentDto) {
+        this.assessmentDto = assessmentDto;
+    }
+
     @Override
     public String toString() {
         return "TournamentDto{" +

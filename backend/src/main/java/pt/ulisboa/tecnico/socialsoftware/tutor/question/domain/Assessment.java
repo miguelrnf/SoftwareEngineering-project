@@ -26,6 +26,7 @@ public class Assessment {
     private Integer id;
 
     private String title;
+
     private Integer sequence = 0;
 
     @Enumerated(EnumType.STRING)
@@ -101,7 +102,6 @@ public class Assessment {
     public String toString() {
         return "Assessment{" +
                 "id=" + id +
-                ", id=" + id +
                 ", title='" + title + '\'' +
                 ", status=" + status +
                 ", topicConjunctions=" + topicConjunctions +

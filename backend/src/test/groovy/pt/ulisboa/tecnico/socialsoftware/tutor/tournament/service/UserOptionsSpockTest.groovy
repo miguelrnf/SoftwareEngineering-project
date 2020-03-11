@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -25,14 +26,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NOT_ENOUGH_QUESTIONS_TOURNAMENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
-
 
 @DataJpaTest
 class UserOptionsSpockTest extends Specification{
@@ -81,6 +81,12 @@ class UserOptionsSpockTest extends Specification{
     def courseExecution
 
     @Shared
+    def topic
+
+    @Shared
+    def topicConjunction
+
+    @Shared
     def creationDate
 
     @Shared
@@ -91,6 +97,21 @@ class UserOptionsSpockTest extends Specification{
 
     @Shared
     def formatter
+
+    @Shared
+    def userS
+
+    @Shared
+    def assessment_1
+
+    @Shared
+    def assessment_2
+
+    @Shared
+    def assessment_3
+
+    @Shared
+    def assessment_4
 
     @Shared
     def STUDENT
@@ -146,7 +167,7 @@ class UserOptionsSpockTest extends Specification{
         VALID_COURSEEXECUT = new CourseExecution(VALID_COURSE, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
 
         and: " a Topic"
-        TOPIC = new Topic();
+        TOPIC = new Topic()
         TOPIC.setName("TOPIC")
         VALID_COURSE.addTopic(TOPIC)
 
@@ -177,7 +198,7 @@ class UserOptionsSpockTest extends Specification{
         INVALID_ASSESSMENT_2.setStatus(Assessment.Status.REMOVED)
         INVALID_ASSESSMENT_2.setCourseExecution(VALID_COURSEEXECUT)
         INVALID_ASSESSMENT_2.addTopicConjunction(TOPIC_CONJUCTIONS)
-        TOPIC_CONJUCTIONS.setAssessment(INVALID_ASSESSMENT_1)
+        TOPIC_CONJUCTIONS.setAssessment(INVALID_ASSESSMENT_2)
         VALID_COURSEEXECUT.addAssessment(INVALID_ASSESSMENT_2)
 
         and: "invalid assessment 3"
@@ -196,22 +217,25 @@ class UserOptionsSpockTest extends Specification{
 
     def setup(){
         given: "a course and a course execution"
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+
+        and:"user"
+        userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
 
         and: " a Topic"
-        def topic = new Topic();
+        topic = new Topic()
         topic.setName("TOPIC")
         topic.setCourse(course)
 
         and: "a Topic conjuctions"
-        def topicConjunction = new TopicConjunction()
+        topicConjunction = new TopicConjunction()
         topicConjunction.addTopic(topic)
         topic.addTopicConjunction(topicConjunction)
         course.addTopic(topic)
 
         and:"a valid assessment"
-        def assessment = new Assessment()
+        assessment = new Assessment()
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setCourseExecution(courseExecution)
         assessment.addTopicConjunction(topicConjunction)
@@ -219,7 +243,7 @@ class UserOptionsSpockTest extends Specification{
         courseExecution.addAssessment(assessment)
 
         and:"a invalid assessment_1"
-        def assessment_1 = new Assessment()
+        assessment_1 = new Assessment()
         assessment_1.setStatus(Assessment.Status.DISABLED)
         assessment_1.setCourseExecution(courseExecution)
         assessment_1.addTopicConjunction(topicConjunction)
@@ -227,7 +251,7 @@ class UserOptionsSpockTest extends Specification{
         courseExecution.addAssessment(assessment_1)
 
         and:"a invalid assessment_2"
-        def assessment_2 = new Assessment()
+        assessment_2 = new Assessment()
         assessment_2.setStatus(Assessment.Status.REMOVED)
         assessment_2.setCourseExecution(courseExecution)
         assessment_2.addTopicConjunction(topicConjunction)
@@ -235,14 +259,14 @@ class UserOptionsSpockTest extends Specification{
         courseExecution.addAssessment(assessment_2)
 
         and:"a invalid assessment_3"
-        def assessment_3 = new Assessment()
+        assessment_3 = new Assessment()
         assessment_3.setStatus(Assessment.Status.AVAILABLE)
         assessment_3.setCourseExecution(courseExecution)
         assessment_3.addTopicConjunction(topicConjunction)
         topicConjunction.setAssessment(assessment_3)
 
         and:"a invalid assessment_4"
-        def assessment_4 = new Assessment()
+        assessment_4 = new Assessment()
         assessment_4.setStatus(Assessment.Status.AVAILABLE)
         assessment_4.setCourseExecution(courseExecution)
         courseExecution.addAssessment(assessment_4)
@@ -252,12 +276,12 @@ class UserOptionsSpockTest extends Specification{
         topicRepository.save(topic)
         courseExecutionRepository.save(courseExecution)
         topicConjunctionRepository.save(topicConjunction)
+        userRepository.save(userS)
         assessmentRepository.save(assessment)
         assessmentRepository.save(assessment_1)
         assessmentRepository.save(assessment_2)
         assessmentRepository.save(assessment_3)
         assessmentRepository.save(assessment_4)
-
     }
 
     def "valid of options"(){
@@ -266,11 +290,13 @@ class UserOptionsSpockTest extends Specification{
        conclusionDate = DATETOMORROW
        tournamentDto.setAvailableDate(availableDate.format(formatter))
        tournamentDto.setConclusionDate(conclusionDate.format(formatter))
-       tournamentDto.setNumberOfQuestions(NUMQUESTIONS);
+       tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
        tournamentDto.setAssessmentDto(new AssessmentDto(assessment))
+       tournamentDto.setTitle(TITLE)
+
 
        when:
-       tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+       tournamentService.createTournament(courseExecution.getId(), tournamentDto, assessment.getId())
 
        then:
        tournamentRepository.count() == 1L
@@ -289,32 +315,41 @@ class UserOptionsSpockTest extends Specification{
        result.getAssessment() ==  assessment
 }
 
+    @Unroll
     def "invalid arguments: available=#avaleDate | conclusionDate=#concDate | numberOfQuestion=#numbOfQuest || errorMessage=#errorMessage "(){
         given:
+
+        VALID_ASSESSMENT.setId(1)
+        INVALID_ASSESSMENT_1.setId(2)
+        INVALID_ASSESSMENT_2.setId(3)
+        INVALID_ASSESSMENT_3.setId(4)
+        INVALID_ASSESSMENT_4.setId(5)
+
         availableDate = DATENOW
         conclusionDate = DATETOMORROW
         tournamentDto.setAvailableDate(avaleDate.format(formatter))
         tournamentDto.setConclusionDate(concDate.format(formatter))
         tournamentDto.setNumberOfQuestions(numbOfQuest)
+        tournamentDto.setTitle(TITLE)
         tournamentDto.setAssessmentDto(new AssessmentDto(assess as Assessment))
 
+        println(assess.dump())
+
         when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto,  (assess as Assessment).getId())
 
         then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
+        cleanup:
+        assessmentRepository.deleteAll()
+
         where:
         avaleDate     |   concDate   | numbOfQuest  |       assess         || errorMessage
-         null         |     null     | NUMQUESTIONS |   VALID_ASSESSMENT   || TOURNAMENT_NOT_CONSISTENT
-        DATENOW       |     null     | NUMQUESTIONS |   VALID_ASSESSMENT   || TOURNAMENT_NOT_CONSISTENT
-         null         | DATETOMORROW | NUMQUESTIONS |   VALID_ASSESSMENT   || TOURNAMENT_NOT_CONSISTENT
         DATENOW       |  DATEBEFORE  | NUMQUESTIONS |   VALID_ASSESSMENT   || TOURNAMENT_NOT_CONSISTENT
         DATENOW       | DATETOMORROW |      -1      |   VALID_ASSESSMENT   || NOT_ENOUGH_QUESTIONS_TOURNAMENT
         DATENOW       | DATETOMORROW |       0      |   VALID_ASSESSMENT   || NOT_ENOUGH_QUESTIONS_TOURNAMENT
-        DATENOW       | DATETOMORROW |     null     |   VALID_ASSESSMENT   || NOT_ENOUGH_QUESTIONS_TOURNAMENT
-        DATENOW       | DATETOMORROW | NUMQUESTIONS |         null         || TOURNAMENT_PERMISSION
         DATENOW       | DATETOMORROW | NUMQUESTIONS | INVALID_ASSESSMENT_1 || TOURNAMENT_NOT_CONSISTENT
         DATENOW       | DATETOMORROW | NUMQUESTIONS | INVALID_ASSESSMENT_2 || TOURNAMENT_NOT_CONSISTENT
         DATENOW       | DATETOMORROW | NUMQUESTIONS | INVALID_ASSESSMENT_3 || TOURNAMENT_NOT_CONSISTENT
