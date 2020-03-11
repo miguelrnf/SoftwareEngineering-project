@@ -66,7 +66,9 @@ public enum ErrorMessage {
     NOT_YOUR_POST("You do not have permission to change somebody else's post"),
     NO_ANSWER("No answer was given by a teacher"),
     INVALID_ANSWER_BLANK("The answer written is invalid because it is empty"),
-    INVALID_ANSWER_TOO_LONG("The answer given is too long");
+    DIFFERENT_QUESTION("You cannot redirect when it's a different question"),
+    INVALID_ANSWER_TOO_LONG("The answer given is too long"),
+    ERROR_WHILE_REDIRECTING("There was an error while redirecting the answer");
 
     public final String label;
 
