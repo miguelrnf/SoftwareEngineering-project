@@ -35,6 +35,9 @@ public class PostAnswer {
     @Column(name = "is_edited", columnDefinition = "boolean default false")
     private Boolean isEdited;
 
+    @Column(name = "is_redirected", columnDefinition = "boolean default false")
+    private Boolean isRedirected;
+
     public PostAnswer() {
     }
 
@@ -44,6 +47,7 @@ public class PostAnswer {
         this.user = user;
         this.teacherAnswer = teacherAnswer;
         this.isEdited = false;
+        this.isRedirected = false;
     }
 
     public Integer getId() {
@@ -107,6 +111,14 @@ public class PostAnswer {
 
     public void setEdited(Boolean edited) {
         isEdited = edited;
+    }
+
+    public Boolean getRedirected() {
+        return isRedirected;
+    }
+
+    public void setRedirected(Boolean redirected) {
+        isRedirected = redirected;
     }
 }
 
