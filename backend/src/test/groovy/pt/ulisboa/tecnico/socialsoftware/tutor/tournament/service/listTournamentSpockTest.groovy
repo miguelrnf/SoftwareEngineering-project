@@ -119,22 +119,19 @@ class listTournamentSpockTest extends Specification{
         def result = tournamentService.listTournaments(courseExecution.getId())
 
         then:
-
-
-        result.size() == 2
         result.contains(new TournamentDto(tournament1))
         result.contains(new TournamentDto(tournament2))
+        result.size() == 2
     }
 
     @Unroll
     def "tournament with status=#status || errorMessage=#errorMessage "() {
         given:
         tournamentDto2.setStatus(status)
-        def tournament2 = new Tournament(tournamentDto2, STUDENT)
         tournamentService.createTournament(courseExecution.id, tournamentDto2)
 
         when:
-        def result = tournamentService.listTournaments(courseExecution.getId())
+        tournamentService.listTournaments(courseExecution.getId())
 
         then:
         def error = thrown(TutorException)
