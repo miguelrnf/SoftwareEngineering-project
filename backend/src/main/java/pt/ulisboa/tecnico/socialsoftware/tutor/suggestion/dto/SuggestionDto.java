@@ -1,9 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +22,7 @@ public class SuggestionDto {
     private String _justification;
     private String creationDate = null;
     private String _status;
-    private User _student;
+    private UserDto _student;
 
 
     public SuggestionDto() {
@@ -33,7 +35,7 @@ public class SuggestionDto {
 
         this._changed=suggestion.get_changed();
         this._justification=suggestion.get_justification();
-        this._student=suggestion.get_student();
+        this._student=new UserDto(suggestion.get_student());
         this._questionStr=suggestion.get_questionStr();
         this._status=suggestion.getStatus().name();
 
@@ -71,8 +73,8 @@ public class SuggestionDto {
         return _topicsList;
     }
 
-    public void set_topicsList(List<TopicDto> _topicsList) {
-        this._topicsList = _topicsList;
+    public void set_topicsList(TopicConjunctionDto _topicsList) {
+        this._topicsList = _topicsList.getTopics();
     }
 
     public Boolean get_changed() {
@@ -107,11 +109,11 @@ public class SuggestionDto {
         this._status = status;
     }
 
-    public User get_student() {
+    public UserDto get_student() {
         return _student;
     }
 
-    public void set_student(User _student) {
+    public void set_student(UserDto _student) {
         this._student = _student;
     }
 }

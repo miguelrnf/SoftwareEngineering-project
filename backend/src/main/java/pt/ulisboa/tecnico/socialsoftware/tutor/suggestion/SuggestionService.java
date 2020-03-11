@@ -10,5 +10,7 @@ public class SuggestionService {
         return s;
     }
 
-
+    public SuggestionDto createSuggestion(SuggestionDto s){
+        return s;
+    }
 }

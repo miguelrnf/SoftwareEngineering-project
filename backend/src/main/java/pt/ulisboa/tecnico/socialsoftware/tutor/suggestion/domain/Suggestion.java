@@ -72,8 +72,7 @@ public class Suggestion {
     public Suggestion() {
     }
 
-    public Suggestion(Integer key, Integer id, User student, String questionStr ) {
-        this._id=id;
+    public Suggestion(Integer key, User student, String questionStr ) {
         this.key=key;
         this._student=student;
         //this.creationDate=date;
