@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -34,9 +33,6 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private TournamentStatus status;
 
-    @OneToOne
-    private Quiz quiz;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
@@ -58,7 +54,6 @@ public class Tournament {
         this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
         this.status = tournamentDto.getStatus();
-        this.quiz = new Quiz(tournamentDto.getQuiz());
         this.owner = user;
     }
 
@@ -76,10 +71,6 @@ public class Tournament {
 
     public TournamentStatus getStatus() {
         return status;
-    }
-
-    public Quiz getQuiz() {
-        return quiz;
     }
 
     public User getOwner() {
@@ -106,10 +97,6 @@ public class Tournament {
         this.status = status;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
     public void setOwner(User owner) {
         this.owner = owner;
     }
@@ -126,6 +113,10 @@ public class Tournament {
         this.courseExecution = courseExecution;
     }
 
+    public void enrollStudent(User user){
+        enrolledStudents.add(user);
+    }
+
     @Override
     public String toString() {
         return "Tournament {" +
@@ -133,7 +124,6 @@ public class Tournament {
                 ", key=" + key +
                 ", title='" + title + '\'' +
                 ", status=" + status +
-                ", quiz=" + quiz +
                 ", owner=" + owner +
                 ", courseExecution=" + courseExecution +
                 ", enrolledStudents=" + enrolledStudents +

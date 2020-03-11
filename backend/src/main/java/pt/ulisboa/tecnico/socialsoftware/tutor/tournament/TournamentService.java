@@ -46,7 +46,9 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(int executionId, TournamentDto tournamentDto){
+
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
         if (tournamentDto.getKey() == null) {
             tournamentDto.setKey(getMaxTournamentKey() + 1);
         }
@@ -54,16 +56,11 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Owner");
         }
 
-        User user = userRepository.findByUsername(tournamentDto.getOwner().getUsername());
-
-        if(user == null){
-            throw new TutorException(USERNAME_NOT_FOUND, tournamentDto.getOwner().getUsername());
-        }
+        User user = findUsername(tournamentDto.getOwner().getUsername());
 
         if(user.getRole() != User.Role.STUDENT){
             throw new TutorException(TOURNAMENT_PERMISSION);
         }
-
 
         if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank()){
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
@@ -77,6 +74,38 @@ public class TournamentService {
         entityManager.persist(tournament);
 
         return new TournamentDto(tournament);
+    }
+
+    public void enrollStudent(int courseExecutionId, String username, int tournamentId) {
+        User user = findUsername(username);
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        if(user.getRole() != User.Role.STUDENT){
+            throw new TutorException(TOURNAMENT_PERMISSION_ENROLL);
+        }
+
+        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED){
+            throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
+        }
+
+         if(courseExecution != tournament.getCourseExecution()){
+             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
+         }
+
+         tournament.enrollStudent(user);
+         user.addTournament(tournament);
+    }
+
+    public User findUsername(String username){
+        User user = userRepository.findByUsername(username);
+
+        if(user == null ){
+            throw new TutorException(USERNAME_NOT_FOUND, username);
+        }
+        return user;
     }
 
 }
