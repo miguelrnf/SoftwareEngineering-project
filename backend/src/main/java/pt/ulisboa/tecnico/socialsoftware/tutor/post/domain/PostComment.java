@@ -110,4 +110,24 @@ public class PostComment {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    public PostComment getParent() {
+        return parent;
+    }
+
+    public void setParent(PostComment parent) {
+        this.parent = parent;
+    }
+
+    public Set<PostComment> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<PostComment> children) {
+        this.children = children;
+    }
+
+    public void addChild(PostComment pc) {
+        this.children.add(pc);
+    }
 }

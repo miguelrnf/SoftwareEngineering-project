@@ -156,6 +156,7 @@ class DeletePostTest extends Specification {
         result.getKey() == expected.getKey()
         result.getQuestion().getQuestion().getKey() == expected.getQuestion().getQuestion().getKey()
         result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
+        postRepository.findByKey(expected.getKey()) == Optional.empty()
 
         where:
         tocheck                 ||   expected

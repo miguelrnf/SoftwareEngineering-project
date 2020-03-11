@@ -100,7 +100,6 @@ class EditPostTest extends Specification {
 
 
     def setupSpec() {
-
         given: "a valid question"
         VALID_Q = new Question()
         VALID_Q.setKey(VALID_KEY)

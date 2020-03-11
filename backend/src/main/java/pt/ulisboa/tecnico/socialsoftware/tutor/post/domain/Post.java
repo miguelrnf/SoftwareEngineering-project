@@ -83,4 +83,12 @@ public class Post {
     public void changePostStatus() {
         this.postStatus = !this.postStatus;
     }
+
+    public Set<PostComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<PostComment> comments) {
+        this.comments = comments;
+    }
 }

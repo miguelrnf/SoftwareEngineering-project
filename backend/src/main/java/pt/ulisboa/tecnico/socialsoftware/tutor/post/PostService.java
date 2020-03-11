@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
@@ -70,6 +71,7 @@ public class PostService {
         checkIfUserOwnsPost(user, post);
 
         entityManager.remove(post);
+        orphanRemoval(post);
         return new PostDto(post);
     }
 
@@ -98,6 +100,14 @@ public class PostService {
 
         post.changePostStatus();
         return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostCommentDto postComment(PostCommentDto dto) {
+        return null;
     }
 
     private boolean checkIfUserHasRoleTeacher(User user) {
@@ -138,4 +148,12 @@ public class PostService {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
     }
+
+    private void orphanRemoval(Post post) {
+        post.getQuestion().setPost(null);
+        if(post.getComments() != null)
+            post.getComments().forEach(x -> x.setPost(null));
+        post.setComments(null);
+    }
+
 }
