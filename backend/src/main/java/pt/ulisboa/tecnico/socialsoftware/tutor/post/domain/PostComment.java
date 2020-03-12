@@ -103,4 +103,16 @@ public class PostComment {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public String toString() {
+        return "PostComment{" +
+                "id=" + id +
+                ", key=" + key +
+                ", user=" + user +
+                ", post=" + post +
+                ", creationDate=" + creationDate +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }

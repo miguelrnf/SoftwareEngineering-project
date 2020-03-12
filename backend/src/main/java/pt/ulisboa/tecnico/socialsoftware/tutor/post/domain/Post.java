@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,7 @@ public class Post {
     private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
-    private Set<PostComment> comments;
+    private Set<PostComment> comments = new HashSet<>();
 
     public Post() {
     }
@@ -90,5 +91,9 @@ public class Post {
 
     public void setComments(Set<PostComment> comments) {
         this.comments = comments;
+    }
+
+    public void addComment(PostComment pc) {
+        this.comments.add(pc);
     }
 }

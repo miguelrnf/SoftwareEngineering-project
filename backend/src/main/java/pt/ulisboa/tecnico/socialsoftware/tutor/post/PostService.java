@@ -8,9 +8,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -22,6 +25,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -36,6 +43,9 @@ public class PostService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private PostCommentRepository commentRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -108,6 +118,18 @@ public class PostService {
     public PostDto viewPost(Integer key) {
         Post post = checkIfPostExists(key);
         return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Set<PostCommentDto> searchComment(String string) {
+        List<PostComment> comments = commentRepository.findByComment(string.trim());
+        if (comments.isEmpty()) {
+            throw new TutorException(INVALID_COMMENT_SEARCH);
+        }
+        return comments.stream().map(PostCommentDto::new).collect(Collectors.toSet());
     }
 
     private boolean checkIfUserHasRoleTeacher(User user) {
