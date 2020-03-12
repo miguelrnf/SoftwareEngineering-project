@@ -47,6 +47,8 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
 
+    UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
+
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
