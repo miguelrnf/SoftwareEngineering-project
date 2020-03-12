@@ -1,17 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.service
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -19,12 +21,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 
-@DataJpaTest
-class SubmitSuggestionTest extends Specification{
+class ApproveSuggestion extends Specification{
+
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -40,6 +40,8 @@ class SubmitSuggestionTest extends Specification{
     public static final String VALID_USERNAME_TEACHER = "something"
     public static final String VALID_NAME_TOPIC = "Spock"
     public static final String EMPTY_SUGGESTION = ""
+    public static final String VALID_USERNAME_T = "Teacher"
+    public static final String VALID_JUSTIFICATION = "approved/rejected"
     public static final String TOO_MANY_CHARS =
             '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -85,6 +87,9 @@ class SubmitSuggestionTest extends Specification{
     def VALID_U
 
     @Shared
+    def VALID_T
+
+    @Shared
     def INVALID_U_UID
 
     @Shared
@@ -107,6 +112,7 @@ class SubmitSuggestionTest extends Specification{
 
     def course
     def courseExecution
+    def suggestion
 
     def setupSpec() {
         given: "a user with an invalid uid"
@@ -132,6 +138,12 @@ class SubmitSuggestionTest extends Specification{
         VALID_U.setId(VALID_ID)
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME)
+
+        and: "a valid user - STUDENT "
+        VALID_T = new User()
+        VALID_T.setId(VALID_ID)
+        VALID_T.setRole(User.Role.TEACHER)
+        VALID_T.setUsername(VALID_USERNAME_T)
     }
 
     def setup(){
@@ -163,6 +175,17 @@ class SubmitSuggestionTest extends Specification{
         and: "a invalid list of topics"
         INVALID_TOPIC_LIST = new HashSet<Topic>();
 
+        and: "a suggestion"
+        SuggestionDto sug = new SuggestionDto()
+        sug.set_questionStr(SUGGESTION_CONTENT as String)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+        sug.set_topicsList(topicsDto)
+        sug.set_student(new UserDto(userS as User))
+        Suggestion suggestion = new Suggestion(courseExecution, userS, sug)
 
         then: "add to repository"
         courseRepository.save(course)
@@ -170,11 +193,79 @@ class SubmitSuggestionTest extends Specification{
         userRepository.save(userS)
         userRepository.save(userT)
         topicRepository.save(VALID_TOPIC)
+        suggestionRepository.save(suggestion)
+    }
+
+    @Unroll
+    def "create a suggestion with invalid fields"(){
+        println(topicRepository.findAll().dump())
+        when:
+        def sug = new SuggestionDto()
+        sug.set_questionStr(s as String)
+
+        List<TopicDto> topicsDto = new ArrayList<>()
+
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(u as User))
+
+        suggestionService.createSuggestion(courseExecution.getId(), sug)
+
+        then:
+        def result = thrown(TutorException)
+        result.message == expected
+
+        where:
+        s                  |u       ||expected
+        TOO_MANY_CHARS     |VALID_U || ErrorMessage.SUGGESTION_TOO_LONG.label
+        EMPTY_SUGGESTION   |VALID_U ||ErrorMessage.SUGGESTION_EMPTY.label
+
 
     }
 
     @Unroll
-    def "submit suggestion"(){
+    def "valid approval"(){
+        when:
+        User validTeacher = t as User()
+        suggestionService.approveSuggestion(courseExecution.getId(), suggestion.get_id(), j as String, validTeacher.getId(), status as Suggestion.Status)
+
+
+        then:
+        result.get_questionStr() == sug.get_questionStr()
+        result.get_topicsList().size() == sug.get_topicsList().size()
+        result.get_student().getUsername() == sug.get_student().getUsername()
+        result.getStatus() == (status as Suggestion.Status)
+
+
+        where:
+        j                   |t          |    status
+        VALID_JUSTIFICATION |VALID_T    |    Suggestion.Status.APPROVED
+        VALID_JUSTIFICATION |VALID_T    |    Suggestion.Status.REJECTED
+
+    }
+
+    @Unroll
+    def "invalid approval"(){
+        when:
+        User validTeacher = t as User()
+        def result = suggestionService.approveSuggestion(courseExecution.getId(), suggestion.get_id(), j as String, validTeacher.getId(), status as Suggestion.Status)
+
+
+        then:
+        def result = thrown(TutorException)
+        result.message == expected
+
+
+        where:
+        j                   |t          |    status                     | expected
+        EMPTY_SUGGESTION    |VALID_T    |    Suggestion.Status.APPROVED |
+        VALID_JUSTIFICATION |VALID_T    |    Suggestion.Status.TOAPPROVE| J
+        VALID_JUSTIFICATION |VALID_U    |    Suggestion.Status.APPROVED |
+
 
     }
 

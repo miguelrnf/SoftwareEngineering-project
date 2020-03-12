@@ -87,6 +87,10 @@ public class SuggestionService {
         return new SuggestionDto(suggestion);
     }
 
+    private SuggestionDto approveSuggestion(int courseId, int suggestionId, String justification, int userId, Suggestion.Status status){
+        return new SuggestionDto();
+    }
+
     private User checkIfUserExists(String username) {
         User u = userRepository.findByUsername(username);
         if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
@@ -99,9 +103,6 @@ public class SuggestionService {
         if (newTopics.isEmpty()){
             throw new TutorException(EMPTY_TOPICS);
         }
-        System.out.println(topicRepository.count());
-        System.out.println("--------------------------------------------------------------");
-        System.out.println(topicRepository.findTopicByName(courseId, suggestionDto.get_topicsList().get(0).getName()));
 
         newTopics.stream().filter(topic -> topicRepository.findTopicByName(courseId, topic.getName()) != null )
                 .findAny().orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND));

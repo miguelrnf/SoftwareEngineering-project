@@ -33,7 +33,6 @@ public class Suggestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int _id;
 
-
     @Column(unique=true, nullable = false)
     private Integer key;
 
@@ -52,15 +51,12 @@ public class Suggestion {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-
     @Enumerated(EnumType.STRING)
     private Status status = Status.TOAPPROVE;
-
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -74,7 +70,6 @@ public class Suggestion {
 
         this.key= suggestionDto.getKey();
         this._student= user;
-
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
