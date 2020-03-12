@@ -1,5 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -17,9 +22,13 @@ public class TopicConjunction {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
+
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
+
+    public TopicConjunction() {
+    }
 
     public Integer getId() {
         return id;
