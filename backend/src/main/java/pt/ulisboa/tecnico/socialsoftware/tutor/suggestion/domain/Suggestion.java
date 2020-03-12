@@ -67,7 +67,6 @@ public class Suggestion {
 
     public Suggestion(CourseExecution courseExecution, User user, SuggestionDto suggestionDto) {
         checkConsistentSuggestion(suggestionDto);
-
         this.key= suggestionDto.getKey();
         this._student= user;
         this._questionStr= suggestionDto.get_questionStr();

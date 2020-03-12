@@ -60,8 +60,9 @@ public enum ErrorMessage {
     USER_HAS_WRONG_ROLE("User has wrong role"),
     SUGGESTION_TOO_LONG("Suggestion is too long"),
     SUGGESTION_EMPTY("Empty suggestion"),
-    EMPTY_TOPICS("No topics");
-
+    EMPTY_TOPICS("No topics"),
+    JUSTIFICATION_EMPTY("No justufication"),
+    SUGGESTION_NOT_FOUND("Not found");
 
     public final String label;
 

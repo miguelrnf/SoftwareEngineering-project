@@ -86,8 +86,11 @@ public class SuggestionService {
         this.entityManager.persist(suggestion);
         return new SuggestionDto(suggestion);
     }
-
-    private SuggestionDto approveSuggestion(int courseId, int suggestionId, String justification, int userId, Suggestion.Status status){
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SuggestionDto approveSuggestion(int courseId, SuggestionDto suggestionDto){
         return new SuggestionDto();
     }
 
