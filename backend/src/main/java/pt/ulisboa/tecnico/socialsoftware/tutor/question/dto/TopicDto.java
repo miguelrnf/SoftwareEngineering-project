@@ -4,6 +4,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class TopicDto implements Serializable {
     private Integer id;
@@ -21,9 +22,6 @@ public class TopicDto implements Serializable {
             this.parentTopic = topic.getParentTopic().getName();
         }
         this.numberOfQuestions = topic.getQuestions().size();
-    }
-
-    public TopicDto(TopicDto topicDto) {
     }
 
     public Integer getId() {
@@ -65,5 +63,28 @@ public class TopicDto implements Serializable {
                 ", name='" + name + '\'' +
                 ", parentTopic='" + parentTopic + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TopicDto topicDto = (TopicDto) o;
+
+        if (!Objects.equals(id, topicDto.id)) return false;
+        if (!Objects.equals(name, topicDto.name)) return false;
+        if (!Objects.equals(parentTopic, topicDto.parentTopic))
+            return false;
+        return Objects.equals(numberOfQuestions, topicDto.numberOfQuestions);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (parentTopic != null ? parentTopic.hashCode() : 0);
+        result = 31 * result + (numberOfQuestions != null ? numberOfQuestions.hashCode() : 0);
+        return result;
     }
 }

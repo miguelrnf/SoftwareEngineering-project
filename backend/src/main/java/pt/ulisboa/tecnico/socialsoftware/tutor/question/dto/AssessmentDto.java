@@ -3,7 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AssessmentDto implements Serializable {
@@ -77,5 +79,35 @@ public class AssessmentDto implements Serializable {
 
     public void addTopicConjunction(TopicConjunctionDto topicConjunctionDto) {
         this.topicConjunctions.add(topicConjunctionDto);
+    }
+
+    public void setTopicConjunctionsFromUnit(TopicConjunctionDto topicConjunctionDto) {
+        List<TopicConjunctionDto> temp = new ArrayList<>();
+        temp.add(topicConjunctionDto);
+        this.topicConjunctions = temp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AssessmentDto that = (AssessmentDto) o;
+
+        if (!Objects.equals(id, that.id)) return false;
+        if (!Objects.equals(sequence, that.sequence)) return false;
+        if (!Objects.equals(title, that.title)) return false;
+        if (!Objects.equals(status, that.status)) return false;
+        return Objects.equals(topicConjunctions, that.topicConjunctions);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (topicConjunctions != null ? topicConjunctions.hashCode() : 0);
+        return result;
     }
 }
