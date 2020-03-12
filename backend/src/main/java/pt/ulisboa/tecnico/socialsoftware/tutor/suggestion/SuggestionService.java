@@ -30,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -88,11 +89,11 @@ public class SuggestionService {
         this.entityManager.persist(suggestion);
         return new SuggestionDto(suggestion);
     }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-
     public SuggestionDto approveSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
         String username = userDto.getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
@@ -105,6 +106,14 @@ public class SuggestionService {
         suggestion.set_justification(suggestionDto.get_justification());
 
         return new SuggestionDto(suggestion);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SuggestionDto> approvedSuggestionList(int courseId, UserDto userDto){
+        return new ArrayList<>();
     }
 
     private User checkIfUserExists(String username) {
