@@ -186,6 +186,7 @@ class ApproveSuggestion extends Specification{
         }
         sug.set_topicsList(topicsDto)
         sug.set_id(VALID_ID)
+        sug.set_student(new UserDto(userS))
         suggestion = new Suggestion(courseExecution, userS, sug)
         println("-----------------------------------------------")
         println(suggestion.dump())
@@ -233,8 +234,7 @@ class ApproveSuggestion extends Specification{
 
         then:
         def result = thrown(TutorException)
-        result.message == expected
-
+        result.errorMessage == expected
 
         where:
         j                   |t          |    sugId                     ||expected

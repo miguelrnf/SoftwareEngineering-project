@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
@@ -90,14 +91,30 @@ public class SuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+
     public SuggestionDto approveSuggestion(int courseId, SuggestionDto suggestionDto){
-        return new SuggestionDto();
+        String username = suggestionDto.get_student().getUsername();
+        CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+
+        suggestion.setStatus(Suggestion.Status.valueOf(suggestionDto.getStatus()));
+        suggestion.set_justification(suggestionDto.get_justification());
+
+        return new SuggestionDto(suggestion);
     }
 
     private User checkIfUserExists(String username) {
         User u = userRepository.findByUsername(username);
         if(u == null)  throw new TutorException(USERNAME_NOT_FOUND);
         return u;
+    }
+
+    private Suggestion checkIfSuggestionExists(int suggestionKey) {
+        Suggestion s = suggestionRepository.findByKey(suggestionKey).orElseThrow(() -> new TutorException(SUGGESTION_NOT_FOUND));
+        return s;
     }
 
     private  Set<Topic> checkIfTopicExists(int courseId, SuggestionDto suggestionDto) {
