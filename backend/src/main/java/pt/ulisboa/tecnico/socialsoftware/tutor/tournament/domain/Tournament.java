@@ -36,7 +36,7 @@ public class Tournament {
     @Column(nullable = false)
     private String title;
 
-    @Column(unique=false, nullable = false)
+    @Column(nullable = false)
     private Integer numberOfQuestions;
 
     @Column(name = "creation_date")
@@ -53,7 +53,7 @@ public class Tournament {
 
     @ManyToOne
     @JoinColumn(name = "assessment_id")
-    Assessment assessment;
+    private Assessment assessment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

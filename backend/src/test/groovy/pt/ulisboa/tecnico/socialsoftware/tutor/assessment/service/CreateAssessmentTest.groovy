@@ -69,7 +69,7 @@ class CreateAssessmentTest extends Specification {
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
-        assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
+        assessmentService.createAssessment(courseExecution.getId(), assessmentDto, false)
 
         then: "the correct assessment is inside the repository"
         courseExecutionRepository.count() == 1L

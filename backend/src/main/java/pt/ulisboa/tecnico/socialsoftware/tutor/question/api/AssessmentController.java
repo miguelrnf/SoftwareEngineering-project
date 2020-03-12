@@ -36,7 +36,7 @@ public class AssessmentController {
 
     @PostMapping("/executions/{executionId}/assessments")
     public AssessmentDto createAssessment(@PathVariable int executionId, @Valid @RequestBody AssessmentDto assessment) {
-        return this.assessmentService.createAssessment(executionId, assessment);
+        return this.assessmentService.createAssessment(executionId, assessment, false);
     }
 
     @PutMapping("/assessments/{assessmentId}")
