@@ -66,8 +66,6 @@ public enum ErrorMessage {
     NOT_YOUR_POST("You do not have permission to change somebody else's post"),
     INVALID_CREATION_DATE("The creation date is invalid"),
     INVALID_COMMENT("The comment you submitted is invalid"),
-    COMMENT_EMPTY("The comment you submitted is empty"),
-    COMMENT_TOO_LONG("The comment you submitted is too long"),
     COMMENT_NO_PARENT("The parent does not exist");
 
     public final String label;

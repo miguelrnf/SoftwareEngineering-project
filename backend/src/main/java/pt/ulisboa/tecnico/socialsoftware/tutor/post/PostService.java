@@ -8,10 +8,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -37,6 +39,9 @@ public class PostService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private PostCommentRepository commentRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -71,7 +76,7 @@ public class PostService {
         checkIfUserOwnsPost(user, post);
 
         entityManager.remove(post);
-        orphanRemoval(post);
+        post.remove();
         return new PostDto(post);
     }
 
@@ -107,7 +112,20 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostCommentDto postComment(PostCommentDto dto) {
-        return null;
+        Post post = checkIfPostExists(dto.getPost().getKey());
+        User user = checkIfUserExists(dto.getUser().getUsername());
+        PostComment comment = new PostComment(dto.getKey(), user, post, dto);
+        if(dto.getParent() != null) {
+            PostComment parent = checkIfCommentParentExists(dto);
+            comment.setParent(parent);
+            parent.addChild(comment);
+            post.addComment(comment);
+        }
+        return new PostCommentDto(comment, false);
+    }
+
+    private PostComment checkIfCommentParentExists(PostCommentDto dto) {
+        return commentRepository.findByKey(dto.getParent().getKey()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
     }
 
     private boolean checkIfUserHasRoleTeacher(User user) {
@@ -148,12 +166,4 @@ public class PostService {
         return questionRepository.findByKey(questionKey)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
     }
-
-    private void orphanRemoval(Post post) {
-        post.getQuestion().setPost(null);
-        if(post.getComments() != null)
-            post.getComments().forEach(x -> x.setPost(null));
-        post.setComments(null);
-    }
-
 }
