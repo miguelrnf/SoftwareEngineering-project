@@ -155,6 +155,9 @@ public class Suggestion {
     }
 
     public void set_justification(String _justification) {
+        if (_justification.length() == 0 ){
+            throw new TutorException(JUSTIFICATION_EMPTY);
+        }
         this._justification = _justification;
     }
 

@@ -13,7 +13,7 @@ public class UserDto implements Serializable {
     private String creationDate;
 
     public UserDto(User user) {
-        this.id = user.getId();
+        //this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();

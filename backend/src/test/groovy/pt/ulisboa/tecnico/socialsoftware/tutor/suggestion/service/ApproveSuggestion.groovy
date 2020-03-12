@@ -156,6 +156,7 @@ class ApproveSuggestion extends Specification{
         and: "a user with the role teacher"
         def userT = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
 
+
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
 
@@ -187,6 +188,7 @@ class ApproveSuggestion extends Specification{
         sug.set_topicsList(topicsDto)
         sug.set_id(VALID_ID)
         sug.set_student(new UserDto(userS))
+
         suggestion = new Suggestion(courseExecution, userS, sug)
         println("-----------------------------------------------")
         println(suggestion.dump())
@@ -206,15 +208,14 @@ class ApproveSuggestion extends Specification{
         when:
         println("*+++++++++++++++++++++++++++")
         println(suggestion.dump())
-
-        def result = suggestionService.approveSuggestion(courseExecution.getId(), sug)
+        sug.setStatus(String.valueOf(status))
+        sug.set_justification(j as String)
+        def result = suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))
 
 
         then:
-        result.get_questionStr() == sug.get_questionStr()
-        result.get_topicsList().size() == sug.get_topicsList().size()
-        result.get_student().getUsername() == sug.get_student().getUsername()
-        result.getStatus() == (status as Suggestion.Status)
+        result.get_justification() == sug.get_justification()
+        result.getStatus() == String.valueOf(status)
 
 
         where:
@@ -227,20 +228,19 @@ class ApproveSuggestion extends Specification{
     @Unroll
     def "invalid approval"(){
         when:
-        User validTeacher = t
-        Suggestion.Status status = Suggestion.Status.APPROVED
-        suggestionService.approveSuggestion(courseExecution.getId(), sug)
+        sug.setStatus("APPROVED")
+        sug.set_justification(j as String)
+        suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))
 
 
         then:
         def result = thrown(TutorException)
-        result.errorMessage == expected
+        result.message == expected
 
         where:
-        j                   |t          |    sugId                     ||expected
-        EMPTY_SUGGESTION    |VALID_T    |    suggestion.get_id()       ||ErrorMessage.JUSTIFICATION_EMPTY.label
-        VALID_JUSTIFICATION |VALID_T    |    suggestion.get_id()       ||ErrorMessage.USER_HAS_WRONG_ROLE.label
-        VALID_JUSTIFICATION |VALID_U    |    INVALID_ID                ||ErrorMessage.SUGGESTION_NOT_FOUND.label
+        j                   |t               ||expected
+        EMPTY_SUGGESTION    |VALID_T         ||ErrorMessage.JUSTIFICATION_EMPTY.label
+        VALID_JUSTIFICATION |VALID_U         ||ErrorMessage.USER_HAS_WRONG_ROLE.label
 
 
     }
