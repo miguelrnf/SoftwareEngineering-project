@@ -46,10 +46,7 @@ class AddTournamentServiceSpockTest extends Specification{
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final USERNAME_1 = 'username1'
-    static final USERNAME_2 = 'username2'
-    static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
-    static final VERSION = 'A'
     static final NAME = 'name'
     static final NUMQUESTIONS = 3
     static final DATENOW = LocalDateTime.now()

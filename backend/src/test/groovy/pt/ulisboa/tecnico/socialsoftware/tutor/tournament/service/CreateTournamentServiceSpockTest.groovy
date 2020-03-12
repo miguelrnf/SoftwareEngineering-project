@@ -47,7 +47,6 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
     static final NAME = 'name'
-    static final VERSION = 'A'
 
     @Autowired
     UserRepository userRepository

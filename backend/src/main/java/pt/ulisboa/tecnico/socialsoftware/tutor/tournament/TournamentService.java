@@ -160,6 +160,7 @@ public class TournamentService {
         if(!status.equals(Assessment.Status.AVAILABLE.name()))
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Assessement Status");
     }
+
     public void enrollStudent(int courseExecutionId, String username, int tournamentId) {
         User user = findUsername(username);
 
