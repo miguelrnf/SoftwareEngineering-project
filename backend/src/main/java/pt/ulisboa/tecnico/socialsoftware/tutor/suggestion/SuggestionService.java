@@ -6,23 +6,19 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -93,6 +89,12 @@ public class SuggestionService {
         return u;
     }
 
+    private Suggestion checkIfSuggestionExists(int suggestion) {
+        Suggestion u = suggestionRepository.findByKey(suggestion);
+        if(u == null)  throw new TutorException(SUGGESTION_NOT_FOUND);
+        return u;
+    }
+
     private  Set<Topic> checkIfTopicExists(int courseId, SuggestionDto suggestionDto) {
         List<TopicDto> newTopics = suggestionDto.get_topicsList();
 
@@ -117,5 +119,32 @@ public class SuggestionService {
 
     private void checkIfUserHasRoleTeacher(User user) {
         if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SuggestionDto editSuggestion(SuggestionDto suggestionDto) {
+
+        checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
+        Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
+
+        if (s.get_questionStr().isEmpty()) {
+
+            throw new TutorException(SUGGESTION_EMPTY);
+
+        }
+
+        if (s.get_questionStr().length() > 1024) {
+
+            throw new TutorException(SUGGESTION_TOO_LONG);
+
+        }
+
+        s.set_questionStr(suggestionDto.get_questionStr());
+
+        return new SuggestionDto(s);
+
     }
 }

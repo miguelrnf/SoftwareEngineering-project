@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface SuggestionRepository extends JpaRepository<Suggestion, Integer> {
-    @Query(value = "SELECT * FROM suggestions s WHERE s.suggeston_key = :key", nativeQuery = true)
-    Optional<Suggestion> findByKey(Integer key);
+    @Query(value = "SELECT * FROM suggestions s WHERE s.key = :key", nativeQuery = true)
+    Suggestion findByKey(Integer key);
 
     @Query(value = "SELECT MAX(key) FROM suggestions", nativeQuery = true)
     Integer getMaxSuggestionNumber();
