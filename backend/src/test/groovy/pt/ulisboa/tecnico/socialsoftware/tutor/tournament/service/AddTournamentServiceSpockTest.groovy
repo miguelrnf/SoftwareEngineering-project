@@ -77,10 +77,12 @@ class AddTournamentServiceSpockTest extends Specification{
     def quiz
 
     @Shared
-    def formatter
+    def STUDENT
 
     @Shared
-    def STUDENT
+    def formatter
+
+
 
     def setupSpec() {
 
