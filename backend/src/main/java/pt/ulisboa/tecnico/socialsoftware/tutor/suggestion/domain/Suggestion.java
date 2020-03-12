@@ -179,4 +179,5 @@ public class Suggestion {
     public void set_student(User _student) {
         this._student = _student;
     }
+
 }

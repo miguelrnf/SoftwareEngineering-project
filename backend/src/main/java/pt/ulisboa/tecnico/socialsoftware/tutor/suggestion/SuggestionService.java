@@ -117,6 +117,10 @@ public class SuggestionService {
         if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
 
+    private void checkIfUserIsValid (SuggestionDto suggestionDto, Suggestion s) {
+        if(suggestionDto.get_student().getUsername() != (s.get_student().getUsername())) throw new TutorException(ACCESS_DENIED);
+    }
+
     private void checkIfUserHasRoleTeacher(User user) {
         if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
@@ -129,6 +133,12 @@ public class SuggestionService {
 
         checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
         Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
+        checkIfUserIsValid (suggestionDto,s);
+
+
+        System.out.println(("################################################################################"));
+        System.out.println(s.get_student().getId());
+        System.out.println(("################################################################################"));
 
         if (s.get_questionStr().isEmpty()) {
 

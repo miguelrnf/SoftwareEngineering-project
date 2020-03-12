@@ -27,6 +27,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 @DataJpaTest
 class EditSuggestionTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
@@ -42,6 +45,8 @@ class EditSuggestionTest extends Specification {
     public static final String VALID_NAME = "Ruben Freitas"
     public static final String VALID_USERNAME = "RubenFreitas99"
     public static final String VALID_USERNAME_TEACHER = "RuiPeter"
+    public static final String VALID_NAME2 = "Goncalo Freitas"
+    public static final String VALID_USERNAME2 = "GoncaloQueridoFreitas"
     public static final String VALID_NAME_TOPIC = "Spock"
     public static final String EMPTY_SUGGESTION = ""
     public static final String TOO_MANY_CHARS =
@@ -110,6 +115,9 @@ class EditSuggestionTest extends Specification {
     def VALID_SUGGESTION
 
     @Shared
+    def FORMATTER
+
+    @Shared
     def INVALID_SUGGESTION_E
 
     @Shared
@@ -127,6 +135,9 @@ class EditSuggestionTest extends Specification {
         INVALID_U_UID.setId(INVALID_ID)
         INVALID_U_UID.setRole(User.Role.STUDENT)
         INVALID_U_UID.setUsername(VALID_USERNAME)
+
+        and: ""
+        FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         and: "a user with the role teacher"
         INVALID_U_ROLE = new User()
@@ -157,6 +168,7 @@ class EditSuggestionTest extends Specification {
         VALID_U.setId(VALID_ID)
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME)
+        VALID_U.setName(VALID_NAME)
 
         and: "valid suggestion"
         VALID_SUGGESTION = new Suggestion()
@@ -175,9 +187,12 @@ class EditSuggestionTest extends Specification {
         INVALID_SUGGESTION_F.set_questionStr(TOO_MANY_CHARS)
 
         and: "invalid user"
-        INVALID_SUGGESTION_IU = new Suggestion()
-        INVALID_SUGGESTION_IU.set_student(VALID_U)
-        INVALID_SUGGESTION_IU.set_questionStr(TOO_MANY_CHARS)
+        INVALID_SUGGESTION_IU = new User()
+        INVALID_SUGGESTION_IU.setId(VALID_ID)
+        INVALID_SUGGESTION_IU.setRole(User.Role.STUDENT)
+        INVALID_SUGGESTION_IU.setUsername(VALID_USERNAME2)
+        INVALID_SUGGESTION_IU.setName(VALID_NAME2)
+
     }
 
     def setup() {
@@ -193,6 +208,9 @@ class EditSuggestionTest extends Specification {
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
 
+        and: "a user with the role student that didn't create that suggestion"
+        def userS2 = new User(VALID_NAME2, VALID_USERNAME2, 3, User.Role.STUDENT)
+
         and:
         def topic = new Topic();
         topic.setName(VALID_NAME_TOPIC)
@@ -203,12 +221,14 @@ class EditSuggestionTest extends Specification {
         suggestion.set_student(userS)
         suggestion.set_questionStr(SUGGESTION_CONTENT)
         suggestion.setKey(VALID_KEY)
+        suggestion.setCreationDate(LocalDateTime.now())
 
         then: "add to repository"
         println(suggestion.dump())
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
+        userRepository.save(userS2)
         userRepository.save(userT)
         topicRepository.save(topic)
         suggestionRepository.save(suggestion)
@@ -224,13 +244,16 @@ class EditSuggestionTest extends Specification {
         sug.set_questionStr(s as String)
         sug.set_student(new UserDto(u as User))
         sug.setKey(VALID_KEY)
+        sug.setCreationDate(LocalDateTime.now().format(FORMATTER))
 
+        println(sug.dump())
 
         then:
         def result = suggestionService.editSuggestion(sug)
         result.get_questionStr() == sug.get_questionStr()
         result.get_topicsList() == sug.get_topicsList()
         result.get_student() == sug.get_student()
+        result.getCreationDate() == sug.getCreationDate();
 
 
         where:
@@ -243,11 +266,11 @@ class EditSuggestionTest extends Specification {
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-
-        sug.set_topicsList(topicsDto)
-
         sug.set_student(new UserDto(u as User))
-        suggestionService.editSuggestion(courseExecution.getId(), sug)
+        sug.setKey(VALID_KEY)
+        sug.setCreationDate(LocalDateTime.now().format(FORMATTER))
+        suggestionService.editSuggestion(sug)
+
 
         then:
         def result = thrown(TutorException)
@@ -259,28 +282,28 @@ class EditSuggestionTest extends Specification {
         SUGGESTION_CONTENT | VALID_TOPIC_LIST | INVALID_U_ROLE        | ErrorMessage.USER_HAS_WRONG_ROLE.label
     }
 
+
     @Unroll
     def "edit a suggestion with invalid fields"() {
         println(topicRepository.findAll().dump())
+
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)
-
-        List<TopicDto> topicsDto = new ArrayList<>()
-
-        for (t in VALID_TOPIC_LIST) {
-            topicsDto.add(new TopicDto(t));
-        }
-
-        sug.set_topicsList(topicsDto)
-
         sug.set_student(new UserDto(u as User))
+        sug.setKey(VALID_KEY)
+        sug.setCreationDate(LocalDateTime.now().format(FORMATTER))
 
-        suggestionService.editSuggestion(sug)
+        println("#" * 100)
+        println(sug.get_student().getId())
+        println("#" * 100)
 
         then:
-        def result = thrown(TutorException)
-        result.message == expected
+        def result = suggestionService.editSuggestion(sug)
+        result.get_questionStr() == sug.get_questionStr()
+        result.get_topicsList() == sug.get_topicsList()
+        result.get_student().getUsername() == sug.get_student().getUsername()
+        result.getCreationDate() == sug.getCreationDate();
 
         where:
         s                | u       || expected
