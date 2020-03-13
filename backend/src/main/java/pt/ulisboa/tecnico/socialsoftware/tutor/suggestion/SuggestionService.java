@@ -136,9 +136,6 @@ public class SuggestionService {
         if(!user.getUsername().equals(suggestionDto.get_student().getUsername()))  throw new TutorException(NOT_SUGGESTION_CREATOR);
 
         Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
-        System.out.println("#################################");
-        System.out.println(suggestion.toString());
-        System.out.println("#################################");
 
         entityManager.remove(suggestion);
     }
