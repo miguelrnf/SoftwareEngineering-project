@@ -71,6 +71,7 @@ public enum ErrorMessage {
     INVALID_POST("The specified post does not exist"),
     NOT_YOUR_POST("You do not have permission to change somebody else's post"),
     NOT_SUGGESTION_CREATOR("User not the one who created the suggestion"),
+    NO_TOPICS("No topics"),
     NO_APPROVED_SUGGESTIONS("No approved suggestions");
 
     public final String label;

@@ -166,24 +166,24 @@ class ChooseTopicsTest extends Specification{
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
         userRepository.save(userT)
+        topicRepository.save(VALID_TOPIC)
 
     }
 
     @Unroll
     def "valid list"(){
         when:
-        topicRepository.save(l as Topic)
 
-        def result = suggestionService.chooseTopics(courseExecution.getId(), new UserDto(u as User))
+        def result = suggestionService.chooseTopics(courseExecution.getId(), u as String)
 
 
         then:
-        result.get_topicsList().size() == expected
+        result.size() == expected
 
 
         where:
-        l               |u       |expected
-        VALID_TOPIC     |VALID_U |1
+        u               ||expected
+        VALID_USERNAME  ||1
     }
 
     @Unroll
@@ -191,7 +191,7 @@ class ChooseTopicsTest extends Specification{
         when:
 
 
-        suggestionService.chooseTopics(courseExecution.getId(), new UserDto(u as User))
+        suggestionService.chooseTopics(course.getId(),  u as String)
 
 
         then:
@@ -201,7 +201,7 @@ class ChooseTopicsTest extends Specification{
 
         where:
         u                     ||expected
-        INVALID_U_UID         ||ErrorMessage.USER_NOT_FOUND.label
+        INVALID_U_UNAME       ||ErrorMessage.USERNAME_NOT_FOUND.label
 
 
     }
