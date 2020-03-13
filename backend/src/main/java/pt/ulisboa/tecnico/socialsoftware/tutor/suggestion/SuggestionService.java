@@ -58,12 +58,20 @@ public class SuggestionService {
     @PersistenceContext
     EntityManager entityManager;
 
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SuggestionDto submitSuggestion(int courseId, SuggestionDto s){
-        return s;
+    public List<TopicDto> chooseTopics(int courseId, String username){
+        CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+
+        List<Topic> list = topicRepository.findTopics(course.getCourse().getId());
+
+        if(list.isEmpty())
+            throw new TutorException(NO_TOPICS);
+        return list.stream().map(TopicDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -139,6 +147,7 @@ public class SuggestionService {
 
         entityManager.remove(suggestion);
     }
+
 
     private User checkIfUserExists(String username) {
         User u = userRepository.findByUsername(username);
