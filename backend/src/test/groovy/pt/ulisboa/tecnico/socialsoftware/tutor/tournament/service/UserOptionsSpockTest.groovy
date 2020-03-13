@@ -233,7 +233,6 @@ class UserOptionsSpockTest extends Specification{
         tournamentDto.setConclusionDate(concDate.format(formatter))
         tournamentDto.setAssessmentDto(assDto as AssessmentDto)
         tournamentDto.setNumberOfQuestions(questNumb)
-        println(assessmentRepository.findAll().dump())
 
         when:
         tournamentService.createTournament(courseExecution.getId(), tournamentDto)
