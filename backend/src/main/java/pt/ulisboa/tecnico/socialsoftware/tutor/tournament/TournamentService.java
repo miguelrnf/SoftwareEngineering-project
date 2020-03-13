@@ -172,7 +172,7 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_PERMISSION_ENROLL);
         }
 
-        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED){
+        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || tournament.getAvailableDate().isAfter(LocalDateTime.now())){
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
         }
 

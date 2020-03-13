@@ -37,7 +37,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TO
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND
 
 @DataJpaTest
-class enrollStudentsSpockTest extends Specification{
+class EnrollStudentsSpockTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -155,7 +155,6 @@ class enrollStudentsSpockTest extends Specification{
 
     def setupSpec(){
 
-
         given: "a user with the role teacher"
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -215,13 +214,9 @@ class enrollStudentsSpockTest extends Specification{
 
         and: "a user with the role student"
         userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
-
         user_same = new User('name', USERNAME_2, 2, User.Role.STUDENT)
-
         user_other = new User('name', USERNAME_3, 3, User.Role.STUDENT)
-
         userT = new User('name', USERNAME_4, 4, User.Role.TEACHER)
-
         userA = new User('name', USERNAME_5, 5, User.Role.ADMIN)
 
         and: "a topic dto"
