@@ -66,13 +66,20 @@ public enum ErrorMessage {
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
 
+    USER_HAS_WRONG_ROLE("User has wrong role"),
+    SUGGESTION_TOO_LONG("Suggestion is too long"),
+    SUGGESTION_EMPTY("Empty suggestion"),
+    EMPTY_TOPICS("No topics"),
+    JUSTIFICATION_EMPTY("No justufication"),
+    SUGGESTION_NOT_FOUND("Not found"),
+
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),
-    USER_HAS_WRONG_ROLE("You do not have the required roll for this action"),
     NO_STUDENT_QUESTION("You cannot submit a post without a writing a question"),
     STUDENT_QUESTION_TOO_LONG("Your question is too long"),
     INVALID_POST("The specified post does not exist"),
     NOT_YOUR_POST("You do not have permission to change somebody else's post"),
+    NO_APPROVED_SUGGESTIONS("No approved suggestions"),
     NO_ANSWER("No answer was given by a teacher"),
     INVALID_ANSWER_BLANK("The answer written is invalid because it is empty"),
     DIFFERENT_QUESTION("You cannot redirect when it's a different question"),
