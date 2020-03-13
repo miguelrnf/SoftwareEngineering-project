@@ -1,8 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -10,8 +11,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "post_questions")
-public class PostQuestion {
+@Table(name = "post_answers")
+
+public class PostAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -21,15 +23,11 @@ public class PostQuestion {
     private Post post;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "question_id")
-    private Question question;
-
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "students_question")
-    private String studentQuestion;
+    @Column(name = "teacher_answer")
+    private String teacherAnswer;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -37,26 +35,19 @@ public class PostQuestion {
     @Column(name = "is_edited", columnDefinition = "boolean default false")
     private Boolean isEdited;
 
-    public PostQuestion() {
+    @Column(name = "is_redirected", columnDefinition = "boolean default false")
+    private Boolean isRedirected;
+
+    public PostAnswer() {
     }
 
-    public PostQuestion(Question q, User u, String sq) {
+    public PostAnswer(User user, String teacherAnswer) {
         final int MAX_LENGTH = 1024;
-        checkPostQuestionConsistency(sq, MAX_LENGTH);
-        this.question = q;
-        this.user = u;
-        this.studentQuestion = sq;
+        checkPostAnswerConsistency(teacherAnswer, MAX_LENGTH);
+        this.user = user;
+        this.teacherAnswer = teacherAnswer;
         this.isEdited = false;
-    }
-
-    private void checkPostQuestionConsistency(String sq, int length) {
-        if(sq == null)
-            throw new TutorException(ErrorMessage.NO_STUDENT_QUESTION);
-        if(sq.trim().isEmpty())
-            throw new TutorException(ErrorMessage.NO_STUDENT_QUESTION);
-        if(sq.trim().length() > length)
-            throw new TutorException(ErrorMessage.STUDENT_QUESTION_TOO_LONG);
-
+        this.isRedirected = false;
     }
 
     public Integer getId() {
@@ -67,12 +58,12 @@ public class PostQuestion {
         this.id = id;
     }
 
-    public Question getQuestion() {
-        return question;
+    public Post getPost() {
+        return post;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public User getUser() {
@@ -83,25 +74,27 @@ public class PostQuestion {
         this.user = user;
     }
 
-    public String getStudentQuestion() {
-        return studentQuestion;
+    public String getTeacherAnswer() {
+        return teacherAnswer;
     }
 
-    public void setStudentQuestion(String studentQuestion) {
-        this.studentQuestion = studentQuestion;
+    public void setTeacherAnswer(String teacherAnswer) {
+        this.teacherAnswer = teacherAnswer;
     }
 
-    public void update(String studentQuestion) {
-        checkPostQuestionConsistency(studentQuestion, 1024);
-        this.studentQuestion = studentQuestion;
+    private void checkPostAnswerConsistency(String pa, int length) {
+        if(pa == null)
+            throw new TutorException(ErrorMessage.NO_ANSWER);
+        if(pa.trim().isEmpty())
+            throw new TutorException(ErrorMessage.INVALID_ANSWER_BLANK);
+        if(pa.trim().length() > length)
+            throw new TutorException(ErrorMessage.INVALID_ANSWER_TOO_LONG);
+
     }
 
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
+    public void update(String teacherAnswer) {
+        checkPostAnswerConsistency(teacherAnswer, 1024);
+        this.teacherAnswer = teacherAnswer;
     }
 
     public LocalDateTime getCreationDate() {
@@ -119,4 +112,13 @@ public class PostQuestion {
     public void setEdited(Boolean edited) {
         isEdited = edited;
     }
+
+    public Boolean getRedirected() {
+        return isRedirected;
+    }
+
+    public void setRedirected(Boolean redirected) {
+        isRedirected = redirected;
+    }
 }
+

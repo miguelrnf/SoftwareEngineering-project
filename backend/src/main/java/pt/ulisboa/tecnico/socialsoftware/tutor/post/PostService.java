@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
@@ -54,7 +56,7 @@ public class PostService {
         checkIfUserAnsweredQuestion(questionKey, user);
         int maxPostNumber = getMaxPostNumber();
 
-        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto));
+        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
         post.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(post);
         return new PostDto(post);
@@ -77,12 +79,12 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto editPost(PostDto toEdit, UserDto userDto) {
+    public PostDto editPost(PostQuestionDto toEdit, UserDto userDto) {
         User user = checkIfUserExists(userDto.getUsername());
-        Post post = checkIfPostExists(toEdit.getKey());
+        Post post = checkIfPostExists(toEdit.getPost().getKey());
         checkIfUserOwnsPost(user, post);
 
-        post.getQuestion().update(toEdit.getQuestion().getStudentQuestion());
+        post.getQuestion().update(toEdit.getStudentQuestion());
         return new PostDto(post);
     }
 
@@ -90,18 +92,85 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changeStatus(PostDto postDto, UserDto userDto) {
+    public PostDto changePostStatus(PostDto postDto, UserDto userDto) {
         Post post = checkIfPostExists(postDto.getKey());
         User user = checkIfUserExists(userDto.getUsername());
-        if(!checkIfUserHasRoleTeacher(user))
+        try {
+            checkIfUserHasRoleTeacher(user);
+        } catch (TutorException e) {
             checkIfUserOwnsPost(user, post);
-
+        }
         post.changePostStatus();
         return new PostDto(post);
     }
 
-    private boolean checkIfUserHasRoleTeacher(User user) {
-        return user.getRole().compareTo(User.Role.TEACHER) == 0;
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto editAnswer(PostAnswerDto toAnswer, UserDto userDto) {
+        User user = checkIfUserExists(userDto.getUsername());
+        Post post = checkIfPostExists(toAnswer.getPost().getKey());
+
+        checkIfUserHasRoleTeacher(user);
+        post.getAnswer().update(toAnswer.getTeacherAnswer());
+        return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto changeDiscussStatus(PostDto postDto, UserDto userDto) {
+        Post post = checkIfPostExists(postDto.getKey());
+        User user = checkIfUserExists(userDto.getUsername());
+        checkIfUserOwnsPost(user, post);
+        checkIfAnswered(post);
+
+        post.changeDiscussStatus();
+        return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto answerQuestion(PostAnswerDto answerDto) {
+        Post post = checkIfPostExists(answerDto.getPost().getKey());
+        User user = checkIfUserExists(answerDto.getUser().getUsername());
+        checkIfUserHasRoleTeacher(user);
+
+        PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
+        post.setAnswer(answer);
+        return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto redirect(PostDto postDto1, PostDto postDto2, UserDto userDto) {
+        Post postNotAnswered = checkIfPostExists(postDto1.getKey());
+        Post postAnswered = checkIfPostExists(postDto2.getKey());
+        PostAnswer answer = checkIfAnswered(postAnswered);
+        User user = checkIfUserExists(userDto.getUsername());
+        checkIfUserHasRoleTeacher(user);
+        checkIfPostsHaveSameQuestion(postDto1, postDto2);
+
+        postNotAnswered.setAnswer(answer);
+        postNotAnswered.setDiscussStatus(false);
+        postNotAnswered.setPostStatus(true);
+        if((postNotAnswered.getAnswer()) != postAnswered.getAnswer()){
+            throw new TutorException(ERROR_WHILE_REDIRECTING);
+        }
+        return new PostDto(postNotAnswered);
+    }
+
+    private void checkIfPostsHaveSameQuestion(PostDto postDto1, PostDto postDto2) {
+        if(postDto2.getQuestion() == null)
+            throw new TutorException(NO_ANSWER);
+         if(!postDto1.getQuestion().getQuestion().getKey().equals(postDto2.getQuestion().getQuestion().getKey()))
+             throw new TutorException(DIFFERENT_QUESTION);
     }
 
     private void checkIfUserOwnsPost(User user, Post post) {
@@ -119,6 +188,11 @@ public class PostService {
         return u;
     }
 
+    private PostAnswer checkIfAnswered(Post post) {
+        if(post.getAnswer() == null){throw new TutorException(NO_ANSWER);}
+        return post.getAnswer();
+    }
+
     private int getMaxPostNumber() {
         return postRepository.getMaxPostNumber() == null ? 0
                     : postRepository.getMaxPostNumber() + 1;
@@ -132,6 +206,10 @@ public class PostService {
 
     private void checkIfUserHasRoleStudent(User user) {
         if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    }
+
+    private void checkIfUserHasRoleTeacher(User user) {
+        if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
 
     private Question checkIfQuestionExists(Integer questionKey) {

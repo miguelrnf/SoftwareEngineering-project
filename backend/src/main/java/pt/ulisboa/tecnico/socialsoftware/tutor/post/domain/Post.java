@@ -21,8 +21,14 @@ public class Post {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private PostQuestion question;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
+    private PostAnswer answer;
+
     @Column(name = "post_status", columnDefinition = "boolean default true")
     private Boolean postStatus;
+
+    @Column(name = "discuss_status", columnDefinition = "boolean default false")
+    private Boolean discussStatus;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -34,6 +40,7 @@ public class Post {
         this.key = key;
         this.question = question;
         this.postStatus = true;
+        this.discussStatus = false;
     }
 
     public Integer getId() {
@@ -60,12 +67,28 @@ public class Post {
         this.question = question;
     }
 
+    public PostAnswer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(PostAnswer answer) {
+        this.answer = answer;
+    }
+
     public Boolean getPostStatus() {
         return postStatus;
     }
 
     public void setPostStatus(Boolean postStatus) {
         this.postStatus = postStatus;
+    }
+
+    public Boolean getDiscussStatus() {
+        return discussStatus;
+    }
+
+    public void setDiscussStatus(Boolean discussStatus) {
+        this.discussStatus = discussStatus;
     }
 
     public LocalDateTime getCreationDate() {
@@ -78,5 +101,9 @@ public class Post {
 
     public void changePostStatus() {
         this.postStatus = !this.postStatus;
+    }
+
+    public void changeDiscussStatus() {
+        this.discussStatus = !this.discussStatus;
     }
 }

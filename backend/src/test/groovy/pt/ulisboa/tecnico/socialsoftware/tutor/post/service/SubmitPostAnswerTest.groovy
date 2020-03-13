@@ -4,39 +4,36 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @DataJpaTest
-class EditPostTest extends Specification {
+class SubmitPostAnswerTest extends Specification {
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
+    public static final String VALID_TEACHER_ANSWER = 'I AM ANSWER'
     public static final String EMPTY_QUESTION = ''
     public static final int VALID_KEY = 1
     public static final int VALID_ID = 1
-    public static final String VALID_NAME_1 = "Ben Dover"
-    public static final String VALID_USERNAME_1 = "BenDover69"
-    public static final String VALID_NAME_2 = "Mickey"
-    public static final String VALID_USERNAME_2 = "Mickey123"
+    public static final String VALID_NAME = "Ben Dover"
+    public static final String VALID_NAME_TEACHER = "Mike Litoris"
+    public static final String VALID_USERNAME = "BenDover69"
+    public static final String VALID_USERNAME_TEACHER = "MikeLitoris420"
     public static final String TOO_MANY_CHARS =
             '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -68,10 +65,16 @@ class EditPostTest extends Specification {
     PostRepository postRepository
 
     @Autowired
-    QuestionRepository questionRepository
+    UserRepository userRepository
 
     @Autowired
-    UserRepository userRepository
+    QuestionRepository questionRepository
+
+    @Shared
+    def VALID_P
+
+    @Shared
+    def VALID_PQ
 
     @Shared
     def VALID_Q
@@ -80,43 +83,34 @@ class EditPostTest extends Specification {
     def VALID_U
 
     @Shared
-    def INVALID_U_NOT_OWNER
+    def VALID_PA
 
     @Shared
-    def VALID_PQ
+    def INVALID_PA_TOO_LONG
 
     @Shared
-    def VALID_P
+    def INVALID_PA_EMPTY
 
     @Shared
-    def INVALID_PQ_TOO_LONG
+    def INVALID_PA_NOT_TEACHER
 
     @Shared
-    def INVALID_PQ_BLANK
+    def INVALID_U_NOT_TEACHER
 
     def setupSpec() {
-
         given: "a valid question"
         VALID_Q = new Question()
+        VALID_Q.setId()
         VALID_Q.setKey(VALID_KEY)
         VALID_Q.setContent(VALID_QUESTION)
-        VALID_Q.setStatus(Question.Status.AVAILABLE)
-        VALID_Q.setNumberOfAnswers(2)
-        VALID_Q.setNumberOfCorrect(1)
 
-        and: "a valid user"
+        and: "a valid user with the role teacher"
         VALID_U = new User()
         VALID_U.setId(VALID_ID)
-        VALID_U.setRole(User.Role.STUDENT)
-        VALID_U.setUsername(VALID_USERNAME_1)
+        VALID_U.setRole(User.Role.TEACHER)
+        VALID_U.setUsername(VALID_USERNAME_TEACHER)
 
-        and: "an invalid user"
-        INVALID_U_NOT_OWNER = new User()
-        INVALID_U_NOT_OWNER.setId(VALID_ID)
-        INVALID_U_NOT_OWNER.setRole(User.Role.STUDENT)
-        INVALID_U_NOT_OWNER.setUsername(VALID_USERNAME_2)
-
-        and: "a valid postQuestion"
+        and: "a valid post question"
         VALID_PQ = new PostQuestion()
         VALID_PQ.setQuestion(VALID_Q)
         VALID_PQ.setUser(VALID_U)
@@ -124,21 +118,36 @@ class EditPostTest extends Specification {
 
         and: "a valid post"
         VALID_P = new Post(VALID_KEY, VALID_PQ)
-        VALID_PQ.setPost(VALID_P)
 
-        and: "an invalid postQuestion: too long"
-        INVALID_PQ_TOO_LONG = new PostQuestion()
-        INVALID_PQ_TOO_LONG.setQuestion(VALID_Q)
-        INVALID_PQ_TOO_LONG.setUser(VALID_U)
-        INVALID_PQ_TOO_LONG.setStudentQuestion(TOO_MANY_CHARS)
-        INVALID_PQ_TOO_LONG.setPost(VALID_P)
+        and: "a valid post answer"
+        VALID_PA = new PostAnswer()
+        VALID_PA.setUser(VALID_U)
+        VALID_PA.setTeacherAnswer(VALID_TEACHER_ANSWER)
+        VALID_PA.setPost(VALID_P)
 
-        and: "an invalid postQuestion: blank"
-        INVALID_PQ_BLANK = new PostQuestion()
-        INVALID_PQ_BLANK.setQuestion(VALID_Q)
-        INVALID_PQ_BLANK.setUser(VALID_U)
-        INVALID_PQ_BLANK.setStudentQuestion(EMPTY_QUESTION)
-        INVALID_PQ_BLANK.setPost(VALID_P)
+        and: "a user with the role student"
+        INVALID_U_NOT_TEACHER = new User()
+        INVALID_U_NOT_TEACHER.setId(VALID_ID)
+        INVALID_U_NOT_TEACHER.setRole(User.Role.STUDENT)
+        INVALID_U_NOT_TEACHER.setUsername(VALID_USERNAME)
+
+        and: "a post answer with too many chars"
+        INVALID_PA_TOO_LONG = new PostAnswer()
+        INVALID_PA_TOO_LONG.setUser(VALID_U)
+        INVALID_PA_TOO_LONG.setTeacherAnswer(TOO_MANY_CHARS)
+        INVALID_PA_TOO_LONG.setPost(VALID_P)
+
+        and: "an empty post answer"
+        INVALID_PA_EMPTY = new PostAnswer()
+        INVALID_PA_EMPTY.setUser(VALID_U)
+        INVALID_PA_EMPTY.setTeacherAnswer(EMPTY_QUESTION)
+        INVALID_PA_EMPTY.setPost(VALID_P)
+
+        and: "a post answer submitted by a user with the role student"
+        INVALID_PA_NOT_TEACHER = new PostAnswer()
+        INVALID_PA_NOT_TEACHER.setUser(INVALID_U_NOT_TEACHER)
+        INVALID_PA_NOT_TEACHER.setTeacherAnswer(VALID_TEACHER_ANSWER)
+        INVALID_PA_NOT_TEACHER.setPost(VALID_P)
     }
 
     def setup() {
@@ -151,10 +160,10 @@ class EditPostTest extends Specification {
         question.setNumberOfCorrect(1)
 
         and: "two valid users"
-        def user1 = new User(VALID_NAME_1, VALID_USERNAME_1, 1, User.Role.STUDENT)
-        def user2 = new User(VALID_NAME_2, VALID_USERNAME_2, 2, User.Role.STUDENT)
+        def user1 = new User(VALID_NAME_TEACHER, VALID_USERNAME_TEACHER, 1, User.Role.TEACHER)
+        def user2 = new User(VALID_NAME, VALID_USERNAME, 2, User.Role.STUDENT)
 
-        and: "a valid postQuestion"
+        and: "a valid post question"
         def postQuestion1 = new PostQuestion()
         postQuestion1.setQuestion(question)
         postQuestion1.setUser(user1)
@@ -164,47 +173,48 @@ class EditPostTest extends Specification {
         def post1 = new Post(VALID_KEY, postQuestion1)
         postQuestion1.setPost(post1)
         user1.addPostQuestion(postQuestion1)
+        user2.addPostQuestion(postQuestion1)
 
         then: "add to repository"
+        questionRepository.save(question)
         userRepository.save(user1)
         userRepository.save(user2)
-        questionRepository.save(question)
         postRepository.save(post1)
     }
 
     @Unroll
-    def "valid edit"() {
+    def "a valid submission"() {
         when:
-        def dto = new PostQuestionDto(pq)
-        dto.setPost(new PostDto(pq.getPost()))
-        def result = postService.editPost(dto, new UserDto(user))
+        def dto = new PostAnswerDto(pa)
+        dto.setPost(new PostDto(pa.getPost()))
+        def result = postService.answerQuestion(dto)
 
         then:
-        result.getKey() == expected.getKey()
-        result.getQuestion().getQuestion().getKey() == expected.getQuestion().getQuestion().getKey()
-        result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
+        result.getAnswer().getUser().getUsername() == expected.getUser().getUsername()
+        result.getAnswer().getTeacherAnswer() == expected.getTeacherAnswer()
 
         where:
-        pq                          |   user            || expected
-        VALID_PQ as PostQuestion    |   VALID_U as User || VALID_P as Post
+        pa                       ||      expected
+        VALID_PA as PostAnswer   ||  VALID_PA as PostAnswer
     }
 
     @Unroll
-    def "invalid edit"() {
+    def "invalid fields"() {
         when:
-        def dto = new PostQuestionDto(pq)
-        dto.setPost(new PostDto(pq.getPost()))
-        postService.editPost(dto, new UserDto(user))
+        def dto = new PostAnswerDto(pa)
+        dto.setPost(new PostDto(pa.getPost()))
+        postService.answerQuestion(dto)
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        user                        | pq                                    || expected
-        INVALID_U_NOT_OWNER as User | VALID_PQ as PostQuestion              || ErrorMessage.NOT_YOUR_POST.label
-        VALID_U as User             | INVALID_PQ_TOO_LONG as PostQuestion   || ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
-        VALID_U as User             | INVALID_PQ_BLANK as PostQuestion      || ErrorMessage.NO_STUDENT_QUESTION.label
+        pa                                  ||      expected
+        INVALID_PA_EMPTY as PostAnswer      ||  ErrorMessage.INVALID_ANSWER_BLANK.label
+        INVALID_PA_TOO_LONG as PostAnswer   ||  ErrorMessage.INVALID_ANSWER_TOO_LONG.label
+        INVALID_PA_NOT_TEACHER as PostAnswer||  ErrorMessage.USER_HAS_WRONG_ROLE.label
+
     }
 
     @TestConfiguration
