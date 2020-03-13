@@ -52,7 +52,7 @@ public class Suggestion {
     private LocalDateTime creationDate;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.TOAPPROVE;
+    public Status status = Status.TOAPPROVE;
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -176,4 +176,5 @@ public class Suggestion {
     public void set_student(User _student) {
         this._student = _student;
     }
+
 }

@@ -5,13 +5,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class UserDto implements Serializable {
     private Integer id;
     private String username;
     private String name;
     private User.Role role;
-    private String creationDate;
 
     public UserDto(User user) {
         //this.id = user.getId();
@@ -19,8 +19,6 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
 
-        if (user.getCreationDate() != null)
-            this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public Integer getId() {
@@ -55,13 +53,6 @@ public class UserDto implements Serializable {
         this.role = role;
     }
 
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
 
     @Override
     public String toString() {
@@ -70,7 +61,22 @@ public class UserDto implements Serializable {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", role=" + role +
-                ", creationDate=" + creationDate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return id == userDto.id &&
+                Objects.equals(username, userDto.username) &&
+                Objects.equals(name, userDto.name) &&
+                role == userDto.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, name, role);
     }
 }
