@@ -218,9 +218,6 @@ public class PostService {
         return commentRepository.findByKey(dto.getParent().getKey()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
     }
 
-    private boolean checkIfUserHasRoleTeacher(User user) {
-        return user.getRole().compareTo(User.Role.TEACHER) == 0;
-
     private void checkIfPostsHaveSameQuestion(PostDto postDto1, PostDto postDto2) {
         if(postDto2.getQuestion() == null)
             throw new TutorException(NO_ANSWER);
