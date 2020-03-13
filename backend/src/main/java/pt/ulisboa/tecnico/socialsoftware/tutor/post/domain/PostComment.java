@@ -7,6 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -37,16 +39,23 @@ public class PostComment {
     @Column(name = "content")
     private String comment;
 
+    @ManyToOne
+    private PostComment parent;
+
+    @OneToMany(mappedBy = "parent")
+    private Set<PostComment> children = new HashSet<>();
+
     public PostComment() {
     }
 
-    public PostComment(Integer key, User u, PostCommentDto dto) {
+    public PostComment(Integer key, User u, Post post, PostCommentDto dto) {
         int MAX_LENGTH = 1024;
         this.user = u;
         this.key = key;
         checkPostCommentConsistency(dto.getCreationDate(), dto.getComment(), MAX_LENGTH);
         this.creationDate = dto.getCreationDate();
         this.comment = dto.getComment();
+        this.post = post;
     }
 
     private void checkPostCommentConsistency(LocalDateTime creationDate, String comment, int length) {
@@ -102,6 +111,27 @@ public class PostComment {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public PostComment getParent() {
+        return parent;
+    }
+
+    public void setParent(PostComment parent) {
+        this.parent = parent;
+    }
+
+    public Set<PostComment> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<PostComment> children) {
+        this.children = children;
+    }
+
+    public void addChild(PostComment pc) {
+        System.out.println(pc);
+        this.children.add(pc);
     }
 
     @Override

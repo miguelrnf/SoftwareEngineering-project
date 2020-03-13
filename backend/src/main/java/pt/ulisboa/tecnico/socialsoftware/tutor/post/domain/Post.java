@@ -96,4 +96,11 @@ public class Post {
     public void addComment(PostComment pc) {
         this.comments.add(pc);
     }
+
+    public void remove() {
+        this.question.setPost(null);
+        if(this.comments != null)
+            this.comments.forEach(x -> x.setPost(null));
+        this.comments = null;
+    }
 }
