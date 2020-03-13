@@ -38,7 +38,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NO
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
 
 @DataJpaTest
-class USOSpockTest extends Specification{
+class UserOptionsSpockTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -76,24 +76,57 @@ class USOSpockTest extends Specification{
     @Autowired
     AssessmentRepository assessmentRepository
 
+    @Shared
     def formatter
-    def assdto
-    def assdto_0
-    def assdto_1
-    def assdto_2
-    def assdto_3
+
+    @Shared
+    def ASSDTO
+
+    @Shared
+    def ASSDTO_0
+
+    @Shared
+    def ASSDTO_1
+
+    @Shared
+    def ASSDTO_2
+
+    @Shared
+    def ASSDTO_3
+
+    @Shared
     def tournamentDto
+
+    @Shared
     def course
+
+    @Shared
     def courseExecution
+
+    @Shared
     def userS
+
+    @Shared
     def topic
+
+    @Shared
     def topicConjunction
 
-    def setup(){
+    @Shared
+    def topicDto
+
+    @Shared
+    def topicConjunctionDto
+
+    @Shared
+    def STUDENT
+
+
+    def setupSpec(){
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         given: "a user with the role student"
-        def STUDENT = new User()
+        STUDENT = new User()
         STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
@@ -110,46 +143,51 @@ class USOSpockTest extends Specification{
         tournamentDto.setTitle("Title")
 
         and: "a topic dto"
-        def topicDto = new TopicDto()
+        topicDto = new TopicDto()
         topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
-        def topicConjunctionDto = new TopicConjunctionDto()
+        topicConjunctionDto = new TopicConjunctionDto()
         topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
-        assdto = new AssessmentDto()
-        assdto.setId(1)
-        assdto.setStatus(Assessment.Status.AVAILABLE.name())
-        assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
+        ASSDTO = new AssessmentDto()
+        ASSDTO.setId(1)
+        ASSDTO.setStatus(Assessment.Status.AVAILABLE.name())
+        ASSDTO.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
         and: "a valid assessment"
-        assdto_0 = new AssessmentDto()
-        assdto_0.setId(2)
-        assdto_0.setStatus(Assessment.Status.AVAILABLE.name())
-        assdto_0.setTopicConjunctionsFromUnit(topicConjunctionDto)
+        ASSDTO_0 = new AssessmentDto()
+        ASSDTO_0.setId(2)
+        ASSDTO_0.setStatus(Assessment.Status.AVAILABLE.name())
+        ASSDTO_0.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
-        and: " some invalid assessments"
-        assdto_1 = new AssessmentDto()
-        assdto_1.setId(3)
-        assdto_1.setStatus(Assessment.Status.DISABLED.name())
-        assdto_1.setTopicConjunctionsFromUnit(topicConjunctionDto)
+        and: "a invalid assessment"
+        ASSDTO_1 = new AssessmentDto()
+        ASSDTO_1.setId(3)
+        ASSDTO_1.setStatus(Assessment.Status.DISABLED.name())
+        ASSDTO_1.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
-        and: " some invalid assessments"
-        assdto_2 = new AssessmentDto()
-        assdto_2.setId(4)
-        assdto_2.setStatus(Assessment.Status.REMOVED.name())
-        assdto_2.setTopicConjunctionsFromUnit(topicConjunctionDto)
+        and: "a invalid assessment"
+        ASSDTO_2 = new AssessmentDto()
+        ASSDTO_2.setId(4)
+        ASSDTO_2.setStatus(Assessment.Status.REMOVED.name())
+        ASSDTO_2.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
-        and: " some invalid assessments"
-        assdto_3 = new AssessmentDto()
-        assdto_3.setId(5)
-        assdto_3.setStatus(Assessment.Status.AVAILABLE.name())
-        assdto_3.setTopicConjunctionsFromUnit(topicConjunctionDto)
+        and: "a invalid assessment"
+        ASSDTO_3 = new AssessmentDto()
+        ASSDTO_3.setId(5)
+        ASSDTO_3.setStatus(Assessment.Status.AVAILABLE.name())
+        ASSDTO_3.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
-        and:
+    }
+
+    def setup(){
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+        give:
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         userS = new User()
@@ -170,9 +208,8 @@ class USOSpockTest extends Specification{
 
     def "valid options"(){
         given:"an assessment"
-        def assr = assessmentService.createAssessment(courseExecution.getId(), assdto, true)
-        tournamentDto.setAssessmentDto(assdto)
-        println(assessmentRepository.findAll().dump())
+        def assr = assessmentService.createAssessment(courseExecution.getId(), ASSDTO, true)
+        tournamentDto.setAssessmentDto(ASSDTO)
 
         when:
         def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
@@ -183,13 +220,13 @@ class USOSpockTest extends Specification{
         result.assessmentDto == assr
     }
 
-    def "invalid arguments"(){
-        given:"an assessment"
-        assessmentService.createAssessment(courseExecution.getId(), assdto_0, true)
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATEBEFORE.format(formatter))
-        tournamentDto.setAssessmentDto(assdto_0)
-        tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
+    @Unroll
+    def "invalid arguments: assessmentDto=#assDto | AvailableDate=#avalDate | ConclusionDate = #concDate | NumberOfQuestions=#questNumb || errorMessage=#errorMessage t"(){
+        assessmentService.createAssessment(courseExecution.getId(), assDto, true)
+        tournamentDto.setAvailableDate(avalDate.format(formatter))
+        tournamentDto.setConclusionDate(concDate.format(formatter))
+        tournamentDto.setAssessmentDto(assDto)
+        tournamentDto.setNumberOfQuestions(questNumb)
         println(assessmentRepository.findAll().dump())
 
         when:
@@ -197,56 +234,15 @@ class USOSpockTest extends Specification{
 
         then:
         def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_NOT_CONSISTENT
-    }
+        error.errorMessage == errorMessage
 
-    def "invalid arguments 2"(){
-        given:"an assessment"
-        assessmentService.createAssessment(courseExecution.getId(), assdto_1, true)
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
-        tournamentDto.setAssessmentDto(assdto_1)
-        tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
-        println(assessmentRepository.findAll().dump())
+        where:
 
-        when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_NOT_CONSISTENT
-    }
-
-    def "invalid arguments - "(){
-        given:"an assessment"
-        assessmentService.createAssessment(courseExecution.getId(), assdto_2,true)
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
-        tournamentDto.setAssessmentDto(assdto_2)
-        tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
-
-        when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_NOT_CONSISTENT
-    }
-
-    def "invalid arguments - Number of questions negative"(){
-        given:"an assessment"
-        assessmentService.createAssessment(courseExecution.getId(), assdto_3, true)
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
-        tournamentDto.setAssessmentDto(assdto_3)
-        tournamentDto.setNumberOfQuestions(-1)
-
-        when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == NOT_ENOUGH_QUESTIONS_TOURNAMENT
+        assDto   | avalDate | concDate     | questNumb    || errorMessage
+        ASSDTO_0 | DATENOW  | DATEBEFORE   | NUMQUESTIONS || TOURNAMENT_NOT_CONSISTENT
+        ASSDTO_1 | DATENOW  | DATETOMORROW | NUMQUESTIONS || TOURNAMENT_NOT_CONSISTENT
+        ASSDTO_2 | DATENOW  | DATETOMORROW | NUMQUESTIONS || TOURNAMENT_NOT_CONSISTENT
+        ASSDTO_3 | DATENOW  | DATETOMORROW | -1           || NOT_ENOUGH_QUESTIONS_TOURNAMENT
     }
 
     @TestConfiguration

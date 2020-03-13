@@ -173,16 +173,17 @@ public class Tournament {
         if (availableDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
-        if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || conclusionDate.isBefore(LocalDateTime.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (conclusionDate != null &&
-                availableDate != null &&
-                conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
+        if (conclusionDate == null) {
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date");
+        }
+        if ((conclusionDate.isBefore(availableDate) || conclusionDate.isBefore(LocalDateTime.now()))) {
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date");
         }
     }
 
