@@ -4,34 +4,35 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import javax.xml.stream.events.Comment
+import java.time.LocalDateTime
+
 @DataJpaTest
-class EditPostTest extends Specification {
+class SearchCommentsTest extends Specification {
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
+    public static final String VALID_COMMENT = 'This is a valid comment'
     public static final String EMPTY_QUESTION = ''
     public static final int VALID_KEY = 1
+    public static final int VALID_KEY_2 = 2
+    public static final int VALID_KEY_3 = 3
     public static final int VALID_ID = 1
     public static final String VALID_NAME_1 = "Ben Dover"
     public static final String VALID_USERNAME_1 = "BenDover69"
@@ -73,14 +74,14 @@ class EditPostTest extends Specification {
     @Autowired
     UserRepository userRepository
 
+    @Autowired
+    PostCommentRepository commentRepository
+
     @Shared
     def VALID_Q
 
     @Shared
     def VALID_U
-
-    @Shared
-    def INVALID_U_NOT_OWNER
 
     @Shared
     def VALID_PQ
@@ -89,12 +90,20 @@ class EditPostTest extends Specification {
     def VALID_P
 
     @Shared
-    def INVALID_PQ_TOO_LONG
+    def VALID_PC
 
     @Shared
-    def INVALID_PQ_BLANK
+    def VALID_PC_2
+
+    @Shared
+    def VALID_C_LIST
+
+    @Shared
+    def COMMENT_LIST
+
 
     def setupSpec() {
+
         given: "a valid question"
         VALID_Q = new Question()
         VALID_Q.setKey(VALID_KEY)
@@ -109,12 +118,6 @@ class EditPostTest extends Specification {
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME_1)
 
-        and: "an invalid user"
-        INVALID_U_NOT_OWNER = new User()
-        INVALID_U_NOT_OWNER.setId(VALID_ID)
-        INVALID_U_NOT_OWNER.setRole(User.Role.STUDENT)
-        INVALID_U_NOT_OWNER.setUsername(VALID_USERNAME_2)
-
         and: "a valid postQuestion"
         VALID_PQ = new PostQuestion()
         VALID_PQ.setQuestion(VALID_Q)
@@ -123,21 +126,32 @@ class EditPostTest extends Specification {
 
         and: "a valid post"
         VALID_P = new Post(VALID_KEY, VALID_PQ)
-        VALID_PQ.setPost(VALID_P)
 
-        and: "an invalid postQuestion: too long"
-        INVALID_PQ_TOO_LONG = new PostQuestion()
-        INVALID_PQ_TOO_LONG.setQuestion(VALID_Q)
-        INVALID_PQ_TOO_LONG.setUser(VALID_U)
-        INVALID_PQ_TOO_LONG.setStudentQuestion(TOO_MANY_CHARS)
-        INVALID_PQ_TOO_LONG.setPost(VALID_P)
+        and: "a valid post comment"
+        VALID_PC = new PostComment()
+        VALID_PC.setPost(VALID_P)
+        VALID_PC.setKey(VALID_KEY)
+        VALID_PC.setUser(VALID_U)
+        VALID_PC.setComment(VALID_COMMENT)
+        VALID_PC.setCreationDate(LocalDateTime.now())
+        VALID_P.addComment(VALID_PC)
 
-        and: "an invalid postQuestion: blank"
-        INVALID_PQ_BLANK = new PostQuestion()
-        INVALID_PQ_BLANK.setQuestion(VALID_Q)
-        INVALID_PQ_BLANK.setUser(VALID_U)
-        INVALID_PQ_BLANK.setStudentQuestion(EMPTY_QUESTION)
-        INVALID_PQ_BLANK.setPost(VALID_P)
+        and: "a valid post comment"
+        VALID_PC_2 = new PostComment()
+        VALID_PC_2.setPost(VALID_P)
+        VALID_PC_2.setKey(VALID_KEY_2)
+        VALID_PC_2.setUser(VALID_U)
+        VALID_PC_2.setComment("ola")
+        VALID_PC_2.setCreationDate(LocalDateTime.now())
+        VALID_P.addComment(VALID_PC_2)
+
+        COMMENT_LIST = new HashSet<>()
+        COMMENT_LIST.add(new PostCommentDto(VALID_PC, false))
+        COMMENT_LIST.add(new PostCommentDto(VALID_PC_2, false))
+
+        VALID_C_LIST = new HashSet<>()
+        VALID_C_LIST.add(new PostCommentDto(VALID_PC, false))
+
     }
 
     def setup() {
@@ -164,46 +178,64 @@ class EditPostTest extends Specification {
         postQuestion1.setPost(post1)
         user1.addPostQuestion(postQuestion1)
 
+        and: "a valid comment"
+        def comment = new PostComment()
+        comment.setKey(VALID_KEY)
+        comment.setComment(VALID_COMMENT)
+        comment.setPost(post1)
+        comment.setUser(user1)
+        comment.setCreationDate(LocalDateTime.now())
+        post1.addComment(comment)
+
+        and: "a valid comment"
+        def comment1 = new PostComment()
+        comment1.setKey(VALID_KEY_2)
+        comment1.setComment("ola")
+        comment1.setPost(post1)
+        comment1.setUser(user2)
+        comment1.setCreationDate(LocalDateTime.now())
+        post1.addComment(comment1)
+
+
         then: "add to repository"
         userRepository.save(user1)
         userRepository.save(user2)
         questionRepository.save(question)
         postRepository.save(post1)
+        commentRepository.save(comment)
+        commentRepository.save(comment1)
     }
 
     @Unroll
-    def "valid edit"() {
+    def "valid search"() {
         when:
-        def dto = new PostQuestionDto(pq)
-        dto.setPost(new PostDto(pq.getPost()))
-        def result = postService.editPost(dto, new UserDto(user))
+        def result = postService.searchComment(new String(string) as String)
 
         then:
-        result.getKey() == expected.getKey()
-        result.getQuestion().getQuestion().getKey() == expected.getQuestion().getQuestion().getKey()
-        result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
-
+        result.size() == size
+        for(int i = 0; i < size; i++)
+            assert result[i].getComment() == expected[i].getComment()
         where:
-        pq                          |   user            || expected
-        VALID_PQ as PostQuestion    |   VALID_U as User || VALID_P as Post
+        string    | size              || expected
+        "comment" | 1                 || VALID_C_LIST as Set<PostCommentDto>
+        "a"       | 2                 || COMMENT_LIST as Set<PostCommentDto>
+
     }
 
+
     @Unroll
-    def "invalid edit"() {
+    def "invalid search"() {
         when:
-        def dto = new PostQuestionDto(pq)
-        dto.setPost(new PostDto(pq.getPost()))
-        postService.editPost(dto, new UserDto(user))
+        postService.searchComment(new String(string) as String)
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
+
         where:
-        user                        | pq                                    || expected
-        INVALID_U_NOT_OWNER as User | VALID_PQ as PostQuestion              || ErrorMessage.NOT_YOUR_POST.label
-        VALID_U as User             | INVALID_PQ_TOO_LONG as PostQuestion   || ErrorMessage.STUDENT_QUESTION_TOO_LONG.label
-        VALID_U as User             | INVALID_PQ_BLANK as PostQuestion      || ErrorMessage.NO_STUDENT_QUESTION.label
+        string                          || expected
+        "jvnnfvdfovkdofkvnojvn"         || ErrorMessage.INVALID_COMMENT_SEARCH.label
     }
 
     @TestConfiguration
@@ -214,3 +246,4 @@ class EditPostTest extends Specification {
         }
     }
 }
+
