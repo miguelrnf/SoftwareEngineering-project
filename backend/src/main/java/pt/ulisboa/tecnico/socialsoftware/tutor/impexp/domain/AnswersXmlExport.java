@@ -8,11 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
 import java.util.List;
+import java.util.Set;
 
 public class AnswersXmlExport {
-
-	public static final String SEQUENCE = "sequence";
-
 	public String export(List<QuizAnswer> quizAnswers) {
 		Element element = createHeader();
 
@@ -45,7 +43,7 @@ public class AnswersXmlExport {
 			quizAnswerElement.setAttribute("answerDate", String.valueOf(quizAnswer.getAnswerDate()));
 		}
 
-		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.isCompleted()));
+		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.getCompleted()));
 
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("key", String.valueOf(quizAnswer.getQuiz().getKey()));
@@ -77,17 +75,17 @@ public class AnswersXmlExport {
 			questionAnswerElement.setAttribute("timeTaken", String.valueOf(questionAnswer.getTimeTaken()));
 		}
 
-        questionAnswerElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getSequence()));
+        questionAnswerElement.setAttribute("sequence", String.valueOf(questionAnswer.getSequence()));
 
 		Element quizQuestionElement = new Element("quizQuestion");
 		quizQuestionElement.setAttribute("key", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getKey()));
-		quizQuestionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
+		quizQuestionElement.setAttribute("sequence", String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
 		questionAnswerElement.addContent(quizQuestionElement);
 
 		if ( questionAnswer.getOption() != null) {
 			Element optionElement = new Element("option");
 			optionElement.setAttribute("questionKey", String.valueOf(questionAnswer.getOption().getQuestion().getKey()));
-			optionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getOption().getSequence()));
+			optionElement.setAttribute("sequence", String.valueOf(questionAnswer.getOption().getSequence()));
 			questionAnswerElement.addContent(optionElement);
 		}
 

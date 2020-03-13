@@ -116,7 +116,6 @@ class GetSolvedQuizzesTest extends Specification {
         quiz.addQuizAnswer(quizAnswer)
 
         def questionAnswer = new QuestionAnswer()
-        questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
@@ -140,13 +139,13 @@ class GetSolvedQuizzesTest extends Specification {
         def solvedQuizDto = solvedQuizDtos.get(0)
         def statementQuizDto = solvedQuizDto.getStatementQuiz()
         statementQuizDto.getQuestions().size() == 1
-        solvedQuizDto.statementQuiz.getAnswers().size() == 1
-        def answer = solvedQuizDto.statementQuiz.getAnswers().get(0)
-        answer.getSequence() == 0
+        solvedQuizDto.getAnswers().size() == 1
+        def answer = solvedQuizDto.getAnswers().get(0)
+        answer.getQuizQuestionId() == quizQuestion.getId()
         answer.getOptionId() == option.getId()
         solvedQuizDto.getCorrectAnswers().size() == 1
         def correct = solvedQuizDto.getCorrectAnswers().get(0)
-        correct.getSequence() == 0
+        correct.getQuizQuestionId() == quizQuestion.getId()
         correct.getCorrectOptionId() == option.getId()
     }
 

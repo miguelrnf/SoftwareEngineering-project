@@ -6,15 +6,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -30,7 +26,6 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -55,14 +50,6 @@ public class QuizService {
 
     @PersistenceContext
     EntityManager entityManager;
-
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto findQuizCourseExecution(int quizId) {
-        return this.quizRepository.findById(quizId)
-                .map(Quiz::getCourseExecution)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-    }
 
     @Retryable(
       value = { SQLException.class },
@@ -139,8 +126,7 @@ public class QuizService {
         quiz.setTitle(quizDto.getTitle());
         quiz.setAvailableDate(quizDto.getAvailableDateDate());
         quiz.setConclusionDate(quizDto.getConclusionDateDate());
-        quiz.setScramble(quizDto.isScramble());
-        quiz.setType(quizDto.getType());
+        quiz.setScramble(quizDto.getScramble());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
@@ -181,7 +167,7 @@ public class QuizService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuiz(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
         quiz.remove();
 
@@ -191,32 +177,6 @@ public class QuizService {
         quizQuestions.forEach(quizQuestion -> entityManager.remove(quizQuestion));
 
         entityManager.remove(quiz);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuizAnswersDto getQuizAnswers(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-        QuizAnswersDto quizAnswersDto = new QuizAnswersDto();
-
-        quizAnswersDto.setCorrectSequence(
-                quiz.getQuizQuestions().stream().sorted(Comparator.comparing(QuizQuestion::getSequence)).map(quizQuestion ->
-                quizQuestion.getQuestion()
-                        .getOptions()
-                        .stream()
-                        .filter(Option::getCorrect)
-                        .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
-                        .getSequence()
-        ).collect(Collectors.toList()));
-
-        quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
-        if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(LocalDateTime.now())) {
-            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(LocalDateTime.now(), quiz.getConclusionDate()));
-        }
-
-        return quizAnswersDto;
     }
 
 
@@ -240,4 +200,5 @@ public class QuizService {
 
         xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository);
     }
+
 }

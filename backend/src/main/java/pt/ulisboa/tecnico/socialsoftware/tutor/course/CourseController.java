@@ -13,19 +13,25 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+    @GetMapping("/courses")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER')and hasPermission(#name, 'ACCESS'))")
+    public List<CourseDto> getCourses() {
+        return courseService.getCourses();
+    }
+
     @GetMapping("/courses/{courseId}")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#name, 'ACCESS'))")
     public List<CourseDto> getCourseExecutions(@PathVariable int courseId) {
         return courseService.getCourseExecutions(courseId);
     }
 
     @PostMapping("/courses")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'EXECUTION.CREATE')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'CREATE'))")
     public CourseDto createCourseExecution(@RequestBody CourseDto courseDto) {
         return courseService.createTecnicoCourseExecution(courseDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'ACCESS'))")
     @GetMapping("/executions/{executionId}/students")
     public List<StudentDto> getCourseStudents(@PathVariable int executionId) {
         return courseService.courseStudents(executionId);

@@ -1,26 +1,36 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class StatementQuestionDto implements Serializable {
+    private Integer quizQuestionId;
     private String content;
-    private List<StatementOptionDto> options;
+    private List<StatementOptionDto> options = new ArrayList<>();
     private ImageDto image;
     private Integer sequence;
 
-    public StatementQuestionDto(QuestionAnswer questionAnswer) {
-        this.content = questionAnswer.getQuizQuestion().getQuestion().getContent();
-        if (questionAnswer.getQuizQuestion().getQuestion().getImage() != null) {
-            this.image = new ImageDto(questionAnswer.getQuizQuestion().getQuestion().getImage());
+    public StatementQuestionDto(QuizQuestion quizQuestion) {
+        this.quizQuestionId = quizQuestion.getId();
+        this.content = quizQuestion.getQuestion().getContent();
+        if (quizQuestion.getQuestion().getImage() != null) {
+            this.image = new ImageDto(quizQuestion.getQuestion().getImage());
         }
-        this.options = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
-        this.sequence = questionAnswer.getSequence();
+        this.options = quizQuestion.getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
+        this.sequence = quizQuestion.getSequence();
+    }
+
+    public Integer getQuizQuestionId() {
+        return quizQuestionId;
+    }
+
+    public void setQuizQuestionId(Integer quizQuestionId) {
+        this.quizQuestionId = quizQuestionId;
     }
 
     public String getContent() {
@@ -58,6 +68,7 @@ public class StatementQuestionDto implements Serializable {
     @Override
     public String toString() {
         return "StatementQuestionDto{" +
+                "quizQuestionId=" + quizQuestionId +
                 ", content='" + content + '\'' +
                 ", options=" + options +
                 ", image=" + image +

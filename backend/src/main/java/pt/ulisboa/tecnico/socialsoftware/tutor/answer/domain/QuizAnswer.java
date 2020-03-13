@@ -16,9 +16,6 @@ public class QuizAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "creation_date")
-    private LocalDateTime creationDate;
-
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
 
@@ -49,8 +46,6 @@ public class QuizAnswer {
         this.quiz = quiz;
         quiz.addQuizAnswer(this);
 
-        this.creationDate = LocalDateTime.now();
-
         List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
         if (quiz.getScramble()) {
             Collections.shuffle(quizQuestions);
@@ -60,82 +55,6 @@ public class QuizAnswer {
             new QuestionAnswer(this, quizQuestions.get(i), i);
         }
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public LocalDateTime getAnswerDate() {
-        return answerDate;
-    }
-
-    public void setAnswerDate(LocalDateTime answerDate) {
-        this.answerDate = answerDate;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    public boolean isUsedInStatistics() {
-        return usedInStatistics;
-    }
-
-    public void setUsedInStatistics(boolean usedInStatistics) {
-        this.usedInStatistics = usedInStatistics;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Quiz getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
-    public void setQuestionAnswers(List<QuestionAnswer> questionAnswers) {
-        this.questionAnswers = questionAnswers;
-    }
-
-    public List<QuestionAnswer> getQuestionAnswers() {
-        if (questionAnswers == null) {
-            questionAnswers = new ArrayList<>();
-        }
-        return questionAnswers;
-    }
-
-    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
-        if (questionAnswers == null) {
-            questionAnswers = new ArrayList<>();
-        }
-        questionAnswers.add(questionAnswer);
-    }
-
-
 
     public void remove() {
         user.getQuizAnswers().remove(this);
@@ -152,7 +71,7 @@ public class QuizAnswer {
     }
 
     public boolean canResultsBePublic(CourseExecution courseExecution) {
-        return isCompleted() &&
+        return getCompleted() &&
                 getQuiz().getCourseExecution() == courseExecution &&
                 !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(LocalDateTime.now()));
     }
@@ -175,4 +94,72 @@ public class QuizAnswer {
             this.usedInStatistics = true;
         }
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
+    public LocalDateTime getAnswerDate() {
+        return answerDate;
+    }
+
+    public void setAnswerDate(LocalDateTime answerDate) {
+        this.answerDate = answerDate;
+    }
+
+    public boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public boolean isUsedInStatistics() {
+        return usedInStatistics;
+    }
+
+    public void setUsedInStatistics(boolean usedInStatistics) {
+        this.usedInStatistics = usedInStatistics;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<QuestionAnswer> getQuestionAnswers() {
+        if (questionAnswers == null) {
+            questionAnswers = new ArrayList<>();
+        }
+        return questionAnswers;
+    }
+
+    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
+        if (questionAnswers == null) {
+            questionAnswers = new ArrayList<>();
+        }
+        questionAnswers.add(questionAnswer);
+    }
+
+
 }

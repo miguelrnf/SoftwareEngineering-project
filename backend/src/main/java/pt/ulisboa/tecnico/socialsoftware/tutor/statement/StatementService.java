@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -85,7 +85,7 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
-        availableQuestions = filterByAssessment(availableQuestions, quizDetails);
+        availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
@@ -128,7 +128,7 @@ public class StatementService {
             return qa;
         });
 
-        if (quizAnswer.isCompleted()) {
+        if (quizAnswer.getCompleted()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
 
         } else if (quiz.getAvailableDate() == null || LocalDateTime.now().isAfter(quiz.getAvailableDate())) {
@@ -174,7 +174,7 @@ public class StatementService {
                 .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate() == null || !(quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && quizAnswer.getQuiz().getAvailableDate().isAfter(now)))
-                .filter(quizAnswer -> !quizAnswer.isCompleted())
+                .filter(quizAnswer -> !quizAnswer.getCompleted())
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
@@ -199,7 +199,7 @@ public class StatementService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CorrectAnswerDto> concludeQuiz(String username, Integer quizId) {
+    public CorrectAnswersDto concludeQuiz(String username, Integer quizId) {
         User user = userRepository.findByUsername(username);
 
         return answerService.concludeQuiz(user, quizId);
@@ -232,10 +232,16 @@ public class StatementService {
         });
     }
 
-    public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
-        Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
-                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, Integer.parseInt(quizDetails.getAssessment())));
+    public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
+        // remove all by default
+        // TODO: support a ALL assessment
+        //if (!quizDetails.getAssessment().equals("all")) {
+            Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
+                    .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, Integer.valueOf(quizDetails.getAssessment())));
 
-        return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
+            return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
+       // }
+       // return availableQuestions;
     }
+
 }

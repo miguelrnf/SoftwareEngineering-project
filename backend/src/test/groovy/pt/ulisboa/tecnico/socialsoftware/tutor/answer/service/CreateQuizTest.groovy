@@ -50,7 +50,7 @@ class CreateQuizTest extends Specification {
         quizAnswerRepository.findAll().size() == 1
         def quizAnswer = quizAnswerRepository.findAll().get(0)
         quizAnswer.getId() != null
-        !quizAnswer.isCompleted()
+        !quizAnswer.getCompleted()
         quizAnswer.getUser().getId() == userId
         quizAnswer.getUser().getQuizAnswers().contains(quizAnswer)
         quizAnswer.getQuiz().getId() == quizId

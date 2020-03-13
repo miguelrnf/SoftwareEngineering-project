@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Controller
-@Secured({"ROLE_ADMIN"})
+@Secured({ "ROLE_ADMIN", "ROLE_TEACHER" })
 public class ImportExportController {
     private static Logger logger = LoggerFactory.getLogger(ImportExportController.class);
 
@@ -43,7 +43,7 @@ public class ImportExportController {
     }
 
     @GetMapping(value = "/admin/import")
-    public String importAll() {
+    public String importAll() throws IOException {
         logger.debug("importAll");
 
         impExpService.importAll();

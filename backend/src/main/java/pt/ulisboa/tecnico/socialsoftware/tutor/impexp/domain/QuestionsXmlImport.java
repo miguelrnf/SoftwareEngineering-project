@@ -20,7 +20,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTIONS_IMPORT_ERROR;
 
 public class QuestionsXmlImport {
@@ -112,7 +111,7 @@ public class QuestionsXmlImport {
 		}
 		questionDto.setOptions(optionDtos);
 
-		Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+		Course course = courseRepository.findByNameType(courseName, courseType).get();
 		questionService.createQuestion(course.getId(), questionDto);
 	}
 

@@ -8,14 +8,7 @@
       v-if="!confirmed"
     >
       <header>
-        <span
-          class="timer"
-          @click="hideTime = !hideTime"
-          v-if="secondsToSubmission > 0"
-        >
-          <i class="fas fa-clock"></i>
-          <span v-if="!hideTime">{{ getTimeAsHHMMSS }}</span>
-        </span>
+        <!--span class="timer"><i class="fas fa-clock"></i> 00:00</span-->
         <span class="end-quiz" @click="confirmationDialog = true"
           ><i class="fas fa-times" />End Quiz</span
         >
@@ -132,14 +125,10 @@ export default class QuizView extends Vue {
   questionOrder: number = 0;
   secondsToSubmission: number =
     StatementManager.getInstance.statementQuiz?.secondsToSubmission ?? 0;
-  hideTime: boolean = false;
 
   async created() {
     if (this.statementManager.isEmpty()) {
       await this.$router.push({ name: 'create-quiz' });
-    }
-    if (this.secondsToSubmission > 0) {
-      this.countDownToResults();
     }
   }
 
@@ -166,28 +155,22 @@ export default class QuizView extends Vue {
 
   async changeAnswer(optionId: number) {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
-      let previousAnswer = this.statementQuiz.answers[this.questionOrder]
-        .optionId;
+      if (
+        this.statementQuiz.answers[this.questionOrder].optionId === optionId
+      ) {
+        this.statementQuiz.answers[this.questionOrder].optionId = null;
+      } else {
+        this.statementQuiz.answers[this.questionOrder].optionId = optionId;
+      }
+
+      this.calculateTime();
+
       try {
-        this.calculateTime();
-
-        if (
-          this.statementQuiz.answers[this.questionOrder].optionId === optionId
-        ) {
-          this.statementQuiz.answers[this.questionOrder].optionId = null;
-        } else {
-          this.statementQuiz.answers[this.questionOrder].optionId = optionId;
-        }
-
         await RemoteServices.submitAnswer(
           this.statementQuiz.id,
           this.statementQuiz.answers[this.questionOrder]
         );
       } catch (error) {
-        this.statementQuiz.answers[
-          this.questionOrder
-        ].optionId = previousAnswer;
-
         await this.$store.dispatch('error', error);
       }
     }
@@ -204,6 +187,8 @@ export default class QuizView extends Vue {
         this.secondsToSubmission <= 0
       ) {
         await this.$router.push({ name: 'quiz-results' });
+      } else {
+        this.countDownToResults();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -220,7 +205,7 @@ export default class QuizView extends Vue {
   }
 
   async countDownToResults() {
-    if (this.secondsToSubmission && this.secondsToSubmission > -1) {
+    if (this.secondsToSubmission && this.secondsToSubmission > 0) {
       this.secondsToSubmission! -= 1;
       setTimeout(() => {
         this.countDownToResults();
@@ -228,18 +213,6 @@ export default class QuizView extends Vue {
     } else {
       await this.endQuiz();
     }
-  }
-
-  get getTimeAsHHMMSS() {
-    let hours = Math.floor(this.secondsToSubmission / 3600);
-    let minutes = Math.floor((this.secondsToSubmission - hours * 3600) / 60);
-    let seconds = this.secondsToSubmission - hours * 3600 - minutes * 60;
-
-    let hoursString = hours < 10 ? '0' + hours : hours;
-    let minutesString = minutes < 10 ? '0' + minutes : minutes;
-    let secondsString = seconds < 10 ? '0' + seconds : seconds;
-
-    return `${hoursString}:${minutesString}:${secondsString}`;
   }
 }
 </script>

@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -30,14 +31,13 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ANSWERS_IMPORT_ERROR;
 
 @Component
 public class AnswersXmlImport {
-	public static final String SEQUENCE = "sequence";
-	public static final String OPTION = "option";
 	private AnswerService answerService;
 	private QuestionRepository questionRepository;
 	private QuizRepository quizRepository;
@@ -132,40 +132,38 @@ public class AnswersXmlImport {
 		User user = userRepository.findByKey(key);
 
 		QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
-		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId())
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerDto.getId()));
+		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId()).get();
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 
-		importQuestionAnswers(answerElement.getChild("questionAnswers"), quizAnswer);
+		Map<Integer,QuizQuestion> mapQuizQuestion = quiz.getQuizQuestions().stream()
+				.collect(Collectors.toMap(QuizQuestion::getSequence, Function.identity()));
+
+		importQuestionAnswers(answerElement.getChild("questionAnswers"), user, mapQuizQuestion, quizAnswer);
 	}
 
-	private void importQuestionAnswers(Element questionAnswersElement, QuizAnswer quizAnswer) {
+	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer, QuizQuestion> mapQuizQuestion, QuizAnswer quizAnswer) {
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
 			Integer timeTaken = null;
 			if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
 				timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
 			}
 
-			int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
+			Integer answerSequence = Integer.valueOf(questionAnswerElement.getAttributeValue("sequence"));
+			Integer questionSequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
+			QuizQuestion quizQuestion = mapQuizQuestion.get(questionSequence);
 
 			Integer optionId = null;
-			if (questionAnswerElement.getChild(OPTION) != null) {
-				Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
-				Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
+			if (questionAnswerElement.getChild("option") != null) {
+				Integer questionKey = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionKey"));
+				Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("sequence"));
 				optionId = questionMap.get(questionKey).get(optionSequence);
 			}
 
-            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence().equals(answerSequence)).findFirst().orElseThrow(() ->
-                    new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
+            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence() == answerSequence).findFirst().get();
 
 			questionAnswer.setTimeTaken(timeTaken);
-
-			if (optionId == null) {
-                questionAnswer.setOption(null);
-            } else {
-    			questionAnswer.setOption(optionRepository.findById(optionId).orElse(null));
-            }
+			questionAnswer.setOption(optionRepository.findById(optionId).get());
 
             questionAnswerRepository.save(questionAnswer);
 		}

@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class SolvedQuizDto implements Serializable {
     private StatementQuizDto statementQuiz;
+    private List<QuestionAnswerDto> answers = new ArrayList<>();
     private List<CorrectAnswerDto> correctAnswers = new ArrayList<>();
     private String answerDate;
 
@@ -21,9 +23,14 @@ public class SolvedQuizDto implements Serializable {
 
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
+        this.answers = quizAnswer.getQuestionAnswers().stream()
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                .map(QuestionAnswerDto::new)
+                .collect(Collectors.toList());
 
         this.correctAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                .map(QuestionAnswer::getQuizQuestion)
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
 
@@ -36,6 +43,14 @@ public class SolvedQuizDto implements Serializable {
 
     public void setStatementQuiz(StatementQuizDto statementQuiz) {
         this.statementQuiz = statementQuiz;
+    }
+
+    public List<QuestionAnswerDto> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<QuestionAnswerDto> answers) {
+        this.answers = answers;
     }
 
     public List<CorrectAnswerDto> getCorrectAnswers() {
@@ -58,6 +73,7 @@ public class SolvedQuizDto implements Serializable {
     public String toString() {
         return "SolvedQuizDto{" +
                 "statementQuiz=" + statementQuiz +
+                ", answers=" + answers +
                 ", correctAnswers=" + correctAnswers +
                 ", answerDate='" + answerDate + '\'' +
                 '}';

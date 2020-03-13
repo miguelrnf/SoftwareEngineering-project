@@ -29,7 +29,7 @@ public class QuizDto implements Serializable {
     private List<QuestionDto> questions = new ArrayList<>();
 
     @Transient
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public QuizDto(){
     }
@@ -80,7 +80,7 @@ public class QuizDto implements Serializable {
         this.key = key;
     }
 
-    public boolean isScramble() {
+    public boolean getScramble() {
         return scramble;
     }
 
@@ -94,6 +94,10 @@ public class QuizDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isScramble() {
+        return scramble;
     }
 
     public String getCreationDate() {

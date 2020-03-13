@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -69,9 +68,6 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=false)
-    private Set<PostQuestion> postQuestions = new HashSet<>();
 
     public Question() {
     }
@@ -206,14 +202,6 @@ public class Question {
         topics.add(topic);
     }
 
-    public Set<PostQuestion> getPostQuestions() {
-        return postQuestions;
-    }
-
-    public void setPostQuestions(Set<PostQuestion> postQuestions) {
-        this.postQuestions = postQuestions;
-    }
-
     public void remove() {
         canRemove();
         getCourse().getQuestions().remove(this);
@@ -255,6 +243,15 @@ public class Question {
 
 
     public Integer getDifficulty() {
+        // required because the import is done directly in the database
+        if (numberOfAnswers == null || numberOfAnswers == 0) {
+            numberOfAnswers = getQuizQuestions().stream()
+                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).map(e -> 1).reduce(0, Integer::sum);
+            numberOfCorrect = getQuizQuestions().stream()
+                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
+                    .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()).map(e -> 1).reduce(0, Integer::sum);
+        }
+
         if (numberOfAnswers == 0) {
             return null;
         }
@@ -276,6 +273,9 @@ public class Question {
             option.setContent(optionDto.getContent());
             option.setCorrect(optionDto.getCorrect());
         });
+
+        // TODO: not yet implemented
+        //new Image(questionDto.getImage());
     }
 
     private void checkConsistentQuestion(QuestionDto questionDto) {

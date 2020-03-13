@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,12 +93,5 @@ public class TopicConjunction {
             this.topics.add(topic);
             topic.addTopicConjunction(this);
         });
-    }
-
-    public List<Question> getQuestions() {
-        return this.topics.stream()
-                .flatMap(topic -> topic.getQuestions().stream())
-                .filter(question -> question.getTopics().equals(this.topics))
-                .collect(Collectors.toList());
     }
 }

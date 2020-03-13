@@ -55,9 +55,8 @@ export default class AvailableQuizzesView extends Vue {
     let correct = 0;
     for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {
       if (
-        quiz.statementQuiz.answers[i] &&
-        quiz.correctAnswers[i].correctOptionId ===
-          quiz.statementQuiz.answers[i].optionId
+        quiz.answers[i] &&
+        quiz.correctAnswers[i].correctOptionId === quiz.answers[i].optionId
       ) {
         correct += 1;
       }

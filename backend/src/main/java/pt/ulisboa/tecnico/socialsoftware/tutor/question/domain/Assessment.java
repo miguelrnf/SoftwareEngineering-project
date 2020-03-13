@@ -6,7 +6,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "assessments")
@@ -21,6 +20,7 @@ public class Assessment {
     private Integer id;
 
     private String title;
+
     private Integer sequence = 0;
 
     @Enumerated(EnumType.STRING)
@@ -109,12 +109,6 @@ public class Assessment {
     public void remove() {
         new ArrayList<>(getTopicConjunctions()).forEach(TopicConjunction::remove);
         getTopicConjunctions().clear();
-    }
-
-    public List<Question> getQuestions() {
-        return this.topicConjunctions.stream()
-                .flatMap(topicConjunction -> topicConjunction.getQuestions().stream())
-                .collect(Collectors.toList());
     }
 
 }

@@ -133,7 +133,7 @@
 //        def correctAnswersDto = answerService.concludeQuiz(user, quizId)
 //
 //        then: 'the value is createQuestion and persistent'
-//        quizAnswer.isCompleted()
+//        quizAnswer.getCompleted()
 //        quizAnswer.getAnswerDate() == date
 //        questionAnswerRepository.findAll().size() == 1
 //        def result = questionAnswerRepository.findAll().get(0)
@@ -261,7 +261,7 @@
 //        def correctAnswersDto = answerService.concludeQuiz(user, secondResultAnswersDto)
 //
 //        then: 'the value is createQuestion and persistent'
-//        quizAnswer.isCompleted()
+//        quizAnswer.getCompleted()
 //        quizAnswer.getAnswerDate() == date
 //        questionAnswerRepository.findAll().size() == 1
 //        def result = questionAnswerRepository.findAll().get(0)

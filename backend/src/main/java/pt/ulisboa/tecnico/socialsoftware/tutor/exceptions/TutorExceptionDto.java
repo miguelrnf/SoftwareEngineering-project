@@ -6,10 +6,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-interface TutorExceptionSubError extends Serializable{
+abstract class TutorExceptionSubError {
 }
 
-public class TutorExceptionDto  implements TutorExceptionSubError {
+public class TutorExceptionDto extends TutorExceptionSubError implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime timestamp;
     private String message;
