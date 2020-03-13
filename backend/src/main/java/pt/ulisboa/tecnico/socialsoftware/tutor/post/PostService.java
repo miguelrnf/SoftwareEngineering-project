@@ -25,6 +25,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -125,7 +128,7 @@ public class PostService {
         if (comments.isEmpty()) {
             throw new TutorException(INVALID_COMMENT_SEARCH);
         }
-        return comments.stream().map(PostCommentDto::new).collect(Collectors.toSet());
+        return comments.stream().map(x -> new PostCommentDto(x, false)).collect(Collectors.toSet());
     }
 
     @Retryable(

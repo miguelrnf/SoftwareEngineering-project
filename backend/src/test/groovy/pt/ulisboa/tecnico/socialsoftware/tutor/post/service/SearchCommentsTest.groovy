@@ -146,11 +146,11 @@ class SearchCommentsTest extends Specification {
         VALID_P.addComment(VALID_PC_2)
 
         COMMENT_LIST = new HashSet<>()
-        COMMENT_LIST.add(new PostCommentDto(VALID_PC))
-        COMMENT_LIST.add(new PostCommentDto(VALID_PC_2))
+        COMMENT_LIST.add(new PostCommentDto(VALID_PC, false))
+        COMMENT_LIST.add(new PostCommentDto(VALID_PC_2, false))
 
         VALID_C_LIST = new HashSet<>()
-        VALID_C_LIST.add(new PostCommentDto(VALID_PC))
+        VALID_C_LIST.add(new PostCommentDto(VALID_PC, false))
 
     }
 

@@ -67,7 +67,6 @@ public enum ErrorMessage {
     INVALID_CREATION_DATE("The creation date is invalid"),
     INVALID_COMMENT("The comment you submitted is invalid"),
     INVALID_COMMENT_SEARCH("No results available"),
-    INVALID_COMMENT("The comment you submitted is invalid"),
     COMMENT_NO_PARENT("The parent does not exist");
 
     public final String label;
