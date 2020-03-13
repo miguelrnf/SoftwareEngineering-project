@@ -96,7 +96,6 @@ public class Assessment {
     public String toString() {
         return "Assessment{" +
                 "id=" + id +
-                ", id=" + id +
                 ", title='" + title + '\'' +
                 ", status=" + status +
                 ", topicConjunctions=" + topicConjunctions +

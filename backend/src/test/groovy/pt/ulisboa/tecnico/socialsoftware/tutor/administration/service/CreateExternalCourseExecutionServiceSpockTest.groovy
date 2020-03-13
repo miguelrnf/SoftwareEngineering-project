@@ -143,7 +143,7 @@ class CreateExternalCourseExecutionServiceSpockTest extends Specification {
 
     @Unroll
     def "invalid arguments: type=#type | courseName=#courseName | acronym=#acronym | academicTerm=#academicTerm || errorMessage=#errorMessage "() {
-        given: "a courseDto"
+        given: "a user"
         def courseDto = new CourseDto()
         courseDto.setCourseType(type)
         courseDto.setName(courseName)

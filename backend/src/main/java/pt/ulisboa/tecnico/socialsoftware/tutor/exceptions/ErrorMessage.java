@@ -41,6 +41,15 @@ public enum ErrorMessage {
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
 
+    TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
+    TOURNAMENT_PERMISSION("Only student's can create tournaments"),
+    TOURNAMENT_PERMISSION_ENROLL("Only student's can enroll in tournaments"),
+    TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
+    TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
+
+    UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
+    NOT_ENOUGH_QUESTIONS_TOURNAMENT("Not enough questions to create a tournament"),
+
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"),

@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TopicConjunctionDto implements Serializable {
@@ -44,5 +45,23 @@ public class TopicConjunctionDto implements Serializable {
 
     public void addTopic(TopicDto topic) {
         this.topics.add(topic);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TopicConjunctionDto that = (TopicConjunctionDto) o;
+
+        if (!Objects.equals(id, that.id)) return false;
+        return Objects.equals(topics, that.topics);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (topics != null ? topics.hashCode() : 0);
+        return result;
     }
 }

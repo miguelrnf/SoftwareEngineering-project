@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +22,12 @@ public class TopicConjunction {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
+
+    public TopicConjunction(){}
+
+    public TopicConjunction(TopicConjunctionDto topicConjunctionsDto) {
+        //this.updateTopics(topicConjunctionsDto.getTopics().stream().map(Topic::new).collect(Collectors.toSet()));
+    }
 
     public Integer getId() {
         return id;
