@@ -3,18 +3,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -32,7 +28,6 @@ public class Suggestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int _id;
-
 
     @Column(unique=true, nullable = false)
     private Integer key;
@@ -52,15 +47,12 @@ public class Suggestion {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-
     @Enumerated(EnumType.STRING)
     public Status status = Status.TOAPPROVE;
-
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -71,10 +63,8 @@ public class Suggestion {
 
     public Suggestion(CourseExecution courseExecution, User user, SuggestionDto suggestionDto) {
         checkConsistentSuggestion(suggestionDto);
-
         this.key= suggestionDto.getKey();
         this._student= user;
-
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
@@ -161,6 +151,9 @@ public class Suggestion {
     }
 
     public void set_justification(String _justification) {
+        if (_justification.length() == 0 ){
+            throw new TutorException(JUSTIFICATION_EMPTY);
+        }
         this._justification = _justification;
     }
 
@@ -179,5 +172,4 @@ public class Suggestion {
     public void set_student(User _student) {
         this._student = _student;
     }
-
 }

@@ -41,6 +41,7 @@ public class SuggestionDto {
 
     }
 
+
     public int get_id() {
         return _id;
     }

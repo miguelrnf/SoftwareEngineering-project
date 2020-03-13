@@ -8,17 +8,22 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 @Transactional
 public interface SuggestionRepository extends JpaRepository<Suggestion, Integer> {
     @Query(value = "SELECT * FROM suggestions s WHERE s.key = :key", nativeQuery = true)
-    Suggestion findByKey(Integer key);
+    Optional<Suggestion> findByKey(Integer key);
+
 
     @Query(value = "SELECT MAX(key) FROM suggestions", nativeQuery = true)
     Integer getMaxSuggestionNumber();
 
+
     @Query (value = "SELECT * FROM suggestions s WHERE s.user_id = :id", nativeQuery =  true)
     ArrayList <Suggestion> listAllSuggestions (Integer id);
+
+    @Query(value = "SELECT * FROM suggestions s WHERE s.status = 'APPROVED'", nativeQuery = true)
+    Optional<List<Suggestion>> getApprovedList();
 }

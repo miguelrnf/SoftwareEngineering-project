@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -68,6 +69,9 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=false)
+    private Set<PostQuestion> postQuestions = new HashSet<>();
 
     public Question() {
     }
@@ -200,6 +204,14 @@ public class Question {
 
     public void addTopic(Topic topic) {
         topics.add(topic);
+    }
+
+    public Set<PostQuestion> getPostQuestions() {
+        return postQuestions;
+    }
+
+    public void setPostQuestions(Set<PostQuestion> postQuestions) {
+        this.postQuestions = postQuestions;
     }
 
     public void remove() {
