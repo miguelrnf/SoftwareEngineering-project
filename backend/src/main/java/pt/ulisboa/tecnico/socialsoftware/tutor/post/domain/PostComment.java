@@ -49,10 +49,10 @@ public class PostComment {
     }
 
     public PostComment(Integer key, User u, Post post, PostCommentDto dto) {
-        int MAX_LENGTH = 1024;
+        int maxLength = 1024;
         this.user = u;
         this.key = key;
-        checkPostCommentConsistency(dto.getCreationDate(), dto.getComment(), MAX_LENGTH);
+        checkPostCommentConsistency(dto.getCreationDate(), dto.getComment(), maxLength);
         this.creationDate = dto.getCreationDate();
         this.comment = dto.getComment();
         this.post = post;
@@ -130,7 +130,6 @@ public class PostComment {
     }
 
     public void addChild(PostComment pc) {
-        System.out.println(pc);
         this.children.add(pc);
     }
 
