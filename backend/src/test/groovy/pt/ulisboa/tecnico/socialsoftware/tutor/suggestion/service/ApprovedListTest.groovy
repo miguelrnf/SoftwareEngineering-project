@@ -235,7 +235,7 @@ class ApprovedListTest extends Specification {
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
         suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))
 
-        def result = suggestionService.approvedSuggestionList(courseExecution.getId(), new UserDto(t as User))
+        def result = suggestionService.approvedSuggestionList(courseExecution.getId(), new UserDto(VALID_T as User))
 
 
         then:
@@ -265,7 +265,7 @@ class ApprovedListTest extends Specification {
 
 
         then:
-        def result = thrown()
+        def result = thrown(TutorException)
         result.message == expected
 
 
