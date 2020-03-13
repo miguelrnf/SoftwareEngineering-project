@@ -25,7 +25,7 @@ public class TournamentDto implements Serializable {
     private List<UserDto> enrolledStudents = new ArrayList<>();
 
     @Transient
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public TournamentDto(){
     }
