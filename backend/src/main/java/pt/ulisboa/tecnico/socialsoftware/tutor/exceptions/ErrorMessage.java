@@ -68,7 +68,11 @@ public enum ErrorMessage {
     INVALID_ANSWER_BLANK("The answer written is invalid because it is empty"),
     DIFFERENT_QUESTION("You cannot redirect when it's a different question"),
     INVALID_ANSWER_TOO_LONG("The answer given is too long"),
-    ERROR_WHILE_REDIRECTING("There was an error while redirecting the answer");
+    ERROR_WHILE_REDIRECTING("There was an error while redirecting the answer"),
+    INVALID_CREATION_DATE("The creation date is invalid"),
+    INVALID_COMMENT("The comment you submitted is invalid"),
+    INVALID_COMMENT_SEARCH("No results available"),
+    COMMENT_NO_PARENT("The parent does not exist");
 
     public final String label;
 
