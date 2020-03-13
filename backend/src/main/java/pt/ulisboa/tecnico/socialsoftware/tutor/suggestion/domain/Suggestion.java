@@ -54,7 +54,7 @@ public class Suggestion {
 
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.TOAPPROVE;
+    public Status status = Status.TOAPPROVE;
 
 
     @ManyToOne

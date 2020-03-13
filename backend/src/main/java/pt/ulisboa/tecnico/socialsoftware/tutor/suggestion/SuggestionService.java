@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -135,11 +136,6 @@ public class SuggestionService {
         Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
         checkIfUserIsValid (suggestionDto,s);
 
-
-        System.out.println(("################################################################################"));
-        System.out.println(s.get_student().getId());
-        System.out.println(("################################################################################"));
-
         if (s.get_questionStr().isEmpty()) {
 
             throw new TutorException(SUGGESTION_EMPTY);
@@ -155,6 +151,22 @@ public class SuggestionService {
         s.set_questionStr(suggestionDto.get_questionStr());
 
         return new SuggestionDto(s);
+
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SuggestionDto> listAllSuggestions(UserDto userdto) {
+
+        checkIfUserHasRoleStudent(checkIfUserExists(userdto.getUsername()));
+
+        List<SuggestionDto> array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+
+        if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+        return array;
 
     }
 }

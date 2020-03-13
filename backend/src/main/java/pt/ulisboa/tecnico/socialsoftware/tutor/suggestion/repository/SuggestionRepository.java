@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,7 @@ public interface SuggestionRepository extends JpaRepository<Suggestion, Integer>
 
     @Query(value = "SELECT MAX(key) FROM suggestions", nativeQuery = true)
     Integer getMaxSuggestionNumber();
+
+    @Query (value = "SELECT * FROM suggestions s WHERE s.user_id = :id", nativeQuery =  true)
+    ArrayList <Suggestion> listAllSuggestions (Integer id);
 }
