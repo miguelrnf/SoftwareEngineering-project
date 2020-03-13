@@ -176,4 +176,10 @@ public class Suggestion {
     public void set_student(User _student) {
         this._student = _student;
     }
+
+    public void remove() {
+        this.courseExecution = null;
+        this._student = null;
+        this.topics = null;
+    }
 }
