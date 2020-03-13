@@ -60,8 +60,18 @@ public enum ErrorMessage {
     USER_HAS_WRONG_ROLE("User has wrong role"),
     SUGGESTION_TOO_LONG("Suggestion is too long"),
     SUGGESTION_EMPTY("Empty suggestion"),
-    EMPTY_TOPICS("No topics");
+    EMPTY_TOPICS("No topics"),
+    JUSTIFICATION_EMPTY("No justufication"),
+    SUGGESTION_NOT_FOUND("Not found"),
 
+    //new errors for posts
+    USER_HAS_NOT_ANSWERED("You have not answered the given question"),
+    NO_STUDENT_QUESTION("You cannot submit a post without a writing a question"),
+    STUDENT_QUESTION_TOO_LONG("Your question is too long"),
+    INVALID_POST("The specified post does not exist"),
+    NOT_YOUR_POST("You do not have permission to change somebody else's post"),
+    NOT_SUGGESTION_CREATOR("User not the one who created the suggestion"),
+    NO_APPROVED_SUGGESTIONS("No approved suggestions");
 
     public final String label;
 

@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
@@ -23,12 +24,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,8 +87,57 @@ public class SuggestionService {
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
-        this.entityManager.persist(suggestion);
+        entityManager.persist(suggestion);
         return new SuggestionDto(suggestion);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SuggestionDto approveSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
+        String username = userDto.getUsername();
+        CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+
+        suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()) );
+        suggestion.set_justification(suggestionDto.get_justification());
+
+        return new SuggestionDto(suggestion);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SuggestionDto> approvedSuggestionList(int courseId, UserDto userDto){
+        String username = userDto.getUsername();
+        CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
+        Optional<List<Suggestion>> approvedList = suggestionRepository.getApprovedList();
+        if(approvedList.isEmpty())
+            throw new TutorException(NO_APPROVED_SUGGESTIONS);
+        return approvedList.get().stream().map(SuggestionDto::new).collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void deleteSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
+        String username = userDto.getUsername();
+        CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+
+        if(!user.getUsername().equals(suggestionDto.get_student().getUsername()))  throw new TutorException(NOT_SUGGESTION_CREATOR);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+
+        entityManager.remove(suggestion);
     }
 
     private User checkIfUserExists(String username) {
@@ -93,15 +146,16 @@ public class SuggestionService {
         return u;
     }
 
+    private Suggestion checkIfSuggestionExists(int suggestionKey) {
+        return suggestionRepository.findByKey(suggestionKey).orElseThrow(() -> new TutorException(SUGGESTION_NOT_FOUND));
+    }
+
     private  Set<Topic> checkIfTopicExists(int courseId, SuggestionDto suggestionDto) {
         List<TopicDto> newTopics = suggestionDto.get_topicsList();
 
         if (newTopics.isEmpty()){
             throw new TutorException(EMPTY_TOPICS);
         }
-        System.out.println(topicRepository.count());
-        System.out.println("--------------------------------------------------------------");
-        System.out.println(topicRepository.findTopicByName(courseId, suggestionDto.get_topicsList().get(0).getName()));
 
         newTopics.stream().filter(topic -> topicRepository.findTopicByName(courseId, topic.getName()) != null )
                 .findAny().orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND));
