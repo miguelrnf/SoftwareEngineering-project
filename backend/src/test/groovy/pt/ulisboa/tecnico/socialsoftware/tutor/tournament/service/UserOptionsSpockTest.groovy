@@ -48,6 +48,7 @@ class UserOptionsSpockTest extends Specification{
     static final DATEBEFORE = LocalDateTime.now().minusDays(1)
     static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static int tempId = 1
 
     @Autowired
     TournamentService tournamentService
@@ -93,6 +94,9 @@ class UserOptionsSpockTest extends Specification{
 
     @Shared
     def ASSDTO_3
+
+    @Shared
+    def ASSDTO_4
 
     @Shared
     def tournamentDto
@@ -154,33 +158,33 @@ class UserOptionsSpockTest extends Specification{
 
         and: " a valid assessments"
         ASSDTO = new AssessmentDto()
-        ASSDTO.setId(1)
         ASSDTO.setStatus(Assessment.Status.AVAILABLE.name())
         ASSDTO.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
         and: "a valid assessment"
         ASSDTO_0 = new AssessmentDto()
-        ASSDTO_0.setId(2)
         ASSDTO_0.setStatus(Assessment.Status.AVAILABLE.name())
         ASSDTO_0.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
         and: "a invalid assessment"
         ASSDTO_1 = new AssessmentDto()
-        ASSDTO_1.setId(3)
         ASSDTO_1.setStatus(Assessment.Status.DISABLED.name())
         ASSDTO_1.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
         and: "a invalid assessment"
         ASSDTO_2 = new AssessmentDto()
-        ASSDTO_2.setId(4)
         ASSDTO_2.setStatus(Assessment.Status.REMOVED.name())
         ASSDTO_2.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
         and: "a invalid assessment"
         ASSDTO_3 = new AssessmentDto()
-        ASSDTO_3.setId(5)
         ASSDTO_3.setStatus(Assessment.Status.AVAILABLE.name())
         ASSDTO_3.setTopicConjunctionsFromUnit(topicConjunctionDto)
+
+        and: "a not saved assessment"
+        ASSDTO_4 = new AssessmentDto()
+        ASSDTO_4.setStatus(Assessment.Status.AVAILABLE.name())
+        ASSDTO_4.setTopicConjunctionsFromUnit(topicConjunctionDto)
 
     }
 
@@ -208,6 +212,7 @@ class UserOptionsSpockTest extends Specification{
 
     def "valid options"(){
         given:"an assessment"
+        ASSDTO.setId(tempId++)
         def assr = assessmentService.createAssessment(courseExecution.getId(), ASSDTO, true)
         tournamentDto.setAssessmentDto(ASSDTO)
 
@@ -222,10 +227,11 @@ class UserOptionsSpockTest extends Specification{
 
     @Unroll
     def "invalid arguments: assessmentDto=#assDto | AvailableDate=#avalDate | ConclusionDate = #concDate | NumberOfQuestions=#questNumb || errorMessage=#errorMessage t"(){
-        assessmentService.createAssessment(courseExecution.getId(), assDto, true)
+        (assDto as AssessmentDto).setId(tempId++)
+        assessmentService.createAssessment(courseExecution.getId(), (assDto as AssessmentDto), true)
         tournamentDto.setAvailableDate(avalDate.format(formatter))
         tournamentDto.setConclusionDate(concDate.format(formatter))
-        tournamentDto.setAssessmentDto(assDto)
+        tournamentDto.setAssessmentDto(assDto as AssessmentDto)
         tournamentDto.setNumberOfQuestions(questNumb)
         println(assessmentRepository.findAll().dump())
 

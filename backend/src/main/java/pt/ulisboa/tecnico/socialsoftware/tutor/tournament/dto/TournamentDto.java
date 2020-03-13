@@ -37,9 +37,8 @@ public class TournamentDto implements Serializable {
 
         this.status = Tournament.TournamentStatus.CREATED;
 
-        if (tournament.getStatus() != null){
+        if (tournament.getStatus() != null)
             this.status = tournament.getStatus();
-        }
 
         this.owner = new UserDto(tournament.getOwner());
 
@@ -124,23 +123,20 @@ public class TournamentDto implements Serializable {
     }
 
     public LocalDateTime getCreationDateDate() {
-        if (getCreationDate() == null || getCreationDate().isEmpty()) {
+        if (getCreationDate() == null || getCreationDate().isEmpty())
             return null;
-        }
         return LocalDateTime.parse(getCreationDate(), formatter);
     }
 
     public LocalDateTime getAvailableDateDate() {
-        if (getAvailableDate() == null || getAvailableDate().isEmpty()) {
+        if (getAvailableDate() == null || getAvailableDate().isEmpty())
             return null;
-        }
         return LocalDateTime.parse(getAvailableDate(), formatter);
     }
 
     public LocalDateTime getConclusionDateDate() {
-        if (getConclusionDate() == null || getConclusionDate().isEmpty()) {
+        if (getConclusionDate() == null || getConclusionDate().isEmpty())
             return null;
-        }
         return LocalDateTime.parse(getConclusionDate(), formatter);
     }
 

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
@@ -59,57 +60,29 @@ public class TournamentService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        if (tournamentDto.getKey() == null) {
+        if (tournamentDto.getKey() == null)
             tournamentDto.setKey(getMaxTournamentKey() + 1);
-        }
 
-        if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null){
+        if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null)
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Owner");
-        }
 
-        if(tournamentDto.getNumberOfQuestions() == null || tournamentDto.getNumberOfQuestions() < 1){
+        if(tournamentDto.getNumberOfQuestions() == null || tournamentDto.getNumberOfQuestions() < 1)
             throw new TutorException(NOT_ENOUGH_QUESTIONS_TOURNAMENT);
-        }
 
         User user = findUsername(tournamentDto.getOwner().getUsername());
 
 
-        if(user.getRole() != User.Role.STUDENT){
+        if(user.getRole() != User.Role.STUDENT)
             throw new TutorException(TOURNAMENT_PERMISSION);
-        }
 
-        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank()){
+        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
-        }
 
-        if(tournamentDto.getAssessmentDto() == null){
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "AssessmentDto");
-        }
+        Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
-        int assessmentId = tournamentDto.getAssessmentDto().getId();
+        Tournament tournament = new Tournament(tournamentDto, user, assessment);
 
-        List<Assessment> assessmentL = assessmentRepository.findByExecutionCourseId(executionId).stream().filter(a -> a.getId() == assessmentId).collect(Collectors.toList());
-
-        if (assessmentL.isEmpty()){
-            throw new TutorException(ASSESSMENT_NOT_FOUND, assessmentId);
-        }
-        Assessment assessmentt = assessmentL.get(0);
-        Tournament tournament = new Tournament(tournamentDto, user, assessmentt);
-
-
-        if(!courseExecution.getAssessments().contains(assessmentt)){
-            throw new TutorException(ASSESSMENT_NOT_FOUND, assessmentId);
-        }
-
-        if(assessmentt.getTopicConjunctions().isEmpty()){
-            throw new TutorException(TOPIC_CONJUNCTION_NOT_FOUND);
-        }
-
-
-
-        assignTournamenttoExecution(tournament, courseExecution);
-
-        checkAssessmentStatus(tournamentDto.getAssessmentDto().getStatus());
+        assignTournamentToExecution(tournament, courseExecution);
 
         setValidCreationDate(tournament, tournamentDto.getCreationDate(), formatter);
         setValidAvailableDate(tournament, tournamentDto.getAvailableDate(), formatter);
@@ -120,7 +93,32 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-    private void assignTournamenttoExecution(Tournament t, CourseExecution courseExecution){
+    private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){
+
+        if(assessmentDto == null)
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "AssessmentDto");
+
+        int assessmentId = assessmentDto.getId();
+
+        List<Assessment> assessmentL = assessmentRepository.findByExecutionCourseId(courseExecution.getId()).stream().filter(a -> a.getId() == assessmentId).collect(Collectors.toList());
+
+        if (assessmentL.isEmpty())
+            throw new TutorException(ASSESSMENT_NOT_FOUND, assessmentId);
+
+        Assessment assessment = assessmentL.get(0);
+
+        if(!courseExecution.getAssessments().contains(assessment))
+            throw new TutorException(ASSESSMENT_NOT_FOUND, assessmentId);
+
+        if(assessment.getTopicConjunctions().isEmpty())
+            throw new TutorException(TOPIC_CONJUNCTION_NOT_FOUND);
+
+        checkAssessmentStatus(assessmentDto.getStatus());
+
+        return assessment;
+    }
+
+    private void assignTournamentToExecution(Tournament t, CourseExecution courseExecution){
         courseExecution.addTournament(t);
         t.setCourseExecution(courseExecution);
     }
@@ -168,17 +166,14 @@ public class TournamentService {
 
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if(user.getRole() != User.Role.STUDENT){
+        if(user.getRole() != User.Role.STUDENT)
             throw new TutorException(TOURNAMENT_PERMISSION_ENROLL);
-        }
 
-        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || tournament.getAvailableDate().isAfter(LocalDateTime.now())){
+        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || tournament.getAvailableDate().isAfter(LocalDateTime.now()))
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
-        }
 
-         if(courseExecution != tournament.getCourseExecution()){
-             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
-         }
+        if(courseExecution != tournament.getCourseExecution())
+            throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
          tournament.enrollStudent(user);
          user.addTournament(tournament);
@@ -188,13 +183,11 @@ public class TournamentService {
         User user = findUsername(username);
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED){
+        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED)
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
-        }
 
-        if(!tournament.getEnrolledStudents().contains(user)){
+        if(!tournament.getEnrolledStudents().contains(user))
             throw new TutorException(UNABLE_TO_UNROLL, user.getUsername());
-        }
 
         tournament.getEnrolledStudents().remove(user);
         user.getTournaments().remove(tournament);

@@ -73,11 +73,11 @@ public class QuizDto implements Serializable {
     }
 
     public Integer getKey() {
-        return id;
+        return key;
     }
 
-    public void setKey(Integer id) {
-        this.id = id;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public boolean getScramble() {
