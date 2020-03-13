@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -32,6 +34,9 @@ public class Post {
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
+    private Set<PostComment> comments = new HashSet<>();
 
     public Post() {
     }
@@ -101,6 +106,25 @@ public class Post {
 
     public void changePostStatus() {
         this.postStatus = !this.postStatus;
+    }
+
+    public Set<PostComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<PostComment> comments) {
+        this.comments = comments;
+    }
+
+    public void addComment(PostComment pc) {
+        this.comments.add(pc);
+    }
+
+    public void remove() {
+        this.question.setPost(null);
+        if(this.comments != null)
+            this.comments.forEach(x -> x.setPost(null));
+        this.comments = null;
     }
 
     public void changeDiscussStatus() {
