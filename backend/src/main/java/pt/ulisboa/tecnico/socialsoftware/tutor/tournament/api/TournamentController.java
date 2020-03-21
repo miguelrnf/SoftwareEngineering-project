@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.api;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,6 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto createTournament(@Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
         formatDates(tournamentDto);
-
         return tournamentService.createTournament(executionId, tournamentDto);
     }
 
