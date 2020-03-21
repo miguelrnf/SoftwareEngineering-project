@@ -29,10 +29,6 @@ public class TopicConjunction {
     public TopicConjunction() {
     }
 
-    public TopicConjunction(TopicConjunctionDto topicConjunctionsDto) {
-        //this.updateTopics(topicConjunctionsDto.getTopics().stream().map(Topic::new).collect(Collectors.toSet()));
-    }
-
     public Integer getId() {
         return id;
     }
