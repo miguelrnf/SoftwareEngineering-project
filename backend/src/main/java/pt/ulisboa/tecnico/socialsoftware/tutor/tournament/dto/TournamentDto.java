@@ -177,24 +177,16 @@ public class TournamentDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        System.out.println("1");
         if (this == o) return true;
-        System.out.println("2");
         if (o == null || getClass() != o.getClass()) return false;
 
         TournamentDto t = (TournamentDto) o;
 
-        System.out.println("3");
         if (!Objects.equals(id, t.id)) return false;
-        System.out.println("4");
         if (!Objects.equals(key, t.key)) return false;
-        System.out.println("5");
         if (!Objects.equals(title, t.title)) return false;
-        System.out.println("6");
         if (!Objects.equals(owner, t.owner)) return false;
-        System.out.println("7");
         if (status != t.status) return false;
-        System.out.println("8");
         return Objects.equals(enrolledStudents, t.enrolledStudents);
     }
 
