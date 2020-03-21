@@ -12,6 +12,8 @@ import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
+import { QuizAnswer } from '@/models/management/QuizAnswer';
+import { QuizAnswers } from '@/models/management/QuizAnswers';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -58,6 +60,17 @@ export default class RemoteServices {
   static async demoTeacherLogin(): Promise<AuthDto> {
     return httpClient
       .get('/auth/demo/teacher')
+      .then(response => {
+        return new AuthDto(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async demoAdminLogin(): Promise<AuthDto> {
+    return httpClient
+      .get('/auth/demo/admin')
       .then(response => {
         return new AuthDto(response.data);
       })
@@ -230,15 +243,21 @@ export default class RemoteServices {
       });
   }
 
-  static async getEvaluationQuiz(quizId: number): Promise<StatementQuiz> {
+  static async getQuizByQRCode(quizId: number): Promise<StatementQuiz> {
     return httpClient
-      .get(`/quizzes/${quizId}/evaluation`)
+      .get(`/quizzes/${quizId}/byqrcode`)
       .then(response => {
         return new StatementQuiz(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async startQuiz(quizId: number) {
+    return httpClient.get(`/quizzes/${quizId}/start`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static submitAnswer(quizId: number, answer: StatementAnswer) {
@@ -255,8 +274,8 @@ export default class RemoteServices {
     return httpClient
       .get(`/quizzes/${quizId}/conclude`)
       .then(response => {
-        if (response.data.answers) {
-          return response.data.answers.map((answer: any) => {
+        if (response.data) {
+          return response.data.map((answer: any) => {
             return new StatementCorrectAnswer(answer);
           });
         }
@@ -329,6 +348,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getQuizAnswers(quizId: number): Promise<QuizAnswers> {
+    return httpClient
+      .get(`/quizzes/${quizId}/answers`)
+      .then(response => {
+        return new QuizAnswers(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async saveQuiz(quiz: Quiz): Promise<Quiz> {
     if (quiz.id) {
       return httpClient
@@ -352,19 +382,6 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
     }
-  }
-
-  static async getCourseExecutions(): Promise<Course[]> {
-    return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.courseId}`)
-      .then(response => {
-        return response.data.map((course: any) => {
-          return new Course(course);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
   }
 
   static async getCourseStudents(course: Course) {
@@ -467,6 +484,38 @@ export default class RemoteServices {
       .then(response => {
         return new Course(response.data);
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static getCourses(): Promise<Course[]> {
+    return httpClient
+      .get('/admin/courses/executions')
+      .then(response => {
+        return response.data.map((course: any) => {
+          return new Course(course);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createCourse(course: Course): Promise<Course> {
+    return httpClient
+      .post('/admin/courses/executions', course)
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteCourse(courseExecutionId: number | undefined) {
+    return httpClient
+      .delete('/admin/courses/executions/' + courseExecutionId)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
