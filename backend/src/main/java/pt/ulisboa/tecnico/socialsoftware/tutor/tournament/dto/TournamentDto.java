@@ -22,7 +22,7 @@ public class TournamentDto implements Serializable {
     private AssessmentDto assessmentDto;
     private String title;
     private UserDto owner;
-    private Tournament.TournamentStatus status;
+    private String status;
     private List<UserDto> enrolledStudents = new ArrayList<>();
 
     @Transient
@@ -36,10 +36,10 @@ public class TournamentDto implements Serializable {
         this.key = tournament.getKey();
         setTitle(tournament.getTitle());
 
-        this.status = Tournament.TournamentStatus.CREATED;
+        this.status = Tournament.TournamentStatus.CREATED.name();
 
         if (tournament.getStatus() != null)
-            this.status = tournament.getStatus();
+            this.status = tournament.getStatus().name();
 
         this.owner = new UserDto(tournament.getOwner());
 
@@ -87,11 +87,11 @@ public class TournamentDto implements Serializable {
         this.owner = owner;
     }
 
-    public Tournament.TournamentStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Tournament.TournamentStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

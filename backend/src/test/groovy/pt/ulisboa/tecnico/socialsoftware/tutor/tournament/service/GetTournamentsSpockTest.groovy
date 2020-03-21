@@ -124,7 +124,7 @@ class GetTournamentsSpockTest extends Specification{
         tournamentDto1 = new TournamentDto()
         tournamentDto1.setId(1)
         tournamentDto1.setKey(1)
-        tournamentDto1.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto1.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
         tournamentDto1.setNumberOfQuestions(3)
@@ -210,11 +210,11 @@ class GetTournamentsSpockTest extends Specification{
         result.size() == size
 
         where:
-                    status                       || size
-        Tournament.TournamentStatus.CANCELED     || 2
-        Tournament.TournamentStatus.CREATED      || 2
-        Tournament.TournamentStatus.OPEN         || 2
-        Tournament.TournamentStatus.CLOSED       || 2
+        status         || size
+        "CANCELED"     ||  2
+        "CREATED"      ||  2
+        "OPEN"         ||  2
+        "CLOSED"       ||  2
     }
 
     def "empty list"() {
