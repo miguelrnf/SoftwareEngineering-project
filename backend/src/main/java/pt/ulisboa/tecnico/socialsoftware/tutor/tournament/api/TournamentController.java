@@ -21,6 +21,7 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto createTournament(@Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
         formatDates(tournamentDto);
+
         return tournamentService.createTournament(executionId, tournamentDto);
     }
 
