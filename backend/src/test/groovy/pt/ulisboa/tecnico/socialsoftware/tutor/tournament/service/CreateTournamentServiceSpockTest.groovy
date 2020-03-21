@@ -124,7 +124,7 @@ class CreateTournamentServiceSpockTest extends Specification {
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
+        given: "a quiz"
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)

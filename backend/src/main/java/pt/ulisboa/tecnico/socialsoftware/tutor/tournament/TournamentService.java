@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
@@ -22,6 +24,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,6 +95,30 @@ public class TournamentService {
         entityManager.persist(tournament);
 
         return new TournamentDto(tournament);
+    }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listTournaments(int executionId){
+        List<TournamentDto> result;
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        //TODO add date filters when added to project
+        List<Tournament> temp = courseExecution.getTournaments().stream()
+                .filter(t -> t.getStatus() == Tournament.TournamentStatus.CREATED).collect(Collectors.toList());
+
+
+        result = temp.stream().map(TournamentDto::new).collect(Collectors.toList());
+
+        if (result.isEmpty()){
+            throw new TutorException(TOURNAMENT_LIST_EMPTY);
+        }
+
+
+        return result;
     }
 
     private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){

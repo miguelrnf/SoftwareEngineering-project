@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TournamentDto implements Serializable {
 
@@ -39,7 +40,7 @@ public class TournamentDto implements Serializable {
 
         if (tournament.getStatus() != null)
             this.status = tournament.getStatus();
-
+      
         this.owner = new UserDto(tournament.getOwner());
 
         if (tournament.getCreationDate() != null)
@@ -172,5 +173,39 @@ public class TournamentDto implements Serializable {
                 ", enrolledStudents=" + enrolledStudents +
                 ", formatter=" + formatter +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        System.out.println("1");
+        if (this == o) return true;
+        System.out.println("2");
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TournamentDto t = (TournamentDto) o;
+
+        System.out.println("3");
+        if (!Objects.equals(id, t.id)) return false;
+        System.out.println("4");
+        if (!Objects.equals(key, t.key)) return false;
+        System.out.println("5");
+        if (!Objects.equals(title, t.title)) return false;
+        System.out.println("6");
+        if (!Objects.equals(owner, t.owner)) return false;
+        System.out.println("7");
+        if (status != t.status) return false;
+        System.out.println("8");
+        return Objects.equals(enrolledStudents, t.enrolledStudents);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (key != null ? key.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (owner != null ? owner.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (enrolledStudents != null ? enrolledStudents.hashCode() : 0);
+        return result;
     }
 }
