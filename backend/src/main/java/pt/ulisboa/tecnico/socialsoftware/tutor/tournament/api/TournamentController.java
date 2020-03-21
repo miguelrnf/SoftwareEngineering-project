@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -18,7 +21,7 @@ public class TournamentController {
     @GetMapping("/executions/{executionId}/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getOpenTournaments(@PathVariable Integer executionId){
-        return tournamentService.getOpenTournaments(executionId);
+        return tournamentService.listTournaments(executionId);
     }
 
     @PostMapping("/executions/{executionId}/tournaments")

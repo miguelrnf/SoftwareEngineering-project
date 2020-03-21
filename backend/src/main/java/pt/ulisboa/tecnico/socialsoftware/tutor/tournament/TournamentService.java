@@ -6,26 +6,18 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,9 +25,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -208,26 +198,31 @@ public class TournamentService {
 
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getOpenTournaments(int courseExecutionId) {
-        return tournamentRepository.findAll().stream()
-                .filter(tournament -> tournament.getStatus().equals(Tournament.TournamentStatus.OPEN) || tournament
+    public List<TournamentDto> listTournaments(int courseExecutionId) {
+        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+                .filter(tournament -> tournament.getStatus().equals(Tournament.TournamentStatus.CREATED) && tournament
                         .getCourseExecution().getId().equals(courseExecutionId))
-                .map(TournamentDto::new).sorted(Comparator
-                        .comparing(TournamentDto::getTitle))
+                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
+        if(temp.isEmpty())
+            throw new TutorException(TOURNAMENT_LIST_EMPTY);
 
+        return temp;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto findById(int tournamentId, int executionId) {
-        TournamentDto tournament = tournamentRepository.findById(tournamentId).stream().filter(t -> t.getCourseExecution().getId()
-                .equals(executionId)).map(TournamentDto::new).collect(Collectors.toList()).get(0);
+        List<TournamentDto> tournament = tournamentRepository.findById(tournamentId).stream().filter(t -> t.getCourseExecution().getId()
+                .equals(executionId)).map(TournamentDto::new).collect(Collectors.toList());
 
-        if(tournament == null)
+        if(tournament.isEmpty())
             throw new TutorException(TOURNAMENT_NOT_FOUND, tournamentId);
 
-        return tournament;
+        return tournament.get(0);
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)

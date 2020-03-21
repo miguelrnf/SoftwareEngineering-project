@@ -50,6 +50,7 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
     TOURNAMENT_UNABLE_EDIT("Unable to edit tournament, field: %s"),
+    TOURNAMENT_LIST_EMPTY("No tournaments found"),
 
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
     NOT_ENOUGH_QUESTIONS_TOURNAMENT("Not enough questions to create a tournament"),
