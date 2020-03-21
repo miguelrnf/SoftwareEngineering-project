@@ -171,6 +171,7 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Assessement Status");
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void enrollStudent(int courseExecutionId, String username, int tournamentId) {
         User user = findUsername(username);
 
@@ -191,6 +192,7 @@ public class TournamentService {
          user.addTournament(tournament);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void unrollStudent(String username, int tournamentId){
         User user = findUsername(username);
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
