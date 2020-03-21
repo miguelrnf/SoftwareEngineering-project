@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
@@ -17,6 +16,8 @@ public class StatementQuizDto implements Serializable {
     private Integer id;
     private Integer quizAnswerId;
     private String title;
+    private boolean qrCodeOnly;
+    private boolean oneWay;
     private String availableDate;
     private String conclusionDate;
     private Long secondsToAvailability;
@@ -30,6 +31,8 @@ public class StatementQuizDto implements Serializable {
         this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
+        this.qrCodeOnly = quizAnswer.getQuiz().isQrCodeOnly();
+        this.oneWay = quizAnswer.getQuiz().isOneWay();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
             this.availableDate = quizAnswer.getQuiz().getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
@@ -41,8 +44,15 @@ public class StatementQuizDto implements Serializable {
             }
         }
 
-        this.questions = quizAnswer.getQuestionAnswers().stream().sorted(Comparator.comparing(QuestionAnswer::getSequence)).map(questionAnswer ->  new StatementQuestionDto(questionAnswer.getQuizQuestion())).collect(Collectors.toList());
-        this.answers = quizAnswer.getQuestionAnswers().stream().sorted(Comparator.comparing(QuestionAnswer::getSequence)).map(StatementAnswerDto::new).collect(Collectors.toList());
+        this.questions = quizAnswer.getQuestionAnswers().stream()
+                .map(StatementQuestionDto::new)
+                .sorted(Comparator.comparing(StatementQuestionDto::getSequence))
+                .collect(Collectors.toList());
+
+        this.answers = quizAnswer.getQuestionAnswers().stream()
+                .map(StatementAnswerDto::new)
+                .sorted(Comparator.comparing(StatementAnswerDto::getSequence))
+                .collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -67,6 +77,22 @@ public class StatementQuizDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isQrCodeOnly() {
+        return qrCodeOnly;
+    }
+
+    public void setQrCodeOnly(boolean qrCodeOnly) {
+        this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public boolean isOneWay() {
+        return oneWay;
+    }
+
+    public void setOneWay(boolean oneWay) {
+        this.oneWay = oneWay;
     }
 
     public String getAvailableDate() {

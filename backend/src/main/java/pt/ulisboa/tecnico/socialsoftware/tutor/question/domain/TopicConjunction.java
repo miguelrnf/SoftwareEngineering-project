@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,11 +21,13 @@ public class TopicConjunction {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
+
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
-    public TopicConjunction(){}
+    public TopicConjunction() {
+    }
 
     public TopicConjunction(TopicConjunctionDto topicConjunctionsDto) {
         //this.updateTopics(topicConjunctionsDto.getTopics().stream().map(Topic::new).collect(Collectors.toSet()));
@@ -94,5 +98,12 @@ public class TopicConjunction {
             this.topics.add(topic);
             topic.addTopicConjunction(this);
         });
+    }
+
+    public List<Question> getQuestions() {
+        return this.topics.stream()
+                .flatMap(topic -> topic.getQuestions().stream())
+                .filter(question -> question.getTopics().equals(this.topics))
+                .collect(Collectors.toList());
     }
 }

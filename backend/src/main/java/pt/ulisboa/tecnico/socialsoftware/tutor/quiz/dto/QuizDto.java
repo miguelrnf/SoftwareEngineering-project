@@ -17,6 +17,8 @@ public class QuizDto implements Serializable {
     private Integer id;
     private Integer key;
     private boolean scramble;
+    private boolean qrCodeOnly;
+    private boolean oneWay;
     private String title;
     private String creationDate = null;
     private String availableDate = null;
@@ -29,7 +31,7 @@ public class QuizDto implements Serializable {
     private List<QuestionDto> questions = new ArrayList<>();
 
     @Transient
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public QuizDto(){
     }
@@ -38,6 +40,8 @@ public class QuizDto implements Serializable {
         this.id = quiz.getId();
         this.key = quiz.getKey();
         this.scramble = quiz.getScramble();
+        this.qrCodeOnly = quiz.isQrCodeOnly();
+        this.oneWay = quiz.isOneWay();
         this.title = quiz.getTitle();
         this.type = quiz.getType();
         this.series = quiz.getSeries();
@@ -73,19 +77,35 @@ public class QuizDto implements Serializable {
     }
 
     public Integer getKey() {
-        return id;
+        return key;
     }
 
-    public void setKey(Integer id) {
-        this.id = id;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
-    public boolean getScramble() {
+    public boolean isScramble() {
         return scramble;
     }
 
     public void setScramble(boolean scramble) {
         this.scramble = scramble;
+    }
+
+    public boolean isQrCodeOnly() {
+        return qrCodeOnly;
+    }
+
+    public void setQrCodeOnly(boolean qrCodeOnly) {
+        this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public boolean isOneWay() {
+        return oneWay;
+    }
+
+    public void setOneWay(boolean oneWay) {
+        this.oneWay = oneWay;
     }
 
     public String getTitle() {
@@ -94,10 +114,6 @@ public class QuizDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public boolean isScramble() {
-        return scramble;
     }
 
     public String getCreationDate() {

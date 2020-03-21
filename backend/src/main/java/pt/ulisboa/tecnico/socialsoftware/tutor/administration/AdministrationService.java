@@ -6,6 +6,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -30,6 +35,37 @@ public class AdministrationService {
         CourseExecution courseExecution = createCourseExecution(courseDto, course);
 
         return new CourseDto(courseExecution);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto getCourseExecutionById(int courseExecutionId) {
+        return courseExecutionRepository.findById(courseExecutionId)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<CourseDto> getCourseExecutions(User.Role role) {
+        return courseExecutionRepository.findAll().stream()
+                .filter(courseExecution -> role.equals(User.Role.ADMIN) ||
+                        (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(Course.DEMO_COURSE)))
+                .map(CourseDto::new)
+                .sorted(Comparator
+                        .comparing(CourseDto::getName)
+                        .thenComparing(CourseDto::getAcademicTerm))
+                .collect(Collectors.toList());
+
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeCourseExecution(int courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        courseExecution.delete();
+
+        courseExecutionRepository.delete(courseExecution);
     }
 
     private CourseExecution createCourseExecution(CourseDto courseDto, Course course) {
@@ -64,4 +100,5 @@ public class AdministrationService {
             throw new TutorException(COURSE_TYPE_NOT_DEFINED);
         }
     }
+
 }

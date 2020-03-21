@@ -1,3 +1,4 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 //package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 //
 //import org.springframework.beans.factory.annotation.Autowired
@@ -133,7 +134,7 @@
 //        def correctAnswersDto = answerService.concludeQuiz(user, quizId)
 //
 //        then: 'the value is createQuestion and persistent'
-//        quizAnswer.getCompleted()
+//        quizAnswer.isCompleted()
 //        quizAnswer.getAnswerDate() == date
 //        questionAnswerRepository.findAll().size() == 1
 //        def result = questionAnswerRepository.findAll().get(0)
@@ -261,7 +262,7 @@
 //        def correctAnswersDto = answerService.concludeQuiz(user, secondResultAnswersDto)
 //
 //        then: 'the value is createQuestion and persistent'
-//        quizAnswer.getCompleted()
+//        quizAnswer.isCompleted()
 //        quizAnswer.getAnswerDate() == date
 //        questionAnswerRepository.findAll().size() == 1
 //        def result = questionAnswerRepository.findAll().get(0)

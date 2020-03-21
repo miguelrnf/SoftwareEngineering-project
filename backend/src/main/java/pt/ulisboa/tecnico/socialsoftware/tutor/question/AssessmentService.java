@@ -8,6 +8,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -19,15 +20,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -48,8 +44,13 @@ public class AssessmentService {
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findAssessmentCourseExecution(int assessmentId) {
+        return assessmentRepository.findById(assessmentId)
+                .map(Assessment::getCourseExecution)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
+    }
 
     @Retryable(
       value = { SQLException.class },
@@ -78,20 +79,35 @@ public class AssessmentService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public AssessmentDto createAssessment(int executionId, AssessmentDto assessmentDto) {
+    public AssessmentDto createAssessment(int executionId, AssessmentDto assessmentDto, boolean isOurMethod) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        List<TopicConjunction> topicConjunctions = assessmentDto.getTopicConjunctions().stream()
-                .map(topicConjunctionDto -> {
-                    TopicConjunction topicConjunction = new TopicConjunction();
-                    Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
-                    topicConjunction.updateTopics(newTopics);
-                    return topicConjunction;
-                }).collect(Collectors.toList());
+        int courseid = courseExecution.getCourse().getId();
+
+        List<TopicConjunction> topicConjunctions;
+
+        if (!isOurMethod)
+            topicConjunctions = assessmentDto.getTopicConjunctions().stream()
+                    .map(topicConjunctionDto -> {
+                        TopicConjunction topicConjunction = new TopicConjunction();
+                        Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
+                        topicConjunction.updateTopics(newTopics);
+                        return topicConjunction;
+                    }).collect(Collectors.toList());
+        else
+            topicConjunctions = assessmentDto.getTopicConjunctions().stream()
+                    .map(topicConjunctionDto -> {
+                        TopicConjunction topicConjunction = new TopicConjunction();
+                        Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findTopicByName(courseid, topicDto.getName())).collect(Collectors.toSet());
+                        if (newTopics.isEmpty() || newTopics.stream().noneMatch(Objects::nonNull))
+                            throw new TutorException(TOPIC_CONJUNCTION_NOT_FOUND, topicConjunctionDto.getId());
+                        topicConjunction.updateTopics(newTopics);
+                        return topicConjunction;
+                    }).collect(Collectors.toList());
 
         Assessment assessment = new Assessment(courseExecution, topicConjunctions, assessmentDto);
+        assessmentRepository.save(assessment);
 
-        this.entityManager.persist(assessment);
         return new AssessmentDto(assessment);
     }
 
@@ -143,7 +159,7 @@ public class AssessmentService {
     public void removeAssessment(Integer assessmentId) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.remove();
-        entityManager.remove(assessment);
+        assessmentRepository.delete(assessment);
     }
 
     @Retryable(

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlExport;
@@ -15,11 +16,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -40,8 +40,8 @@ public class QuestionService {
     @Autowired
     private TopicRepository topicRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
+    @Autowired
+    private ImageRepository imageRepository;
 
     @Retryable(
       value = { SQLException.class },
@@ -49,6 +49,14 @@ public class QuestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findQuestionCourse(Integer questionId) {
+        return questionRepository.findById(questionId)
+                .map(Question::getCourse)
+                .map(CourseDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
@@ -92,7 +100,7 @@ public class QuestionService {
 
         Question question = new Question(course, questionDto);
         question.setCreationDate(LocalDateTime.now());
-        this.entityManager.persist(question);
+        questionRepository.save(question);
         return new QuestionDto(question);
     }
 
@@ -115,7 +123,7 @@ public class QuestionService {
     public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.remove();
-        entityManager.remove(question);
+        questionRepository.delete(question);
     }
 
     @Retryable(
@@ -142,7 +150,7 @@ public class QuestionService {
 
             question.setImage(image);
 
-            entityManager.persist(image);
+            imageRepository.save(image);
         }
 
         question.getImage().setUrl(question.getKey() + "." + type);
