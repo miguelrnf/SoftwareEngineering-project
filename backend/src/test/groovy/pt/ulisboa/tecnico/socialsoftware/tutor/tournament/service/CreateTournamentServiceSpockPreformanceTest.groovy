@@ -167,7 +167,7 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
 
 
         when:
-        1.upto(5, {
+        1.upto(5000, {
             tournamentService.createTournament(courseExecution.getId(), tournamentDto)
         })
 
