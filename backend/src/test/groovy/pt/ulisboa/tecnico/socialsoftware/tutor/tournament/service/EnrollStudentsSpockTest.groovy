@@ -196,7 +196,7 @@ class EnrollStudentsSpockTest extends Specification{
         TOURNAMENTDTO = new TournamentDto()
         TOURNAMENTDTO.setId(1)
         TOURNAMENTDTO.setKey(1)
-        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED)
+        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
         TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
@@ -307,7 +307,7 @@ class EnrollStudentsSpockTest extends Specification{
        given:
        assdto.setId(tempId++)
        TOURNAMENTDTO.setAssessmentDto(assdto)
-       TOURNAMENTDTO.setStatus(tournamentStatus)
+       TOURNAMENTDTO.setStatus(tournamentStatus.name())
        def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
        when:

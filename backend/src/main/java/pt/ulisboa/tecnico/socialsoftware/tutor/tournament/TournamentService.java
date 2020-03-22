@@ -113,7 +113,7 @@ public class TournamentService {
         if(assessment.getTopicConjunctions().isEmpty())
             throw new TutorException(TOPIC_CONJUNCTION_NOT_FOUND);
 
-        checkAssessmentStatus(assessmentDto.getStatus());
+        checkAssessmentStatus(assessment.getStatus().name());
 
         return assessment;
     }

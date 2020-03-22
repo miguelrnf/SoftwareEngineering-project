@@ -74,7 +74,7 @@ public class Tournament {
 
         this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
-        this.status = tournamentDto.getStatus();
+        setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
