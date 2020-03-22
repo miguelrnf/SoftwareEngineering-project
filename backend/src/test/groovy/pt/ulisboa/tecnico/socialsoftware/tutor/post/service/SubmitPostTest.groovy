@@ -30,6 +30,7 @@ class SubmitPostTest extends Specification {
     public static final String COURSE_NAME = 'TECNICO'
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
+    public static final int VALID_COURSE_EXECUTION = 11
     public static final String EMPTY_QUESTION = ''
     public static final int VALID_KEY = 1
     public static final int INVALID_KEY = -1
@@ -181,7 +182,7 @@ class SubmitPostTest extends Specification {
         pq.setUser(new UserDto (u as User))
 
         then:
-        def result = postService.submitPost(pq)
+        def result = postService.submitPost(VALID_COURSE_EXECUTION, pq)
         result.getQuestion().getQuestion().getKey() == pq.getQuestion().getKey()
         result.getQuestion().getStudentQuestion() == pq.getStudentQuestion()
         result.getQuestion().getUser().getUsername() == pq.getUser().getUsername()
@@ -200,7 +201,7 @@ class SubmitPostTest extends Specification {
         pq.setQuestion(q as QuestionDto)
         pq.setStudentQuestion(sq)
         pq.setUser(new UserDto (u as User))
-        postService.submitPost(pq)
+        postService.submitPost(VALID_COURSE_EXECUTION, pq)
 
         then:
         def result = thrown(TutorException)
@@ -222,7 +223,7 @@ class SubmitPostTest extends Specification {
         pq.setQuestion(q as QuestionDto)
         pq.setStudentQuestion(sq)
         pq.setUser(new UserDto (u as User))
-        postService.submitPost(pq)
+        postService.submitPost(VALID_COURSE_EXECUTION, pq)
 
         then:
         def result = thrown(TutorException)

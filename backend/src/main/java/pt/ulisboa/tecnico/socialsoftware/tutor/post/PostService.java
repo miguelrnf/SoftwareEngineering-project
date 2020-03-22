@@ -55,7 +55,7 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto submitPost(PostQuestionDto postQuestionDto) {
+    public PostDto submitPost(int executionId, PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
         Integer questionKey = postQuestionDto.getQuestion().getKey();
         String username = postQuestionDto.getUser().getUsername();
         User user = checkIfUserExists(username);
@@ -64,8 +64,8 @@ public class PostService {
         Question question = checkIfQuestionExists(questionKey);
         checkIfUserAnsweredQuestion(questionKey, user);
         int maxPostNumber = getMaxPostNumber();
-
         Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
+
         post.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(post);
         return new PostDto(post);
