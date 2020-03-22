@@ -73,17 +73,7 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
     def courseExecution
 
     @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
     def formatter
-
 
     @Shared
     def STUDENT
@@ -110,10 +100,6 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
 
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
@@ -181,7 +167,7 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
 
 
         when:
-        1.upto(5000, {
+        1.upto(5, {
             tournamentService.createTournament(courseExecution.getId(), tournamentDto)
         })
 
