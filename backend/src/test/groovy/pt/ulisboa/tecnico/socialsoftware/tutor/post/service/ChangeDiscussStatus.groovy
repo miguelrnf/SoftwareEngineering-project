@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
@@ -15,23 +16,27 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @DataJpaTest
-class DeletePostTest extends Specification {
+class ChangeDiscussStatus extends Specification{
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
+    public static final String VALID_ANSWER = 'I am a valid answer'
     public static final int VALID_KEY = 1
-    public static final int VALID_KEY_NOT_SAVED = 2
-    public static final int VALID_KEY_NOT_ANSWERED = 3
-    public static final int INVALID_KEY = -1
+    public static final int VALID_KEY_2 = 2
     public static final int VALID_ID_1 = 1
+    public static final int VALID_ID_2 = 2
+    public static final int VALID_ID_3 = 3
     public static final String VALID_NAME_1 = "Ben Dover"
     public static final String VALID_NAME_2 = "Mike Litoris"
+    public static final String VALID_NAME_3 = "Peixe Acha"
     public static final String VALID_USERNAME_1 = "BenDover69"
     public static final String VALID_USERNAME_2 = "MikeLitoris420"
+    public static final String VALID_USERNAME_3 = "PeixeAcha666"
 
     @Autowired
     PostService postService
@@ -52,19 +57,29 @@ class DeletePostTest extends Specification {
     def VALID_Q
 
     @Shared
-    def VALID_U
+    def VALID_Q_2
+
+    @Shared
+    def VALID_PA
 
     @Shared
     def VALID_PQ
 
     @Shared
-    def INVALID_P_KEY
+    def VALID_PQ_2
 
     @Shared
-    def INVALID_P_NOT_SAVED
+    def VALID_U
 
     @Shared
-    def INVALID_P_NOT_ANSWERED
+    def VALID_U_TEACHER
+
+    @Shared
+    def INVALID_U_NOT_OWNER
+
+    @Shared
+    def VALID_P_NO_ANSWER
+
 
     def setupSpec() {
         given: "a valid question"
@@ -75,38 +90,56 @@ class DeletePostTest extends Specification {
         VALID_Q.setNumberOfAnswers(2)
         VALID_Q.setNumberOfCorrect(1)
 
-        and:"a valid user"
+        and: "a valid user who is the owner"
         VALID_U = new User()
-        VALID_U.setId(VALID_ID_1)
+        VALID_U.setKey(VALID_KEY)
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME_1)
+
+        and: "a valid user with the role teacher"
+        VALID_U_TEACHER = new User()
+        VALID_U_TEACHER.setId(VALID_ID_2)
+        VALID_U_TEACHER.setRole(User.Role.TEACHER)
+        VALID_U_TEACHER.setUsername(VALID_USERNAME_2)
 
         and: "a valid postQuestion"
         VALID_PQ = new PostQuestion()
         VALID_PQ.setQuestion(VALID_Q)
         VALID_PQ.setUser(VALID_U)
         VALID_PQ.setStudentQuestion(VALID_STUDENT_QUESTION)
+        VALID_U.addPostQuestion(VALID_PQ)
 
-        and: "a valid post"
+        and: "a valid postQuestion"
+        VALID_PQ_2 = new PostQuestion()
+        VALID_PQ_2.setQuestion(VALID_Q)
+        VALID_PQ_2.setUser(VALID_U)
+        VALID_PQ_2.setStudentQuestion(VALID_STUDENT_QUESTION)
+        VALID_U.addPostQuestion(VALID_PQ_2)
+
+        and: "a valid postAnswer"
+        VALID_PA = new PostAnswer()
+        VALID_PA.setUser(VALID_U_TEACHER)
+        VALID_PA.setTeacherAnswer(VALID_ANSWER)
+
+        and: "a valid post with no answer"
+        VALID_P_NO_ANSWER = new Post()
+        VALID_P_NO_ANSWER.setKey(VALID_KEY)
+        VALID_P_NO_ANSWER.setQuestion(VALID_PQ_2)
+
+        and: "a valid post with an answer"
         VALID_P = new Post()
-        VALID_P.setKey(VALID_KEY)
+        VALID_P.setKey(VALID_KEY_2)
         VALID_P.setQuestion(VALID_PQ)
+        VALID_P.setAnswer(VALID_PA)
 
-        and: "a post with an invalid key"
-        INVALID_P_KEY = new Post()
-        INVALID_P_KEY.setKey(INVALID_KEY)
-        INVALID_P_KEY.setQuestion(VALID_PQ)
+        and: "a valid user that does not own the post"
+        INVALID_U_NOT_OWNER = new User()
+        INVALID_U_NOT_OWNER.setId(VALID_ID_3)
+        INVALID_U_NOT_OWNER.setRole(User.Role.STUDENT)
+        INVALID_U_NOT_OWNER.setUsername(VALID_USERNAME_3)
 
-        and: "a post that was not saved"
-        INVALID_P_NOT_SAVED = new Post()
-        INVALID_P_NOT_SAVED.setKey(VALID_KEY_NOT_SAVED)
-        INVALID_P_NOT_SAVED.setQuestion(VALID_PQ)
-
-        and: "a post that was not answered"
-        INVALID_P_NOT_ANSWERED = new Post()
-        INVALID_P_NOT_ANSWERED.setKey(VALID_KEY_NOT_ANSWERED)
-        INVALID_P_NOT_ANSWERED.setQuestion(VALID_PQ)
     }
+
 
     def setup() {
         given: "a valid question"
@@ -117,66 +150,85 @@ class DeletePostTest extends Specification {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
 
-        and: "two valid users"
+        and: "three valid users"
         def user1 = new User(VALID_NAME_1, VALID_USERNAME_1, 1, User.Role.STUDENT)
-        def user2 = new User(VALID_NAME_2, VALID_USERNAME_2, 2, User.Role.STUDENT)
+        def user2 = new User(VALID_NAME_2, VALID_USERNAME_2, 2, User.Role.TEACHER)
+        def user3 = new User(VALID_NAME_3, VALID_USERNAME_3, 3, User.Role.STUDENT)
 
-        and: "two valid postQuestions"
+        and: "a valid postQuestion"
         def postQuestion1 = new PostQuestion()
         postQuestion1.setQuestion(question)
         postQuestion1.setUser(user1)
         postQuestion1.setStudentQuestion(VALID_STUDENT_QUESTION)
+
+        and: "a valid postQuestion"
         def postQuestion2 = new PostQuestion()
         postQuestion2.setQuestion(question)
-        postQuestion2.setUser(user2)
+        postQuestion2.setUser(user1)
         postQuestion2.setStudentQuestion(VALID_STUDENT_QUESTION)
 
-        and: "two valid posts"
-        def post1 = new Post(VALID_KEY, postQuestion1)
-        def post2 = new Post(VALID_KEY_NOT_ANSWERED, postQuestion2)
-        postQuestion1.setPost(post1)
-        postQuestion2.setPost(post2)
+        and: "a valid postAnswer"
+        def postAnswer1 = new PostAnswer()
+        postAnswer1.setUser(user2)
+        postAnswer1.setTeacherAnswer(VALID_ANSWER)
+
+        and: "a valid post no answer"
+        def postNo = new Post(VALID_KEY, postQuestion2)
+        postQuestion2.setPost(postNo)
+        user1.addPostQuestion(postQuestion2)
+
+        and: "a valid post with an answer"
+        def postAnswered = new Post(VALID_KEY_2, postQuestion1)
+        def answer = new PostAnswer(user2, VALID_ANSWER)
+        postQuestion1.setPost(postAnswered)
         user1.addPostQuestion(postQuestion1)
-        user2.addPostQuestion(postQuestion2)
+        answer.setTeacherAnswer(VALID_ANSWER)
+        postAnswered.setAnswer(answer)
 
         then: "add to repository"
+        println(user1.dump())
         userRepository.save(user1)
         userRepository.save(user2)
+        userRepository.save(user3)
         questionRepository.save(question)
-        postRepository.save(post1)
-        postRepository.save(post2)
+        postRepository.save(postNo)
+        postRepository.save(postAnswered)
+
     }
 
+
     @Unroll
-    def "valid deletion"() {
+    def "valid discuss status"() {
         when:
-        def result = postService.deletePost(new PostDto(tocheck))
+        def result = postService.changeDiscussStatus(new PostDto(post), new UserDto(user))
 
         then:
-        result.getKey() == expected.getKey()
-        result.getQuestion().getQuestion().getKey() == expected.getQuestion().getQuestion().getKey()
-        result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
-        postRepository.findByKey(expected.getKey()) == Optional.empty()
+        result.getDiscussStatus() != expected.getDiscussStatus()
 
         where:
-        tocheck                 ||   expected
-        VALID_P as Post         ||   VALID_P as Post
+        user                 | post                    ||       expected
+        VALID_U as User      | VALID_P as Post         ||       VALID_P as Post
+
+
     }
 
     @Unroll
-    def "invalid deletions"() {
+    def "invalid discuss status"() {
         when:
-        postService.deletePost(new PostDto(tocheck as Post))
+        postService.changeDiscussStatus(new PostDto(post), new UserDto(user))
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        tocheck                 ||   expected
-        INVALID_P_KEY           ||   ErrorMessage.INVALID_POST.label
-        INVALID_P_NOT_SAVED     ||   ErrorMessage.INVALID_POST.label
-        INVALID_P_NOT_ANSWERED  ||   ErrorMessage.NOT_YOUR_POST.label
+        user                            | post                       || expected
+        VALID_U as User                 | VALID_P_NO_ANSWER as Post  || ErrorMessage.NO_ANSWER.label
+        INVALID_U_NOT_OWNER as User     | VALID_P as Post            || ErrorMessage.NOT_YOUR_POST.label
+
+
+
+
     }
 
     @TestConfiguration
@@ -186,4 +238,9 @@ class DeletePostTest extends Specification {
             return new PostService()
         }
     }
+
+
+
+
+
 }

@@ -140,7 +140,7 @@ class ChangePostStatusTest extends Specification {
     @Unroll
     def "valid status change"() {
         when:
-        def result = postService.changeStatus(new PostDto(VALID_P), new UserDto(u))
+        def result = postService.changePostStatus(new PostDto(VALID_P), new UserDto(u))
 
         then:
         result.getPostStatus() != expected.getPostStatus()
@@ -154,7 +154,7 @@ class ChangePostStatusTest extends Specification {
     @Unroll
     def "invalid status change"() {
         when:
-        postService.changeStatus(new PostDto(VALID_P), new UserDto(u))
+        postService.changePostStatus(new PostDto(VALID_P), new UserDto(u))
 
         then:
         def result = thrown(TutorException)

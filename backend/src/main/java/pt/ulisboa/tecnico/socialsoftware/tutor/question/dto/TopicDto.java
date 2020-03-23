@@ -72,15 +72,22 @@ public class TopicDto implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         TopicDto topicDto = (TopicDto) o;
-        return Objects.equals(id, topicDto.id) &&
-                Objects.equals(name, topicDto.name) &&
-                Objects.equals(parentTopic, topicDto.parentTopic) &&
-                Objects.equals(numberOfQuestions, topicDto.numberOfQuestions);
+
+        if (!Objects.equals(id, topicDto.id)) return false;
+        if (!Objects.equals(name, topicDto.name)) return false;
+        if (!Objects.equals(parentTopic, topicDto.parentTopic))
+            return false;
+        return Objects.equals(numberOfQuestions, topicDto.numberOfQuestions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, parentTopic, numberOfQuestions);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (parentTopic != null ? parentTopic.hashCode() : 0);
+        result = 31 * result + (numberOfQuestions != null ? numberOfQuestions.hashCode() : 0);
+        return result;
     }
 }

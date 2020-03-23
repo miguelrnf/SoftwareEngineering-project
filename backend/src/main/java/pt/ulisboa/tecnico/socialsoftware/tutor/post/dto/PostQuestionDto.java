@@ -9,6 +9,7 @@ public class PostQuestionDto {
     private QuestionDto question;
     private UserDto user;
     private String studentQuestion;
+    private PostDto post;
 
     public PostQuestionDto() {
     }
@@ -50,5 +51,13 @@ public class PostQuestionDto {
 
     public void setStudentQuestion(String studentQuestion) {
         this.studentQuestion = studentQuestion;
+    }
+
+    public PostDto getPost() {
+        return post;
+    }
+
+    public void setPost(PostDto post) {
+        this.post = post;
     }
 }

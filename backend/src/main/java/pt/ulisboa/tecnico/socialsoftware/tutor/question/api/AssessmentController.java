@@ -34,7 +34,7 @@ public class AssessmentController {
     @PostMapping("/executions/{executionId}/assessments")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public AssessmentDto createAssessment(@PathVariable int executionId, @Valid @RequestBody AssessmentDto assessment) {
-        return this.assessmentService.createAssessment(executionId, assessment);
+        return this.assessmentService.createAssessment(executionId, assessment, false);
     }
 
     @PutMapping("/assessments/{assessmentId}")
