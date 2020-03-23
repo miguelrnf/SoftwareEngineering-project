@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -61,6 +62,10 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Suggestion> suggestions = new HashSet<>();
+
+
     public User() {
     }
 
@@ -79,6 +84,14 @@ public class User implements UserDetails {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+    }
+
+    public Set<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
     }
 
     public Integer getId() {

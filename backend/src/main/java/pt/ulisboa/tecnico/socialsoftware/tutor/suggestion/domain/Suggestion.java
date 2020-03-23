@@ -56,7 +56,7 @@ public class Suggestion {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User _student;
+    private User student;
 
     public Suggestion() {
     }
@@ -64,7 +64,7 @@ public class Suggestion {
     public Suggestion(CourseExecution courseExecution, User user, SuggestionDto suggestionDto) {
         checkConsistentSuggestion(suggestionDto);
         this.key= suggestionDto.getKey();
-        this._student= user;
+        this.student= user;
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
@@ -78,6 +78,7 @@ public class Suggestion {
         this.courseExecution = courseExecution;
 
         courseExecution.addSuggestion(this);
+        user.addSuggestion(this);
 
     }
 
@@ -166,10 +167,10 @@ public class Suggestion {
     }
 
     public User get_student() {
-        return _student;
+        return student;
     }
 
-    public void set_student(User _student) {
-        this._student = _student;
+    public void set_student(User student) {
+        this.student = student;
     }
 }

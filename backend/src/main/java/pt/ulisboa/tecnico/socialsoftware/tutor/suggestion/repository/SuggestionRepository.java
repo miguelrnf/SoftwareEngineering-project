@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional

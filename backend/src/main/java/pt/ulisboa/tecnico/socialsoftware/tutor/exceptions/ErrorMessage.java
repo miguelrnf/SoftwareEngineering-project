@@ -64,7 +64,6 @@ public enum ErrorMessage {
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),
-    SUGGESTION_NOT_FOUND("Not found"),
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),
