@@ -46,6 +46,7 @@ class GetTournamentsSpockTest extends Specification{
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
     static int tempId = 1
     static int tournId = 1
+    static int userId = 1
 
     @Autowired
     TournamentService tournamentService
@@ -116,7 +117,7 @@ class GetTournamentsSpockTest extends Specification{
 
         given: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(1)
+        STUDENT.setId(userId++)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
@@ -196,8 +197,8 @@ class GetTournamentsSpockTest extends Specification{
         tournamentDto2.setAssessmentDto(assdto)
         tournamentService.createTournament(courseExecution.id, tournamentDto1)
         tournamentService.createTournament(courseExecution.id, tournamentDto2)
-        def tournament1 = new Tournament(tournamentDto1, STUDENT, ass)
-        def tournament2 = new Tournament(tournamentDto2, STUDENT, ass)
+        def tournament1 = new Tournament(tournamentDto1, user, ass)
+        def tournament2 = new Tournament(tournamentDto2, user, ass)
         tournament1.setId(tournId++)
         tournament2.setId(tournId++)
 
