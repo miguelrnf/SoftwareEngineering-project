@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 
@@ -31,5 +29,12 @@ public class PostController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto createPost(@PathVariable int executionId, @Valid @RequestBody PostQuestionDto postQ) {
         return postService.submitPost(executionId, postQ);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/edit")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto editPost(@PathVariable int executionId, @PathVariable int postId,
+                            @Valid @RequestBody PostQuestionDto postQ) {
+        return postService.editPost(postQ);
     }
 }

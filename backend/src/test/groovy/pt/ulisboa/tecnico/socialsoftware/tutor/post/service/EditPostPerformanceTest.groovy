@@ -8,6 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -22,7 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Specification
 
 @DataJpaTest
-class SubmitPostPerformanceTest extends Specification {
+class EditPostPerformanceTest extends Specification {
 
     @Autowired
     PostService postService
@@ -42,47 +45,49 @@ class SubmitPostPerformanceTest extends Specification {
     @Autowired
     PostRepository postRepository
 
-    def "performance testing with 3000 post submissions"() {
-        given: "a question"
+    def "performance testing with 3000 post edits"() {
+        given: "a valid question"
         def question = new Question()
-        question.setKey(123)
+        question.setKey(11133)
         question.setContent("VALID_QUESTION")
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-
-        and: "a quiz"
-        def quiz = new Quiz()
-        def quizQuestion = new QuizQuestion()
-        quizQuestion.setQuestion(question)
-        quiz.setKey(123123)
-        quiz.addQuizQuestion(quizQuestion)
-
-        and: "a quiz answer"
-        def user = new User("VALID_NAME", "VALID_USERNAME", 1, User.Role.STUDENT)
-        def quizAnswer = new QuizAnswer(user, quiz)
-        def questionAnswer = new QuestionAnswer()
-        questionAnswer.setQuizQuestion()
-        quizAnswer.addQuestionAnswer()
-
-        and: "a user that answered the question"
-        user.addQuizAnswer(quizAnswer)
-
-        and: "a post question"
-        def pq = new PostQuestionDto()
-        pq.setUser(new UserDto(user))
-        pq.setStudentQuestion("QUESTION")
-        pq.setQuestion(new QuestionDto(question))
-
-        and: "added to repository"
         questionRepository.save(question)
-        quizRepository.save(quiz)
-        userRepository.save(user)
 
-        when: "3000 posts get submitted"
-        1.upto(3000, {
-            postService.submitPost(11, pq)
-        })
+        and: "two valid users"
+        def user1 = new User("VALID_NAME_1", "VALID_USERNAME_1", 1, User.Role.STUDENT)
+        userRepository.save(user1)
+
+        and: "valid posts"
+        for(int i = 0; i <= 3000; i++) {
+            def postQuestion1 = new PostQuestion()
+            postQuestion1.setQuestion(question)
+            postQuestion1.setUser(user1)
+            user1.addPostQuestion(postQuestion1)
+            postQuestion1.setStudentQuestion("VALID_STUDENT_QUESTION")
+            def post1 = new Post(i, postQuestion1)
+            postQuestion1.setPost(post1)
+            postRepository.save(post1)
+        }
+        def pqDto = new PostQuestionDto()
+        pqDto.setUser(new UserDto(user1))
+        def postDto = new PostDto()
+        postDto.setQuestion(pqDto)
+        pqDto.setPost(postDto)
+
+        and: "a valid edit"
+        def postQuestion2 = new PostQuestionDto()
+        postQuestion2.setQuestion(new QuestionDto(question))
+        postQuestion2.setUser(new UserDto(user1))
+        postQuestion2.setStudentQuestion("VALID_STUDENT_QUESTION")
+
+        when: "2000 posts get edited"
+        for(int i = 0; i <= 3000; i++) {
+            postDto.setKey(i)
+            postQuestion2.setPost(postDto)
+            postService.editPost(postQuestion2)
+        }
         
         then:
         true

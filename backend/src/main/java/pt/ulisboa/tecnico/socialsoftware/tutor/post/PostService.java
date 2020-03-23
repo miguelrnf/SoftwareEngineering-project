@@ -68,6 +68,7 @@ public class PostService {
 
         post.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(post);
+        post.getQuestion().setPost(post);
         return new PostDto(post);
     }
 
@@ -89,8 +90,8 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto editPost(PostQuestionDto toEdit, UserDto userDto) {
-        User user = checkIfUserExists(userDto.getUsername());
+    public PostDto editPost(PostQuestionDto toEdit) {
+        User user = checkIfUserExists(toEdit.getUser().getUsername());
         Post post = checkIfPostExists(toEdit.getPost().getKey());
         checkIfUserOwnsPost(user, post);
 
@@ -152,6 +153,7 @@ public class PostService {
 
         PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
         post.setAnswer(answer);
+        answer.setPost(post);
         return new PostDto(post);
     }
 
@@ -211,6 +213,7 @@ public class PostService {
             parent.addChild(comment);
             post.addComment(comment);
         }
+        comment.setPost(post);
         return new PostCommentDto(comment, false);
     }
 

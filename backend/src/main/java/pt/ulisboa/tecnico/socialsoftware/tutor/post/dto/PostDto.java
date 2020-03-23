@@ -3,7 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 
-public class PostDto {
+import java.io.Serializable;
+
+public class PostDto implements Serializable {
     private Integer id;
     private Integer key;
     private PostQuestionDto question;

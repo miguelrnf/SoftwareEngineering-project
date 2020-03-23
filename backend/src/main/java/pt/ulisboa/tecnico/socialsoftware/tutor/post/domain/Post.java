@@ -136,4 +136,18 @@ public class Post {
     public void changeDiscussStatus() {
         this.discussStatus = !this.discussStatus;
     }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", key=" + key +
+                ", question=" + question +
+                ", answer=" + answer +
+                ", postStatus=" + postStatus +
+                ", discussStatus=" + discussStatus +
+                ", creationDate=" + creationDate +
+                ", comments=" + comments +
+                '}';
+    }
 }
