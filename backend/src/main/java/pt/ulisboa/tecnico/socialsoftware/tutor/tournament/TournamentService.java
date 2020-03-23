@@ -184,7 +184,11 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Assessement Status");
     }
 
-    public void enrollStudent(String username, int tournamentId) {
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto enrollStudent(String username, int tournamentId) {
         User user = findUsername(username);
 
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
@@ -197,6 +201,8 @@ public class TournamentService {
 
          tournament.enrollStudent(user);
          user.addTournament(tournament);
+
+        return new TournamentDto(tournament);
     }
 
     public void unrollStudent(String username, int tournamentId){

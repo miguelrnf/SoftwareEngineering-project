@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import org.springframework.data.annotation.Transient;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -10,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
 
@@ -52,7 +55,13 @@ public class TournamentDto implements Serializable {
 
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
+        if(tournament.getEnrolledStudents().isEmpty())
+            throw new TutorException(ErrorMessage.TOURNAMENT_LIST_EMPTY);
 
+        this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
+
+        if(this.enrolledStudents.isEmpty())
+            throw new TutorException(ErrorMessage.TOPIC_NOT_FOUND);
     }
 
     public Integer getId() {
