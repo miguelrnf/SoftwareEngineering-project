@@ -60,7 +60,7 @@ class EditPostPerformanceTest extends Specification {
         userRepository.save(user1)
 
         and: "valid posts"
-        for(int i = 0; i <= 3000; i++) {
+        for(int i = 1; i <= 3000; i++) {
             def postQuestion1 = new PostQuestion()
             postQuestion1.setQuestion(question)
             postQuestion1.setUser(user1)
@@ -82,8 +82,8 @@ class EditPostPerformanceTest extends Specification {
         postQuestion2.setUser(new UserDto(user1))
         postQuestion2.setStudentQuestion("VALID_STUDENT_QUESTION")
 
-        when: "2000 posts get edited"
-        for(int i = 0; i <= 3000; i++) {
+        when: "3000 posts get edited"
+        for(int i = 1; i <= 3000; i++) {
             postDto.setKey(i)
             postQuestion2.setPost(postDto)
             postService.editPost(postQuestion2)
