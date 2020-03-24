@@ -140,21 +140,6 @@ public class SuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<SuggestionDto> suggestionList(int courseId, UserDto userDto){
-        String username = userDto.getUsername();
-        CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        User user = checkIfUserExists(username);
-        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
-        Optional<List<Suggestion>> approvedList = suggestionRepository.getSuggestionsList(courseId);
-        if(approvedList.isEmpty())
-            throw new TutorException(NO_APPROVED_SUGGESTIONS);
-        return approvedList.get().stream().map(SuggestionDto::new).collect(Collectors.toList());
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
         String username = userDto.getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
