@@ -199,6 +199,10 @@ public class TournamentService {
         if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || tournament.getAvailableDate().isAfter(LocalDateTime.now()))
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
+        if(tournament.getEnrolledStudents().contains(user) || user.getTournaments().contains(tournament)){
+           throw new TutorException(USER_ALREADY_ENROLLED, user.getUsername());
+        }
+
          tournament.enrollStudent(user);
          user.addTournament(tournament);
 
