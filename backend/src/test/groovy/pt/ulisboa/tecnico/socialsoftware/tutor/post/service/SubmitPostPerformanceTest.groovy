@@ -42,7 +42,7 @@ class SubmitPostPerformanceTest extends Specification {
     @Autowired
     PostRepository postRepository
 
-    def "performance testing with 3000 post submissions"() {
+    def "performance testing with 5000 post submissions"() {
         given: "a question"
         def question = new Question()
         question.setKey(123)
@@ -79,8 +79,8 @@ class SubmitPostPerformanceTest extends Specification {
         quizRepository.save(quiz)
         userRepository.save(user)
 
-        when: "3000 posts get submitted"
-        1.upto(3000, {
+        when: "5000 posts get submitted"
+        1.upto(5000, {
             postService.submitPost(11, pq)
         })
         

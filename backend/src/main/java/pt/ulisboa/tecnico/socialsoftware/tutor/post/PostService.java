@@ -78,7 +78,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto deletePost(PostDto toDelete) {
         User user = checkIfUserExists(toDelete.getQuestion().getUser().getUsername());
-        Post post = checkIfPostExists(toDelete.getKey());
+        Post post = checkIfPostExistsKey(toDelete.getKey());
         checkIfUserOwnsPost(user, post);
 
         entityManager.remove(post);
@@ -92,7 +92,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto editPost(PostQuestionDto toEdit) {
         User user = checkIfUserExists(toEdit.getUser().getUsername());
-        Post post = checkIfPostExists(toEdit.getPost().getKey());
+        Post post = checkIfPostExistsKey(toEdit.getPost().getKey());
         checkIfUserOwnsPost(user, post);
 
         post.getQuestion().update(toEdit.getStudentQuestion());
@@ -104,7 +104,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changePostStatus(PostDto postDto, UserDto userDto) {
-        Post post = checkIfPostExists(postDto.getKey());
+        Post post = checkIfPostExistsKey(postDto.getKey());
         User user = checkIfUserExists(userDto.getUsername());
         try {
             checkIfUserHasRoleTeacher(user);
@@ -121,7 +121,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto editAnswer(PostAnswerDto toAnswer, UserDto userDto) {
         User user = checkIfUserExists(userDto.getUsername());
-        Post post = checkIfPostExists(toAnswer.getPost().getKey());
+        Post post = checkIfPostExistsKey(toAnswer.getPost().getKey());
 
         checkIfUserHasRoleTeacher(user);
         post.getAnswer().update(toAnswer.getTeacherAnswer());
@@ -133,7 +133,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changeDiscussStatus(PostDto postDto) {
-        Post post = checkIfPostExists(postDto.getKey());
+        Post post = checkIfPostExistsKey(postDto.getKey());
         User user = checkIfUserExists(postDto.getQuestion().getUser().getUsername());
         checkIfUserOwnsPost(user, post);
         checkIfAnswered(post);
@@ -147,7 +147,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto answerQuestion(PostAnswerDto answerDto) {
-        Post post = checkIfPostExists(answerDto.getPost().getKey());
+        Post post = checkIfPostExistsKey(answerDto.getPost().getKey());
         User user = checkIfUserExists(answerDto.getUser().getUsername());
         checkIfUserHasRoleTeacher(user);
 
@@ -162,8 +162,8 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto redirect(PostDto postDto1, PostDto postDto2, UserDto userDto) {
-        Post postNotAnswered = checkIfPostExists(postDto1.getKey());
-        Post postAnswered = checkIfPostExists(postDto2.getKey());
+        Post postNotAnswered = checkIfPostExistsKey(postDto1.getKey());
+        Post postAnswered = checkIfPostExistsKey(postDto2.getKey());
         PostAnswer answer = checkIfAnswered(postAnswered);
         User user = checkIfUserExists(userDto.getUsername());
         checkIfUserHasRoleTeacher(user);
@@ -183,7 +183,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto viewPost(Integer key) {
-        Post post = checkIfPostExists(key);
+        Post post = checkIfPostExistsKey(key);
         return new PostDto(post);
     }
 
@@ -204,7 +204,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostCommentDto postComment(PostCommentDto dto) {
-        Post post = checkIfPostExists(dto.getPost().getKey());
+        Post post = checkIfPostExistsKey(dto.getPost().getKey());
         User user = checkIfUserExists(dto.getUser().getUsername());
         PostComment comment = new PostComment(dto.getKey(), user, post, dto);
         if(dto.getParent() != null) {
@@ -233,8 +233,12 @@ public class PostService {
                 .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
     }
 
-    private Post checkIfPostExists(Integer key) {
+    private Post checkIfPostExistsKey(Integer key) {
         return postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key));
+    }
+
+    private Post checkIfPostExistsId(Integer id) {
+        return postRepository.findById(id).orElseThrow(() -> new TutorException(INVALID_POST, id));
     }
 
     private User checkIfUserExists(String username) {
