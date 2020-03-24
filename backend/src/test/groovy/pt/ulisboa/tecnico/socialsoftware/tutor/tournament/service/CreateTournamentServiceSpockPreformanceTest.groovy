@@ -184,4 +184,5 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
             return new TournamentService()
         }
     }
+
 }
