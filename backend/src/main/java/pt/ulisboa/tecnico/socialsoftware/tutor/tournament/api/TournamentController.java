@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.security.Principal;
@@ -23,12 +24,12 @@ public class TournamentController {
 
     @PutMapping("/tournament/{tournamentId}/opened/unenroll")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS'))")
-    public void enrollStudent(Principal principal, @PathVariable int tournamentId){
+    public TournamentDto enrollStudent(Principal principal, @PathVariable int tournamentId){
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
 
-        this.tournamentservice.unrollStudent(user.getUsername(), tournamentId);
+        return this.tournamentservice.unrollStudent(user.getUsername(), tournamentId);
     }
 }
