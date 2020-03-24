@@ -21,6 +21,9 @@ public class PostAnswerDto implements Serializable {
         this.teacherAnswer = pa.getTeacherAnswer();
     }
 
+    public PostAnswerDto() {
+    }
+
     public Integer getId() {
         return id;
     }

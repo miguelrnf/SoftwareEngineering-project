@@ -132,9 +132,9 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changeDiscussStatus(PostDto postDto, UserDto userDto) {
+    public PostDto changeDiscussStatus(PostDto postDto) {
         Post post = checkIfPostExists(postDto.getKey());
-        User user = checkIfUserExists(userDto.getUsername());
+        User user = checkIfUserExists(postDto.getQuestion().getUser().getUsername());
         checkIfUserOwnsPost(user, post);
         checkIfAnswered(post);
 
