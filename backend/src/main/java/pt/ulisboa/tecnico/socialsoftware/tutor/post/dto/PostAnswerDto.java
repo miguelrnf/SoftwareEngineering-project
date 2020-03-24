@@ -20,6 +20,9 @@ public class PostAnswerDto {
         this.teacherAnswer = pa.getTeacherAnswer();
     }
 
+    public PostAnswerDto() {
+    }
+
     public Integer getId() {
         return id;
     }

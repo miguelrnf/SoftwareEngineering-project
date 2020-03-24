@@ -67,6 +67,7 @@ public class PostService {
 
         Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
         post.setCreationDate(LocalDateTime.now());
+        post.getQuestion().setPost(post);
         this.entityManager.persist(post);
         return new PostDto(post);
     }

@@ -42,7 +42,8 @@ public class Post {
     }
 
     public Post(Integer key, PostQuestion question) {
-        this.key = key;
+        if(key == 0) this.key = 1;
+        else this.key = key;
         this.question = question;
         this.postStatus = true;
         this.discussStatus = false;
