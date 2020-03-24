@@ -15,15 +15,15 @@ public class TournamentController {
     private TournamentService tournamentService;
 
 
-    @GetMapping("/executions/{executionId}/tournaments")
+    @GetMapping("/executions/{executionId}/tournaments/open")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getOpenTournaments(@PathVariable Integer executionId){
         return tournamentService.listTournaments(executionId);
     }
 
-    @PostMapping("/executions/{executionId}/tournaments")
+    @GetMapping("/executions/{executionId}/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getTournaments( @PathVariable Integer executionId){
+    public List<TournamentDto> getTournaments(@PathVariable Integer executionId){
         return tournamentService.getTournaments(executionId);
     }
 

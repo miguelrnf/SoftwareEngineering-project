@@ -7,8 +7,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.Id;
+import java.io.Serializable;
 
-public class PostAnswerDto {
+public class PostAnswerDto implements Serializable {
     private Integer id;
     private UserDto user;
     private String teacherAnswer;

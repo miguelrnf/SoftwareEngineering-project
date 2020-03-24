@@ -3,12 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PostCommentDto {
+public class PostCommentDto implements Serializable {
     private Integer id;
     private Integer key;
     private UserDto user;
