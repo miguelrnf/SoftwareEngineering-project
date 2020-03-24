@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Web Service Test submitPostAnswer" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Web Service Test changeDiscussStatus" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -44,14 +44,14 @@
             <stringProp name="Argument.value">69</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="new_question" elementType="Argument">
+            <stringProp name="Argument.name">new_question</stringProp>
+            <stringProp name="Argument.value">BIG QUESTION</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="pkey" elementType="Argument">
             <stringProp name="Argument.name">pkey</stringProp>
             <stringProp name="Argument.value">420</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="answer" elementType="Argument">
-            <stringProp name="Argument.name">answer</stringProp>
-            <stringProp name="Argument.value">ANSWER ANSWER</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -117,21 +117,25 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password"></stringProp>
+          <stringProp name="password">sopa</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">ars</stringProp>
+          <stringProp name="username">erdna</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">Setup</stringProp>
           <stringProp name="query">${__FileToString(${dir}/data/postPopulate.sql,,)}
 INSERT INTO POSTS (ID, KEY) VALUES (${pid}, ${pkey});
+
 INSERT INTO POST_QUESTIONS (ID, POST_ID, QUESTION_ID, USER_ID, STUDENTS_QUESTION)
-VALUES (6969, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);</stringProp>
+VALUES (12921, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);
+
+INSERT INTO POST_ANSWERS (ID, TEACHER_ANSWER, POST_ID, USER_ID)
+VALUES (11111, &apos;ANSWER&apos;, ${pid}, ${tid});</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -242,20 +246,45 @@ VALUES (6969, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);</stringProp>
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-	&quot;user&quot;: &#xd;
-		{ &quot;id&quot;: &quot;${tid}&quot;,&#xd;
-		  &quot;name&quot;: &quot;${tname}&quot;,&#xd;
-		  &quot;username&quot;: &quot;${tusername}&quot;,&#xd;
-		  &quot;role&quot;: &quot;${trole}&quot;&#xd;
-		},&#xd;
-		&#xd;
-	&quot;teacherAnswer&quot;: &quot;${answer}&quot;,&#xd;
-&#xd;
 	&quot;post&quot;: {&#xd;
-		&quot;key&quot;: &quot;${pkey}&quot;&#xd;
+		&quot;key&quot;: &quot;${pkey}&quot;,&#xd;
+		&quot;question&quot;: {&#xd;
+			&quot;question&quot;:{&#xd;
+				&quot;id&quot;: &quot;${qid}&quot;,&#xd;
+				&quot;key&quot;: &quot;${key}&quot;,&#xd;
+				&quot;content&quot;: &quot;A question&quot;,&#xd;
+				&quot;status&quot;: &quot;${status}&quot;			&#xd;
+			},&#xd;
+			&quot;user&quot;:{&#xd;
+				&quot;id&quot;: &quot;${sid}&quot;,&#xd;
+				&quot;name&quot;: &quot;${sname}&quot;,&#xd;
+				&quot;role&quot;: &quot;${srole}&quot;,&#xd;
+				&quot;username&quot;: &quot;${susername}&quot;			&#xd;
+			},&#xd;
+			&#xd;
+			&quot;studentQuestion&quot;: &quot;A Question&quot;&#xd;
+			&#xd;
+		},&#xd;
+		&quot;answer&quot;:{&#xd;
+			&quot;user&quot;: {&#xd;
+				&quot;id&quot;: &quot;${tid}&quot;,&#xd;
+				&quot;name&quot;: &quot;${tname}&quot;,&#xd;
+				&quot;role&quot;: &quot;${trole}&quot;,&#xd;
+				&quot;username&quot;: &quot;${tusername}&quot;	&#xd;
+				&#xd;
+			},&#xd;
+			&quot;teacherAnswer&quot;: &quot;Answer&quot;		&#xd;
+		}	&#xd;
+	},&#xd;
+&#xd;
+	&quot;user&quot;: {&#xd;
+		&quot;id&quot;: &quot;${tid}&quot;,&#xd;
+		&quot;name&quot;: &quot;${tname}&quot;,&#xd;
+		&quot;role&quot;: &quot;${trole}&quot;,&#xd;
+		&quot;username&quot;: &quot;${tusername}&quot;	&#xd;
+				&#xd;
 	}&#xd;
-}&#xd;
-</stringProp>
+}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -264,8 +293,8 @@ VALUES (6969, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/${pid}/answer</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/${pid}/edit/status</stringProp>
+            <stringProp name="HTTPSampler.method">PUT</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -274,15 +303,6 @@ VALUES (6969, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
-          <hashTree/>
-          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Post" enabled="true">
-            <stringProp name="JSON_PATH">$.answer.teacherAnswer</stringProp>
-            <stringProp name="EXPECTED_VALUE">${answer}</stringProp>
-            <boolProp name="JSONVALIDATION">false</boolProp>
-            <boolProp name="EXPECT_NULL">false</boolProp>
-            <boolProp name="INVERT">false</boolProp>
-            <boolProp name="ISREGEX">true</boolProp>
-          </JSONPathAssertion>
           <hashTree/>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
@@ -388,8 +408,8 @@ VALUES (6969, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);</stringProp>
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">ars</stringProp>
-          <stringProp name="password"></stringProp>
+          <stringProp name="username">erdna</stringProp>
+          <stringProp name="password">sopa</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
