@@ -37,4 +37,17 @@ public class PostController {
                             @Valid @RequestBody PostQuestionDto postQ) {
         return postService.editPost(postQ);
     }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/edit/discuss")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto changeDiscussStatus(@PathVariable int executionId, @PathVariable int postId,
+                            @Valid @RequestBody PostDto post) {
+        return postService.changeDiscussStatus(post);
+    }
+
+
+
+
+
+
 }
