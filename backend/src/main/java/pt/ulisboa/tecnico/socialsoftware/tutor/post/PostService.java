@@ -153,6 +153,7 @@ public class PostService {
 
         PostAnswer answer = new PostAnswer(user, answerDto.getTeacherAnswer());
         post.setAnswer(answer);
+        answer.setPost(post);
         return new PostDto(post);
     }
 

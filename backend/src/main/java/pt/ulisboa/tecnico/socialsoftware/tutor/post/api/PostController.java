@@ -26,6 +26,7 @@ public class PostController {
         this.postService = postService;
     }
 
+    //TODO - DO SOMETHING WITH POSTID AND EXECUTIONID
     @PostMapping("executions/{executionId}/posts/{postId}/answer")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto answerPost(@PathVariable int executionId, @PathVariable int postId,
