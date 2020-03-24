@@ -30,6 +30,7 @@ public class TournamentController {
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-        return this.tournamentservice.enrollStudent(user.getUsername(), tournamentId);
+
+        return tournamentservice.enrollStudent(user.getUsername(), tournamentId);
     }
 }

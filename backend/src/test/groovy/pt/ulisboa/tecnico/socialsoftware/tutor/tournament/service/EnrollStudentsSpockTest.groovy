@@ -196,7 +196,7 @@ class EnrollStudentsSpockTest extends Specification{
         TOURNAMENTDTO = new TournamentDto()
         TOURNAMENTDTO.setId(1)
         TOURNAMENTDTO.setKey(1)
-        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED)
+        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
         TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
@@ -270,11 +270,11 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId(), STUDENT_SAME_CE.getUsername(), result.getId())
+        tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername(), result.getId())
 
         then:
         def tournamentTest = tournamentRepository.findById(result.getId())
-        def result2 = tournamentTest.get().getEnrolledStudents().getAt(0)
+        def result2 = tournamentTest.get().getEnrolledStudents()[0]
 
         result2.username == USERNAME_2
         result2.id == 2
@@ -290,7 +290,7 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId(), user.getUsername(), result.getId())
+        tournamentService.enrollStudent(user.getUsername(), result.getId())
 
         then:
         def error = thrown(TutorException)
@@ -307,11 +307,11 @@ class EnrollStudentsSpockTest extends Specification{
        given:
        assdto.setId(tempId++)
        TOURNAMENTDTO.setAssessmentDto(assdto)
-       TOURNAMENTDTO.setStatus(tournamentStatus)
+       TOURNAMENTDTO.setStatus(tournamentStatus.name())
        def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
        when:
-       tournamentService.enrollStudent(courseExecution_1.getId(), STUDENT_OTHER_CE.getUsername(), result.getId())
+       tournamentService.enrollStudent(STUDENT_OTHER_CE.getUsername(), result.getId())
 
        then:
        def error = thrown(TutorException)
@@ -331,7 +331,7 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_2.getId(), STUDENT_OTHER_CE.getUsername(), result.getId())
+        tournamentService.enrollStudent(STUDENT_OTHER_CE.getUsername(), result.getId())
 
         then:
         def error = thrown(TutorException)
@@ -346,7 +346,7 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId() as Integer, username, result.getId() as Integer)
+        tournamentService.enrollStudent(username, result.getId() as Integer)
 
         then:
         def error = thrown(TutorException)
