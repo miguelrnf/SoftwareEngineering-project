@@ -33,6 +33,13 @@ public class PostController {
         return postService.answerQuestion(postA);
     }
 
+    @PutMapping("executions/{executionId}/posts/{postId}/answer/edit")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto editPost(@PathVariable int executionId, @PathVariable int postId,
+                              @Valid @RequestBody PostAnswerDto postA) {
+        return postService.editAnswer(postA);
+    }
+
     //TODO - REMOVE TEMP
     @PostMapping("executions/{executionId}/posts/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")

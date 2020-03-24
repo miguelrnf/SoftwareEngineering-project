@@ -119,8 +119,8 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto editAnswer(PostAnswerDto toAnswer, UserDto userDto) {
-        User user = checkIfUserExists(userDto.getUsername());
+    public PostDto editAnswer(PostAnswerDto toAnswer) {
+        User user = checkIfUserExists(toAnswer.getUser().getUsername());
         Post post = checkIfPostExists(toAnswer.getPost().getKey());
 
         checkIfUserHasRoleTeacher(user);
