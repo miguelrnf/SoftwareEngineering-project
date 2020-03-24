@@ -137,6 +137,7 @@ class GetOpenedTournamentPerformanceTest extends Specification{
         tournamentDto2 = new TournamentDto()
         tournamentDto2.setId(2)
         tournamentDto2.setKey(2)
+        tournamentDto2.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
         tournamentDto2.setNumberOfQuestions(3)
@@ -189,16 +190,10 @@ class GetOpenedTournamentPerformanceTest extends Specification{
     def "show tournaments"(){
         //available tournaments exist and are listed
         given: "two tournaments"
-        assdto.setId(tempId++)
-        tournamentDto2.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto1.setAssessmentDto(assdto)
         tournamentDto2.setAssessmentDto(assdto)
-        tournamentService.createTournament(courseExecution.id, tournamentDto1)
-        tournamentService.createTournament(courseExecution.id, tournamentDto2)
-        def tournament1 = new Tournament(tournamentDto1, user, ass)
-        def tournament2 = new Tournament(tournamentDto2, user, ass)
-        tournament1.setId(tournId++)
-        tournament2.setId(tournId++)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto1)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto2)
 
         when:
         1.upto(5000, {tournamentService.listTournaments(courseExecution.getId())})

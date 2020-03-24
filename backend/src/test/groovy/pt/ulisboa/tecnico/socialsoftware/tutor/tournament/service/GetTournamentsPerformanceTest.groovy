@@ -42,9 +42,6 @@ class GetTournamentsPerformanceTest extends Specification{
     static final String NAME = 'Name'
     static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
-    static int tempId = 1
-    static int tournId = 1
-    static int userId = 1
 
     @Autowired
     TournamentService tournamentService
@@ -115,7 +112,7 @@ class GetTournamentsPerformanceTest extends Specification{
 
         given: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(userId++)
+        STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
@@ -134,9 +131,10 @@ class GetTournamentsPerformanceTest extends Specification{
         tournamentDto2 = new TournamentDto()
         tournamentDto2.setId(2)
         tournamentDto2.setKey(2)
+        tournamentDto2.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
-        tournamentDto2.setNumberOfQuestions(3)
+        tournamentDto2.setNumberOfQuestions(4)
         tournamentDto2.setAvailableDate(DATENOW.format(formatter))
         tournamentDto2.setConclusionDate(DATETOMORROW.format(formatter))
 
@@ -189,19 +187,13 @@ class GetTournamentsPerformanceTest extends Specification{
     def "list tournaments"(){
         //all tournaments are listed
         given: "two tournaments"
-        assdto.setId(tempId++)
-        tournamentDto2.setStatus('CREATED')
         tournamentDto1.setAssessmentDto(assdto)
         tournamentDto2.setAssessmentDto(assdto)
-        tournamentService.createTournament(courseExecution.id, tournamentDto1)
-        tournamentService.createTournament(courseExecution.id, tournamentDto2)
-        def tournament1 = new Tournament(tournamentDto1, user, ass)
-        def tournament2 = new Tournament(tournamentDto2, user, ass)
-        tournament1.setId(tournId++)
-        tournament2.setId(tournId++)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto1)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto2)
 
         when:
-        1.upto(5000, {tournamentService.getTournaments(courseExecution.getId())})
+        1.upto(10000, {tournamentService.getTournaments(courseExecution.getId())})
 
         then:
         true
