@@ -229,26 +229,6 @@ class EditAnswerTest extends Specification {
         INVALID_PA_TOO_LONG.setTeacherAnswer(INVALID_ANSWER_TOO_LONG)
         INVALID_PA_TOO_LONG.setPost(INVALID_P_ANSWER_TOO_LONG)
         INVALID_P_ANSWER_TOO_LONG.setAnswer(INVALID_PA_TOO_LONG)
-
-       
-        
-        
-        
-        
-        
-        
-        
-        
-        println('-' * 50)
-        println('-' * 50)
-        println(VALID_P_WITH_ANSWER.dump())
-        println('-' * 50)
-        println('-' * 50)
-        println(VALID_PA.dump())
-        println('-' * 50)
-        println('-' * 50)
-
-
     }
 
     def setup() {
@@ -281,16 +261,11 @@ class EditAnswerTest extends Specification {
         postAnswer.setTeacherAnswer(VALID_ANSWER)
         post.setAnswer(postAnswer)
 
-
-
-
         then: "add to repository"
         userRepository.save(user1)
         userRepository.save(user2)
         questionRepository.save(question)
         postRepository.save(post)
-
-
     }
 
 
@@ -300,7 +275,8 @@ class EditAnswerTest extends Specification {
         def dto = new PostAnswerDto(VALID_PA)
         def post = new PostDto(VALID_P_WITH_ANSWER)
         dto.setPost(post)
-        def result = postService.editAnswer(dto, new UserDto(user))
+        dto.setUser(new UserDto(user))
+        def result = postService.editAnswer(dto)
 
         then:
         result.getKey() == result.getKey()
@@ -319,7 +295,8 @@ class EditAnswerTest extends Specification {
         def dto = new PostAnswerDto(pa)
         def post = new PostDto(VALID_P_WITH_ANSWER)
         dto.setPost(post)
-        postService.editAnswer(dto, new UserDto(user))
+        dto.setUser(new UserDto(user))
+        postService.editAnswer(dto)
 
         then:
         def result = thrown(TutorException)

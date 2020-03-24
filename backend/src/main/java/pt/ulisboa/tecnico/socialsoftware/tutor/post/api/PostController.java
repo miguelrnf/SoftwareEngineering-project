@@ -27,11 +27,19 @@ public class PostController {
         this.postService = postService;
     }
 
+    //TODO - DO SOMETHING WITH POSTID AND EXECUTIONID
     @PostMapping("executions/{executionId}/posts/{postId}/answer")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto answerPost(@PathVariable int executionId, @PathVariable int postId,
                               @Valid @RequestBody PostAnswerDto postA) {
         return postService.answerQuestion(postA);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/answer/edit")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto editPost(@PathVariable int executionId, @PathVariable int postId,
+                              @Valid @RequestBody PostAnswerDto postA) {
+        return postService.editAnswer(postA);
     }
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit/status")
