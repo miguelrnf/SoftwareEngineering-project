@@ -610,7 +610,8 @@ ${__intSum(50,${post_id},post_id)}</stringProp>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">TearDown</stringProp>
           <stringProp name="queryType">Update Statement</stringProp>
-          <stringProp name="query">${__FileToString(${dir}/data/deletePopulate.sql,,)}</stringProp>
+          <stringProp name="query">DELETE FROM POST_QUESTIONS WHERE USER_ID = ${id};
+${__FileToString(${dir}/data/deletePopulate.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>
