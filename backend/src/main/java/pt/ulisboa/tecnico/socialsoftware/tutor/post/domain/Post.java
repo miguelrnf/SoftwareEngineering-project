@@ -17,7 +17,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique=false, nullable = false) //TODO
     private Integer key;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
@@ -42,7 +42,8 @@ public class Post {
     }
 
     public Post(Integer key, PostQuestion question) {
-        this.key = key;
+        if(key == 0) this.key = 1;
+        else this.key = key;
         this.question = question;
         this.postStatus = true;
         this.discussStatus = false;
