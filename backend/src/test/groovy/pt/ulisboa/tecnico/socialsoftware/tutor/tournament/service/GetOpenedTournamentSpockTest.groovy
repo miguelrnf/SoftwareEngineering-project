@@ -35,7 +35,7 @@ import java.time.format.DateTimeFormatter
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_LIST_EMPTY
 
 @DataJpaTest
-class listTournamentSpockTest extends Specification{
+class GetOpenedTournamentSpockTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
