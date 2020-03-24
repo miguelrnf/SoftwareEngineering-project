@@ -45,9 +45,11 @@ public class PostController {
         return postService.changeDiscussStatus(post);
     }
 
-
-
-
-
-
+    @DeleteMapping("executions/{executionId}/posts/{postId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto deletePost(@PathVariable int executionId, @PathVariable int postId,
+                              @Valid @RequestBody PostDto post) {
+        return postService.deletePost(post);
+    }
 }
+

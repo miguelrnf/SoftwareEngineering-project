@@ -72,4 +72,16 @@ public class PostDto implements Serializable {
     public void setDiscussStatus(Boolean discussStatus) {
         this.discussStatus = discussStatus;
     }
+
+    @Override
+    public String toString() {
+        return "PostDto{" +
+                "id=" + id +
+                ", key=" + key +
+                ", question=" + question +
+                ", answer=" + answer +
+                ", postStatus=" + postStatus +
+                ", discussStatus=" + discussStatus +
+                '}';
+    }
 }
