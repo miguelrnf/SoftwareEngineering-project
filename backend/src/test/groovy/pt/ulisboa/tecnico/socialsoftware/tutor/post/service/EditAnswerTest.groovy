@@ -261,16 +261,11 @@ class EditAnswerTest extends Specification {
         postAnswer.setTeacherAnswer(VALID_ANSWER)
         post.setAnswer(postAnswer)
 
-
-
-
         then: "add to repository"
         userRepository.save(user1)
         userRepository.save(user2)
         questionRepository.save(question)
         postRepository.save(post)
-
-
     }
 
 
