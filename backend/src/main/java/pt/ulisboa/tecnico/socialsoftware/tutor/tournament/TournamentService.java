@@ -95,6 +95,28 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listTournaments(int executionId){
+        List<TournamentDto> result;
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        //TODO add date filters when added to project
+        List<Tournament> temp = courseExecution.getTournaments().stream()
+                .filter(t -> t.getStatus() == Tournament.TournamentStatus.CREATED).collect(Collectors.toList());
+
+
+        result = temp.stream().map(TournamentDto::new).collect(Collectors.toList());
+
+        if (result.isEmpty()){
+            throw new TutorException(TOURNAMENT_LIST_EMPTY);
+        }
+
+
+        return result;
+
     private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){
 
         if(assessmentDto == null)
