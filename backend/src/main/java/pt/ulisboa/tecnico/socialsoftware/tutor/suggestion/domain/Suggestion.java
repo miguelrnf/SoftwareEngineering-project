@@ -31,7 +31,7 @@ public class Suggestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int _id;
+    private Integer _id;
 
     @Column(unique=true, nullable = false)
     private Integer key;
@@ -118,11 +118,11 @@ public class Suggestion {
     public void setCourse(CourseExecution courseExecution) {
         this.courseExecution = courseExecution;
     }
-    public int get_id() {
+    public Integer get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(Integer _id) {
         this._id = _id;
     }
 

@@ -7,15 +7,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SuggestionDto {
+public class SuggestionDto implements Serializable{
 
-    private int _id;
+
+    private Integer _id;
     private Integer key;
     private String _questionStr;
     private List<TopicDto> _topicsList = new ArrayList<>();
@@ -47,11 +49,11 @@ public class SuggestionDto {
     }
 
 
-    public int get_id() {
+    public Integer get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(Integer _id) {
         this._id = _id;
     }
 
