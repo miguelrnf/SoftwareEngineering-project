@@ -165,12 +165,6 @@
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
-            <stringProp name="JSONPostProcessor.referenceNames">user</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">$.user</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-          </JSONPostProcessor>
-          <hashTree/>
         </hashTree>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Authenticated Requests" enabled="true"/>
         <hashTree>
@@ -238,6 +232,15 @@
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament numberOfQuestions" enabled="true">
               <stringProp name="JSON_PATH">$.numberOfQuestions</stringProp>
               <stringProp name="EXPECTED_VALUE">5</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert enrolledStudent" enabled="true">
+              <stringProp name="JSON_PATH">$.enrolledStudents[0].username</stringProp>
+              <stringProp name="EXPECTED_VALUE">Demo-Student</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -343,7 +346,7 @@
           <stringProp name="dataSource">tearDown</stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="initQuery"></stringProp>
+          <stringProp name="initQuery">${__FileToString(${dir}/data/deletPopulateEnroll.sql,,)}</stringProp>
           <boolProp name="keepAlive">true</boolProp>
           <stringProp name="password">CaldoVerde</stringProp>
           <stringProp name="poolMax">0</stringProp>
@@ -356,7 +359,7 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">tearDown</stringProp>
-          <stringProp name="query">${__FileToString(${dir}/data/deletPopulateEnroll.sql,,)}</stringProp>
+          <stringProp name="query"></stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

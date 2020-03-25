@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
 
@@ -51,6 +52,7 @@ public class TournamentDto implements Serializable {
 
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
+        this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
 
     }
 
@@ -154,6 +156,10 @@ public class TournamentDto implements Serializable {
 
     public void setAssessmentDto(AssessmentDto assessmentDto) {
         this.assessmentDto = assessmentDto;
+    }
+
+    public List<UserDto> getEnrolledStudents() {
+        return enrolledStudents;
     }
 
     @Override
