@@ -38,7 +38,7 @@ public class PostController {
 
     @PutMapping("executions/{executionId}/posts/{postId}/answer/edit")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public PostDto editPost(@PathVariable int executionId, @PathVariable int postId,
+    public PostDto editAnswer(@PathVariable int executionId, @PathVariable int postId,
                               @Valid @RequestBody PostAnswerDto postA) {
         return postService.editAnswer(postA);
     }
