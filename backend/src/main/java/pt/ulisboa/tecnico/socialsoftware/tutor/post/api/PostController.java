@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAndUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
@@ -48,6 +49,14 @@ public class PostController {
                                     @Valid @RequestBody PostAndUserDto postUser) {
         return postService.changePostStatus(postUser.getPost(), postUser.getUser());
     }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/redirect")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostDto redirect(@PathVariable int executionId, @PathVariable int postId,
+                            @Valid @RequestBody PostPostUserDto ppu) {
+        return postService.redirect(ppu.getPostNotAnswered(), ppu.getPostAnswered(), ppu.getUserT());
+    }
+
 
 
     //TODO - REMOVE TEMP
