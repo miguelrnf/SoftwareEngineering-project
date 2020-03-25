@@ -195,7 +195,6 @@ class SignOutStudentsSpockPreformanceTest extends Specification{
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)
         assessmentRepository.save(ass)
-
     }
 
     def "Unenroll a students that is in the same courseExecution as the owner"() {
