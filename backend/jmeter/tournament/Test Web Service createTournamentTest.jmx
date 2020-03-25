@@ -316,7 +316,7 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM tournaments t WHERE ctid IN (SELECT ctid FROM tournaments ORDER BY KEY LIMIT 2);</stringProp>
+          <stringProp name="query">DELETE FROM tournaments t WHERE ctid IN (SELECT ctid FROM tournaments ORDER BY KEY LIMIT 1);</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

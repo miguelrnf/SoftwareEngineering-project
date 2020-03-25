@@ -61,8 +61,10 @@ public class TournamentService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        if (tournamentDto.getKey() == null)
-            tournamentDto.setKey(getMaxTournamentKey() + 1);
+        if (tournamentDto.getKey() == null) {
+            int maxTournamentNumber = getMaxTournamentKey();
+            tournamentDto.setKey(maxTournamentNumber + 1);
+        }
 
         if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null)
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Owner");
@@ -138,7 +140,7 @@ public class TournamentService {
         if(assessment.getTopicConjunctions().isEmpty())
             throw new TutorException(TOPIC_CONJUNCTION_NOT_FOUND);
 
-        checkAssessmentStatus(assessmentDto.getStatus());
+        checkAssessmentStatus(assessment.getStatus().name());
 
         return assessment;
     }
