@@ -23,8 +23,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,6 +96,7 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
 
     @Retryable(
             value = { SQLException.class },
@@ -204,6 +205,7 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
@@ -222,7 +224,6 @@ public class TournamentService {
         user.getTournaments().remove(tournament);
 
         return new TournamentDto(tournament);
-
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -243,7 +244,6 @@ public class TournamentService {
 
         return tournament.get(0);
     }
-
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getTournaments(Integer executionId) {
         return tournamentRepository.findAll().stream().filter(tournament -> tournament.getCourseExecution().getId()
