@@ -11,6 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 @Repository
 @Transactional
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
-    @Query(value = "SELECT MAX(key) FROM tournament", nativeQuery = true)
+    @Query(value = "SELECT MAX(key) FROM tournaments", nativeQuery = true)
     Integer getMaxTournamentKey();
 }

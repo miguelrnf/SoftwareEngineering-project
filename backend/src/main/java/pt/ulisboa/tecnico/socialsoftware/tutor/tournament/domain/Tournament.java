@@ -16,9 +16,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TO
 
 @Entity
 @Table(name = "tournaments",
-       indexes = {
-        @Index(name = "tournament_indx_0", columnList = "key")
-       }
+        indexes = {
+                @Index(name = "tournament_indx_0", columnList = "key")
+        }
 )
 public class Tournament {
 
@@ -30,7 +30,7 @@ public class Tournament {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(nullable = false)
     private Integer key;
 
     @Column(nullable = false)
@@ -74,7 +74,7 @@ public class Tournament {
 
         this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
-        this.status = Tournament.TournamentStatus.valueOf(tournamentDto.getStatus());
+        setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());

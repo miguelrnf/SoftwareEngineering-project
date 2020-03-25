@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
     private Integer id;
@@ -51,6 +52,7 @@ public class TournamentDto implements Serializable {
 
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
+        this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
 
     }
 
@@ -156,6 +158,10 @@ public class TournamentDto implements Serializable {
         this.assessmentDto = assessmentDto;
     }
 
+    public List<UserDto> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
     @Override
     public String toString() {
         return "TournamentDto{" +
@@ -168,7 +174,7 @@ public class TournamentDto implements Serializable {
                 ", assessmentDto=" + assessmentDto +
                 ", title='" + title + '\'' +
                 ", owner=" + owner +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
                 ", formatter=" + formatter +
                 '}';

@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -26,25 +25,22 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND
-
-
 @DataJpaTest
-class AddTournamentServiceSpockTest extends Specification{
+class CreateTournamentServiceSpockPreformanceTest extends Specification {
+
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final USERNAME_1 = 'username1'
     static final TITLE = 'first tournament'
-    static final NAME = 'name'
     static final NUMQUESTIONS = 3
     static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final NAME = 'name'
 
     @Autowired
     UserRepository userRepository
@@ -77,15 +73,6 @@ class AddTournamentServiceSpockTest extends Specification{
     def courseExecution
 
     @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
     def formatter
 
     @Shared
@@ -109,16 +96,13 @@ class AddTournamentServiceSpockTest extends Specification{
     @Shared
     def topicConjunction
 
+
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        given: "a quiz"
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
+
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
-        tournamentDto.setId(1)
         tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW.format(formatter))
@@ -130,14 +114,12 @@ class AddTournamentServiceSpockTest extends Specification{
         STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
-
     }
 
     def setup() {
         given: "a course and a course execution"
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        tournamentDto.setAssessmentDto(assdto)
 
         and: "a topic dto"
         topicDto = new TopicDto()
@@ -162,8 +144,10 @@ class AddTournamentServiceSpockTest extends Specification{
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution, tcl, assdto)
 
+
         and: "a user with the role student"
         def userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
+
 
         then:"add to repository"
         courseRepository.save(course)
@@ -172,56 +156,24 @@ class AddTournamentServiceSpockTest extends Specification{
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)
         assessmentRepository.save(ass)
-
     }
 
-    def "valid course Execution"() {
+
+    def "student creates a tournament"() {
         given:
         tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setTitle(TITLE)
-        tournamentDto.setId(1)
         tournamentDto.setAssessmentDto(assdto)
 
-        when:
-        def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then:
-        result.id != null
-        result.key == 1
-        result.owner.getName() == 'name'
-        result.owner.getRole() == User.Role.STUDENT
-        result.title == TITLE
-        result.status == "CREATED"
-
-        def tourntest = new TournamentDto(courseExecution.getTournaments().getAt(0))
-
-        result.getId() == tourntest.getId()
-        result.getKey() == tourntest.getKey()
-        result.getOwner().getName() == tourntest.getOwner().getName()
-        result.getOwner().getRole() == tourntest.getOwner().getRole()
-        result.getTitle() == tourntest.getTitle()
-    }
-
-
-
-    @Unroll
-    def "invalid arguments: id=#id || errorMessage=#errorMessage "() {
-        given:
-        tournamentDto.setOwner(new UserDto(STUDENT))
-        tournamentDto.setTitle(TITLE)
 
         when:
-        tournamentService.createTournament(id, tournamentDto as TournamentDto)
+        1.upto(5000, {
+            tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        })
 
         then:
-        def error = thrown(TutorException)
-        error.errorMessage == errorMessage
+        true
 
-        where:
-        id     || errorMessage
-        -1     || COURSE_EXECUTION_NOT_FOUND
-         4     || COURSE_EXECUTION_NOT_FOUND
-         5     || COURSE_EXECUTION_NOT_FOUND
     }
 
     @TestConfiguration
@@ -232,4 +184,5 @@ class AddTournamentServiceSpockTest extends Specification{
             return new TournamentService()
         }
     }
+
 }

@@ -187,7 +187,7 @@ class SignOutServiceSpockTest extends Specification{
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -215,11 +215,11 @@ class SignOutServiceSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId() as Integer, STUDENT_SAME_CE.getUsername() as String, result.getId())
+        tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername() as String, result.getId())
 
         then:
         def tournamentTest = tournamentRepository.findById(result.getId())
-        def result2 = tournamentTest.get().getEnrolledStudents().getAt(0)
+        def result2 = tournamentTest.get().getEnrolledStudents()[0]
         def result5 = user_same.getTournaments()
 
         result2.username == USERNAME_2

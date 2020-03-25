@@ -1,10 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
@@ -26,7 +23,7 @@ public class SuggestionDto implements Serializable {
     private UserDto _student;
 
 
-    public SuggestionDto() {
+    public SuggestionDto(){
     }
 
     public SuggestionDto(Suggestion suggestion) {

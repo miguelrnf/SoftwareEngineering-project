@@ -46,12 +46,13 @@ public enum ErrorMessage {
 
     TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
     TOURNAMENT_PERMISSION("Only student's can create tournaments"),
+    TOURNAMENT_LIST_EMPTY("No tournaments found"),
     TOURNAMENT_PERMISSION_ENROLL("Only student's can enroll in tournaments"),
     TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
     TOURNAMENT_UNABLE_EDIT("Unable to edit tournament, field: %s"),
-    TOURNAMENT_LIST_EMPTY("No tournaments found"),
 
+    USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
     NOT_ENOUGH_QUESTIONS_TOURNAMENT("Not enough questions to create a tournament"),
 

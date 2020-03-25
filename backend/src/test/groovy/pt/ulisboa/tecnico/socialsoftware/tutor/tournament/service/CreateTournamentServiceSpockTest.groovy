@@ -124,7 +124,7 @@ class CreateTournamentServiceSpockTest extends Specification {
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
+        given: "a quiz"
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
@@ -184,7 +184,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
