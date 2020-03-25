@@ -48,6 +48,7 @@ public enum ErrorMessage {
     TOURNAMENT_PERMISSION_ENROLL("Only student's can enroll in tournaments"),
     TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
+    USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
     NOT_ENOUGH_QUESTIONS_TOURNAMENT("Not enough questions to create a tournament"),
 

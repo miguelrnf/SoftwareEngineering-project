@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -27,28 +26,28 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_LIST_EMPTY
-
 @DataJpaTest
-class listTournamentSpockTest extends Specification{
+class SignOutStudentsSpockPreformanceTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
-    static final USERNAME_1 = 'username1'
-    static final TITLE1 = 'first tournament'
-    static final TITLE2 = 'second tournament'
-    static final String NAME = 'Name'
+    static final String USERNAME_1 = "username1"
+    static final String USERNAME_2 = "username2"
+    static final Integer NUMQUESTIONS = 3
+    static final String TITLE = "Title"
+    static final String NAME = "NOME"
     static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
-    static int tempId = 1
 
     @Autowired
-    TournamentService tournamentService
+    UserRepository userRepository
+
+    @Autowired
+    AssessmentRepository assessmentRepository
 
     @Autowired
     CourseRepository courseRepository
@@ -60,7 +59,7 @@ class listTournamentSpockTest extends Specification{
     CourseExecutionRepository courseExecutionRepository
 
     @Autowired
-    UserRepository userRepository
+    TournamentService tournamentService
 
     @Autowired
     TopicRepository topicRepository
@@ -68,20 +67,27 @@ class listTournamentSpockTest extends Specification{
     @Autowired
     TopicConjunctionRepository topicConjunctionRepository
 
-    @Autowired
-    AssessmentRepository assessmentRepository
-
-    @Shared
-    def tournamentDto1
-
-    @Shared
-    def tournamentDto2
-
-    @Shared
-    def STUDENT
-
     @Shared
     def course
+
+    @Shared
+    def courseExecution_1
+
+    @Shared
+    def STUDENT_OWNER
+
+    @Shared
+    def STUDENT_SAME_CE
+
+
+    @Shared
+    def TOURNAMENTDTO
+
+    @Shared
+    def userS
+
+    @Shared
+    def user_same
 
     @Shared
     def assdto
@@ -102,56 +108,60 @@ class listTournamentSpockTest extends Specification{
     def topicConjunction
 
     @Shared
-    def user
+    def creationDate
 
     @Shared
-    def courseExecution
+    def availableDate
+
+    @Shared
+    def conclusionDate
 
     @Shared
     def formatter
 
-    def setupSpec() {
+
+    def setupSpec(){
+
+        given: "a user with the role teacher"
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
-        given: "a user with the role student"
-        STUDENT = new User()
-        STUDENT.setId(1)
-        STUDENT.setRole(User.Role.STUDENT)
-        STUDENT.setUsername(USERNAME_1)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
 
-        and: "some tournamentDtos"
-        tournamentDto1 = new TournamentDto()
-        tournamentDto1.setId(1)
-        tournamentDto1.setKey(1)
-        tournamentDto1.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto1.setOwner(new UserDto(STUDENT))
-        tournamentDto1.setTitle(TITLE1)
-        tournamentDto1.setNumberOfQuestions(3)
-        tournamentDto1.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto1.setConclusionDate(DATETOMORROW.format(formatter))
+        and: "a user with the role student"
+        STUDENT_OWNER = new User()
+        STUDENT_OWNER.setId(1)
+        STUDENT_OWNER.setRole(User.Role.STUDENT)
+        STUDENT_OWNER.setUsername(USERNAME_1)
 
+        and: "a user with the role student"
+        STUDENT_SAME_CE = new User()
+        STUDENT_SAME_CE.setId(2)
+        STUDENT_SAME_CE.setRole(User.Role.STUDENT)
+        STUDENT_SAME_CE.setUsername(USERNAME_2)
 
-        tournamentDto2 = new TournamentDto()
-        tournamentDto2.setId(2)
-        tournamentDto2.setKey(2)
-        tournamentDto2.setOwner(new UserDto(STUDENT))
-        tournamentDto2.setTitle(TITLE2)
-        tournamentDto2.setNumberOfQuestions(3)
-        tournamentDto2.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto2.setConclusionDate(DATETOMORROW.format(formatter))
-
-
+        and: "a tournamentDto"
+        TOURNAMENTDTO = new TournamentDto()
+        TOURNAMENTDTO.setKey(1)
+        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
+        TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
+        TOURNAMENTDTO.setTitle(TITLE)
+        TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
+        TOURNAMENTDTO.setConclusionDate(DATETOMORROW.format(formatter))
+        TOURNAMENTDTO.setNumberOfQuestions(NUMQUESTIONS)
     }
 
-    def setup() {
+    def setup(){
+
         given: "a course and a course execution"
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        user = new User()
-        user.setKey(2)
-        user.setRole(User.Role.STUDENT)
-        user.setUsername(USERNAME_1)
+        courseExecution_1 = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+
+        and: "a user with the role student"
+        userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
+        user_same = new User('name', USERNAME_2, 2, User.Role.STUDENT)
 
         and: "a topic dto"
         topicDto = new TopicDto()
@@ -174,63 +184,32 @@ class listTournamentSpockTest extends Specification{
         and:
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
-        ass = new Assessment(courseExecution, tcl, assdto)
+        ass = new Assessment(courseExecution_1, tcl, assdto)
 
-
-        then:"add to repository"
+        courseExecution_1.addUser(userS)
+        courseExecution_1.addUser(user_same)
+        userRepository.save(userS)
+        userRepository.save(user_same)
         courseRepository.save(course)
-        courseExecutionRepository.save(courseExecution)
-        userRepository.save(user)
+        courseExecutionRepository.save(courseExecution_1)
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)
         assessmentRepository.save(ass)
+
     }
 
-    def "show tournaments"(){
-        //available tournaments exist and are listed
-        given: "three tournaments"
-        assdto.setId(tempId++)
-        tournamentDto2.setStatus(Tournament.TournamentStatus.CREATED)
-        tournamentDto1.setAssessmentDto(assdto)
-        tournamentDto2.setAssessmentDto(assdto)
-        tournamentService.createTournament(courseExecution.id, tournamentDto1)
-        tournamentService.createTournament(courseExecution.id, tournamentDto2)
-        def tournament1 = new Tournament(tournamentDto1, STUDENT, ass)
-        def tournament2 = new Tournament(tournamentDto2, STUDENT, ass)
-        tournament1.setId(1)
-        tournament2.setId(2)
-
-        when:
-        def result = tournamentService.listTournaments(courseExecution.getId())
-
-        then:
-        result.contains(new TournamentDto(tournament1))
-        result.contains(new TournamentDto(tournament2))
-        result.size() == 2
-    }
-
-    @Unroll
-    def "tournament with status=#status || errorMessage=#errorMessage "() {
+    def "Unenroll a students that is in the same courseExecution as the owner"() {
         given:
-        assdto.setId(tempId++)
-        tournamentDto2.setStatus(status)
-        tournamentDto2.setAssessmentDto(assdto)
-        tournamentService.createTournament(courseExecution.id, tournamentDto2)
+        TOURNAMENTDTO.setAssessmentDto(assdto)
+        1.upto(5000, {tournamentService.createTournament(courseExecution_1.getId(), TOURNAMENTDTO)})
+        1.upto(5000, {tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername(), it.intValue())})
 
         when:
-        tournamentService.listTournaments(courseExecution.getId())
+        1.upto(5000, {tournamentService.unrollStudent(STUDENT_SAME_CE.getUsername(), it.intValue())})
 
         then:
-        def error = thrown(TutorException)
-        error.errorMessage == errorMessage
-
-        where:
-                    status                   ||       errorMessage
-        Tournament.TournamentStatus.CLOSED   || TOURNAMENT_LIST_EMPTY
-        Tournament.TournamentStatus.OPEN     || TOURNAMENT_LIST_EMPTY
-        Tournament.TournamentStatus.CANCELED || TOURNAMENT_LIST_EMPTY
+        true
     }
-
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
@@ -240,6 +219,5 @@ class listTournamentSpockTest extends Specification{
             return new TournamentService()
         }
     }
+
 }
-
-

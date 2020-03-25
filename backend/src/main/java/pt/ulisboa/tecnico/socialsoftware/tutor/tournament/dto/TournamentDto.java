@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
 
@@ -22,7 +22,7 @@ public class TournamentDto implements Serializable {
     private AssessmentDto assessmentDto;
     private String title;
     private UserDto owner;
-    private Tournament.TournamentStatus status;
+    private String status;
     private List<UserDto> enrolledStudents = new ArrayList<>();
 
     @Transient
@@ -36,11 +36,11 @@ public class TournamentDto implements Serializable {
         this.key = tournament.getKey();
         setTitle(tournament.getTitle());
 
-        this.status = Tournament.TournamentStatus.CREATED;
+        this.status = Tournament.TournamentStatus.CREATED.name();
 
         if (tournament.getStatus() != null)
-            this.status = tournament.getStatus();
-      
+            this.status = tournament.getStatus().name();
+
         this.owner = new UserDto(tournament.getOwner());
 
         if (tournament.getCreationDate() != null)
@@ -52,6 +52,7 @@ public class TournamentDto implements Serializable {
 
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
+        this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
 
     }
 
@@ -87,11 +88,11 @@ public class TournamentDto implements Serializable {
         this.owner = owner;
     }
 
-    public Tournament.TournamentStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Tournament.TournamentStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -157,6 +158,10 @@ public class TournamentDto implements Serializable {
         this.assessmentDto = assessmentDto;
     }
 
+    public List<UserDto> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
     @Override
     public String toString() {
         return "TournamentDto{" +
@@ -169,43 +174,9 @@ public class TournamentDto implements Serializable {
                 ", assessmentDto=" + assessmentDto +
                 ", title='" + title + '\'' +
                 ", owner=" + owner +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
                 ", formatter=" + formatter +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        System.out.println("1");
-        if (this == o) return true;
-        System.out.println("2");
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TournamentDto t = (TournamentDto) o;
-
-        System.out.println("3");
-        if (!Objects.equals(id, t.id)) return false;
-        System.out.println("4");
-        if (!Objects.equals(key, t.key)) return false;
-        System.out.println("5");
-        if (!Objects.equals(title, t.title)) return false;
-        System.out.println("6");
-        if (!Objects.equals(owner, t.owner)) return false;
-        System.out.println("7");
-        if (status != t.status) return false;
-        System.out.println("8");
-        return Objects.equals(enrolledStudents, t.enrolledStudents);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (key != null ? key.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (owner != null ? owner.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (enrolledStudents != null ? enrolledStudents.hashCode() : 0);
-        return result;
     }
 }
