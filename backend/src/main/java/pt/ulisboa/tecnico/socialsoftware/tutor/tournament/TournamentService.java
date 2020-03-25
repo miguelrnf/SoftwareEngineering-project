@@ -209,7 +209,11 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-    public void unrollStudent(String username, int tournamentId){
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto unrollStudent(String username, int tournamentId){
         User user = findUsername(username);
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
@@ -221,6 +225,8 @@ public class TournamentService {
 
         tournament.getEnrolledStudents().remove(user);
         user.getTournaments().remove(tournament);
+
+        return new TournamentDto(tournament);
 
     }
 
