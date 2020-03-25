@@ -202,7 +202,7 @@ class EnrollStudentsSpockPreformanceTest extends Specification{
 
     }
 
-    def "Enroll a student that is in the same courseExecution as the owner"() {
+    def "Enroll a students that is in the same courseExecution as the owner"() {
         given:
         TOURNAMENTDTO.setAssessmentDto(assdto)
         1.upto(5000, {tournamentService.createTournament(courseExecution_1.getId(), TOURNAMENTDTO)})

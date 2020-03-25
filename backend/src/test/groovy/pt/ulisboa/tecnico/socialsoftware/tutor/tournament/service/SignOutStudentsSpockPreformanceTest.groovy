@@ -198,12 +198,11 @@ class SignOutStudentsSpockPreformanceTest extends Specification{
 
     }
 
-    def "Enroll a student that is in the same courseExecution as the owner"() {
+    def "Unenroll a students that is in the same courseExecution as the owner"() {
         given:
         TOURNAMENTDTO.setAssessmentDto(assdto)
         1.upto(5000, {tournamentService.createTournament(courseExecution_1.getId(), TOURNAMENTDTO)})
         1.upto(5000, {tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername(), it.intValue())})
-
 
         when:
         1.upto(5000, {tournamentService.unrollStudent(STUDENT_SAME_CE.getUsername(), it.intValue())})
