@@ -88,7 +88,7 @@ public class SuggestionService {
         User user = checkIfUserExists(username);
         checkIfUserHasRoleStudent(user);
 
-        Set<Topic> topics = checkIfTopicExists(courseId, suggestionDto);
+        Set<Topic> topics = checkIfTopicExists(course.getCourse().getId(), suggestionDto);
 
         if (suggestionDto.getKey() == null) {
             int maxQuestionNumber = suggestionRepository.getMaxSuggestionNumber() != null ?

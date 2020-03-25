@@ -34,7 +34,7 @@ public class SuggestionController {
         return this.suggestionService.createSuggestion(courseExecutionId, suggDto);
     }
 
-    @PutMapping(value = "courses/{courseExecutionId}/suggestions")
+    @PutMapping(value = "/courses/{courseExecutionId}/suggestions")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
     public SuggestionDto approveSuggestion(Principal principal, @PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
