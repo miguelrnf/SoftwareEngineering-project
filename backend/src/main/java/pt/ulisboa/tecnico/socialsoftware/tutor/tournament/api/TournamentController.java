@@ -62,20 +62,19 @@ public class TournamentController {
     @GetMapping("/executions/{executionId}/tournaments/open")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getOpenTournaments(@PathVariable Integer executionId){
-        return tournamentService.listTournaments(executionId);
+        return tournamentservice.listTournaments(executionId);
     }
 
     @GetMapping("/executions/{executionId}/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getTournaments(@PathVariable Integer executionId){
-        return tournamentService.getTournaments(executionId);
+        return tournamentservice.getTournaments(executionId);
     }
 
     @GetMapping("/executions/{executionId}/tournaments/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto getTournament(@PathVariable Integer tournamentId, @PathVariable Integer executionId) {
-        return this.tournamentService.findById(tournamentId, executionId);
+        return this.tournamentservice.findById(tournamentId, executionId);
     }
-}
 }
 

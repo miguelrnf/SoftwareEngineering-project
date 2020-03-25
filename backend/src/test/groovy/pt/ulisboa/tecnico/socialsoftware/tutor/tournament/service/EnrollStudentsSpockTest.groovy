@@ -303,25 +303,25 @@ class EnrollStudentsSpockTest extends Specification{
     }
 
     @Unroll
-   def "invalid arguments: tournamentSate=#tournameSate || errorMessage=#errorMessage "() {
-       given:
-       assdto.setId(tempId++)
-       TOURNAMENTDTO.setAssessmentDto(assdto)
-       TOURNAMENTDTO.setStatus(tournamentStatus.name())
-       def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
+    def "invalid arguments: tournamentSate=#tournameSate || errorMessage=#errorMessage "() {
+        given:
+        assdto.setId(tempId++)
+        TOURNAMENTDTO.setAssessmentDto(assdto)
+        TOURNAMENTDTO.setStatus(tournamentStatus.name())
+        def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
-       when:
-       tournamentService.enrollStudent(STUDENT_OTHER_CE.getUsername(), result.getId())
+        when:
+        tournamentService.enrollStudent(STUDENT_OTHER_CE.getUsername(), result.getId())
 
-       then:
-       def error = thrown(TutorException)
-       error.errorMessage == errorMessage
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == errorMessage
 
         where:
         tournamentStatus                       || errorMessage
-        "CANCELED"   || TOURNAMENT_NOT_AVAILABLE
-        "CLOSED"     || TOURNAMENT_NOT_AVAILABLE
-        "OPEN"       || TOURNAMENT_NOT_AVAILABLE
+        Tournament.TournamentStatus.CANCELED   || TOURNAMENT_NOT_AVAILABLE
+        Tournament.TournamentStatus.CLOSED     || TOURNAMENT_NOT_AVAILABLE
+        Tournament.TournamentStatus.OPEN       || TOURNAMENT_NOT_AVAILABLE
     }
 
     def "Enroll a student that isn't in the same courseExecution as the owner"() {

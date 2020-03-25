@@ -97,28 +97,20 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listTournaments(int executionId){
-        List<TournamentDto> result;
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
-
-        //TODO add date filters when added to project
-        List<Tournament> temp = courseExecution.getTournaments().stream()
-                .filter(t -> t.getStatus() == Tournament.TournamentStatus.CREATED).collect(Collectors.toList());
-
-
-        result = temp.stream().map(TournamentDto::new).collect(Collectors.toList());
-
-        if (result.isEmpty()){
+    public List<TournamentDto> listTournaments(int courseExecutionId) {
+        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+                .filter(tournament -> tournament.getStatus().equals(Tournament.TournamentStatus.CREATED) && tournament
+                        .getCourseExecution().getId().equals(courseExecutionId))
+                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+                .collect(Collectors.toList());
+        if(temp.isEmpty())
             throw new TutorException(TOURNAMENT_LIST_EMPTY);
-        }
 
-
-        return result;
+        return temp;
     }
 
     private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){
@@ -203,11 +195,11 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
         if(tournament.getEnrolledStudents().contains(user) || user.getTournaments().contains(tournament)){
-           throw new TutorException(USER_ALREADY_ENROLLED, user.getUsername());
+            throw new TutorException(USER_ALREADY_ENROLLED, user.getUsername());
         }
 
-         tournament.enrollStudent(user);
-         user.addTournament(tournament);
+        tournament.enrollStudent(user);
+        user.addTournament(tournament);
 
         return new TournamentDto(tournament);
     }
@@ -241,22 +233,6 @@ public class TournamentService {
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listTournaments(int courseExecutionId) {
-        List<TournamentDto> temp = tournamentRepository.findAll().stream()
-                .filter(tournament -> tournament.getStatus().equals(Tournament.TournamentStatus.CREATED) && tournament
-                        .getCourseExecution().getId().equals(courseExecutionId))
-                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
-                .collect(Collectors.toList());
-        if(temp.isEmpty())
-            throw new TutorException(TOURNAMENT_LIST_EMPTY);
-
-        return temp;
-    }
-
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto findById(int tournamentId, int executionId) {
         List<TournamentDto> tournament = tournamentRepository.findById(tournamentId).stream().filter(t -> t.getCourseExecution().getId()
@@ -273,13 +249,5 @@ public class TournamentService {
         return tournamentRepository.findAll().stream().filter(tournament -> tournament.getCourseExecution().getId()
                 .equals(executionId)).map(TournamentDto::new).sorted(Comparator
                 .comparing(TournamentDto::getTitle)).collect(Collectors.toList());
-    }
-
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto findTournamentCourseExecution(int tournamentId) {
-        return this.tournamentRepository.findById(tournamentId)
-                .map(Tournament::getCourseExecution)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 }
