@@ -65,11 +65,12 @@ public class PostQuestionDto implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("id: ").append(this.id)
-          .append("question: ").append(this.question)
-          .append("user: ").append(this.user)
-          .append("post: ").append(this.post);
-        return sb.toString();
+        return "PostQuestionDto{" +
+                "id=" + id +
+                ", question=" + question +
+                ", user=" + user +
+                ", studentQuestion='" + studentQuestion + '\'' +
+                ", post=" + post +
+                '}';
     }
 }
