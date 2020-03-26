@@ -58,7 +58,7 @@
       <hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Create Tournament" enabled="true">
           <stringProp name="dataSource">setup</stringProp>
-          <stringProp name="query">${__FileToString(${testHome}/data/tournamentPopulateList.sql,,)}</stringProp>
+          <stringProp name="query">${__FileToString(${testHome}/data/tournamentPopulatesignOut.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -299,7 +299,7 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Delete Tournament" enabled="true">
           <stringProp name="dataSource">tearDown</stringProp>
           <stringProp name="queryType">Update Statement</stringProp>
-          <stringProp name="query">${__FileToString(${testHome}/data/deletePopulateList.sql,,)}</stringProp>
+          <stringProp name="query">${__FileToString(${testHome}/data/deletePopulatesignOut.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>

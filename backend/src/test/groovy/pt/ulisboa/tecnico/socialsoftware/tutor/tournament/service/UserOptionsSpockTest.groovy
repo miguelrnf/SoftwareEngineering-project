@@ -138,7 +138,6 @@ class UserOptionsSpockTest extends Specification{
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
-        tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setNumberOfQuestions(3)

@@ -132,7 +132,6 @@ class CreateTournamentServiceSpockTest extends Specification {
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
-        tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW.format(formatter))
         tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
@@ -222,7 +221,6 @@ class CreateTournamentServiceSpockTest extends Specification {
 
        then:"the return data are correct"
        result.id != null
-       result.key == 1
        result.owner.getName() == 'name'
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE

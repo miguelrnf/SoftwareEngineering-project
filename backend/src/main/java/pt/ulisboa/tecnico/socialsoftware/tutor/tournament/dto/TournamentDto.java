@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
     private Integer id;
-    private Integer key;
     private Integer numberOfQuestions;
     private String creationDate = null;
     private String availableDate = null;
@@ -33,7 +32,6 @@ public class TournamentDto implements Serializable {
 
     public TournamentDto(Tournament tournament){
         this.id = tournament.getId();
-        this.key = tournament.getKey();
         setTitle(tournament.getTitle());
 
         this.status = Tournament.TournamentStatus.CREATED.name();
@@ -62,14 +60,6 @@ public class TournamentDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getKey() {
-        return key;
-    }
-
-    public void setKey(Integer key) {
-        this.key = key;
     }
 
     public String getTitle() {
@@ -166,7 +156,6 @@ public class TournamentDto implements Serializable {
     public String toString() {
         return "TournamentDto{" +
                 "id=" + id +
-                ", key=" + key +
                 ", numberOfQuestions=" + numberOfQuestions +
                 ", creationDate='" + creationDate + '\'' +
                 ", availableDate='" + availableDate + '\'' +
@@ -189,24 +178,16 @@ public class TournamentDto implements Serializable {
 
         TournamentDto t = (TournamentDto) o;
 
-        System.out.println("3");
         if (!Objects.equals(id, t.id)) return false;
-        System.out.println("4");
-        if (!Objects.equals(key, t.key)) return false;
-        System.out.println("5");
         if (!Objects.equals(title, t.title)) return false;
-        System.out.println("6");
         if (!Objects.equals(owner, t.owner)) return false;
-        System.out.println("7");
         if (status != t.status) return false;
-        System.out.println("8");
         return Objects.equals(enrolledStudents, t.enrolledStudents);
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (key != null ? key.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (owner != null ? owner.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);

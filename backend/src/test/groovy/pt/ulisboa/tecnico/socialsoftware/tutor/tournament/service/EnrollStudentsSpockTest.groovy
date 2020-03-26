@@ -195,7 +195,6 @@ class EnrollStudentsSpockTest extends Specification{
         and: "a tournamentDto"
         TOURNAMENTDTO = new TournamentDto()
         TOURNAMENTDTO.setId(1)
-        TOURNAMENTDTO.setKey(1)
         TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)

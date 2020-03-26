@@ -48,11 +48,6 @@ public class TournamentService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public Integer getMaxTournamentKey() {
-        Integer maxTournamentKey = tournamentRepository.getMaxTournamentKey();
-        return maxTournamentKey != null ? maxTournamentKey : 0;
-    }
-
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
@@ -61,11 +56,6 @@ public class TournamentService {
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        if (tournamentDto.getKey() == null) {
-            int maxTournamentNumber = getMaxTournamentKey();
-            tournamentDto.setKey(maxTournamentNumber + 1);
-        }
 
         if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null)
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Owner");

@@ -103,7 +103,6 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
 
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
-        tournamentDto.setKey(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW.format(formatter))
         tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))

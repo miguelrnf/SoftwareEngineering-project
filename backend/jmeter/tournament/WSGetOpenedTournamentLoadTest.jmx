@@ -53,7 +53,7 @@
       <hashTree>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Create Tournament" enabled="true">
           <stringProp name="dataSource">setup</stringProp>
-          <stringProp name="query">${__FileToString(${testHome}/data/tournamentPopulateList.sql,,)}</stringProp>
+          <stringProp name="query">${__FileToString(${testHome}/data/tournamentPopulatesignOut.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -121,11 +121,11 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="100 Users Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">25</stringProp>
+          <stringProp name="LoopController.loops">100</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -174,7 +174,7 @@
           <hashTree/>
           <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">4</stringProp>
+            <stringProp name="LoopController.loops">10</stringProp>
           </LoopController>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
@@ -300,7 +300,7 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Delete Tournament" enabled="true">
           <stringProp name="dataSource">tearDown</stringProp>
           <stringProp name="queryType">Update Statement</stringProp>
-          <stringProp name="query">${__FileToString(${testHome}/data/deletePopulateList.sql,,)}</stringProp>
+          <stringProp name="query">${__FileToString(${testHome}/data/deletePopulatesignOut.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>

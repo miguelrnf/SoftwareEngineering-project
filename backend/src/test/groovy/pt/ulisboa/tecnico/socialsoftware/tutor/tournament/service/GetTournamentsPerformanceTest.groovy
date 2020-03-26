@@ -119,7 +119,6 @@ class GetTournamentsPerformanceTest extends Specification{
         and: "some tournamentDtos"
         tournamentDto1 = new TournamentDto()
         tournamentDto1.setId(1)
-        tournamentDto1.setKey(1)
         tournamentDto1.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
@@ -130,7 +129,6 @@ class GetTournamentsPerformanceTest extends Specification{
 
         tournamentDto2 = new TournamentDto()
         tournamentDto2.setId(2)
-        tournamentDto2.setKey(2)
         tournamentDto2.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
