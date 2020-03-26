@@ -171,9 +171,7 @@ public class TournamentDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        System.out.println("1");
         if (this == o) return true;
-        System.out.println("2");
         if (o == null || getClass() != o.getClass()) return false;
 
         TournamentDto t = (TournamentDto) o;
