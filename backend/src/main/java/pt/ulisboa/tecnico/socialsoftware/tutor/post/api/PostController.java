@@ -29,7 +29,7 @@ public class PostController {
     @GetMapping("executions/{executionId}/posts/{postId}")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
             "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
-    public PostDto createPost(@PathVariable int executionId, @PathVariable int postId) {
+    public PostDto viewPost(@PathVariable int executionId, @PathVariable int postId) {
         return postService.viewPost(postId);
     }
 
