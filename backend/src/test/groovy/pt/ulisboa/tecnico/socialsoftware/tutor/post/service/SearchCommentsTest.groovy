@@ -21,7 +21,6 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import javax.xml.stream.events.Comment
 import java.time.LocalDateTime
 
 @DataJpaTest
