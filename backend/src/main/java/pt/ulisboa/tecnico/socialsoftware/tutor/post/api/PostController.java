@@ -6,23 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 
 import javax.validation.Valid;
 import java.util.Set;
-
-@RestController
-public class PostController {
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAndUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
-
-import javax.validation.Valid;
 
 @RestController
 public class PostController {
@@ -65,8 +52,6 @@ public class PostController {
         return postService.deletePost(post);
     }
 
-
-    //TODO - DO SOMETHING WITH POSTID AND EXECUTIONID
     @PostMapping("executions/{executionId}/posts/{postId}/answer")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto answerPost(@PathVariable int executionId, @PathVariable int postId,
