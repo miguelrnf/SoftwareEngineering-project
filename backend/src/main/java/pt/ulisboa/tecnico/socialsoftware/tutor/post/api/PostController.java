@@ -40,14 +40,12 @@ public class PostController {
         return postService.searchComment(toFind);
     }
 
-    //TODO - REMOVE WHEN MERGING IMNTO DEV
     @PutMapping("executions/{executionId}/posts/{postId}/comment")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
             "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public PostCommentDto comment(@PathVariable int executionId, @PathVariable String postId, @Valid @RequestBody PostCommentDto comment) {
         return postService.postComment(comment);
     }
-    //TODO - REMOVE WHEN MERGING IMNTO DEV
 
     //TODO - REMOVE WHEN MERGING INTO DEVELOP
     @PostMapping("executions/{executionId}/posts/submit")
