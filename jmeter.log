@@ -1,0 +1,53 @@
+2020-03-26 16:36:41,659 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2020-03-26 16:36:41,692 INFO o.a.j.JMeter: Loading user properties from: /usr/local/Cellar/jmeter/5.2.1/libexec/bin/user.properties
+2020-03-26 16:36:41,694 INFO o.a.j.JMeter: Loading system properties from: /usr/local/Cellar/jmeter/5.2.1/libexec/bin/system.properties
+2020-03-26 16:36:41,695 INFO o.a.j.JMeter: Copyright (c) 1998-2019 The Apache Software Foundation
+2020-03-26 16:36:41,695 INFO o.a.j.JMeter: Version 5.2.1
+2020-03-26 16:36:41,695 INFO o.a.j.JMeter: java.version=11.0.4
+2020-03-26 16:36:41,695 INFO o.a.j.JMeter: java.vm.name=OpenJDK 64-Bit Server VM
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: os.name=Mac OS X
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: os.arch=x86_64
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: os.version=10.15.3
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: file.encoding=UTF-8
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: java.awt.headless=null
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: Max memory     =1073741824
+2020-03-26 16:36:41,696 INFO o.a.j.JMeter: Available Processors =8
+2020-03-26 16:36:41,716 INFO o.a.j.JMeter: Default Locale=English (EN)
+2020-03-26 16:36:41,716 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2020-03-26 16:36:41,716 INFO o.a.j.JMeter: JMeterHome=/usr/local/Cellar/jmeter/5.2.1/libexec
+2020-03-26 16:36:41,717 INFO o.a.j.JMeter: user.dir  =/Users/stopshark/Documents/es20tg_36-project
+2020-03-26 16:36:41,717 INFO o.a.j.JMeter: PWD       =/Users/stopshark/Documents/es20tg_36-project
+2020-03-26 16:36:41,742 INFO o.a.j.JMeter: IP: 192.168.1.8 Name: the-communist-manifesto.local FullName: 192.168.1.8
+2020-03-26 16:36:43,422 INFO o.a.j.g.a.LookAndFeelCommand: Installing Darcula LAF
+2020-03-26 16:36:43,432 INFO o.a.j.g.a.LookAndFeelCommand: Using look and feel: com.bulenkov.darcula.DarculaLaf [Darcula]
+2020-03-26 16:36:43,432 INFO o.a.j.JMeter: Setting LAF to: com.bulenkov.darcula.DarculaLaf
+2020-03-26 16:36:43,536 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2020-03-26 16:36:44,344 INFO o.j.r.JARSourceHTTP: Found cached repo
+2020-03-26 16:36:44,518 INFO o.j.r.PluginManager: Plugins Status: [jpgc-plugins-manager=1.3, jmeter-core=5.2.1, jmeter-ftp=5.2.1, jmeter-http=5.2.1, jmeter-jdbc=5.2.1, jmeter-jms=5.2.1, jmeter-junit=5.2.1, jmeter-java=5.2.1, jmeter-ldap=5.2.1, jmeter-mail=5.2.1, jmeter-mongodb=5.2.1, jmeter-native=5.2.1, jmeter-tcp=5.2.1, jmeter-components=5.2.1]
+2020-03-26 16:36:46,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-26 16:36:46,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-26 16:36:46,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-26 16:36:46,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-26 16:36:46,207 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2020-03-26 16:36:46,208 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2020-03-26 16:36:46,545 INFO o.a.j.e.KeyToolUtils: keytool found at 'keytool'
+2020-03-26 16:36:46,545 INFO o.a.j.p.h.p.ProxyControl: HTTP(S) Test Script Recorder SSL Proxy will use keys that support embedded 3rd party resources in file /usr/local/Cellar/jmeter/5.2.1/libexec/bin/proxyserver.jks
+2020-03-26 16:36:46,689 INFO o.a.j.s.FileServer: Default base='/Users/stopshark/Documents/es20tg_36-project'
+2020-03-26 16:36:47,011 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2020-03-26 16:36:47,011 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
+2020-03-26 16:36:47,012 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2020-03-26 16:36:47,012 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2020-03-26 16:36:47,033 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:48,442 INFO o.a.j.g.a.Load: Loading file: /Users/stopshark/Documents/es20tg_36-project/backend/jmeter/post/WSViewPostLoadTest.jmx
+2020-03-26 16:37:48,444 INFO o.a.j.s.FileServer: Set new base='/Users/stopshark/Documents/es20tg_36-project/backend/jmeter/post'
+2020-03-26 16:37:48,756 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2020-03-26 16:37:48,772 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2020-03-26 16:37:48,776 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2020-03-26 16:37:48,780 INFO o.a.j.s.SaveService: Loading file: /Users/stopshark/Documents/es20tg_36-project/backend/jmeter/post/WSViewPostLoadTest.jmx
+2020-03-26 16:37:49,301 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:49,408 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:49,485 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:49,582 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:49,686 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:49,768 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-26 16:37:49,823 INFO o.a.j.s.FileServer: Set new base='/Users/stopshark/Documents/es20tg_36-project/backend/jmeter/post'
