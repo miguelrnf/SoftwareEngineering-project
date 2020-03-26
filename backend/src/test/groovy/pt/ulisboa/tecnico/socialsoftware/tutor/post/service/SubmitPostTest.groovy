@@ -183,7 +183,6 @@ class SubmitPostTest extends Specification {
 
         then:
         def result = postService.submitPost(pq)
-        result.getQuestion().getQuestion().getKey() == pq.getQuestion().getKey()
         result.getQuestion().getStudentQuestion() == pq.getStudentQuestion()
         result.getQuestion().getUser().getUsername() == pq.getUser().getUsername()
 

@@ -5,6 +5,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -82,6 +84,11 @@ public class User implements UserDetails {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitUser(this);
     }
 
     public Integer getId() {
@@ -452,21 +459,5 @@ public class User implements UserDetails {
         }
 
         return result;
-    }
-
-    @Override //TODO: toString of tournaments, postquestions and quizanswers
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("id: ").append(this.id).append('\n')
-          .append("key: ").append(this.key).append('\n')
-          .append("role: ").append(this.role).append('\n')
-          .append("username: ").append(this.username).append('\n')
-          .append("name: ").append(this.name).append('\n')
-          .append("creation_date: ").append(this.creationDate).append('\n')
-          .append("quiz_answers: ").append(this.quizAnswers).append('\n')
-          .append("course_executions: ").append(this.courseExecutions).append('\n')
-          .append("tournaments: ").append(this.tournaments).append('\n')
-          .append("post_questions: ").append(this.postQuestions).append('\n');
-        return sb.toString();
     }
 }

@@ -24,6 +24,7 @@ import spock.lang.Unroll
 @DataJpaTest
 class RedirectDuplicatePostTest extends Specification{
     public static final String VALID_QUESTION = 'This is a valid question'
+    public static final String VALID_QUESTION_2 = 'This is a valid question too'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
     public static final String VALID_TEACHER_ANSWER = 'I AM ANSWER'
     public static final int VALID_KEY = 1
@@ -109,7 +110,7 @@ class RedirectDuplicatePostTest extends Specification{
         given: "a different valid question"
         VALID_Q_DIFFERENT = new Question()
         VALID_Q_DIFFERENT.setKey(VALID_KEY_2)
-        VALID_Q_DIFFERENT.setContent(VALID_QUESTION)
+        VALID_Q_DIFFERENT.setContent(VALID_QUESTION_2)
         VALID_Q_DIFFERENT.setStatus(Question.Status.AVAILABLE)
         VALID_Q_DIFFERENT.setNumberOfAnswers(2)
         VALID_Q_DIFFERENT.setNumberOfCorrect(1)
@@ -266,7 +267,6 @@ class RedirectDuplicatePostTest extends Specification{
 
         then:
         result.getAnswer().getTeacherAnswer() == post2.getAnswer().getTeacherAnswer()
-        result.getQuestion().getQuestion().getKey() == post2.getQuestion().getQuestion().getKey()
         !result.getDiscussStatus()
         result.getPostStatus()
 

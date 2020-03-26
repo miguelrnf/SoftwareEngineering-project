@@ -225,7 +225,7 @@ public class PostService {
     private void checkIfPostsHaveSameQuestion(PostDto postDto1, PostDto postDto2) {
         if(postDto2.getQuestion() == null)
             throw new TutorException(NO_ANSWER);
-         if(!postDto1.getQuestion().getQuestion().getKey().equals(postDto2.getQuestion().getQuestion().getKey()))
+         if(!postDto1.getQuestion().getQuestion().getContent().equals(postDto2.getQuestion().getQuestion().getContent()))
              throw new TutorException(DIFFERENT_QUESTION);
     }
 
