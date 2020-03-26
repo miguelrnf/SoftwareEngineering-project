@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -14,7 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution {
-    public enum Status {ACTIVE, INACTIVE, HISTORIC}
+     public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +42,13 @@ public class CourseExecution {
     private Set<Quiz> quizzes = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<Tournament> tournaments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
     private Set<Assessment> assessments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<Suggestion> suggestions = new HashSet<>();
 
     public CourseExecution() {
     }
@@ -62,6 +70,15 @@ public class CourseExecution {
         this.academicTerm = academicTerm;
         this.status = Status.ACTIVE;
         course.addCourseExecution(this);
+    }
+
+    public void delete() {
+        if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {
+            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
+        }
+
+        course.getCourseExecutions().remove(this);
+        users.forEach(user -> user.getCourseExecutions().remove(this));
     }
 
     public Integer getId() {
@@ -134,5 +151,15 @@ public class CourseExecution {
 
     public void setType(Course.Type type) {
         this.type = type;
+    }
+
+    public void addSuggestion(Suggestion s) {suggestions.add(s); }
+
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void addTournament(Tournament tournament) {
+        this.tournaments.add(tournament);
     }
 }

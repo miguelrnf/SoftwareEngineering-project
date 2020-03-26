@@ -3,12 +3,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -57,6 +59,9 @@ public class User implements UserDetails {
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
+
+    @ManyToMany
+    private Set<Tournament> tournaments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<PostQuestion> postQuestions = new HashSet<>();
@@ -156,6 +161,14 @@ public class User implements UserDetails {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void setTournaments(Set<Tournament> tournaments) {
+        this.tournaments = tournaments;
     }
 
     public Set<PostQuestion> getPostQuestions() {
@@ -304,6 +317,10 @@ public class User implements UserDetails {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
     }
 
+    public void addTournament(Tournament tournament){
+        tournaments.add(tournament);
+    }
+
     public void increaseNumberOfQuizzes(Quiz.QuizType type) {
         switch (type) {
             case PROPOSED:
@@ -362,29 +379,6 @@ public class User implements UserDetails {
 
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", role=" + role +
-                ", id=" + id +
-                ", username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
-                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
-                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
-                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
-                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
-                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
-                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
-                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
-                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
-                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", creationDate=" + creationDate +
-                ", courseExecutions=" + courseExecutions +
-                '}';
     }
 
     @Override
@@ -460,5 +454,21 @@ public class User implements UserDetails {
         }
 
         return result;
+    }
+
+    @Override //TODO: toString of tournaments, postquestions and quizanswers
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("id: ").append(this.id).append('\n')
+          .append("key: ").append(this.key).append('\n')
+          .append("role: ").append(this.role).append('\n')
+          .append("username: ").append(this.username).append('\n')
+          .append("name: ").append(this.name).append('\n')
+          .append("creation_date: ").append(this.creationDate).append('\n')
+          .append("quiz_answers: ").append(this.quizAnswers).append('\n')
+          .append("course_executions: ").append(this.courseExecutions).append('\n')
+          .append("tournaments: ").append(this.tournaments).append('\n')
+          .append("post_questions: ").append(this.postQuestions).append('\n');
+        return sb.toString();
     }
 }

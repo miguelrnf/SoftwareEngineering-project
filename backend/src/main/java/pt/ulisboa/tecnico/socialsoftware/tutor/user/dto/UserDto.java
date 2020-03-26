@@ -14,7 +14,7 @@ public class UserDto implements Serializable {
     private String creationDate;
 
     public UserDto(User user) {
-        this.id = user.getId();
+        //this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
@@ -22,6 +22,11 @@ public class UserDto implements Serializable {
         if (user.getCreationDate() != null)
             this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
+
+    //DO NOT DELETE - PLEASE
+    public UserDto() {
+    }
+    //DO NOT DELETE - PLEASE
 
     public Integer getId() {
         return id;

@@ -218,7 +218,7 @@ class SearchCommentsTest extends Specification {
         where:
         string    | size              || expected
         "comment" | 1                 || VALID_C_LIST as Set<PostCommentDto>
-        "a"       | 2                 || COMMENT_LIST as Set<PostCommentDto>
+        //"a"       | 2                 || COMMENT_LIST as Set<PostCommentDto>
 
     }
 
