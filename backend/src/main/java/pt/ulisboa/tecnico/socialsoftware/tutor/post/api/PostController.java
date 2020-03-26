@@ -6,6 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+
+import javax.validation.Valid;
+import java.util.Set;
+
+@RestController
+public class PostController {
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAndUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
@@ -84,5 +93,25 @@ public class PostController {
     public PostDto redirect(@PathVariable int executionId, @PathVariable int postId,
                             @Valid @RequestBody PostPostUserDto ppu) {
         return postService.redirect(ppu.getPostNotAnswered(), ppu.getPostAnswered(), ppu.getUserT());
+    }
+    @GetMapping("executions/{executionId}/posts/{postId}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
+            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostDto viewPost(@PathVariable int executionId, @PathVariable int postId) {
+        return postService.viewPost(postId);
+    }
+
+    @GetMapping("executions/{executionId}/comments/search")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
+            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public Set<PostCommentDto> searchComment(@PathVariable int executionId, @Valid @RequestBody String toFind) {
+        return postService.searchComment(toFind);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/comment")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
+            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostCommentDto comment(@PathVariable int executionId, @PathVariable String postId, @Valid @RequestBody PostCommentDto comment) {
+        return postService.postComment(comment);
     }
 }

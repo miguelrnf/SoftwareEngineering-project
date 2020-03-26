@@ -64,8 +64,8 @@ public class PostService {
         Question question = checkIfQuestionExists(questionKey);
         checkIfUserAnsweredQuestion(questionKey, user);
         int maxPostNumber = getMaxPostNumber();
-        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
 
+        Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
         post.setCreationDate(LocalDateTime.now());
         post.getQuestion().setPost(post);
         this.entityManager.persist(post);
@@ -214,6 +214,7 @@ public class PostService {
             post.addComment(comment);
         }
         comment.setPost(post);
+        commentRepository.save(comment);
         return new PostCommentDto(comment, false);
     }
 
