@@ -191,7 +191,7 @@ class GetTournamentsPerformanceTest extends Specification{
         tournamentService.createTournament(courseExecution.getId(), tournamentDto2)
 
         when:
-        1.upto(10000, {tournamentService.getTournaments(courseExecution.getId())})
+        1.upto(500000, {tournamentService.getTournaments(courseExecution.getId())})
 
         then:
         true
