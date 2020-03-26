@@ -305,18 +305,18 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">CaldoVerde</stringProp>
+          <stringProp name="password">ach123</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">leugim</stringProp>
+          <stringProp name="username">achando</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM tournaments t WHERE ctid IN (SELECT ctid FROM tournaments ORDER BY KEY LIMIT 1);</stringProp>
+          <stringProp name="query">DELETE FROM tournaments t WHERE ctid IN (SELECT ctid FROM tournaments ORDER BY ID LIMIT 1);</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
