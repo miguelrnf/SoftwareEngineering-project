@@ -212,6 +212,7 @@ public class PostService {
             parent.addChild(comment);
             post.addComment(comment);
         }
+        commentRepository.save(comment);
         return new PostCommentDto(comment, false);
     }
 
