@@ -182,7 +182,7 @@ class SubmitPostTest extends Specification {
         pq.setUser(new UserDto (u as User))
 
         then:
-        def result = postService.submitPost(VALID_COURSE_EXECUTION, pq)
+        def result = postService.submitPost(pq)
         result.getQuestion().getQuestion().getKey() == pq.getQuestion().getKey()
         result.getQuestion().getStudentQuestion() == pq.getStudentQuestion()
         result.getQuestion().getUser().getUsername() == pq.getUser().getUsername()
@@ -201,7 +201,7 @@ class SubmitPostTest extends Specification {
         pq.setQuestion(q as QuestionDto)
         pq.setStudentQuestion(sq)
         pq.setUser(new UserDto (u as User))
-        postService.submitPost(VALID_COURSE_EXECUTION, pq)
+        postService.submitPost(pq)
 
         then:
         def result = thrown(TutorException)
@@ -223,7 +223,7 @@ class SubmitPostTest extends Specification {
         pq.setQuestion(q as QuestionDto)
         pq.setStudentQuestion(sq)
         pq.setUser(new UserDto (u as User))
-        postService.submitPost(VALID_COURSE_EXECUTION, pq)
+        postService.submitPost(pq)
 
         then:
         def result = thrown(TutorException)

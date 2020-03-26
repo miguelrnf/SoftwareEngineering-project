@@ -17,6 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 public class PostController {
+    //TODO - USE POSTID
     private static Logger logger = LoggerFactory.getLogger(PostController.class);
 
     private PostService postService;
@@ -31,7 +32,7 @@ public class PostController {
     @PostMapping("executions/{executionId}/posts/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto createPost(@PathVariable int executionId, @Valid @RequestBody PostQuestionDto postQ) {
-        return postService.submitPost(executionId, postQ);
+        return postService.submitPost(postQ);
     }
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit")
@@ -54,7 +55,7 @@ public class PostController {
                               @Valid @RequestBody PostDto post) {
         return postService.deletePost(post);
     }
-}
+
 
     //TODO - DO SOMETHING WITH POSTID AND EXECUTIONID
     @PostMapping("executions/{executionId}/posts/{postId}/answer")
