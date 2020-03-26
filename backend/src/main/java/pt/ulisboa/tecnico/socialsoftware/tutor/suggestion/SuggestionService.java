@@ -118,6 +118,7 @@ public class SuggestionService {
         suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()) );
         suggestion.set_justification(suggestionDto.get_justification());
 
+
         return new SuggestionDto(suggestion);
     }
 
