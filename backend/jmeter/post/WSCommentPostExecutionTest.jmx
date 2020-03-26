@@ -401,7 +401,7 @@ VALUES (6969, ${pid}, ${tid}, &apos;ANSWER&apos;);</stringProp>
           <stringProp name="queryType">Update Statement</stringProp>
           <stringProp name="query">DELETE FROM POST_QUESTIONS P WHERE P.USER_ID = ${sid};
 DELETE FROM POST_ANSWERS P WHERE P.USER_ID = ${tid};
-DELETE FROM COMMENTS C WHERE C.ID = 1209;
+DELETE FROM COMMENTS C WHERE C.USER_ID = ${sid};
 DELETE FROM POSTS P WHERE P.KEY IN (SELECT MAX(KEY) FROM POSTS);
 ${__FileToString(${dir}/data/deletePopulate.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
