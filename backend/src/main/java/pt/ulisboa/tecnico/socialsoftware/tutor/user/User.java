@@ -461,4 +461,20 @@ public class User implements UserDetails, DomainEntity {
 
         return result;
     }
+
+    @Override //TODO: toString of tournaments, postquestions and quizanswers
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("id: ").append(this.id).append('\n')
+          .append("key: ").append(this.key).append('\n')
+          .append("role: ").append(this.role).append('\n')
+          .append("username: ").append(this.username).append('\n')
+          .append("name: ").append(this.name).append('\n')
+          .append("creation_date: ").append(this.creationDate).append('\n')
+          .append("quiz_answers: ").append(this.quizAnswers).append('\n')
+          .append("course_executions: ").append(this.courseExecutions).append('\n')
+          .append("tournaments: ").append(this.tournaments).append('\n')
+          .append("post_questions: ").append(this.postQuestions).append('\n');
+        return sb.toString();
+    }
 }

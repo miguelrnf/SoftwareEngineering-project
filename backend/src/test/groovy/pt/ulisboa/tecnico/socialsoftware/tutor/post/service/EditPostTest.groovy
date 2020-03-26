@@ -176,7 +176,8 @@ class EditPostTest extends Specification {
         when:
         def dto = new PostQuestionDto(pq)
         dto.setPost(new PostDto(pq.getPost()))
-        def result = postService.editPost(dto, new UserDto(user))
+        dto.setUser(new UserDto(user))
+        def result = postService.editPost(dto)
 
         then:
         result.getKey() == expected.getKey()
@@ -192,7 +193,8 @@ class EditPostTest extends Specification {
         when:
         def dto = new PostQuestionDto(pq)
         dto.setPost(new PostDto(pq.getPost()))
-        postService.editPost(dto, new UserDto(user))
+        dto.setUser(new UserDto(user))
+        postService.editPost(dto)
 
         then:
         def result = thrown(TutorException)

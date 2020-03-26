@@ -23,6 +23,11 @@ public class UserDto implements Serializable {
             this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
+    //DO NOT DELETE - PLEASE
+    public UserDto() {
+    }
+    //DO NOT DELETE - PLEASE
+
     public Integer getId() {
         return id;
     }
