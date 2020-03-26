@@ -184,7 +184,7 @@ public class SuggestionService {
     }
 
     private void checkIfUserIsValid (SuggestionDto suggestionDto, Suggestion s) {
-        if(suggestionDto.get_student().getUsername() != (s.get_student().getUsername())) throw new TutorException(ACCESS_DENIED);
+        if(!suggestionDto.get_student().getUsername().equals(s.get_student().getUsername())) throw new TutorException(ACCESS_DENIED);
     }
 
     private void checkIfUserHasRoleTeacher(User user) {
@@ -214,6 +214,8 @@ public class SuggestionService {
         }
 
         s.set_questionStr(suggestionDto.get_questionStr());
+        s.setStatus(Suggestion.Status.TOAPPROVE);
+        s.set_changed(true);
 
         return new SuggestionDto(s);
 

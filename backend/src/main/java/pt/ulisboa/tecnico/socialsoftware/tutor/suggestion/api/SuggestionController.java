@@ -41,6 +41,15 @@ public class SuggestionController {
         return this.suggestionService.approveSuggestion(courseExecutionId, suggDto, new UserDto(user));
     }
 
+    @PutMapping(value = "/courses/{courseExecutionId}/suggestions/edit")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public SuggestionDto editSuggestion(Principal principal,@PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
+        User user = (User)((Authentication)principal).getPrincipal();
+        return this.suggestionService.editSuggestion(suggDto);
+    }
+
+
+
     /*
     @DeleteMapping("/topics/{topicId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#topicId, 'TOPIC.ACCESS')")
