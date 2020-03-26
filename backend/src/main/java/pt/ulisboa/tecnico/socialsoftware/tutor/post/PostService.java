@@ -214,6 +214,7 @@ public class PostService {
             post.addComment(comment);
         }
         comment.setPost(post);
+        commentRepository.save(comment);
         return new PostCommentDto(comment, false);
     }
 

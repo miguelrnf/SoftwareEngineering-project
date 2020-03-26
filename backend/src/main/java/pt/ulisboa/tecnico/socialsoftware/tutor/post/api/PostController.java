@@ -7,13 +7,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAndUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @RestController
 public class PostController {
@@ -26,6 +22,27 @@ public class PostController {
 
     public PostController(PostService postService) {
         this.postService = postService;
+    }
+
+    @GetMapping("executions/{executionId}/posts/{postId}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
+            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostDto viewPost(@PathVariable int executionId, @PathVariable int postId) {
+        return postService.viewPost(postId);
+    }
+
+    @GetMapping("executions/{executionId}/comments/search")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
+            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public Set<PostCommentDto> searchComment(@PathVariable int executionId, @Valid @RequestBody String toFind) {
+        return postService.searchComment(toFind);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/comment")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
+            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostCommentDto comment(@PathVariable int executionId, @PathVariable String postId, @Valid @RequestBody PostCommentDto comment) {
+        return postService.postComment(comment);
     }
 
     @PostMapping("executions/{executionId}/posts/submit")
