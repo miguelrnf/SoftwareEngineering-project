@@ -4,15 +4,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SuggestionDto implements Serializable {
+public class SuggestionDto {
 
-    private Integer _id;
+    private int _id;
     private Integer key;
     private String _questionStr;
     private List<TopicDto> _topicsList = new ArrayList<>();
@@ -23,7 +22,7 @@ public class SuggestionDto implements Serializable {
     private UserDto _student;
 
 
-    public SuggestionDto(){
+    public SuggestionDto() {
     }
 
     public SuggestionDto(Suggestion suggestion) {
