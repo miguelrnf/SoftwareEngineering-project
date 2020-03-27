@@ -6,17 +6,14 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -27,7 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -234,5 +230,18 @@ public class SuggestionService {
         if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
         return array;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Suggestion.Status SeeSuggestionStatus(SuggestionDto suggestionDto) {
+
+        checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
+        Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
+        checkIfUserIsValid (suggestionDto,s);
+
+        return s.getStatus();
     }
 }

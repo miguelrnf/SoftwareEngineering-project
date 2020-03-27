@@ -65,8 +65,8 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">vaz</stringProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
@@ -143,7 +143,7 @@
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Demo Teacher" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Demo Student" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -151,7 +151,7 @@
           <stringProp name="HTTPSampler.port">${port}</stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/auth/demo/teacher</stringProp>
+          <stringProp name="HTTPSampler.path">/auth/demo/student</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -178,7 +178,7 @@
                 <stringProp name="Header.value">${token}</stringProp>
               </elementProp>
               <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.name">Content-type</stringProp>
                 <stringProp name="Header.value">application/json</stringProp>
               </elementProp>
             </collectionProp>
@@ -196,16 +196,11 @@
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
-  &quot;key&quot;: 3,&#xd;
-  &quot;_student&quot;: {&#xd;
-    &quot;id&quot;: 676,&#xd;
-    &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
-    &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
-    &quot;role&quot;: &quot;STUDENT&quot;&#xd;
-  },&#xd;
-    &quot;_questionStr&quot;: &quot;string2&quot;&#xd;
-}&#xd;
-</stringProp>
+  &quot;id&quot;: 676,&#xd;
+  &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
+  &quot;role&quot;: &quot;STUDENT&quot;,&#xd;
+  &quot;username&quot;: &quot;Demo-Student&quot;&#xd;
+}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -215,7 +210,7 @@
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path">/courses/${courseExecutionId}/suggestions/listall</stringProp>
-              <stringProp name="HTTPSampler.method">PUT</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
               <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -363,13 +358,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">

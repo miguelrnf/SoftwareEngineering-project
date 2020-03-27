@@ -254,6 +254,7 @@ class EditSuggestionTest extends Specification {
         result.getCreationDate() == sug.getCreationDate();
 
 
+
         where:
         s                  | l                | u
         SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_U

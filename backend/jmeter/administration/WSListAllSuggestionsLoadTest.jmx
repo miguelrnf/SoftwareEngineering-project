@@ -65,8 +65,8 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">vaz</stringProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
@@ -129,21 +129,21 @@
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="1 Users Thread Group" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="69 Users Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">25</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">50</stringProp>
+        <stringProp name="ThreadGroup.num_threads">69</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Demo Teacher" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Demo Student" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -151,7 +151,7 @@
           <stringProp name="HTTPSampler.port">${port}</stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/auth/demo/teacher</stringProp>
+          <stringProp name="HTTPSampler.path">/auth/demo/student</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -186,7 +186,7 @@
           <hashTree/>
           <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">1</stringProp>
+            <stringProp name="LoopController.loops">20</stringProp>
           </LoopController>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to list all suggestion" enabled="true">
@@ -196,16 +196,11 @@
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
-  &quot;key&quot;: 3,&#xd;
-  &quot;_student&quot;: {&#xd;
-    &quot;id&quot;: 676,&#xd;
-    &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
-    &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
-    &quot;role&quot;: &quot;STUDENT&quot;&#xd;
-  },&#xd;
-    &quot;_questionStr&quot;: &quot;string2&quot;&#xd;
-}&#xd;
-</stringProp>
+  &quot;id&quot;: 676,&#xd;
+  &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
+  &quot;role&quot;: &quot;STUDENT&quot;,&#xd;
+  &quot;username&quot;: &quot;Demo-Student&quot;&#xd;
+}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -215,7 +210,7 @@
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path">/courses/${courseExecutionId}/suggestions/listall</stringProp>
-              <stringProp name="HTTPSampler.method">PUT</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
               <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -224,44 +219,7 @@
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
             </HTTPSamplerProxy>
-            <hashTree>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion review" enabled="true">
-                <stringProp name="JSON_PATH">$._questionStr</stringProp>
-                <stringProp name="EXPECTED_VALUE">string2</stringProp>
-                <boolProp name="JSONVALIDATION">true</boolProp>
-                <boolProp name="EXPECT_NULL">false</boolProp>
-                <boolProp name="INVERT">false</boolProp>
-                <boolProp name="ISREGEX">false</boolProp>
-              </JSONPathAssertion>
-              <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion acceptordeny" enabled="true">
-                <stringProp name="JSON_PATH">$.status</stringProp>
-                <stringProp name="EXPECTED_VALUE">TOAPPROVE</stringProp>
-                <boolProp name="JSONVALIDATION">true</boolProp>
-                <boolProp name="EXPECT_NULL">false</boolProp>
-                <boolProp name="INVERT">false</boolProp>
-                <boolProp name="ISREGEX">false</boolProp>
-              </JSONPathAssertion>
-              <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion SuggestionId" enabled="true">
-                <stringProp name="JSON_PATH">$._id</stringProp>
-                <stringProp name="EXPECTED_VALUE">3</stringProp>
-                <boolProp name="JSONVALIDATION">true</boolProp>
-                <boolProp name="EXPECT_NULL">false</boolProp>
-                <boolProp name="INVERT">false</boolProp>
-                <boolProp name="ISREGEX">false</boolProp>
-              </JSONPathAssertion>
-              <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion changed" enabled="true">
-                <stringProp name="JSON_PATH">$._changed</stringProp>
-                <stringProp name="EXPECTED_VALUE">true</stringProp>
-                <boolProp name="JSONVALIDATION">true</boolProp>
-                <boolProp name="EXPECT_NULL">false</boolProp>
-                <boolProp name="INVERT">false</boolProp>
-                <boolProp name="ISREGEX">false</boolProp>
-              </JSONPathAssertion>
-              <hashTree/>
-            </hashTree>
+            <hashTree/>
           </hashTree>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
@@ -363,13 +321,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
