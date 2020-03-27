@@ -96,23 +96,22 @@ class SuggestionDashboardPerfomanceTest extends Specification{
         topicRepository.save(topic)
 
 
+        def userSDto = new UserDto()
+        userSDto.setUsername("VALID_USERNAME")
+        userSDto.setRole('STUDENT' as User.Role)
+        userSDto.setName("VALID_NAME")
+        userSDto.setId(1)
+
         def sugDto = new SuggestionDto()
-        sugDto.set_student(new UserDto(userS))
+        sugDto.set_student(userSDto)
         sugDto.setStatus("TOAPPROVE")
         sugDto.set_justification("JUSTIFICATION")
-
-        def userTDto = new UserDto()
-        userTDto.setUsername("VALID_USERNAME_TEACHER")
-        userTDto.setRole('TEACHER' as User.Role)
-        userTDto.setName("VALID_NAME1")
-        userTDto.setId(2)
 
         when: "Listing 3000 times all 3000 suggestions"
         for (int i = 1; i <= 3000; i++) {
             sugDto.setKey(i)
-            println(i)
-            suggestionService.listAllSuggestions(userTDto)
-            println(i)
+            suggestionService.listAllSuggestions(userSDto)
+
         }
 
         then:

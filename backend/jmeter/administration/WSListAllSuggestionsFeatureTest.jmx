@@ -226,15 +226,15 @@
             </HTTPSamplerProxy>
             <hashTree>
               <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion review" enabled="true">
-                <stringProp name="JSON_PATH">$._questionStr</stringProp>
-                <stringProp name="EXPECTED_VALUE">string2</stringProp>
+                <stringProp name="JSON_PATH">$.[0]._questionStr</stringProp>
+                <stringProp name="EXPECTED_VALUE">sugestao</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
                 <boolProp name="EXPECT_NULL">false</boolProp>
                 <boolProp name="INVERT">false</boolProp>
                 <boolProp name="ISREGEX">false</boolProp>
               </JSONPathAssertion>
               <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion acceptordeny" enabled="true">
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion acceptordeny" enabled="false">
                 <stringProp name="JSON_PATH">$.status</stringProp>
                 <stringProp name="EXPECTED_VALUE">TOAPPROVE</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
@@ -243,7 +243,7 @@
                 <boolProp name="ISREGEX">false</boolProp>
               </JSONPathAssertion>
               <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion SuggestionId" enabled="true">
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion SuggestionId" enabled="false">
                 <stringProp name="JSON_PATH">$._id</stringProp>
                 <stringProp name="EXPECTED_VALUE">3</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
@@ -252,7 +252,7 @@
                 <boolProp name="ISREGEX">false</boolProp>
               </JSONPathAssertion>
               <hashTree/>
-              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion changed" enabled="true">
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion changed" enabled="false">
                 <stringProp name="JSON_PATH">$._changed</stringProp>
                 <stringProp name="EXPECTED_VALUE">true</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
