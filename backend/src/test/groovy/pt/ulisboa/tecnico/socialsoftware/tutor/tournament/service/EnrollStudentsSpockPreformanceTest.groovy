@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -31,27 +30,24 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.UNABLE_TO_UNROLL
-
 @DataJpaTest
-class SignOutServiceSpockTest extends Specification{
-
+class EnrollStudentsSpockPreformanceTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final String USERNAME_1 = "username1"
     static final String USERNAME_2 = "username2"
-    static final String TITLE = "Title"
-    static final Integer INV_TOURNAMENT_ID = -1
     static final Integer NUMQUESTIONS = 3
+    static final String TITLE = "Title"
     static final String NAME = "NOME"
     static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(1)
-    static int tempId = 1
 
     @Autowired
     UserRepository userRepository
+
+    @Autowired
+    AssessmentRepository assessmentRepository
 
     @Autowired
     CourseRepository courseRepository
@@ -61,9 +57,6 @@ class SignOutServiceSpockTest extends Specification{
 
     @Autowired
     CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    AssessmentRepository assessmentRepository
 
     @Autowired
     TournamentService tournamentService
@@ -85,6 +78,7 @@ class SignOutServiceSpockTest extends Specification{
 
     @Shared
     def STUDENT_SAME_CE
+
 
     @Shared
     def TOURNAMENTDTO
@@ -125,9 +119,10 @@ class SignOutServiceSpockTest extends Specification{
     @Shared
     def formatter
 
+
     def setupSpec(){
 
-        given: "a user with the role student"
+        given: "a user with the role teacher"
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
@@ -135,7 +130,7 @@ class SignOutServiceSpockTest extends Specification{
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
 
-
+        and: "a user with the role student"
         STUDENT_OWNER = new User()
         STUDENT_OWNER.setId(1)
         STUDENT_OWNER.setRole(User.Role.STUDENT)
@@ -149,14 +144,12 @@ class SignOutServiceSpockTest extends Specification{
 
         and: "a tournamentDto"
         TOURNAMENTDTO = new TournamentDto()
-        TOURNAMENTDTO.setId(1)
         TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
         TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
         TOURNAMENTDTO.setConclusionDate(DATETOMORROW.format(formatter))
         TOURNAMENTDTO.setNumberOfQuestions(NUMQUESTIONS)
-
     }
 
     def setup(){
@@ -167,7 +160,6 @@ class SignOutServiceSpockTest extends Specification{
 
         and: "a user with the role student"
         userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
-
         user_same = new User('name', USERNAME_2, 2, User.Role.STUDENT)
 
         and: "a topic dto"
@@ -193,7 +185,6 @@ class SignOutServiceSpockTest extends Specification{
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution_1, tcl, assdto)
 
-
         courseExecution_1.addUser(userS)
         courseExecution_1.addUser(user_same)
         userRepository.save(userS)
@@ -206,64 +197,17 @@ class SignOutServiceSpockTest extends Specification{
 
     }
 
-    def "students unroll from a valid tournament"(){
+    def "Enroll a students that is in the same courseExecution as the owner"() {
         given:
-        assdto.setId(tempId++)
         TOURNAMENTDTO.setAssessmentDto(assdto)
-
-        def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
-
-        when:
-        tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername() as String, result.getId())
-
-        then:
-        def tournamentTest = tournamentRepository.findById(result.getId())
-        def result2 = tournamentTest.get().getEnrolledStudents()[0]
-        def result5 = user_same.getTournaments()
-
-        result2.username == USERNAME_2
-        result2.id == 2
-        result2.role == User.Role.STUDENT
-        result5.contains(tournamentTest.get())
+        1.upto(5000, {tournamentService.createTournament(courseExecution_1.getId(), TOURNAMENTDTO)})
 
         when:
-        tournamentService.unrollStudent (user_same.getUsername() as String, result.getId() as Integer)
+        1.upto(5000, {tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername(), it.intValue())})
 
         then:
-        def tournamentTest2 = tournamentRepository.findById(result.getId())
-        def result3 = tournamentTest2.get().getEnrolledStudents()
-        def result4 = user_same.getTournaments()
+        true
 
-        !result3.contains(user_same)
-        !result4.contains(tournamentTest2)
-    }
-
-    def "students unroll from an invalid tournament"(){
-        given:
-        assdto.setId(tempId++)
-        TOURNAMENTDTO.setAssessmentDto(assdto)
-
-        when:
-        tournamentService.unrollStudent (USERNAME_2, INV_TOURNAMENT_ID)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_NOT_FOUND
-    }
-
-    def "unroll students not enrolled in a tournament"(){
-        given:
-        assdto.setId(tempId++)
-        TOURNAMENTDTO.setAssessmentDto(assdto)
-
-        def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
-
-        when:
-        tournamentService.unrollStudent (USERNAME_2, result.getId() as Integer)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == UNABLE_TO_UNROLL
     }
 
     @TestConfiguration
@@ -274,4 +218,5 @@ class SignOutServiceSpockTest extends Specification{
             return new TournamentService()
         }
     }
+
 }

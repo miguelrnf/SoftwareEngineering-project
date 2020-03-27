@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -26,22 +25,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
-
 @DataJpaTest
-class CreateTournamentServiceSpockTest extends Specification {
+class CreateTournamentServiceSpockPreformanceTest extends Specification {
+
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final USERNAME_1 = 'username1'
-    static final USERNAME_2 = 'username2'
-    static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
     static final NUMQUESTIONS = 3
     static final DATENOW = LocalDateTime.now()
@@ -79,28 +73,10 @@ class CreateTournamentServiceSpockTest extends Specification {
     def courseExecution
 
     @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
     def formatter
 
     @Shared
-    def TEACHER
-
-    @Shared
-    def ADMIN
-
-    @Shared
     def STUDENT
-
-    @Shared
-    def NLL_USERNAME
 
     @Shared
     def assdto
@@ -124,42 +100,19 @@ class CreateTournamentServiceSpockTest extends Specification {
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        given: "a quiz"
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
 
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
-        tournamentDto.setId(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW.format(formatter))
         tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
-
-        and: "a user with the role teacher"
-        TEACHER = new User()
-        TEACHER.setId(3)
-        TEACHER.setRole(User.Role.TEACHER)
-        TEACHER.setUsername(USERNAME_2)
-
-        and: "a user with the role admin"
-        ADMIN = new User()
-        ADMIN.setId(2)
-        ADMIN.setRole(User.Role.ADMIN)
-        ADMIN.setUsername(USERNAME_3)
 
         and: "a user with the role student"
         STUDENT = new User()
         STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
-
-        and: "a user with the null username"
-        NLL_USERNAME = new User()
-        NLL_USERNAME.setId(1)
-        NLL_USERNAME.setRole(User.Role.STUDENT)
-        NLL_USERNAME.setUsername(null)
     }
 
     def setup() {
@@ -194,74 +147,32 @@ class CreateTournamentServiceSpockTest extends Specification {
         and: "a user with the role student"
         def userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
 
-        def userT = new User('name', USERNAME_2, 2, User.Role.TEACHER)
-
-        def userA = new User('name', USERNAME_3, 3, User.Role.ADMIN)
-
 
         then:"add to repository"
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
-        userRepository.save(userT)
-        userRepository.save(userA)
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)
         assessmentRepository.save(ass)
     }
 
+
     def "student creates a tournament"() {
-       given:
-       tournamentDto.setOwner(new UserDto(STUDENT))
-       tournamentDto.setTitle(TITLE)
-       tournamentDto.setAssessmentDto(assdto)
-
-       when:
-       def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-       then:"the return data are correct"
-       result.id != null
-       result.owner.getName() == 'name'
-       result.owner.getRole() == User.Role.STUDENT
-       result.title == TITLE
-       result.status == "CREATED"
-    }
-
-    def "null user creates a tournament"() {
-        given: "a null user"
-        tournamentDto.setOwner(null)
-        tournamentDto.setTitle(TITLE)
-
-        when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then: "an exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_NOT_CONSISTENT
-    }
-
-
-    @Unroll
-    def "invalid arguments: user=#user | title=#title || errorMessage=#errorMessage "() {
         given:
-        tournamentDto.setOwner(new UserDto(user as User))
-        tournamentDto.setTitle(title)
+        tournamentDto.setOwner(new UserDto(STUDENT))
+        tournamentDto.setTitle(TITLE)
+        tournamentDto.setAssessmentDto(assdto)
 
 
         when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        1.upto(5000, {
+            tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        })
 
         then:
-        def error = thrown(TutorException)
-        error.errorMessage == errorMessage
+        true
 
-        where:
-             user     | title || errorMessage
-            TEACHER   | TITLE || TOURNAMENT_PERMISSION
-             ADMIN    | TITLE || TOURNAMENT_PERMISSION
-         NLL_USERNAME | TITLE || TOURNAMENT_NOT_CONSISTENT
-            STUDENT   | null  || TOURNAMENT_NOT_CONSISTENT
-            STUDENT   | '  '  || TOURNAMENT_NOT_CONSISTENT
     }
 
     @TestConfiguration
@@ -272,4 +183,5 @@ class CreateTournamentServiceSpockTest extends Specification {
             return new TournamentService()
         }
     }
+
 }
