@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
-
 import java.io.Serializable;
 
 public class PostDto implements Serializable {

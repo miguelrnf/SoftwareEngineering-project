@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
-
 import java.io.Serializable;
 
 public class PostAnswerDto implements Serializable {

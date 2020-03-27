@@ -24,7 +24,6 @@ import NotFoundView from './views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
-import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 Vue.use(Router);
 
@@ -188,20 +187,13 @@ let router = new Router({
       ]
     },
     {
-      path: '/admin',
-      name: 'admin',
+      path: '/admin-management',
+      name: 'admin-management',
       component: AdminManagementView,
-      children: [
-        {
-          path: 'courses',
-          name: 'courseAdmin',
-          component: CoursesView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - Manage Courses',
-            requiredAuth: 'Admin'
-          }
-        }
-      ]
+      meta: {
+        title: process.env.VUE_APP_NAME + ' - AdminManagement',
+        requiredAuth: 'Admin'
+      }
     },
     {
       path: '**',

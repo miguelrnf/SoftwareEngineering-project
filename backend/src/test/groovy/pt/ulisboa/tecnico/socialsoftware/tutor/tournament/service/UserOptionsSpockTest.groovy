@@ -137,8 +137,7 @@ class UserOptionsSpockTest extends Specification{
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
-        tournamentDto.setKey(1)
-        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setNumberOfQuestions(3)
         tournamentDto.setAvailableDate(LocalDateTime.now().format(formatter))
@@ -198,7 +197,7 @@ class UserOptionsSpockTest extends Specification{
         userS.setRole(User.Role.STUDENT)
         userS.setUsername(USERNAME_1)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         then:"add to repository"
         userRepository.save(userS)
