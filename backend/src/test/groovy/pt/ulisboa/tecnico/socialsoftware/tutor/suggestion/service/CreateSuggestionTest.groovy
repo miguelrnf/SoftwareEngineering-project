@@ -175,7 +175,6 @@ class CreateSuggestionTest extends Specification{
 
     @Unroll
     def "create a suggestion with invalid fields"(){
-        println(topicRepository.findAll().dump())
         when:
         def sug = new SuggestionDto()
         sug.set_questionStr(s as String)

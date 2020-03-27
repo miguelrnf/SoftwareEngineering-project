@@ -38,17 +38,18 @@ public class CourseExecution {
     @ManyToMany(mappedBy = "courseExecutions")
     private Set<User> users = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Quiz> quizzes = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Tournament> tournaments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Assessment> assessments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Suggestion> suggestions = new HashSet<>();
+
 
     public CourseExecution() {
     }
@@ -153,7 +154,6 @@ public class CourseExecution {
         this.type = type;
     }
 
-    public void addSuggestion(Suggestion s) {suggestions.add(s); }
 
     public Set<Tournament> getTournaments() {
         return tournaments;
@@ -162,4 +162,6 @@ public class CourseExecution {
     public void addTournament(Tournament tournament) {
         this.tournaments.add(tournament);
     }
+
+    public void addSuggestion(Suggestion suggestion) {this.suggestions.add(suggestion); }
 }

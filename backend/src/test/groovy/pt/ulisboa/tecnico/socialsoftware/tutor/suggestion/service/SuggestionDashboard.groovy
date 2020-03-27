@@ -8,9 +8,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -22,12 +23,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 @DataJpaTest
-class ApprovedListTest extends Specification {
-
-
+class SuggestionDashboard extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -35,20 +39,16 @@ class ApprovedListTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
     public static final int VALID_KEY = 1
-    public static final int VALID_KEY2 = 2
     public static final int INVALID_KEY = -1
     public static final int VALID_ID = 1
-    public static final int VALID_ID2 = 2
     public static final int INVALID_ID = -1
-    public static final String VALID_NAME = "Ben Dover"
-    public static final String REJECTED = "REJECTED"
-    public static final String APPROVED = "APPROVED"
-    public static final String VALID_USERNAME = "BenDover69"
-    public static final String VALID_USERNAME_TEACHER = "something"
+    public static final String VALID_NAME = "Ruben Freitas"
+    public static final String VALID_USERNAME = "RubenFreitas99"
+    public static final String VALID_USERNAME_TEACHER = "RuiPeter"
+    public static final String VALID_NAME2 = "Goncalo Freitas"
+    public static final String VALID_USERNAME2 = "GoncaloQueridoFreitas"
     public static final String VALID_NAME_TOPIC = "Spock"
     public static final String EMPTY_SUGGESTION = ""
-    public static final String VALID_USERNAME_T = "Teacher"
-    public static final String VALID_JUSTIFICATION = "approved/rejected"
     public static final String TOO_MANY_CHARS =
             '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -94,9 +94,6 @@ class ApprovedListTest extends Specification {
     def VALID_U
 
     @Shared
-    def VALID_T
-
-    @Shared
     def INVALID_U_UID
 
     @Shared
@@ -109,22 +106,34 @@ class ApprovedListTest extends Specification {
     def VALID_TOPIC
 
     @Shared
-    def VALID_TOPIC_DTO
-
-    @Shared
     def VALID_TOPIC_LIST
 
     @Shared
     def INVALID_TOPIC_LIST
 
     @Shared
-    def suggestion
+    def VALID_SUGGESTION
 
     @Shared
-    def suggestion2
+    def FORMATTER
 
-    def sug
-    def sug2
+    @Shared
+    def INVALID_SUGGESTION_E
+
+    @Shared
+    def INVALID_SUGGESTION_F
+
+    @Shared
+    def INVALID_SUGGESTION_IU
+
+    @Shared
+    def VALID_SUGGESTION_LIST
+
+    @Shared
+    def VALID_Udto
+
+    @Shared
+    def VALID_U1
 
     def course
     def courseExecution
@@ -135,6 +144,9 @@ class ApprovedListTest extends Specification {
         INVALID_U_UID.setId(INVALID_ID)
         INVALID_U_UID.setRole(User.Role.STUDENT)
         INVALID_U_UID.setUsername(VALID_USERNAME)
+
+        and: ""
+        FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         and: "a user with the role teacher"
         INVALID_U_ROLE = new User()
@@ -149,135 +161,129 @@ class ApprovedListTest extends Specification {
 
 
         and: "a valid user - STUDENT "
-        VALID_U = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+        VALID_U = new User()
+        VALID_U.setId(VALID_ID)
+        VALID_U.setRole(User.Role.STUDENT)
+        VALID_U.setUsername(VALID_USERNAME)
+        VALID_U.setName(VALID_NAME)
 
-        and: "a valid user - teacher "
-        VALID_T = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
+        and: "valid user DTO"
+        VALID_Udto = new UserDto(VALID_U)
+        VALID_Udto.setId(VALID_ID)
+        VALID_Udto.setRole(User.Role.STUDENT)
+        VALID_Udto.setUsername(VALID_USERNAME)
+        VALID_Udto.setName(VALID_NAME)
+
+        and: "invalid user"
+        INVALID_SUGGESTION_IU = new User()
+        INVALID_SUGGESTION_IU.setId(VALID_ID)
+        INVALID_SUGGESTION_IU.setRole(User.Role.STUDENT)
+        INVALID_SUGGESTION_IU.setUsername(VALID_USERNAME2)
+        INVALID_SUGGESTION_IU.setName(VALID_NAME2)
+
+        and: "valid suggesiton"
+        VALID_SUGGESTION = new SuggestionDto()
+        VALID_SUGGESTION.set_id(1)
+        VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
+        VALID_SUGGESTION.setKey(VALID_KEY)
+        VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
+        VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
+        VALID_SUGGESTION.set_changed(null)
+        VALID_SUGGESTION.set_student(VALID_Udto)
+
+        and: "a valid user - STUDENT "
+        VALID_U1 = new User()
+        VALID_U1.setId(5)
+        VALID_U1.setRole(User.Role.STUDENT)
+        VALID_U1.setUsername(VALID_USERNAME2)
+        VALID_U1.setName(VALID_NAME2)
+
+
+        and: "arraylist of suggestions"
+        VALID_SUGGESTION_LIST = new ArrayList<SuggestionDto>()
+        VALID_SUGGESTION_LIST.add(VALID_SUGGESTION)
+
     }
 
-    def setup(){
+    def setup() {
+
         given:
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
-
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         and: "a user with the role teacher"
         def userT = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
 
-
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
 
-        and: "a valid topicDto"
-        VALID_TOPIC_DTO = new TopicDto()
-        VALID_TOPIC_DTO.setId(VALID_ID)
-        VALID_TOPIC_DTO.setName(VALID_NAME_TOPIC)
-
-        and: "a valid topic"
-        VALID_TOPIC = new Topic(course, VALID_TOPIC_DTO)
 
 
-        and: "a valid list of topics"
-        VALID_TOPIC_LIST = new HashSet<Topic>();
-        VALID_TOPIC_LIST.add(VALID_TOPIC)
+        and: "a user with the role student that didn't create that suggestion"
+        def userS2 = new User(VALID_NAME2, VALID_USERNAME2, 3, User.Role.STUDENT)
 
-        and: "a invalid list of topics"
-        INVALID_TOPIC_LIST = new HashSet<Topic>();
+        and:
+        def topic = new Topic();
+        topic.setName(VALID_NAME_TOPIC)
+        topic.setCourse(course)
 
-        and: "a suggestion"
-        sug = new SuggestionDto()
-        sug.set_questionStr(SUGGESTION_CONTENT as String)
-        sug.setKey(VALID_KEY)
-
-        sug2 = new SuggestionDto()
-        sug2.set_questionStr(SUGGESTION_CONTENT as String)
-        sug2.setKey(VALID_KEY2)
-
-        List<TopicDto> topicsDto = new ArrayList<>();
-        for (t in VALID_TOPIC_LIST){
-            topicsDto.add(new TopicDto(t));
-        }
-        sug.set_topicsList(topicsDto)
-        sug.set_id(VALID_ID)
-        sug.set_student(new UserDto(userS))
-
-        sug2.set_topicsList(topicsDto)
-        sug2.set_id(VALID_ID2)
-        sug2.set_student(new UserDto(userS))
-
-        suggestion = new Suggestion(courseExecution, userS, sug)
-        suggestion2 = new Suggestion(courseExecution, userS, sug2)
-
+        and: "valid suggestion"
+        def suggestion = new Suggestion()
+        suggestion.set_student(userS)
+        suggestion.set_questionStr(SUGGESTION_CONTENT)
+        suggestion.setKey(VALID_KEY)
+        suggestion.setCreationDate(LocalDateTime.now())
 
         then: "add to repository"
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
+        userRepository.save(userS2)
         userRepository.save(userT)
-        topicRepository.save(VALID_TOPIC)
+        topicRepository.save(topic)
         suggestionRepository.save(suggestion)
-        suggestionRepository.save(suggestion2)
+
     }
 
-
     @Unroll
-    def "valid list"(){
+    def "valid suggestion list"() {
         when:
-
-        sug.setStatus(a)
-        sug.set_justification(VALID_JUSTIFICATION as String)
-        sug2.setStatus(b)
-        sug2.set_justification(VALID_JUSTIFICATION as String)
-
-        suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
-        suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))
-
-        def result = suggestionService.approvedSuggestionList(courseExecution.getId(), new UserDto(VALID_T as User))
+        def result = suggestionService.listAllSuggestions(new UserDto(u as User))
 
 
         then:
-        result.size() == valid_suggestions
+        result.size().equals(VALID_SUGGESTION_LIST.size())
+
+        for(int i = 0; i < result.size(); i++)
+            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
 
 
         where:
-        a                   |b           |    valid_suggestions
-        APPROVED            |APPROVED    |    2
-        APPROVED            |REJECTED    |    1
-
+        s                  | l                | u
+        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_U
     }
 
     @Unroll
-    def "invalid user"(){
+    def "empty suggestions list"() {
+
         when:
-
-        sug.setStatus(APPROVED)
-        sug.set_justification(VALID_JUSTIFICATION as String)
-        sug2.setStatus(APPROVED)
-        sug2.set_justification(VALID_JUSTIFICATION as String)
-
-        suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
-        suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))
-
-        suggestionService.approvedSuggestionList(courseExecution.getId(), new UserDto(t as User))
-
+        def list = suggestionService.listAllSuggestions(new UserDto(u as User))
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
-
         where:
-        a                   |t               ||expected
-        APPROVED            |VALID_U         ||ErrorMessage.USER_HAS_WRONG_ROLE.label
+        s                  | l                | u                     | expected
+        SUGGESTION_CONTENT | VALID_TOPIC_LIST | VALID_U1              | ErrorMessage.EMPTY_SUGGESTIONS_LIST.label
+        SUGGESTION_CONTENT | VALID_TOPIC_LIST | INVALID_U_ROLE        | ErrorMessage.USER_HAS_WRONG_ROLE.label
 
 
     }
 
-
-
     @TestConfiguration
-    static class SuggestionServiceImplTestContextConfiguration {
+    static class SuggestionDashBoardServiceImplTestContextConfiguration {
 
         @Bean
         SuggestionService suggestionService() {
