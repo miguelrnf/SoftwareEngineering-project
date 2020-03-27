@@ -200,7 +200,9 @@ class ChangeDiscussStatus extends Specification{
     @Unroll
     def "valid discuss status"() {
         when:
-        def result = postService.changeDiscussStatus(new PostDto(post), new UserDto(user))
+        def dto = new PostDto(post)
+        dto.getQuestion().setUser(new UserDto(user))
+        def result = postService.changeDiscussStatus(dto)
 
         then:
         result.getDiscussStatus() != expected.getDiscussStatus()
@@ -215,7 +217,9 @@ class ChangeDiscussStatus extends Specification{
     @Unroll
     def "invalid discuss status"() {
         when:
-        postService.changeDiscussStatus(new PostDto(post), new UserDto(user))
+        def dto = new PostDto(post)
+        dto.getQuestion().setUser(new UserDto(user))
+        postService.changeDiscussStatus(dto)
 
         then:
         def result = thrown(TutorException)

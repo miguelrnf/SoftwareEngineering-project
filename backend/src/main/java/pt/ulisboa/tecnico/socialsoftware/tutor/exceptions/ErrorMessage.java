@@ -25,6 +25,9 @@ public enum ErrorMessage {
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
     COURSE_EXECUTION_MISMATCH("Course Execution %d does not have quiz %d"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
+
+    CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
 
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
@@ -44,10 +47,13 @@ public enum ErrorMessage {
 
     TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
     TOURNAMENT_PERMISSION("Only student's can create tournaments"),
+    TOURNAMENT_LIST_EMPTY("No tournaments found"),
     TOURNAMENT_PERMISSION_ENROLL("Only student's can enroll in tournaments"),
     TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
+    TOURNAMENT_UNABLE_EDIT("Unable to edit tournament, field: %s"),
 
+    USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
     NOT_ENOUGH_QUESTIONS_TOURNAMENT("Not enough questions to create a tournament"),
 
@@ -73,6 +79,7 @@ public enum ErrorMessage {
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),
+
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),

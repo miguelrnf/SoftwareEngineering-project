@@ -13,9 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
@@ -70,6 +70,8 @@ class CreateQuizTest extends Specification {
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
+        quiz.setOneWay(true)
+        quiz.setQrCodeOnly(true)
         quiz.setAvailableDate(availableDate.format(formatter))
         quiz.setConclusionDate(conclusionDate.format(formatter))
         quiz.setSeries(1)
@@ -105,6 +107,8 @@ class CreateQuizTest extends Specification {
         result.getId() != null
         result.getKey() != null
         result.getScramble()
+        result.isOneWay()
+        result.isQrCodeOnly()
         result.getTitle() == QUIZ_TITLE
         result.getCreationDate() != null
         result.getAvailableDate().format(formatter) == availableDate.format(formatter)

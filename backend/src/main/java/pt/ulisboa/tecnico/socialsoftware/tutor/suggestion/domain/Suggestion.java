@@ -2,19 +2,16 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -176,5 +173,26 @@ public class Suggestion {
 
     public void set_student(User student) {
         this.student = student;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Suggestion that = (Suggestion) o;
+        return Objects.equals(_id, that._id) &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(_questionStr, that._questionStr) &&
+                Objects.equals(topics, that.topics) &&
+                Objects.equals(_changed, that._changed) &&
+                Objects.equals(_justification, that._justification) &&
+                status == that.status &&
+                Objects.equals(courseExecution, that.courseExecution) &&
+                Objects.equals(student, that.student);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id, key, _questionStr, topics, _changed, _justification, status, courseExecution, student);
     }
 }

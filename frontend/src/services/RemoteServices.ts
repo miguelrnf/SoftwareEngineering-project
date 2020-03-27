@@ -105,6 +105,24 @@ export default class RemoteServices {
       });
   }
 
+  static async exportCourseQuestions(): Promise<Blob> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questions/export`,
+        {
+          responseType: 'blob'
+        }
+      )
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/zip, application/octet-stream'
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
       .get(
@@ -243,15 +261,36 @@ export default class RemoteServices {
       });
   }
 
-  static async getEvaluationQuiz(quizId: number): Promise<StatementQuiz> {
+  static async getQuizByQRCode(quizId: number): Promise<StatementQuiz> {
     return httpClient
-      .get(`/quizzes/${quizId}/evaluation`)
+      .get(`/quizzes/${quizId}/byqrcode`)
       .then(response => {
         return new StatementQuiz(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async exportQuiz(quizId: number): Promise<Blob> {
+    return httpClient
+      .get(`/quizzes/${quizId}/export`, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/zip, application/octet-stream'
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async startQuiz(quizId: number) {
+    return httpClient.get(`/quizzes/${quizId}/start`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static submitAnswer(quizId: number, answer: StatementAnswer) {
@@ -491,6 +530,25 @@ export default class RemoteServices {
           return new Course(course);
         });
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createCourse(course: Course): Promise<Course> {
+    return httpClient
+      .post('/admin/courses/executions', course)
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteCourse(courseExecutionId: number | undefined) {
+    return httpClient
+      .delete('/admin/courses/executions/' + courseExecutionId)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

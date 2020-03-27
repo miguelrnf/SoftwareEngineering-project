@@ -71,13 +71,4 @@ public class SuggestionController {
     }
 
 
-
-    /*
-    @DeleteMapping("/topics/{topicId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#topicId, 'TOPIC.ACCESS')")
-    public ResponseEntity removeTopic(@PathVariable Integer topicId) {
-        topicService.removeTopic(topicId);
-        return ResponseEntity.ok().build();
-    }*/
-
 }

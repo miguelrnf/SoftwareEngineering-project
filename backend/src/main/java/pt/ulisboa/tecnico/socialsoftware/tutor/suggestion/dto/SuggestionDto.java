@@ -28,7 +28,7 @@ public class SuggestionDto implements Serializable{
     private UserDto _student;
 
 
-    public SuggestionDto() {
+    public SuggestionDto(){
     }
 
     public SuggestionDto(Suggestion suggestion) {

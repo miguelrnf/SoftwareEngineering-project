@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
-
 import io.swagger.models.auth.In;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ public class UserDto implements Serializable {
     private User.Role role;
 
     public UserDto(User user) {
-        //this.id = user.getId();
+        this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
@@ -71,15 +71,25 @@ public class UserDto implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
+
         UserDto userDto = (UserDto) o;
-        return id == userDto.id &&
-                Objects.equals(username, userDto.username) &&
-                Objects.equals(name, userDto.name) &&
-                role == userDto.role;
+
+        if (id != userDto.id) return false;
+        if (!Objects.equals(username, userDto.username)) return false;
+        if (!Objects.equals(name, userDto.name)) return false;
+        if (role != userDto.role) return false;
+        return Objects.equals(creationDate, userDto.creationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, name, role);
+
+        int result = id;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (role != null ? role.hashCode() : 0);
+        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        return result;
     }
 }

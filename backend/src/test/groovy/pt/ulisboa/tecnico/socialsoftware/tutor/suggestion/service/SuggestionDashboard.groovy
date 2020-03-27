@@ -248,6 +248,7 @@ class SuggestionDashboard extends Specification {
 
     @Unroll
     def "valid suggestion status"() {
+
         when:
         def result = suggestionService.listAllSuggestions(new UserDto(u as User))
 

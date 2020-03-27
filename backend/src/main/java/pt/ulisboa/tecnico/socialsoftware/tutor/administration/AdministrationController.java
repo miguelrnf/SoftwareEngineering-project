@@ -1,12 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.administration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -38,5 +36,14 @@ public class AdministrationController {
     public CourseDto createCourseExecution(@RequestBody CourseDto courseDto) {
         return administrationService.createExternalCourseExecution(courseDto);
     }
+
+    @DeleteMapping("/admin/courses/executions/{courseExecutionId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))")
+    public ResponseEntity removeCourseExecution(@PathVariable Integer courseExecutionId) {
+        administrationService.removeCourseExecution(courseExecutionId);
+
+        return ResponseEntity.ok().build();
+    }
+
 
 }
