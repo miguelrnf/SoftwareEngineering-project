@@ -47,13 +47,11 @@ export const questionWithFigure = new Question({
     {
       id: 48,
       name: 'Graphite',
-      parentTopic: 'Case Studies',
       numberOfQuestions: 27
     },
     {
       id: 4,
       name: 'Module viewtype',
-      parentTopic: null,
       numberOfQuestions: 94
     }
   ],
@@ -104,13 +102,11 @@ export const questionWithoutFigure = new Question({
     {
       id: 48,
       name: 'Graphite',
-      parentTopic: 'Case Studies',
       numberOfQuestions: 27
     },
     {
       id: 4,
       name: 'Module viewtype',
-      parentTopic: null,
       numberOfQuestions: 94
     }
   ],

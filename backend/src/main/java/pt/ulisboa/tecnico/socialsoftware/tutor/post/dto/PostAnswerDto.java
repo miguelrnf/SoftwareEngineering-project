@@ -1,4 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import java.io.Serializable;
@@ -13,6 +14,9 @@ public class PostAnswerDto implements Serializable {
         this.id = pa.getId();
         this.user = new UserDto(pa.getUser());
         this.teacherAnswer = pa.getTeacherAnswer();
+    }
+
+    public PostAnswerDto() {
     }
 
     public Integer getId() {
