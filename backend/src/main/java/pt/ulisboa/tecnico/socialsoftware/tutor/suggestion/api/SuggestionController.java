@@ -48,6 +48,13 @@ public class SuggestionController {
         return this.suggestionService.editSuggestion(suggDto);
     }
 
+    @PutMapping(value = "/courses/{courseExecutionId}/suggestions/listall")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId) {
+        User user = (User)((Authentication)principal).getPrincipal();
+        return this.suggestionService.listAllSuggestions(new UserDto (user));
+    }
+
 
 
     /*
