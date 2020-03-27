@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
