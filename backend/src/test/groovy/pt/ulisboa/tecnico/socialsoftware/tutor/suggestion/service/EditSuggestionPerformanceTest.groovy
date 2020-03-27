@@ -24,8 +24,11 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 @DataJpaTest
-class CreateSuggestionPerformanceTest extends Specification{
+class EditSuggestionPerformanceTest extends Specification {
     @Autowired
     SuggestionService suggestionService
 
@@ -44,18 +47,22 @@ class CreateSuggestionPerformanceTest extends Specification{
     @Autowired
     TopicRepository topicRepository
 
-    def "testing performance when creating 3000 suggestions"() {
-        given: "a valid course"
 
-        def course = new Course("Course", Course.Type.TECNICO)
-        def courseExecution = new CourseExecution(course, "CS", "1", Course.Type.TECNICO)
+    def "testing editing 3000 suggestions"() {
+
+        given: "a course"
+        def course = new Course("COURSE_NAME", Course.Type.TECNICO)
+        def courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         and: "a user with the role teacher"
-        def userT = new User("VALID_NAME", "VALID_USERNAME_TEACHER", 2, User.Role.TEACHER)
+        def userT = new User("VALID_NAME1", "VALID_USERNAME_TEACHER", 2, User.Role.TEACHER)
 
         and: "a user with the role student"
         def userS = new User("VALID_NAME", "VALID_USERNAME", 1, User.Role.STUDENT)
+
+        and: "a user with the role student that didn't create that suggestion"
+        def userS2 = new User("VALID_NAME2", "VALID_USERNAME2", 3, User.Role.STUDENT)
 
         and: "a valid topicDto"
         def topicDto = new TopicDto()
@@ -63,36 +70,49 @@ class CreateSuggestionPerformanceTest extends Specification{
         topicDto.setName("VALID_NAME_TOPIC")
 
         and: "a valid topic"
-        def topic = new Topic(course, topicDto)
-
+        def topic = new Topic(course, topicDto);
 
         and: "a valid list of topics"
         def topicList = new HashSet<Topic>();
         topicList.add(topic)
 
+        and: "3000 valid suggestions"
+        for (int i = 1; i <= 3000; i++) {
+            def suggestion = new Suggestion()
+            suggestion.setKey(i)
+            suggestion.set_student(userS)
+            suggestion.set_questionStr("SUGGESTION_CONTENT")
+            suggestion.setCreationDate(LocalDateTime.now())
+            suggestion.set_topicsList(topicList)
+            suggestionRepository.save(suggestion)
+        }
+
         and: "add to repository"
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
+        userRepository.save(userS2)
         userRepository.save(userT)
         topicRepository.save(topic)
 
-        when: "create 3000 suggestions"
-        for (int i = 1; i <= 10; i++) {
-            def sug = new Suggestion()
-            sug.set_student(userS)
-            sug.set_topicsList(topicList)
-            def sugDto = new SuggestionDto(sug)
-            sugDto.set_questionStr("question")
-            suggestionService.createSuggestion(course.getId(), sugDto)
-        }
 
+        def sugDto = new SuggestionDto()
+        sugDto.set_student(new UserDto(userS))
+
+
+
+        when: "3000 suggestions get edited"
+        for (int i = 1; i <= 3000; i++) {
+            sugDto.setKey(i)
+            suggestionService.editSuggestion(sugDto)
+        }
 
         then:
         true
 
-
     }
+
+
     @TestConfiguration
     static class SuggestionServiceImplTestContextConfiguration {
 
