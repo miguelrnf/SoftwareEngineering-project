@@ -1,4 +1,3 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 //package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 //
 //import org.springframework.beans.factory.annotation.Autowired

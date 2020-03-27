@@ -16,9 +16,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TO
 
 @Entity
 @Table(name = "tournaments",
-        indexes = {
-                @Index(name = "tournament_indx_0", columnList = "id")
-        }
+       indexes = {
+        @Index(name = "tournament_indx_0", columnList = "key")
+       }
 )
 public class Tournament {
 
@@ -29,6 +29,9 @@ public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(unique=true, nullable = false)
+    private Integer key;
 
     @Column(nullable = false)
     private String title;
@@ -64,12 +67,14 @@ public class Tournament {
     private Set<User> enrolledStudents = new HashSet<>();
 
     public Tournament(){
+
     }
 
     public Tournament(TournamentDto tournamentDto, User user, Assessment assessment){
 
+        this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
-        setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
+        this.status = tournamentDto.getStatus();
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
@@ -80,6 +85,10 @@ public class Tournament {
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getKey() {
+        return key;
     }
 
     public String getTitle() {
@@ -100,6 +109,10 @@ public class Tournament {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public void setTitle(String title) {
@@ -194,6 +207,7 @@ public class Tournament {
     public String toString() {
         return "Tournament{" +
                 "id=" + id +
+                ", key=" + key +
                 ", title='" + title + '\'' +
                 ", numberOfQuestions=" + numberOfQuestions +
                 ", creationDate=" + creationDate +
