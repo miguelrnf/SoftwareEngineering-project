@@ -150,7 +150,8 @@ class SignOutServiceSpockTest extends Specification{
         and: "a tournamentDto"
         TOURNAMENTDTO = new TournamentDto()
         TOURNAMENTDTO.setId(1)
-        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
+        TOURNAMENTDTO.setKey(1)
+        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED)
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
         TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
@@ -186,7 +187,7 @@ class SignOutServiceSpockTest extends Specification{
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction()
+        topicConjunction = new TopicConjunction(topicConjunctionDto)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -214,11 +215,11 @@ class SignOutServiceSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername() as String, result.getId())
+        tournamentService.enrollStudent(courseExecution_1.getId() as Integer, STUDENT_SAME_CE.getUsername() as String, result.getId())
 
         then:
         def tournamentTest = tournamentRepository.findById(result.getId())
-        def result2 = tournamentTest.get().getEnrolledStudents()[0]
+        def result2 = tournamentTest.get().getEnrolledStudents().getAt(0)
         def result5 = user_same.getTournaments()
 
         result2.username == USERNAME_2

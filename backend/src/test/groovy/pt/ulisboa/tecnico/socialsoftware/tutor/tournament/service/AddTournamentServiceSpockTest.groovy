@@ -33,7 +33,6 @@ import java.time.format.DateTimeFormatter
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND
 
-
 @DataJpaTest
 class AddTournamentServiceSpockTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
@@ -112,14 +111,14 @@ class AddTournamentServiceSpockTest extends Specification{
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        given: "a quiz"
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
-        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
+        tournamentDto.setKey(1)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
         tournamentDto.setAvailableDate(DATENOW.format(formatter))
         tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
@@ -154,7 +153,7 @@ class AddTournamentServiceSpockTest extends Specification{
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction()
+        topicConjunction = new TopicConjunction(topicConjunctionDto)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -186,14 +185,16 @@ class AddTournamentServiceSpockTest extends Specification{
 
         then:
         result.id != null
+        result.key == 1
         result.owner.getName() == 'name'
         result.owner.getRole() == User.Role.STUDENT
         result.title == TITLE
-        result.status == "CREATED"
+        result.status == Tournament.TournamentStatus.CREATED
 
         def tourntest = new TournamentDto(courseExecution.getTournaments().getAt(0))
 
         result.getId() == tourntest.getId()
+        result.getKey() == tourntest.getKey()
         result.getOwner().getName() == tourntest.getOwner().getName()
         result.getOwner().getRole() == tourntest.getOwner().getRole()
         result.getTitle() == tourntest.getTitle()

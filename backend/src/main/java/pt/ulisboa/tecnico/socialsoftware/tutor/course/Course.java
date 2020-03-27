@@ -16,9 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CO
 @Table(name = "courses")
 public class Course {
     public static final String DEMO_COURSE = "Demo Course";
-
     public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
 
     public enum Type {TECNICO, EXTERNAL}
 
