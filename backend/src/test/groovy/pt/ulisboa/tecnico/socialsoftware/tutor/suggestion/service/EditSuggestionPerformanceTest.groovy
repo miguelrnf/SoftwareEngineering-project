@@ -27,7 +27,6 @@ import spock.lang.Unroll
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-//Testing
 
 @DataJpaTest
 class EditSuggestionPerformanceTest extends Specification {
