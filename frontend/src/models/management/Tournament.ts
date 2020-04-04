@@ -1,5 +1,5 @@
 import Assessment from '@/models/management/Assessment';
-import User from '@/models/user/User';
+import { Student } from '@/models/management/Student';
 
 export class Tournament {
   id!: number;
@@ -11,8 +11,8 @@ export class Tournament {
   numberOfQuestions!: number;
   status!: string;
   assessment!: Assessment;
-  owner!: User;
-  enrolledStudents: User[] = [];
+  owner!: Student;
+  enrolledStudents: Student[] = [];
 
   constructor(jsonObj?: Tournament) {
     if (jsonObj) {
@@ -28,11 +28,11 @@ export class Tournament {
       if (jsonObj.assessment)
         this.assessment = new Assessment(jsonObj.assessment);
 
-      if (jsonObj.owner) this.owner = new User(jsonObj.owner);
+      if (jsonObj.owner) this.owner = new Student(jsonObj.owner);
 
       if (jsonObj.enrolledStudents) {
         this.enrolledStudents = jsonObj.enrolledStudents.map(
-          (student: User) => new User(student)
+          (student: Student) => new Student(student)
         );
       }
     }
