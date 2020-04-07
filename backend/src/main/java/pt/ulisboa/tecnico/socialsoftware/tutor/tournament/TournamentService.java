@@ -84,6 +84,8 @@ public class TournamentService {
 
         entityManager.persist(tournament);
 
+
+
         return new TournamentDto(tournament);
     }
 
@@ -143,15 +145,15 @@ public class TournamentService {
     }
 
     private void setValidConclusionDate(Tournament tournament, String date, DateTimeFormatter formatter){
-        if(date == null)
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Date");
+        if(date == null || LocalDateTime.parse(date, formatter).isBefore(LocalDateTime.now()))
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion Date");
 
         tournament.setConclusionDate(LocalDateTime.parse(date, formatter));
     }
 
     private void setValidAvailableDate(Tournament tournament, String date, DateTimeFormatter formatter){
-        if(date == null)
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Date");
+        if(date == null || !LocalDateTime.parse(date, formatter).isAfter(LocalDateTime.now()))
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available Date");
 
         tournament.setAvailableDate(LocalDateTime.parse(date, formatter));
     }
@@ -182,12 +184,17 @@ public class TournamentService {
         if(user.getRole() != User.Role.STUDENT)
             throw new TutorException(TOURNAMENT_PERMISSION_ENROLL);
 
-        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || tournament.getAvailableDate().isAfter(LocalDateTime.now()))
+        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || !tournament.getAvailableDate().isAfter(LocalDateTime.now()))
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
         if(tournament.getEnrolledStudents().contains(user) || user.getTournaments().contains(tournament)){
             throw new TutorException(USER_ALREADY_ENROLLED, user.getUsername());
         }
+
+        if(!user.getCourseExecutions().contains(tournament.getCourseExecution())){
+            throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
+        }
+
 
         tournament.enrollStudent(user);
         user.addTournament(tournament);

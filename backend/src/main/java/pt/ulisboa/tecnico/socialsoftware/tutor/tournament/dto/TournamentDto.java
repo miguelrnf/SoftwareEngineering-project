@@ -22,11 +22,11 @@ public class TournamentDto implements Serializable {
     private AssessmentDto assessmentDto;
     private String title;
     private UserDto owner;
-    private String status;
+    private String status = "CREATED";
     private List<UserDto> enrolledStudents = new ArrayList<>();
 
     @Transient
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public TournamentDto(){
     }
@@ -180,7 +180,7 @@ public class TournamentDto implements Serializable {
         if (!Objects.equals(id, t.id)) return false;
         if (!Objects.equals(title, t.title)) return false;
         if (!Objects.equals(owner, t.owner)) return false;
-        if (status != t.status) return false;
+        if (!status.equals(t.status)) return false;
         return Objects.equals(enrolledStudents, t.enrolledStudents);
     }
 
