@@ -104,6 +104,23 @@ public class TournamentService {
         return temp;
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> getOwnTournaments(String username, int courseExecutionId) {
+        User owner = userRepository.findByUsername(username);
+        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+                .filter(tournament -> tournament.getOwner().equals(owner) && tournament
+                        .getCourseExecution().getId().equals(courseExecutionId))
+                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+                .collect(Collectors.toList());
+        if(temp.isEmpty())
+            throw new TutorException(TOURNAMENT_LIST_EMPTY);
+
+        return temp;
+    }
+
     private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){
 
         if(assessmentDto == null)
@@ -235,9 +252,8 @@ public class TournamentService {
         return tournament.get(0);
     }
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getTournaments(Integer executionId) {
-        return tournamentRepository.findAll().stream().filter(tournament -> tournament.getCourseExecution().getId()
-                .equals(executionId)).map(TournamentDto::new).sorted(Comparator
+    public List<TournamentDto> getTournaments() {
+        return tournamentRepository.findAll().stream().map(TournamentDto::new).sorted(Comparator
                 .comparing(TournamentDto::getTitle)).collect(Collectors.toList());
     }
 }
