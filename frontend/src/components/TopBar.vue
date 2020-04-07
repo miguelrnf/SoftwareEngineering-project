@@ -42,6 +42,14 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/admin/tournaments">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>All Tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -155,6 +163,20 @@
             </v-btn>
           </template>
           <v-list dense>
+            <v-list-item to="/student/availableTournaments">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Available</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/ownTournaments">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Own</v-list-item-title>
             <v-list-item to="/student/createTournaments">
               <v-list-item-action>
                 <v-icon>create</v-icon>
@@ -219,9 +241,13 @@
             <v-list-item-action>
               <v-icon>fas fa-school</v-icon>
             </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Manage Courses</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-content>Manage Courses</v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/admin/tournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>All Tournaments</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
@@ -330,6 +356,20 @@
               <v-icon>done</v-icon>
             </v-list-item-action>
             <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/availableTournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Tournaments</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/ownTournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Own</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/stats">

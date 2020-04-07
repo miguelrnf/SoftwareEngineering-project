@@ -199,7 +199,7 @@ class GetTournamentsSpockTest extends Specification{
         tournament2.setId(tournId++)
 
         when:
-        def result = tournamentService.getTournaments(courseExecution.getId())
+        def result = tournamentService.getTournaments()
 
         then:
         result.contains(new TournamentDto(tournament1))
@@ -218,7 +218,7 @@ class GetTournamentsSpockTest extends Specification{
         given: "nothing"
 
         when:
-        def test = tournamentService.getTournaments(courseExecution.getId())
+        def test = tournamentService.getTournaments()
 
         then:
         test.isEmpty()
