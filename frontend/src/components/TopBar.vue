@@ -177,6 +177,12 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Own</v-list-item-title>
+            <v-list-item to="/student/createTournaments">
+              <v-list-item-action>
+                <v-icon>create</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -322,6 +328,13 @@
               <v-icon>assignment</v-icon>
             </v-list-item-action>
             <v-list-item-content>Available Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/createTournaments">
+            <v-list-item-action>
+              <v-icon>create</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Create Tournaments</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/create">

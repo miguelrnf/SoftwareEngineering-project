@@ -12,7 +12,6 @@ import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
-import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { Tournament } from '@/models/management/Tournament';
 
@@ -284,6 +283,20 @@ export default class RemoteServices {
       )
       .then(response => {
         return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static createNewTournament(params: object): Promise<Tournament> {
+    return httpClient
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`,
+        params
+      )
+      .then(response => {
+        return new Tournament(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

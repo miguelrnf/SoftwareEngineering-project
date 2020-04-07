@@ -28,6 +28,7 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import TournamentsView from '@/views/admin/TournamentsView.vue';
+import CreateTournamentsView from '@/views/student/tournament/CreateTournamentsView.vue';
 
 Vue.use(Router);
 
@@ -158,6 +159,15 @@ let router = new Router({
           component: CreateQuizzesView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Create Quizzes',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'createTournaments',
+          name: 'create-tournament',
+          component: CreateTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Create Tournaments',
             requiredAuth: 'Student'
           }
         },
