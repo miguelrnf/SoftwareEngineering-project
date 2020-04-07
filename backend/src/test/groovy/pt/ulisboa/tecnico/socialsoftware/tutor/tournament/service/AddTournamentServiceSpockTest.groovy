@@ -43,8 +43,8 @@ class AddTournamentServiceSpockTest extends Specification{
     static final TITLE = 'first tournament'
     static final NAME = 'name'
     static final NUMQUESTIONS = 3
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
 
     @Autowired
     UserRepository userRepository
@@ -114,8 +114,8 @@ class AddTournamentServiceSpockTest extends Specification{
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         given: "a quiz"
         creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
+        availableDate = LocalDateTime.now().plusDays(1)
+        conclusionDate = LocalDateTime.now().plusDays(2)
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
