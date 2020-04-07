@@ -177,6 +177,8 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Own</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/student/createTournaments">
               <v-list-item-action>
                 <v-icon>create</v-icon>

@@ -108,7 +108,7 @@ export default class CreateTournamentView extends Vue {
   async createTournament() {
     try {
       await this.tournamentManager.getNewTournament();
-      //await this.$router.push({ name: 'solved' }); //TODO MUDAR
+      await this.$router.push({ name: 'own-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
