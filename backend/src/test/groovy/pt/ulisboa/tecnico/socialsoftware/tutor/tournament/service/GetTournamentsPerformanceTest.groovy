@@ -40,8 +40,8 @@ class GetTournamentsPerformanceTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
 
     @Autowired
     TournamentService tournamentService
