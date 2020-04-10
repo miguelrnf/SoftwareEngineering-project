@@ -3,7 +3,11 @@
     <h2>Create Tournament</h2>
     <v-container class="create-buttons">
       <v-card-text>
-        <v-text-field v-model="tournamentManager.title" label="*Title" />
+        <v-text-field
+          v-model="tournamentManager.title"
+          label="*Title"
+          data-cy="title"
+        />
       </v-card-text>
       <v-container>
         <p>Assessment</p>
@@ -17,6 +21,7 @@
             text
             :value="assessment.id"
             :key="assessment.id"
+            data-cy="AssessmentTitle"
             >{{ assessment.title }}</v-btn
           >
           <!--          <v-btn text value="all">All</v-btn>-->
@@ -55,6 +60,7 @@
             <v-datetime-picker
               label="*Available Date"
               format="yyyy-MM-dd HH:mm"
+              data-cy="availableDate"
               v-model="tournamentManager.availableDate"
               date-format="yyyy-MM-dd"
               time-format="HH:mm"
@@ -69,13 +75,19 @@
               v-model="tournamentManager.conclusionDate"
               date-format="yyyy-MM-dd"
               time-format="HH:mm"
+              data-cy="conclusionDate"
             >
             </v-datetime-picker>
           </v-col>
         </v-row>
       </v-card-text>
       <v-container>
-        <v-btn @click="createTournament" depressed color="primary">
+        <v-btn
+          @click="createTournament"
+          depressed
+          color="primary"
+          data-cy="createButton"
+        >
           Create tournament
         </v-btn>
       </v-container>
