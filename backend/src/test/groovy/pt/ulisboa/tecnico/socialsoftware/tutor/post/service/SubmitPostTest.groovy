@@ -199,7 +199,7 @@ class SubmitPostTest extends Specification {
         pq.setQuestion(q as QuestionDto)
         pq.setStudentQuestion(sq)
         pq.setUser(new UserDto (u as User))
-        postService.submitPost(pq)
+        postService.submitPost(11, pq)
 
         then:
         def result = thrown(TutorException)
@@ -221,7 +221,7 @@ class SubmitPostTest extends Specification {
         pq.setQuestion(q as QuestionDto)
         pq.setStudentQuestion(sq)
         pq.setUser(new UserDto (u as User))
-        postService.submitPost(pq)
+        postService.submitPost(11, pq)
 
         then:
         def result = thrown(TutorException)

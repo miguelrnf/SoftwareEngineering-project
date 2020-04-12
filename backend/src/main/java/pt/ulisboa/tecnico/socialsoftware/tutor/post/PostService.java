@@ -11,10 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -55,7 +52,7 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto submitPost(PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
+    public PostDto submitPost(int number, PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
         Integer questionKey = postQuestionDto.getQuestion().getKey();
         String username = postQuestionDto.getUser().getUsername();
         User user = checkIfUserExists(username);
@@ -185,6 +182,19 @@ public class PostService {
     public PostDto viewPost(Integer key) {
         Post post = checkIfPostExistsKey(key);
         return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ListPostsDto postPagination(ListPostsDto dto) {
+        int offset = dto.getPage() * dto.getPerPage() - dto.getPerPage();
+        List<Post> posts = postRepository.findByPage(dto.getPerPage(), offset).orElse(null);
+        List<PostDto> postDto = posts != null ? posts.stream().map(PostDto::new).collect(Collectors.toList()) : null;
+        dto.setLists(postDto);
+
+        return dto;
     }
 
     @Retryable(

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 
 import javax.validation.Valid;
+import javax.validation.executable.ValidateOnExecution;
 import java.util.Set;
 
 @RestController
@@ -48,7 +49,7 @@ public class PostController {
     @PostMapping("executions/{executionId}/posts/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto createPost(@PathVariable int executionId, @Valid @RequestBody PostQuestionDto postQ) {
-        return postService.submitPost(postQ);
+        return postService.submitPost(executionId,postQ);
     }
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit")
@@ -99,5 +100,11 @@ public class PostController {
     public PostDto redirect(@PathVariable int executionId, @PathVariable int postId,
                             @Valid @RequestBody PostPostUserDto ppu) {
         return postService.redirect(ppu.getPostNotAnswered(), ppu.getPostAnswered(), ppu.getUserT());
+    }
+
+    @GetMapping("executions/{executionId}/posts")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ListPostsDto getPage(@PathVariable int executionId, @Valid @RequestBody ListPostsDto lp) {
+        return postService.postPagination(lp);
     }
 }
