@@ -224,8 +224,6 @@ class GetOpenedTournamentSpockTest extends Specification{
 
         where:
         status     ||       errorMessage
-        "CLOSED"   || TOURNAMENT_LIST_EMPTY
-        "OPEN"     || TOURNAMENT_LIST_EMPTY
         "CANCELED" || TOURNAMENT_LIST_EMPTY
     }
 
