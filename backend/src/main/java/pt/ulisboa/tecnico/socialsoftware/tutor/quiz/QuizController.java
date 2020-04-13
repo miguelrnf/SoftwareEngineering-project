@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

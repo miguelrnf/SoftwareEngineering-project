@@ -9,9 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "quiz_answers")
@@ -146,14 +144,8 @@ public class QuizAnswer implements DomainEntity {
     public void remove() {
         user.getQuizAnswers().remove(this);
         user = null;
-
         quiz.getQuizAnswers().remove(this);
         quiz = null;
-
-        for (QuestionAnswer questionAnswer : getQuestionAnswers()) {
-            questionAnswer.remove();
-        }
-
         questionAnswers.clear();
     }
 
