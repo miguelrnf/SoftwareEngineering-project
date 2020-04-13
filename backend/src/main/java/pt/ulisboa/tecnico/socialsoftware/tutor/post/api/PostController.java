@@ -49,7 +49,7 @@ public class PostController {
     @PostMapping("executions/{executionId}/posts/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto createPost(@PathVariable int executionId, @Valid @RequestBody PostQuestionDto postQ) {
-        return postService.submitPost(executionId,postQ);
+        return postService.submitPost(postQ);
     }
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit")
@@ -102,9 +102,9 @@ public class PostController {
         return postService.redirect(ppu.getPostNotAnswered(), ppu.getPostAnswered(), ppu.getUserT());
     }
 
-    @GetMapping("executions/{executionId}/posts")
+    @GetMapping("executions/{executionId}/posts/{perPage}/{page}")
     @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public ListPostsDto getPage(@PathVariable int executionId, @Valid @RequestBody ListPostsDto lp) {
-        return postService.postPagination(lp);
+    public ListPostsDto getPage(@PathVariable int executionId, @PathVariable int perPage, @PathVariable int page) {
+        return postService.postPagination(perPage, page);
     }
 }

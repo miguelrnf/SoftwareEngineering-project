@@ -229,6 +229,22 @@ public class PostService {
         return new PostCommentDto(comment, false);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ListPostsDto postPagination(int perPage, int page) {
+        int offset = page * perPage - perPage;
+        List<Post> posts = postRepository.findByPage(perPage, offset).orElse(null);
+        List<PostDto> postDto = posts != null ? posts.stream().map(PostDto::new).collect(Collectors.toList()) : null;
+        ListPostsDto dto = new ListPostsDto();
+        dto.setLists(postDto);
+        dto.setPage(page);
+        dto.setPerPage(perPage);
+        dto.setTotalPosts(postRepository.getTotalPosts());
+        return dto;
+    }
+
     private PostComment checkIfCommentParentExists(PostCommentDto dto) {
         return commentRepository.findByKey(dto.getParent().getKey()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
     }

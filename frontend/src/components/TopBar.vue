@@ -101,6 +101,14 @@
                 <v-list-item-title>ImpExp</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/posts/allp">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Posts</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -142,6 +150,14 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Solved</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/posts/allp">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Posts</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -263,6 +279,12 @@
               <v-list-item-title>ImpExp</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/posts/allp">
+            <v-list-item-action>
+              <v-icon>done</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Posts List</v-list-item-content>
+          </v-list-item>
         </v-list-group>
 
         <!-- Student Group-->
@@ -304,6 +326,13 @@
               <v-icon>done</v-icon>
             </v-list-item-action>
             <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/posts/allp">
+            <v-list-item-action>
+              <v-icon>done</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/stats">

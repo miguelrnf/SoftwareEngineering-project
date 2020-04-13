@@ -13,6 +13,8 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Post from '@/models/management/Post';
+import ListPost from '@/models/management/ListPost';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -569,6 +571,17 @@ export default class RemoteServices {
         );
         document.body.appendChild(link);
         link.click();
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async viewPosts(perPage: number, page: number): Promise<ListPost> {
+    return httpClient
+      .get(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${perPage}/${page}`)
+      .then(response => {
+        return new ListPost(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

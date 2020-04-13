@@ -21,5 +21,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query(value = "SELECT * FROM posts LIMIT :perPage OFFSET :offset ", nativeQuery = true)
     Optional<List<Post>> findByPage(Integer perPage, Integer offset);
+
+    @Query(value = "SELECT COUNT(*) FROM posts", nativeQuery = true)
+    Integer getTotalPosts();
 }
 
