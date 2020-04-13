@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.ListPostsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -22,7 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Specification
 
 @DataJpaTest
-class SubmitPostPerformanceTest extends Specification {
+class ListPostsPerformanceTest extends Specification {
 
     @Autowired
     PostService postService
@@ -74,15 +75,25 @@ class SubmitPostPerformanceTest extends Specification {
         pq.setStudentQuestion("QUESTION")
         pq.setQuestion(new QuestionDto(question))
 
+        and: "page info"
+        def list = new ListPostsDto();
+
         and: "added to repository"
         questionRepository.save(question)
         quizRepository.save(quiz)
         userRepository.save(user)
 
-        when: "5000 posts get submitted"
-        1.upto(50, {
+
+        and: "100 posts get submitted"
+        1.upto(100, {
             postService.submitPost(11, pq)
         })
+
+        when: "100 posts get listed"
+        list.setTotalPosts(100)
+        list.setPage(1)
+        list.setPerPage(15)
+        postService.postPagination(list)
         
         then:
         true
