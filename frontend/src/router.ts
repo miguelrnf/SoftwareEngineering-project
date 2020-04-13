@@ -19,8 +19,11 @@ import ResultsView from '@/views/student/quiz/ResultsView.vue';
 import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 
-import AdminManagementView from '@/views/admin/AdminManagementView.vue';
-import NotFoundView from '@/views/NotFoundView.vue';
+import PostsView from '@/views/PostsView.vue';
+import PostPostView from '@/views/student/PostPostView.vue';
+
+import AdminManagementView from './views/admin/AdminManagementView.vue';
+import NotFoundView from './views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
@@ -194,6 +197,15 @@ let router = new Router({
       name: 'posts',
       component: PostManagementView,
       children: [
+        {
+          path: 'submit',
+          name: 'submit-post',
+          component: PostPostView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'Student'
+          }
+        },
         {
           path: 'allp',
           name: 'all-posts',

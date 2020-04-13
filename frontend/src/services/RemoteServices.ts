@@ -15,6 +15,7 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import Post from '@/models/management/Post';
 import ListPost from '@/models/management/ListPost';
+import { PostQuestion } from '@/models/management/PostQuestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -582,6 +583,20 @@ export default class RemoteServices {
       .get(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${perPage}/${page}`)
       .then(response => {
         return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async submitPost(postQ: PostQuestion) {
+    return httpClient
+      .post(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/submit`,
+        postQ
+      )
+      .then(response => {
+        return new Post(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

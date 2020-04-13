@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -32,7 +33,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class PostService {
-    //TODO - USE PRINCIPAL FOR LOGGED IN USER
     @Autowired
     private PostRepository postRepository;
 
@@ -52,14 +52,13 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto submitPost(int number, PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
-        Integer questionKey = postQuestionDto.getQuestion().getKey();
+    public PostDto submitPost(PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
         String username = postQuestionDto.getUser().getUsername();
         User user = checkIfUserExists(username);
 
         checkIfUserHasRoleStudent(user);
-        Question question = checkIfQuestionExists(questionKey);
-        checkIfUserAnsweredQuestion(questionKey, user);
+        Question question = checkIfQuestionExists(postQuestionDto);
+        checkIfUserAnsweredQuestion(postQuestionDto.getQuestion(), user);
         int maxPostNumber = getMaxPostNumber();
         Post post = new Post(maxPostNumber, new PostQuestion(question, user, postQuestionDto.getStudentQuestion()));
 
@@ -285,10 +284,19 @@ public class PostService {
                     : postRepository.getMaxPostNumber() + 1;
     }
 
-    private void checkIfUserAnsweredQuestion(Integer questionKey, User user) {
-        user.getQuizAnswers().stream().map(x -> x.getQuestionAnswers()
-                .stream().filter(y -> y.getQuizQuestion().getQuestion().getKey().equals(questionKey)))
-                .findAny().orElseThrow(() -> new TutorException(USER_HAS_NOT_ANSWERED, questionKey));
+    private void checkIfUserAnsweredQuestion(QuestionDto question, User user) {
+        if(question.getKey() != null) {
+            int questionKey = question.getKey();
+            user.getQuizAnswers().stream().map(x -> x.getQuestionAnswers()
+                    .stream().filter(y -> y.getQuizQuestion().getQuestion().getKey().equals(questionKey)))
+                    .findAny().orElseThrow(() -> new TutorException(USER_HAS_NOT_ANSWERED, questionKey));
+        }
+        else {
+            int questionId = question.getId();
+            user.getQuizAnswers().stream().map(x -> x.getQuestionAnswers()
+                    .stream().filter(y -> y.getQuizQuestion().getQuestion().getKey().equals(questionId)))
+                    .findAny().orElseThrow(() -> new TutorException(USER_HAS_NOT_ANSWERED, questionId));
+        }
     }
 
     private void checkIfUserHasRoleStudent(User user) {
@@ -299,8 +307,14 @@ public class PostService {
         if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
     }
 
-    private Question checkIfQuestionExists(Integer questionKey) {
-        return questionRepository.findByKey(questionKey)
-                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
+    private Question checkIfQuestionExists(PostQuestionDto question) {
+        if(question.getQuestion().getKey() != null) {
+            return questionRepository.findByKey(question.getQuestion().getKey())
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getQuestion().getKey()));
+        }
+        else {
+            return questionRepository.findByKey(question.getQuestion().getId())
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getQuestion().getId()));
+        }
     }
 }

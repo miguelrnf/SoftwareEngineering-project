@@ -3,13 +3,16 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,7 +33,7 @@ public class User implements UserDetails, DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    
+
     @Column(unique=true)
     private String username;
 
@@ -58,6 +61,12 @@ public class User implements UserDetails, DomainEntity {
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
+
+    @ManyToMany
+    private Set<Tournament> tournaments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<PostQuestion> postQuestions = new HashSet<>();
 
     public User() {
     }
@@ -161,6 +170,29 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void setTournaments(Set<Tournament> tournaments) {
+        this.tournaments = tournaments;
+    }
+
+    public Set<PostQuestion> getPostQuestions() {
+        return postQuestions;
+    }
+
+    public void setPostQuestions(Set<PostQuestion> postQuestions) {
+        this.postQuestions = postQuestions;
+    }
+
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Suggestion> suggestions = new HashSet<>();
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
@@ -225,7 +257,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                     .sum();
-            return numberOfInClassAnswers;
+        return numberOfInClassAnswers;
     }
 
     public void setNumberOfInClassAnswers(Integer numberOfInClassAnswers) {
@@ -258,7 +290,7 @@ public class User implements UserDetails, DomainEntity {
                             questionAnswer.getOption().getCorrect())
                     .count();
 
-            return numberOfCorrectTeacherAnswers;
+        return numberOfCorrectTeacherAnswers;
     }
 
     public void setNumberOfCorrectTeacherAnswers(Integer numberOfCorrectTeacherAnswers) {
@@ -272,7 +304,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
+                            questionAnswer.getOption().getCorrect())
                     .count();
 
         return numberOfCorrectInClassAnswers;
@@ -289,7 +321,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
+                            questionAnswer.getOption().getCorrect())
                     .count();
 
         return numberOfCorrectStudentAnswers;
@@ -297,6 +329,10 @@ public class User implements UserDetails, DomainEntity {
 
     public void setNumberOfCorrectStudentAnswers(Integer numberOfCorrectStudentAnswers) {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
+    }
+
+    public void addTournament(Tournament tournament){
+        tournaments.add(tournament);
     }
 
     public void increaseNumberOfQuizzes(Quiz.QuizType type) {
@@ -345,6 +381,10 @@ public class User implements UserDetails, DomainEntity {
             default:
                 break;
         }
+    }
+
+    public void addPostQuestion(PostQuestion postQuestion) {
+        this.postQuestions.add(postQuestion);
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {

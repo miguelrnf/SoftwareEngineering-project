@@ -160,6 +160,14 @@
                 <v-list-item-title>Posts</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/posts/submit">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Submit</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -340,6 +348,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/posts/submit">
+            <v-list-item-action>
+              <v-icon>fas fa-user</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Submit</v-list-item-content>
           </v-list-item>
         </v-list-group>
 

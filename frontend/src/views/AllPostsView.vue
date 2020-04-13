@@ -7,7 +7,7 @@
         <div class="col">Question</div>
         <div class="col">User</div>
       </li>
-      <li class="list-row" v-for="posta in allp.lists" :key="posta.id">
+      <li class="list-row" v-for="posta in allp.lists.reverse()" :key="posta.id">
         <div class="col">
           {{ posta.question.question.title }}
         </div>
