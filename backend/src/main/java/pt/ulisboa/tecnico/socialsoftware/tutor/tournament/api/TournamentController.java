@@ -106,4 +106,5 @@ public class TournamentController {
     public List<TournamentDto> getEnrolledTournaments(@PathVariable String username, @PathVariable Integer executionId) {
         return this.tournamentservice.getEnrolledTournaments(username, executionId);
     }
+    //TODO tirar cancelado
 }
