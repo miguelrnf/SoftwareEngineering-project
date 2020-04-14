@@ -9,7 +9,6 @@
         <div class="col">Questions</div>
         <div class="col">Status</div>
         <div class="col">Participants</div>
-        <div class="col last-col"></div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
         <div class="col">
@@ -29,9 +28,6 @@
         </div>
         <div class="col">
           {{ t.enrolledStudents.length }}
-        </div>
-        <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"></i>
         </div>
       </li>
     </ul>

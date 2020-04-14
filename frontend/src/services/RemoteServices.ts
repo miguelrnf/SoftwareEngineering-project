@@ -289,6 +289,28 @@ export default class RemoteServices {
       });
   }
 
+  static async enrollTournament(tournamentId: Number): Promise<Tournament> {
+    return httpClient
+      .put(`/tournament/${tournamentId}/opened/enroll`)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async unenrollTournament(tournamentId: Number): Promise<Tournament> {
+    return httpClient
+      .put(`/tournament/${tournamentId}/opened/unenroll`)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async createNewTournament(params: object): Promise<Tournament> {
     return httpClient
       .post(

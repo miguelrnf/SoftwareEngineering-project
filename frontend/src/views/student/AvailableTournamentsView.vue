@@ -22,9 +22,62 @@
         <div class="col">
           {{ t.numberOfQuestions }}
         </div>
-        <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"></i>
-        </div>
+        <v-dialog v-model="dialog" class="container" max-width="70%">
+          <template v-slot:activator="{ on }">
+            <v-btn class="btn" color="primary" dark v-on="on">
+              Details
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="justify-center">
+              <v-card-actions>
+                <h3>{{ t.title }}</h3>
+              </v-card-actions>
+            </v-card-title>
+            <v-card-text>
+              <v-card-actions>
+                <div class="container">
+                  <ul>
+                    <li class="cth">
+                      <div class="col">Starts</div>
+                      <div class="col">Ends</div>
+                      <div class="col">Assessment</div>
+                      <div class="col">Questions</div>
+                      <div class="col">Participants</div>
+                    </li>
+                    <li class="lt">
+                      <div class="col">
+                        {{ t.availableDate }}
+                      </div>
+                      <div class="col">
+                        {{ t.conclusionDate }}
+                      </div>
+                      <div class="col">
+                        {{ t.assessmentDto.title }}
+                      </div>
+                      <div class="col">
+                        {{ t.numberOfQuestions }}
+                      </div>
+                      <div class="col">
+                        {{ t.enrolledStudents.length }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </v-card-actions>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="signButton(t.id)">
+                {{ sign }}
+              </v-btn>
+              <v-btn color="primary" text @click="dialog = false">
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </li>
     </ul>
   </div>
@@ -37,6 +90,12 @@ import { Tournament } from '@/models/management/Tournament';
 
 @Component
 export default class AvailableTournamentsView extends Vue {
+  data() {
+    return {
+      sign: 'Sign In',
+      dialog: false
+    };
+  }
   tournaments: Tournament[] = [];
 
   async created() {
@@ -45,6 +104,36 @@ export default class AvailableTournamentsView extends Vue {
       this.tournaments = (
         await RemoteServices.getOpenedTournaments()
       ).reverse();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async signButton(id: Number) {
+    if (this.sign == 'Sign In') {
+      this.enrollTournament(id);
+      this.sign = 'Sign Out';
+    } else {
+      this.unenrollTournament(id);
+      this.sign = 'Sign In';
+    }
+  }
+
+  async enrollTournament(id: Number) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.enrollTournament(id);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async unenrollTournament(id: Number) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.unenrollTournament(id);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -60,6 +149,10 @@ export default class AvailableTournamentsView extends Vue {
   margin-right: auto;
   padding-left: 10px;
   padding-right: 10px;
+
+  h3 {
+    color: blue;
+  }
 
   h2 {
     font-size: 26px;
@@ -91,6 +184,23 @@ export default class AvailableTournamentsView extends Vue {
       text-align: center;
     }
 
+    .cth {
+      background-color: #ffffff;
+      box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
+      color: Black;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      text-align: center;
+    }
+
+    .lt {
+      background-color: #ffffff;
+      box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
+      display: flex;
+    }
+
     .col {
       flex-basis: 25% !important;
       margin: auto; /* Important */
@@ -100,6 +210,11 @@ export default class AvailableTournamentsView extends Vue {
     .list-row {
       background-color: #ffffff;
       box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
+      display: flex;
+    }
+
+    .btn {
+      flex-basis: 20% !important;
       display: flex;
     }
   }
