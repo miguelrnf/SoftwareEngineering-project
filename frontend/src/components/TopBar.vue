@@ -415,6 +415,16 @@
           </v-list-item-action>
           <v-list-item-content>Login</v-list-item-content>
         </v-list-item>
+        <v-list-item href="https://www.worldometers.info/coronavirus/">
+          <v-list-item-action>
+            <v-icon>fas fa-virus</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            #STAYHOME
+            <br />
+            #STAYSAFE
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <!-- End of mobile side menu -->
