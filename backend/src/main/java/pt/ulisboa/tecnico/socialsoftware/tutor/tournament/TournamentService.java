@@ -96,7 +96,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listTournaments(int courseExecutionId) {
         List<TournamentDto> temp = tournamentRepository.findAll().stream()
-                .filter(tournament -> tournament.getStatus().equals(Tournament.TournamentStatus.CREATED) && tournament
+                .filter(tournament -> tournament.checkStatus().equals(Tournament.TournamentStatus.CREATED) && tournament
                         .getCourseExecution().getId().equals(courseExecutionId))
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
@@ -201,7 +201,7 @@ public class TournamentService {
         if(user.getRole() != User.Role.STUDENT)
             throw new TutorException(TOURNAMENT_PERMISSION_ENROLL);
 
-        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED || !tournament.getAvailableDate().isAfter(LocalDateTime.now()))
+        if(tournament.checkStatus() != Tournament.TournamentStatus.CREATED)
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
         if(tournament.getEnrolledStudents().contains(user) || user.getTournaments().contains(tournament)){
@@ -219,7 +219,6 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
@@ -228,7 +227,7 @@ public class TournamentService {
         User user = findUsername(username);
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-        if(tournament.getStatus() != Tournament.TournamentStatus.CREATED)
+        if(tournament.checkStatus() != Tournament.TournamentStatus.CREATED)
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
         if(!tournament.getEnrolledStudents().contains(user))
@@ -258,6 +257,7 @@ public class TournamentService {
 
         return tournament.get(0);
     }
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getTournaments() {
         return tournamentRepository.findAll().stream().map(TournamentDto::new).sorted(Comparator

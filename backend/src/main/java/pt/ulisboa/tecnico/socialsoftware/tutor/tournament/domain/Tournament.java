@@ -190,6 +190,18 @@ public class Tournament {
         this.assessment = assessment;
     }
 
+    public TournamentStatus checkStatus(){
+        if(status == TournamentStatus.CANCELED)
+            return TournamentStatus.CANCELED;
+        if(LocalDateTime.now().isBefore(availableDate))
+            this.setStatus(TournamentStatus.CREATED);
+        else if(LocalDateTime.now().isBefore(conclusionDate))
+            this.setStatus(TournamentStatus.OPEN);
+        else
+            this.setStatus(TournamentStatus.CLOSED);
+        return status;
+    }
+
     @Override
     public String toString() {
         return "Tournament{" +

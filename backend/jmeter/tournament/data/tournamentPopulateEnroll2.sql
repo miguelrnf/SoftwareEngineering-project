@@ -1,0 +1,50 @@
+INSERT INTO TOURNAMENTS (ID, AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE, NUMBER_OF_QUESTIONS, STATUS, TITLE, ASSESSMENT_ID, COURSE_EXECUTION_ID, USER_ID) VALUES 
+(6969, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6970, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676), 
+
+(6971, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6972, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6973, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6974, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6975, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6976, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6977, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6978, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6979, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6980, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6981, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6982, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6983, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6984, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6985, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6986, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6987, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6988, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6989, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6990, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6991, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6992, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676),
+
+(6993, TO_TIMESTAMP('2020-02-23 20:31:00.000000', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-09-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), TO_TIMESTAMP('2020-01-23 01:10:50.913949', 'yyyy-MM-dd HH24:mi:ss.ffffff'), 5, 'CREATED', 'BOLITA', 6, 11, 676);
