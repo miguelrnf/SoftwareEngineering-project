@@ -100,5 +100,10 @@ public class TournamentController {
 
         return this.tournamentservice.unrollStudent(user.getUsername(), tournamentId);
     }
-}
 
+    @GetMapping("/executions/{executionId}/tournaments/enrolled/{username}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TournamentDto> getEnrolledTournaments(@PathVariable String username, @PathVariable Integer executionId) {
+        return this.tournamentservice.getEnrolledTournaments(username, executionId);
+    }
+}
