@@ -22,7 +22,12 @@
         <div class="col">
           {{ t.numberOfQuestions }}
         </div>
-        <v-dialog v-model="dialog" class="container" max-width="70%">
+        <v-dialog
+          :retain-focus="false"
+          v-model="dialog"
+          class="container"
+          max-width="70%"
+        >
           <template v-slot:activator="{ on }">
             <v-btn class="btn" color="primary" v-on="on" @click="isEnrolled(t)">
               Details
@@ -131,12 +136,13 @@ export default class AvailableTournamentsView extends Vue {
 
   async signButton(t: Tournament) {
     if (this.sign == 'Sign In') {
-      this.enrollTournament(t.id);
+      await this.enrollTournament(t.id);
       this.sign = 'Sign Out';
     } else {
-      this.unenrollTournament(t.id);
+      await this.unenrollTournament(t.id);
       this.sign = 'Sign In';
     }
+    await this.$router.push({ name: 'enrolled-Tournaments' });
   }
 
  
