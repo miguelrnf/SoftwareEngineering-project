@@ -24,14 +24,14 @@
         </div>
         <v-dialog v-model="dialog" class="container" max-width="70%">
           <template v-slot:activator="{ on }">
-            <v-btn class="btn" color="primary" dark v-on="on">
+            <v-btn class="btn" color="primary" v-on="on" @click="isEnrolled(t)">
               Details
             </v-btn>
           </template>
           <v-card>
             <v-card-title class="justify-center">
               <v-card-actions>
-                <h3>{{ t.title }}</h3>
+                <h3>{{ currentTournament.title }}</h3>
               </v-card-actions>
             </v-card-title>
             <v-card-text>
@@ -47,19 +47,19 @@
                     </li>
                     <li class="lt">
                       <div class="col">
-                        {{ t.availableDate }}
+                        {{ currentTournament.availableDate }}
                       </div>
                       <div class="col">
-                        {{ t.conclusionDate }}
+                        {{ currentTournament.conclusionDate }}
                       </div>
                       <div class="col">
-                        {{ t.assessmentDto.title }}
+                        {{ currentTournament.assessmentDto.title }}
                       </div>
                       <div class="col">
-                        {{ t.numberOfQuestions }}
+                        {{ currentTournament.numberOfQuestions }}
                       </div>
                       <div class="col">
-                        {{ t.enrolledStudents.length }}
+                        {{ currentTournament.enrolledStudents.length }}
                       </div>
                     </li>
                   </ul>
@@ -69,7 +69,7 @@
             <v-divider></v-divider>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="signButton(t.id)">
+              <v-btn color="primary" text @click="signButton(currentTournament)">
                 {{ sign }}
               </v-btn>
               <v-btn color="primary" text @click="dialog = false">
@@ -87,16 +87,18 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/management/Tournament';
+import { Student } from '@/models/management/Student';
 
 @Component
 export default class AvailableTournamentsView extends Vue {
   data() {
     return {
-      sign: 'Sign In',
       dialog: false
     };
   }
+  sign: string = '';
   tournaments: Tournament[] = [];
+  currentTournament: Tournament = new Tournament();
 
   async created() {
     await this.$store.dispatch('loading');
@@ -104,21 +106,40 @@ export default class AvailableTournamentsView extends Vue {
       this.tournaments = (
         await RemoteServices.getOpenedTournaments()
       ).reverse();
+      this.currentTournament = this.tournaments[0];
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  async signButton(id: Number) {
+  async isEnrolled(t: Tournament) {
+    this.currentTournament = t;
+    let s: Student;
+    if (t.enrolledStudents.length == 0) {
+      this.sign = 'Sign In';
+      return;
+    }
+    for (s of t.enrolledStudents) {
+      if (s.username == this.$store.getters.getUser.username) {
+        this.sign = 'Sign Out';
+      } else {
+        this.sign = 'Sign In';
+      }
+    }
+  }
+
+  async signButton(t: Tournament) {
     if (this.sign == 'Sign In') {
-      this.enrollTournament(id);
+      this.enrollTournament(t.id);
       this.sign = 'Sign Out';
     } else {
-      this.unenrollTournament(id);
+      this.unenrollTournament(t.id);
       this.sign = 'Sign In';
     }
   }
+
+ 
 
   async enrollTournament(id: Number) {
     await this.$store.dispatch('loading');
