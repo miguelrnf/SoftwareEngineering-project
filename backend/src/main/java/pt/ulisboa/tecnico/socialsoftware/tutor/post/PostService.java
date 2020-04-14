@@ -233,6 +233,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ListPostsDto postPagination(int perPage, int page) {
+        if (perPage == - 1) perPage = postRepository.getTotalPosts();
         int offset = page * perPage - perPage;
         List<Post> posts = postRepository.findByPage(perPage, offset).orElse(null);
         List<PostDto> postDto = posts != null ? posts.stream().map(PostDto::new).collect(Collectors.toList()) : null;

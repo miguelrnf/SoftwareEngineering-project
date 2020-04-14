@@ -103,7 +103,7 @@
             </v-list-item>
             <v-list-item to="/posts/allp">
               <v-list-item-action>
-                <v-icon>done</v-icon>
+                <v-icon>fas fa-book</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Posts</v-list-item-title>
@@ -154,7 +154,7 @@
             </v-list-item>
             <v-list-item to="/posts/allp">
               <v-list-item-action>
-                <v-icon>done</v-icon>
+                <v-icon>fas fa-book</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Posts</v-list-item-title>
@@ -162,10 +162,10 @@
             </v-list-item>
             <v-list-item to="/posts/submit">
               <v-list-item-action>
-                <v-icon>done</v-icon>
+                <v-icon>fas fa-plus</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Submit</v-list-item-title>
+                <v-list-item-title>Submit Post</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -289,7 +289,7 @@
           </v-list-item>
           <v-list-item to="/posts/allp">
             <v-list-item-action>
-              <v-icon>done</v-icon>
+              <v-icon>fas fa-book</v-icon>
             </v-list-item-action>
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
@@ -338,7 +338,7 @@
 
           <v-list-item to="/posts/allp">
             <v-list-item-action>
-              <v-icon>done</v-icon>
+              <v-icon>fas fa-book</v-icon>
             </v-list-item-action>
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
@@ -352,9 +352,9 @@
 
           <v-list-item to="/posts/submit">
             <v-list-item-action>
-              <v-icon>fas fa-user</v-icon>
+              <v-icon>fas fa-plus</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Submit</v-list-item-content>
+            <v-list-item-content>Submit Post</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
