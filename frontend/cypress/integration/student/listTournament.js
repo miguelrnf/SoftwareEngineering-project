@@ -1,5 +1,6 @@
 describe('Student walkthrough', () => {
   afterEach(() => {
+    cy.get('.v-app-bar > .v-toolbar__content').click('bottomLeft')
     cy.contains('Logout').click()
   })
 
@@ -39,5 +40,10 @@ describe('Student walkthrough', () => {
     cy.wait(3000)
   })
 
+  it('list all tournaments', () => {
+    cy.justDemoAdminLogin()
+    cy.listAllTournaments()
+    cy.wait(3000)
+  })
 
 });
