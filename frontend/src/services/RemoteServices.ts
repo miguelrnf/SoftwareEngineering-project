@@ -589,11 +589,24 @@ export default class RemoteServices {
       });
   }
 
-  static async submitPost(postQ: PostQuestion) {
+  static async submitPost(postQ: PostQuestion): Promise<Post> {
     return httpClient
       .post(
         `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/submit`,
         postQ
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getPost(id: number): Promise<Post> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
       )
       .then(response => {
         return new Post(response.data);

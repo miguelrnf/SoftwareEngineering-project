@@ -29,7 +29,6 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import PostManagementView from '@/views/PostManagementView.vue';
-import AllPostsView from '@/views/AllPostsView.vue';
 
 Vue.use(Router);
 
@@ -209,7 +208,7 @@ let router = new Router({
         {
           path: 'allp',
           name: 'all-posts',
-          component: AllPostsView,
+          component: PostsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
             requiredAuth: 'None'
