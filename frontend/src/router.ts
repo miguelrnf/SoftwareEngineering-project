@@ -29,6 +29,7 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
+import EnrolledTournamentsView from '@/views/student/EnrolledTournamentsView.vue';
 
 Vue.use(Router);
 
@@ -141,6 +142,15 @@ let router = new Router({
           component: AvailableTournamentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Available Tournaments',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'enrolledTournaments',
+          name: 'enrolled-Tournaments',
+          component: EnrolledTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Enrolled Tournaments',
             requiredAuth: 'Student'
           }
         },
