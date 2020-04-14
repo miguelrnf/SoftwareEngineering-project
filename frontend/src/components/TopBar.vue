@@ -222,6 +222,13 @@
         <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
+
+        <v-btn href="https://www.worldometers.info/coronavirus/" text dark>
+          #STAYHOME
+          <br />
+          #STAYSAFE
+          <v-icon>fas fa-virus</v-icon>
+        </v-btn>
       </v-toolbar-items>
     </v-app-bar>
 
