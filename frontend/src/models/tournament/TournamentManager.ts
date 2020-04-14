@@ -5,7 +5,7 @@ import Assessment from '@/models/management/Assessment';
 export default class TournamentManager {
   assessmentDto: Assessment = new Assessment();
   assessmentId: number | null = null;
-  numberOfQuestions: string = '5';
+  numberOfQuestions: string = '';
   title: string = '';
   availableDate!: string;
   conclusionDate!: string;
@@ -30,6 +30,12 @@ export default class TournamentManager {
   }
 
   reset() {
+    this.assessmentDto = new Assessment();
+    this.assessmentId = null;
+    this.numberOfQuestions = '';
+    this.title = '';
+    this.availableDate = '';
+    this.conclusionDate = '';
     this.tournament = null;
   }
 

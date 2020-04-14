@@ -110,7 +110,7 @@ export default class AvailableTournamentsView extends Vue {
     try {
       this.tournaments = (
         await RemoteServices.getOpenedTournaments()
-      ).reverse();
+      );
       this.currentTournament = this.tournaments[0];
     } catch (error) {
       await this.$store.dispatch('error', error);

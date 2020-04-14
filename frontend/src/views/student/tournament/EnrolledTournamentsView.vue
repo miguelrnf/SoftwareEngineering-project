@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>Own Tournaments</h2>
+    <h2>Enrolled Tournaments</h2>
     <ul>
       <li class="list-header">
         <div class="col">Title</div>
@@ -40,13 +40,13 @@ import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/management/Tournament';
 
 @Component
-export default class OwnTournamentsView extends Vue {
+export default class EnrolledTournamentsView extends Vue {
   tournaments: Tournament[] = [];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = (await RemoteServices.getOwnTournaments()).reverse();
+      this.tournaments = (await RemoteServices.getEnrolledTournaments());
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
