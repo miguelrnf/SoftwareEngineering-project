@@ -8,7 +8,7 @@
         <div class="col">Ends</div>
         <div class="col">Questions</div>
         <div class="col">Status</div>
-        <div class="col last-col"></div>
+        <div class="col">Enrolled</div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
         <div class="col">
@@ -26,8 +26,8 @@
         <div class="col">
           {{ t.status }}
         </div>
-        <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"></i>
+        <div class="col">
+          {{ t.enrolledStudents.length }}
         </div>
       </li>
     </ul>
@@ -46,9 +46,7 @@ export default class AvailableTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      console.log('before rm');
-      this.tournaments = (await RemoteServices.getTournaments()).reverse();
-      console.log('received');
+      this.tournaments = (await RemoteServices.getTournaments());
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

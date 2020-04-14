@@ -115,6 +115,49 @@
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
+              Tournament
+              <v-icon>fas fa-trophy</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/student/createTournaments">
+              <v-list-item-action>
+                <v-icon>create</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Create</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/availableTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-list-ul</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Available</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/enrolledTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-award</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Enrolled</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/ownTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-user</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Own</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
               Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -155,48 +198,7 @@
           </v-list>
         </v-menu>
 
-        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
-              Tournament
-              <v-icon>fas fa-trophy</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item to="/student/createTournaments">
-              <v-list-item-action>
-                <v-icon>create</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Create</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/availableTournaments">
-              <v-list-item-action>
-                <v-icon>fas fa-list-ul</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Available</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/enrolledTournaments">
-              <v-list-item-action>
-                <v-icon>fas fa-award</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Enrolled</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/ownTournaments">
-              <v-list-item-action>
-                <v-icon>fas fa-user</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Own</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+
 
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats

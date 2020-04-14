@@ -72,32 +72,25 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
 Cypress.Commands.add('demoStudentLogin', () => {
     cy.visit('/')
     cy.get('[data-cy="studentButton"]').click()
-    cy.contains('Tournament').click()
-    cy.contains('Create').click()
-})
-
-Cypress.Commands.add('demoStudentLogin', () => {
-    cy.visit('/')
-    cy.get('[data-cy="studentButton"]').click()
-    cy.contains('Tournament').click()
-    cy.contains('Create').click()
 })
 
 Cypress.Commands.add('createTournament', (tile, numbQuestions) => {
     let forwoardButtonAval = ':nth-child(3) > .v-btn__content > .v-icon'
     let forwoardButtonConc = '.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__text > .v-tabs > .v-window > .v-window__container > .v-window-item > .v-picker > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3) > .v-btn__content > .v-icon';
 
+    cy.contains('Tournament').click()
+    cy.contains('Create').click()
     cy.get('[data-cy="title"]').type(tile)
     cy.get('[data-cy="AssessmentTitle"]').contains('Third mini-test').click()
     cy.contains(numbQuestions).click()
-    cy.get('#input-76').click()
+    cy.get('.row > :nth-child(1) > .v-input').click()
     cy.get(forwoardButtonAval).click()
     cy.get(forwoardButtonAval).click()
     cy.get(forwoardButtonAval).click()
     cy.get(forwoardButtonAval).click()
     cy.get('.tab-transition-enter-active > tbody > :nth-child(2) > :nth-child(1) > .v-btn').click()
     cy.get('.green--text').click()
-    cy.get('#input-81').click()
+    cy.get(':nth-child(3) > .v-input').click()
     cy.get(forwoardButtonConc).click()
     cy.get(forwoardButtonConc).click()
     cy.get(forwoardButtonConc).click()
@@ -112,14 +105,16 @@ Cypress.Commands.add('createInvalidTournament', (tile, numbQuestions) => {
     let backbutton = '.v-date-picker-header > :nth-child(1) > .v-btn__content > .v-icon'
     let forwoardButton = '.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__text > .v-tabs > .v-window > .v-window__container > .v-window-item > .v-picker > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3) > .v-btn__content > .v-icon';
 
+    cy.contains('Tournament').click()
+    cy.contains('Create').click()
     cy.get('[data-cy="title"]').type(tile)
     cy.get('[data-cy="AssessmentTitle"]').contains('Third mini-test').click()
     cy.contains(numbQuestions).click()
-    cy.get('#input-76').click()
+    cy.get('.row > :nth-child(1) > .v-input').click()
     cy.get(backbutton).click()
     cy.get('.tab-reverse-transition-enter-active > tbody > :nth-child(1) > :nth-child(4) > .v-btn').click()
     cy.get('.green--text').click()
-    cy.get('#input-81').click()
+    cy.get(':nth-child(3) > .v-input').click()
     cy.get(forwoardButton).click()
     cy.get(forwoardButton).click()
     cy.get(forwoardButton).click()
@@ -131,6 +126,23 @@ Cypress.Commands.add('createInvalidTournament', (tile, numbQuestions) => {
 })
 
 Cypress.Commands.add('createBlankTournament', () => {
+    cy.contains('Tournament').click()
+    cy.contains('Create').click()
     cy.get('[data-cy="createButton"]').click()
+})
+
+Cypress.Commands.add('listAvailableTournaments', () => {
+    cy.contains('Tournament').click()
+    cy.contains('Available').click()
+})
+
+Cypress.Commands.add('listEnrolledTournaments', () => {
+    cy.contains('Tournament').click()
+    cy.contains('Enrolled').click()
+})
+
+Cypress.Commands.add('listOwnTournaments', () => {
+    cy.contains('Tournament').click()
+    cy.contains('Own').click()
 })
 

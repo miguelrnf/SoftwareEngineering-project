@@ -24,23 +24,8 @@
             data-cy="AssessmentTitle"
             >{{ assessment.title }}</v-btn
           >
-          <!--          <v-btn text value="all">All</v-btn>-->
         </v-btn-toggle>
       </v-container>
-
-      <!--      <v-container>
-        <p class="pl-0">Questions</p>
-        <v-btn-toggle
-          v-model="statementManager.questionType"
-          mandatory
-          class="button-group"
-        >
-          <v-btn text value="failed">Only Failed</v-btn>
-          <v-btn text value="new">Only New</v-btn>
-          <v-btn text value="all">All</v-btn>
-        </v-btn-toggle>
-      </v-container>-->
-
       <v-container>
         <p class="pl-0">Number of Questions</p>
         <v-btn-toggle
@@ -60,10 +45,10 @@
             <v-datetime-picker
               label="*Available Date"
               format="yyyy-MM-dd HH:mm"
-              data-cy="availableDate"
               v-model="tournamentManager.availableDate"
               date-format="yyyy-MM-dd"
               time-format="HH:mm"
+              data-cy="availableDate"
             >
             </v-datetime-picker>
           </v-col>
@@ -120,6 +105,7 @@ export default class CreateTournamentView extends Vue {
   async createTournament() {
     try {
       await this.tournamentManager.getNewTournament();
+      await this.tournamentManager.reset();
       await this.$router.push({ name: 'own-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
