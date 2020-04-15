@@ -12,7 +12,8 @@ export default class ListPost {
       this.perPage = jsonObj.perPage;
       this.page = jsonObj.page;
 
-      this.lists = jsonObj.lists.map((post: Post) => new Post(post));
+      if (jsonObj.lists != null)
+        this.lists = jsonObj.lists.map((post: Post) => new Post(post));
     }
   }
 }

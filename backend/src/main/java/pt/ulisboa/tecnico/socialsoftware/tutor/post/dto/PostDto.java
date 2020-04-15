@@ -18,10 +18,22 @@ public class PostDto implements Serializable {
     public PostDto(Post p) {
         this.id = p.getId();
         this.key = p.getKey();
-        this.question = new PostQuestionDto(p.getQuestion());
+        this.question = p.getQuestion() != null ? new PostQuestionDto(p.getQuestion()) : null;
         this.answer = p.getAnswer() != null ? new PostAnswerDto(p.getAnswer()) : null;
         this.postStatus = p.getPostStatus();
         this.discussStatus = p.getDiscussStatus();
+    }
+
+    //Honestly? Im just too lazy to change the tests
+    public PostDto(Post p, Boolean pq) {
+        if(p != null) {
+            if (p.getId() != null) {
+                this.id = p.getId();
+            } else this.id = null;
+            if (p.getKey() != null) {
+                this.key = p.getKey();
+            } else this.key = null;
+        }
     }
 
     public Integer getId() {

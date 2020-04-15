@@ -81,12 +81,10 @@ public class PostController {
     }
 
     @DeleteMapping("executions/{executionId}/posts/{postId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public PostDto deletePost(Principal principal, @PathVariable int executionId, @PathVariable int postId,
-                              @Valid @RequestBody PostDto post) {
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto deletePost(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        if(post.getQuestion().getUser() == null) post.getQuestion().setUser(new UserDto(user));
-        return postService.deletePost(post);
+        return postService.deletePost(postId, user);
     }
 
     //TODO - DO SOMETHING WITH POSTID

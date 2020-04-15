@@ -21,6 +21,7 @@ public class PostQuestionDto implements Serializable {
         this.question = new QuestionDto(pq.getQuestion());
         this.user = new UserDto(pq.getUser());
         this.studentQuestion = pq.getStudentQuestion();
+        this.post = new PostDto(pq.getPost(), true);
     }
 
     public Integer getId() {

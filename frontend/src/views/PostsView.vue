@@ -10,7 +10,6 @@
       :server-items-length="totalFilteredPosts"
       @update:page="getPage"
       @update:items-per-page="getPage"
-      @click:row="showPostDialog"
     >
       <template v-slot:top>
         <v-card-title>
@@ -26,7 +25,9 @@
       </template>
 
       <template v-slot:item.title="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.question.question.title, null)"
+        <p
+          v-html="convertMarkDownNoFigure(item.question.question.title, null)"
+          @click="showPostDialog(item)"
       /></template>
 
       <template v-slot:item.question="{ item }">
@@ -37,6 +38,7 @@
               null
             )
           "
+          @click="showPostDialog(item)"
       /></template>
 
       <template v-slot:item.user="{ item }">
@@ -60,7 +62,7 @@
           </template>
           <span>Edit Post</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="$store.getters.isTeacher">
           <template v-slot:activator="{ on }">
             <v-icon small class="mr-2" v-on="on" @click="redirectPost(item)"
               >cached</v-icon
@@ -68,7 +70,13 @@
           </template>
           <span>Redirect Post</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip
+          bottom
+          v-if="
+            $store.getters.getUser.username === item.question.user.username ||
+              $store.getters.isTeacher
+          "
+        >
           <template v-slot:activator="{ on }">
             <v-icon
               small
@@ -175,7 +183,11 @@ export default class PostsView extends Vue {
     if (search != '') {
       this.filteredPosts = this.posts.filter(
         post =>
-          JSON.stringify(post)
+          JSON.stringify(
+            post.question.question?.title +
+              post.question.studentQuestion +
+              post.question.user.username
+          )
             .toLowerCase()
             .indexOf(search.toLowerCase()) !== -1
       );
@@ -213,7 +225,16 @@ export default class PostsView extends Vue {
 
   redirectPost() {}
 
-  deletePost() {}
+  async deletePost(post: Post) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.deletePost(post.id);
+      await this.getPage();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
 }
 </script>
 

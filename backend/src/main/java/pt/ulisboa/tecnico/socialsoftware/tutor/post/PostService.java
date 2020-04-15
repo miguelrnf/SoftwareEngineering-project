@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -26,6 +27,7 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class PostService {
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private PostQuestionRepository postQuestionRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -64,7 +69,8 @@ public class PostService {
 
         post.setCreationDate(LocalDateTime.now());
         post.getQuestion().setPost(post);
-        this.entityManager.persist(post);
+        user.addPostQuestion(post.getQuestion());
+        entityManager.persist(post);
         return new PostDto(post);
     }
 
@@ -72,13 +78,13 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto deletePost(PostDto toDelete) {
-        User user = checkIfUserExists(toDelete.getQuestion().getUser().getUsername());
-        Post post = checkIfPostExistsKey(toDelete.getKey());
-        checkIfUserOwnsPost(user, post);
+    public PostDto deletePost(int toDelete, User user) {
+        User u = checkIfUserExists(user.getUsername());
+        Post post = checkIfPostExists(null, toDelete);
+        if(user.getRole() == User.Role.STUDENT) checkIfUserOwnsPost(user, post);
 
-        entityManager.remove(post);
         post.remove();
+        postRepository.delete(post);
         return new PostDto(post);
     }
 
@@ -88,7 +94,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto editPost(PostQuestionDto toEdit) {
         User user = checkIfUserExists(toEdit.getUser().getUsername());
-        Post post = checkIfPostExistsKey(toEdit.getPost().getKey());
+        Post post = checkIfPostExists(toEdit.getPost(), null);
         checkIfUserOwnsPost(user, post);
 
         post.getQuestion().update(toEdit.getStudentQuestion());
@@ -100,7 +106,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changePostStatus(PostDto postDto, UserDto userDto) {
-        Post post = checkIfPostExistsKey(postDto.getKey());
+        Post post = checkIfPostExists(postDto, null);
         User user = checkIfUserExists(userDto.getUsername());
         try {
             checkIfUserHasRoleTeacher(user);
@@ -117,7 +123,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto editAnswer(PostAnswerDto toAnswer) {
         User user = checkIfUserExists(toAnswer.getUser().getUsername());
-        Post post = checkIfPostExistsKey(toAnswer.getPost().getKey());
+        Post post = checkIfPostExists(toAnswer.getPost(), null);
 
         checkIfUserHasRoleTeacher(user);
         post.getAnswer().update(toAnswer.getTeacherAnswer());
@@ -129,7 +135,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changeDiscussStatus(PostDto postDto) {
-        Post post = checkIfPostExistsKey(postDto.getKey());
+        Post post = checkIfPostExists(postDto, null);
         User user = checkIfUserExists(postDto.getQuestion().getUser().getUsername());
         checkIfUserOwnsPost(user, post);
         checkIfAnswered(post);
@@ -143,7 +149,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto answerQuestion(PostAnswerDto answerDto) {
-        Post post = checkIfPostExistsKey(answerDto.getPost().getKey());
+        Post post = checkIfPostExists(answerDto.getPost(), null);
         User user = checkIfUserExists(answerDto.getUser().getUsername());
         checkIfUserHasRoleTeacher(user);
 
@@ -158,8 +164,8 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto redirect(PostDto postDto1, PostDto postDto2, UserDto userDto) {
-        Post postNotAnswered = checkIfPostExistsKey(postDto1.getKey());
-        Post postAnswered = checkIfPostExistsKey(postDto2.getKey());
+        Post postNotAnswered = checkIfPostExists(postDto1, null);
+        Post postAnswered = checkIfPostExists(postDto2, null);
         PostAnswer answer = checkIfAnswered(postAnswered);
         User user = checkIfUserExists(userDto.getUsername());
         checkIfUserHasRoleTeacher(user);
@@ -179,7 +185,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto viewPost(Integer key) {
-        Post post = checkIfPostExistsKey(key);
+        Post post = checkIfPostExists(null, key);
         return new PostDto(post);
     }
 
@@ -214,7 +220,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostCommentDto postComment(PostCommentDto dto) {
-        Post post = checkIfPostExistsKey(dto.getPost().getKey());
+        Post post = checkIfPostExists(dto.getPost(), null);
         User user = checkIfUserExists(dto.getUser().getUsername());
         PostComment comment = new PostComment(dto.getKey(), user, post, dto);
         if(dto.getParent() != null) {
@@ -257,16 +263,9 @@ public class PostService {
     }
 
     private void checkIfUserOwnsPost(User user, Post post) {
-        user.getPostQuestions().stream().filter(x -> x.getPost() == post)
+        int toSearch = post.getKey() != null ? post.getKey() : post.getId();
+        user.getPostQuestions().stream().filter(x -> x.getPost().getKey() != null ? x.getPost().getKey().equals(toSearch) : x.getPost().getId().equals(toSearch))
                 .findAny().orElseThrow(() -> new TutorException(NOT_YOUR_POST));
-    }
-
-    private Post checkIfPostExistsKey(Integer key) {
-        return postRepository.findByKey(key).orElseThrow(() -> new TutorException(INVALID_POST, key));
-    }
-
-    private Post checkIfPostExistsId(Integer id) {
-        return postRepository.findById(id).orElseThrow(() -> new TutorException(INVALID_POST, id));
     }
 
     private User checkIfUserExists(String username) {
@@ -316,6 +315,26 @@ public class PostService {
         else {
             return questionRepository.findByKey(question.getQuestion().getId())
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getQuestion().getId()));
+        }
+    }
+
+    private Post checkIfPostExists(PostDto post, Integer pid) {
+        if (post != null) {
+            if (post.getKey() != null) {
+                return postRepository.findByKey(post.getKey()).orElseThrow(() -> new TutorException(INVALID_POST, post.getKey()));
+            }
+            else {
+                return postRepository.findByKey(post.getId()).orElseThrow(() -> new TutorException(INVALID_POST, post.getId()));
+            }
+        }
+
+        else {
+            try {
+                return postRepository.findByKey(pid).orElseThrow(Exception::new);
+            } catch(Exception e) {
+                return postRepository.findById(pid).orElseThrow(() -> new TutorException(INVALID_POST, pid));
+            }
+
         }
     }
 }

@@ -580,7 +580,9 @@ export default class RemoteServices {
 
   static async viewPosts(perPage: number, page: number): Promise<ListPost> {
     return httpClient
-      .get(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${perPage}/${page}`)
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${perPage}/${page}`
+      )
       .then(response => {
         return new ListPost(response.data);
       })
@@ -606,6 +608,19 @@ export default class RemoteServices {
   static async getPost(id: number): Promise<Post> {
     return httpClient
       .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deletePost(id: number): Promise<Post> {
+    return httpClient
+      .delete(
         `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
       )
       .then(response => {
