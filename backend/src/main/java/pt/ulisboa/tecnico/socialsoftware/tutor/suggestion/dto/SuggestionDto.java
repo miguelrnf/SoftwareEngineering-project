@@ -30,7 +30,7 @@ public class SuggestionDto implements Serializable{
     private CourseExecution _courseexecution;
 
 
-    public SuggestionDto() {
+    public SuggestionDto(){
     }
 
     public SuggestionDto(Suggestion suggestion) {

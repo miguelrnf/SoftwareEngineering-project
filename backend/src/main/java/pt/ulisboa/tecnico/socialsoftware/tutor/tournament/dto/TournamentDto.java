@@ -4,16 +4,17 @@ import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class TournamentDto implements Serializable {
-
     private Integer id;
-    private Integer key;
     private Integer numberOfQuestions;
     private String creationDate = null;
     private String availableDate = null;
@@ -21,7 +22,7 @@ public class TournamentDto implements Serializable {
     private AssessmentDto assessmentDto;
     private String title;
     private UserDto owner;
-    private Tournament.TournamentStatus status;
+    private String status;
     private List<UserDto> enrolledStudents = new ArrayList<>();
 
     @Transient
@@ -32,13 +33,12 @@ public class TournamentDto implements Serializable {
 
     public TournamentDto(Tournament tournament){
         this.id = tournament.getId();
-        this.key = tournament.getKey();
         setTitle(tournament.getTitle());
 
-        this.status = Tournament.TournamentStatus.CREATED;
+        this.status = Tournament.TournamentStatus.CREATED.name();
 
         if (tournament.getStatus() != null)
-            this.status = tournament.getStatus();
+            this.status = tournament.getStatus().name();
 
         this.owner = new UserDto(tournament.getOwner());
 
@@ -51,6 +51,7 @@ public class TournamentDto implements Serializable {
 
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
+        this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
 
     }
 
@@ -60,14 +61,6 @@ public class TournamentDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getKey() {
-        return key;
-    }
-
-    public void setKey(Integer key) {
-        this.key = key;
     }
 
     public String getTitle() {
@@ -86,11 +79,11 @@ public class TournamentDto implements Serializable {
         this.owner = owner;
     }
 
-    public Tournament.TournamentStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Tournament.TournamentStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -156,11 +149,14 @@ public class TournamentDto implements Serializable {
         this.assessmentDto = assessmentDto;
     }
 
+    public List<UserDto> getEnrolledStudents() {
+        return enrolledStudents;
+    }
+
     @Override
     public String toString() {
         return "TournamentDto{" +
                 "id=" + id +
-                ", key=" + key +
                 ", numberOfQuestions=" + numberOfQuestions +
                 ", creationDate='" + creationDate + '\'' +
                 ", availableDate='" + availableDate + '\'' +
@@ -168,9 +164,33 @@ public class TournamentDto implements Serializable {
                 ", assessmentDto=" + assessmentDto +
                 ", title='" + title + '\'' +
                 ", owner=" + owner +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
                 ", formatter=" + formatter +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TournamentDto t = (TournamentDto) o;
+
+        if (!Objects.equals(id, t.id)) return false;
+        if (!Objects.equals(title, t.title)) return false;
+        if (!Objects.equals(owner, t.owner)) return false;
+        if (status != t.status) return false;
+        return Objects.equals(enrolledStudents, t.enrolledStudents);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (owner != null ? owner.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (enrolledStudents != null ? enrolledStudents.hashCode() : 0);
+        return result;
     }
 }

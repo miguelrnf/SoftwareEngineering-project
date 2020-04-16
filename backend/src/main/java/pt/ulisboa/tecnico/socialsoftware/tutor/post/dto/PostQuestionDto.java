@@ -4,7 +4,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-public class PostQuestionDto {
+import java.io.Serializable;
+
+public class PostQuestionDto implements Serializable {
     private Integer id;
     private QuestionDto question;
     private UserDto user;
@@ -59,5 +61,16 @@ public class PostQuestionDto {
 
     public void setPost(PostDto post) {
         this.post = post;
+    }
+
+    @Override
+    public String toString() {
+        return "PostQuestionDto{" +
+                "id=" + id +
+                ", question=" + question +
+                ", user=" + user +
+                ", studentQuestion='" + studentQuestion + '\'' +
+                ", post=" + post +
+                '}';
     }
 }

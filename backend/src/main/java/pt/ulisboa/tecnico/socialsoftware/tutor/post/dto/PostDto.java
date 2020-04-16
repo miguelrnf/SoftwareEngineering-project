@@ -1,9 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer;
 
-public class PostDto {
+import java.io.Serializable;
+
+public class PostDto implements Serializable {
     private Integer id;
     private Integer key;
     private PostQuestionDto question;
@@ -69,5 +70,17 @@ public class PostDto {
 
     public void setDiscussStatus(Boolean discussStatus) {
         this.discussStatus = discussStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "PostDto{" +
+                "id=" + id +
+                ", key=" + key +
+                ", question=" + question +
+                ", answer=" + answer +
+                ", postStatus=" + postStatus +
+                ", discussStatus=" + discussStatus +
+                '}';
     }
 }

@@ -124,7 +124,7 @@ class CreateTournamentServiceSpockTest extends Specification {
     def setupSpec() {
 
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
+        given: "a quiz"
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
@@ -132,8 +132,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
-        tournamentDto.setKey(1)
-        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW.format(formatter))
         tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
@@ -184,7 +183,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -222,11 +221,10 @@ class CreateTournamentServiceSpockTest extends Specification {
 
        then:"the return data are correct"
        result.id != null
-       result.key == 1
        result.owner.getName() == 'name'
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE
-       result.status == Tournament.TournamentStatus.CREATED
+       result.status == "CREATED"
     }
 
     def "null user creates a tournament"() {
