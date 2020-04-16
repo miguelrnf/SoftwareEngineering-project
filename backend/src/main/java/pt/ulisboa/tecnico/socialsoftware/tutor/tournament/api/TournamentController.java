@@ -43,7 +43,6 @@ public class TournamentController {
         return tournamentservice.createTournament(executionId, tournamentDto);
     }
 
-
     private void formatDates(TournamentDto tournament) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
