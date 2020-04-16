@@ -73,11 +73,9 @@ public class PostController {
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit/discuss")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public PostDto changeDiscussStatus(Principal principal, @PathVariable int executionId, @PathVariable int postId,
-                            @Valid @RequestBody PostDto post) {
+    public PostDto changeDiscussStatus(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        if(post.getQuestion().getUser() == null) post.getQuestion().setUser(new UserDto(user));
-        return postService.changeDiscussStatus(post);
+        return postService.changeDiscussStatus(postId, user);
     }
 
     @DeleteMapping("executions/{executionId}/posts/{postId}")
@@ -108,10 +106,9 @@ public class PostController {
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit/status")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
-    public PostDto changePostStatus(Principal principal, @PathVariable int executionId, @PathVariable int postId,
-                                    @Valid @RequestBody PostAndUserDto postUser) {
+    public PostDto changePostStatus(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return postService.changePostStatus(postUser.getPost(), postUser.getUser());
+        return postService.changePostStatus(postId, user);
     }
 
     @PutMapping("executions/{executionId}/posts/{postId}/redirect")

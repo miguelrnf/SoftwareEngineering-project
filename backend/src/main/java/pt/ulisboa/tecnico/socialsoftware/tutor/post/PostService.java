@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -27,7 +26,6 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,9 +35,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class PostService {
     @Autowired
     private PostRepository postRepository;
-
-    @Autowired
-    private PostQuestionRepository postQuestionRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -105,9 +100,9 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changePostStatus(PostDto postDto, UserDto userDto) {
-        Post post = checkIfPostExists(postDto, null);
-        User user = checkIfUserExists(userDto.getUsername());
+    public PostDto changePostStatus(int id, User u) {
+        Post post = checkIfPostExists(null, id);
+        User user = checkIfUserExists(u.getUsername());
         try {
             checkIfUserHasRoleTeacher(user);
         } catch (TutorException e) {
@@ -134,9 +129,9 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changeDiscussStatus(PostDto postDto) {
-        Post post = checkIfPostExists(postDto, null);
-        User user = checkIfUserExists(postDto.getQuestion().getUser().getUsername());
+    public PostDto changeDiscussStatus(int id, User u) {
+        Post post = checkIfPostExists(null, id);
+        User user = checkIfUserExists(u.getUsername());
         checkIfUserOwnsPost(user, post);
         checkIfAnswered(post);
 
@@ -324,7 +319,7 @@ public class PostService {
                 return postRepository.findByKey(post.getKey()).orElseThrow(() -> new TutorException(INVALID_POST, post.getKey()));
             }
             else {
-                return postRepository.findByKey(post.getId()).orElseThrow(() -> new TutorException(INVALID_POST, post.getId()));
+                return postRepository.findById(post.getId()).orElseThrow(() -> new TutorException(INVALID_POST, post.getId()));
             }
         }
 

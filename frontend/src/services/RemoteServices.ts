@@ -16,6 +16,7 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
 import Post from '@/models/management/Post';
 import ListPost from '@/models/management/ListPost';
 import { PostQuestion } from '@/models/management/PostQuestion';
+import User from '@/models/user/User';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -610,6 +611,40 @@ export default class RemoteServices {
       .get(
         `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
       )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updatePost(post: Post): Promise<Post> {
+    console.log(post.question as PostQuestion);
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${post.id}/edit`, post.question as PostQuestion)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeDiscussStatus(id: number): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/discuss`)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changePostStatus(id: number): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/status`)
       .then(response => {
         return new Post(response.data);
       })

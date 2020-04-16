@@ -1,10 +1,33 @@
 <template>
   <v-card class="mx-auto" max-height="80%">
+    <v-app-bar dense color="grey lighten-2">
+      <v-toolbar-title>
+        {{ convertMarkDown(post.question.question.title) }}</v-toolbar-title
+      >
+      <v-spacer />
+      <post-status-buttons :post="post"></post-status-buttons>
+      <v-menu
+              left
+              bottom
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+                  v-for="n in 5"
+                  :key="n"
+                  @click="() => {}"
+          >
+            <v-list-item-title>Option {{ n }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-app-bar>
     <v-card-text>
-      <div></div>
-      <p class="subtitle-1 font-weight-light">
-        <span v-html="convertMarkDown(post.question.question.title)" />
-      </p>
       <p class="headline font-weight-black">
         <span v-html="convertMarkDown(post.question.question.content)" />
       </p>
@@ -24,8 +47,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
+import PostStatusButtons from '@/views/PostStatusButtons.vue';
 
-@Component
+@Component({
+  components: {
+    'post-status-buttons': PostStatusButtons
+  }
+})
 export default class ShowPost extends Vue {
   @Prop({ type: Post, required: true }) readonly post!: Post;
 
@@ -34,3 +62,4 @@ export default class ShowPost extends Vue {
   }
 }
 </script>
+

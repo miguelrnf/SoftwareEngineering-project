@@ -10,6 +10,8 @@
       :server-items-length="totalFilteredPosts"
       @update:page="getPage"
       @update:items-per-page="getPage"
+      :discuss-status.sync="discussStatus"
+      :post-status.sync="postStatus"
     >
       <template v-slot:top>
         <v-card-title>
@@ -54,7 +56,7 @@
           </template>
           <span>Show Post</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="checkIfCanEdit(item)">
+        <v-tooltip bottom v-if="isOwner">
           <template v-slot:activator="{ on }">
             <v-icon small class="mr-2" v-on="on" @click="editPost(item)"
               >edit</v-icon
@@ -70,13 +72,7 @@
           </template>
           <span>Redirect Post</span>
         </v-tooltip>
-        <v-tooltip
-          bottom
-          v-if="
-            $store.getters.getUser.username === item.question.user.username ||
-              $store.getters.isTeacher
-          "
-        >
+        <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
               small
@@ -90,38 +86,42 @@
           <span>Delete Post</span>
         </v-tooltip>
       </template>
+      <template v-slot:item.status="{ item }">
+        <post-status-buttons :post="item"></post-status-buttons>
+      </template>
     </v-data-table>
-    <!--<edit-question-dialog
-      v-if="currentQuestion"
-      v-model="editQuestionDialog"
-      :question="currentQuestion"
-      v-on:save-question="onSaveQuestion"
-    />-->
+    <edit-post-dialog
+      v-if="currentPost"
+      v-model="editPostDialog"
+      :post="currentPost"
+      v-on:save-post="onSavePost"
+      v-on:close-show-post-dialog="onCloseDialog"
+    />
     <show-post-dialog
       v-if="currentPost"
       :dialog="postDialog"
       :post="currentPost"
-      v-on:close-show-post-dialog="onCloseShowPostDialog"
+      v-on:close-show-post-dialog="onCloseDialog"
     />
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
-/*import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
-import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';*/
 import Post from '@/models/management/Post';
 import PostViewDialog from '@/views/PostViewDialog.vue';
+import EditPostDialog from './EditPostDialog.vue';
+import PostStatusButtons from '@/views/PostStatusButtons.vue';
 
 @Component({
   components: {
-    'show-post-dialog': PostViewDialog
-    /*'edit-question-dialog': EditQuestionDialog,
-    'edit-question-topics': EditQuestionTopics*/
+    'show-post-dialog': PostViewDialog,
+    'edit-post-dialog': EditPostDialog,
+    'post-status-buttons': PostStatusButtons
   }
 })
 export default class PostsView extends Vue {
@@ -135,6 +135,8 @@ export default class PostsView extends Vue {
   search: string = '';
   perPage: number = 5;
   page: number = 1;
+  discussStatus: boolean = false;
+  postStatus: boolean = true;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -145,7 +147,8 @@ export default class PostsView extends Vue {
       value: 'action',
       align: 'center',
       sortable: false
-    }
+    },
+    { text: 'Status', value: 'status', align: 'center' }
   ];
 
   @Watch('editPostDialog')
@@ -215,15 +218,28 @@ export default class PostsView extends Vue {
     this.postDialog = true;
   }
 
-  onCloseShowPostDialog() {
+  onCloseDialog() {
     this.postDialog = false;
   }
 
-  checkIfCanEdit(post: Post) {}
+  editPost(post: Post) {
+    this.currentPost = post;
+    this.editPostDialog = true;
+  }
 
-  editPost() {}
+  isOwner(post: Post): boolean {
+    return this.$store.getters.getUser.username === post.question.user.username;
+  }
 
   redirectPost() {}
+
+  async onSavePost(post: Post) {
+    this.posts = this.posts.filter(p => p.id !== post.id);
+    this.posts.unshift(post);
+    this.editPostDialog = false;
+    this.currentPost = null;
+    this.postDialog = false;
+  }
 
   async deletePost(post: Post) {
     await this.$store.dispatch('loading');
