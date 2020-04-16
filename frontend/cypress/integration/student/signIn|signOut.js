@@ -8,7 +8,7 @@ describe('Student walkthrough', () => {
     cy.contains('Logout').click()
   })
 
-  it('signIn in tournament', () => {
+  it('login and signIn in tournament 1', () => {
     cy.createTournament('Demo tournament 1', '30')
     cy.wait(100)
     cy.createTournament('Demo tournament 2', '20')
@@ -22,10 +22,11 @@ describe('Student walkthrough', () => {
     cy.listAvailableTournaments()
   })
 
-  it('signOut in tournament', () => {
+  it('login and signOut in tournament 1', () => {
     cy.listAvailableTournaments()
     cy.signInSignOut('Demo tournament 1')
     cy.closeErrorMessage()
+
     cy.listAvailableTournaments()
     cy.deleteTournament('Demo tournament 1')
     cy.deleteTournament('Demo tournament 2')
