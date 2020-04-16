@@ -111,7 +111,7 @@ public class TournamentController {
         return this.tournamentservice.getEnrolledTournaments(username, executionId);
     }
 
-    @DeleteMapping("/tournaments/{tournamentId}/delete")
+    @DeleteMapping("/tournaments/{tournamentId}/delete") //ONLY FOR CLEAN DATABASE AFTER EACH TEST
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity deleteTournament(@PathVariable Integer tournamentId) {
         tournamentservice.removeTournament(tournamentId);
