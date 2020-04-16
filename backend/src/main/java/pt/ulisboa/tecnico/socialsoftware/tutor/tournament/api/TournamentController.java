@@ -111,7 +111,6 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity deleteTournament(@PathVariable Integer tournamentId) {
         tournamentservice.removeTournament(tournamentId);
-        System.out.println("DELETEDDDD" + tournamentId);
 
         return ResponseEntity.ok().build();
     }
