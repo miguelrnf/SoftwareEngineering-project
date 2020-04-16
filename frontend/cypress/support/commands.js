@@ -69,3 +69,46 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
     cy.get('[data-cy="saveButton"]').click()
 })
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*
+* Post Cypress Commands
+*
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+Cypress.Commands.add('demoStudentLoginPosts', () => {
+    cy.visit('/');
+    cy.get('[data-cy="studentButton"]').click();
+    cy.get('[data-cy="Student"]').click();
+})
+
+Cypress.Commands.add('demoTeacherLoginPosts', () => {
+    cy.visit('/');
+    cy.get('[data-cy="teacherButton"]').click();
+    cy.contains('Management').click();
+})
+
+Cypress.Commands.add('gotoPosts', () => {
+    cy.contains('Posts').click();
+});
+
+Cypress.Commands.add('gotoSubmitPost', () => {
+    cy.contains('Submit Post').click();
+});
+
+Cypress.Commands.add('submitPost', (question, studentQuestion) => {
+    cy.get('[data-cy="pickQ"]').type(question.concat('{downarrow}{enter}'));
+    cy.get('[data-cy="typeQ"]').type(studentQuestion);
+    cy.get('[data-cy="submitButton"]').click();
+});
+
+Cypress.Commands.add('deletePost', (studentQuestion) => {
+    cy.contains(studentQuestion)
+        .parent()
+        .should('have.length', 1)
+        .parent()
+        .should('have.length', 1)
+        .find('[data-cy="deleteButton"]')
+        .click();
+})
+
+

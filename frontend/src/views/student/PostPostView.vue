@@ -10,6 +10,7 @@
           item-value="id"
           label="Pick a question"
           solo
+          data-cy="pickQ"
         ></v-autocomplete>
       </v-container>
       <v-container fluid>
@@ -19,12 +20,13 @@
             v-model="message"
             @input="checkConsistency"
             placeholder="type your question here"
+            data-cy="typeQ"
           ></v-textarea>
         </label>
         <p class="len">{{ limit }}</p>
       </v-container>
       <v-container>
-        <v-btn @click="submitPost" depressed color="primary">
+        <v-btn @click="submitPost" depressed color="primary" data-cy="submitButton">
           Submit post
         </v-btn>
       </v-container>
@@ -83,7 +85,7 @@ export default class PostPostView extends Vue {
     if (this.canSubmit) {
       try {
         await RemoteServices.submitPost(this.postQ);
-        await this.$router.push({ name: 'home' });
+        await this.$router.push({ name: 'all-posts' });
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
