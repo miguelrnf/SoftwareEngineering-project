@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,6 @@ public class TournamentController {
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
     }
-
 
     private void formatDates(TournamentDto tournament) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -106,5 +106,12 @@ public class TournamentController {
     public List<TournamentDto> getEnrolledTournaments(@PathVariable String username, @PathVariable Integer executionId) {
         return this.tournamentservice.getEnrolledTournaments(username, executionId);
     }
-    //TODO tirar cancelado
+
+    @DeleteMapping("/tournaments/{tournamentId}/delete")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity deleteTournament(@PathVariable Integer tournamentId) {
+        tournamentservice.removeTournament(tournamentId);
+
+        return ResponseEntity.ok().build();
+    }
 }

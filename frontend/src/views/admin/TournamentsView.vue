@@ -11,8 +11,11 @@
         <div class="col">Enrolled</div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
-        <div class="col">
+        <div class="col" data-cy="title">
           {{ t.title }}
+          <p v-show="false" data-cy="id">
+            <span id="num"> {{ t.id }} </span>
+          </p>
         </div>
         <div class="col">
           {{ t.availableDate }}
@@ -46,7 +49,7 @@ export default class AvailableTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = (await RemoteServices.getTournaments());
+      this.tournaments = await RemoteServices.getTournaments();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

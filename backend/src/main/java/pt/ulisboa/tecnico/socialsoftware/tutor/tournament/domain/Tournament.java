@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_UNABLE_REMOVE;
 
 @Entity
 @Table(name = "tournaments",
@@ -201,6 +202,31 @@ public class Tournament {
             this.setStatus(TournamentStatus.CLOSED);
         return status;
     }
+
+    public void remove() {
+        checkCanRemove();
+
+        for(User s : this.enrolledStudents){
+            s.getTournaments().remove(this);
+        }
+        this.enrolledStudents.clear();
+        this.owner = null;
+        this.assessment = null;
+
+        courseExecution.getTournaments().remove(this);
+        courseExecution = null;
+    }
+
+    public void checkCanRemove() {
+        if( checkStatus() == TournamentStatus.OPEN)
+            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament is open");
+
+        if( checkStatus() == TournamentStatus.CREATED && !enrolledStudents.isEmpty())
+            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament has enrolled students");
+
+
+    }
+
 
     @Override
     public String toString() {

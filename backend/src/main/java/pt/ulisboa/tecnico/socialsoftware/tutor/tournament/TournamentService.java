@@ -281,4 +281,16 @@ public class TournamentService {
         return tournamentRepository.findAll().stream().map(TournamentDto::new).sorted(Comparator
                 .comparing(TournamentDto::getTitle)).collect(Collectors.toList());
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeTournament(Integer tournamentId) {
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+
+        tournament.remove();
+
+        tournamentRepository.delete(tournament);
+    }
 }

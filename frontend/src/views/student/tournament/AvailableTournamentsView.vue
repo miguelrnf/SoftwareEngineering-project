@@ -10,8 +10,11 @@
         <div class="col last-col"></div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
-        <div class="col">
+        <div class="col" data-cy="title">
           {{ t.title }}
+          <p v-show="false" data-cy="id">
+            <span id="num"> {{ t.id }} </span>
+          </p>
         </div>
         <div class="col">
           {{ t.availableDate }}
@@ -22,68 +25,79 @@
         <div class="col">
           {{ t.numberOfQuestions }}
         </div>
-        <v-dialog
-          :retain-focus="false"
-          v-model="dialog"
-          class="container"
-          max-width="70%"
-        >
-          <template v-slot:activator="{ on }">
-            <v-btn class="btn" color="primary" v-on="on" @click="isEnrolled(t)">
-              Details
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="justify-center">
-              <v-card-actions>
-                <h3>{{ currentTournament.title }}</h3>
-              </v-card-actions>
-            </v-card-title>
-            <v-card-text>
-              <v-card-actions>
-                <div class="container">
-                  <ul>
-                    <li class="cth">
-                      <div class="col">Starts</div>
-                      <div class="col">Ends</div>
-                      <div class="col">Assessment</div>
-                      <div class="col">Questions</div>
-                      <div class="col">Participants</div>
-                    </li>
-                    <li class="lt">
-                      <div class="col">
-                        {{ currentTournament.availableDate }}
-                      </div>
-                      <div class="col">
-                        {{ currentTournament.conclusionDate }}
-                      </div>
-                      <div class="col">
-                        {{ currentTournament.assessmentDto.title }}
-                      </div>
-                      <div class="col">
-                        {{ currentTournament.numberOfQuestions }}
-                      </div>
-                      <div class="col">
-                        {{ currentTournament.enrolledStudents.length }}
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </v-card-actions>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="signButton(currentTournament)">
-                {{ sign }}
-              </v-btn>
-              <v-btn color="primary" text @click="dialog = false">
-                Close
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <div>
+          <v-btn
+            class="btn"
+            color="primary"
+            @click.stop="isEnrolled(t)"
+            data-cy="details"
+          >
+            Details
+          </v-btn>
+        </div>
       </li>
+      <v-dialog
+        :retain-focus="false"
+        v-model="dialog"
+        class="container"
+        max-width="70%"
+        v-if="iscreated"
+      >
+        <v-card>
+          <v-card-title class="justify-center">
+            <v-card-actions>
+              <h3>{{ currentTournament.title }}</h3>
+            </v-card-actions>
+          </v-card-title>
+          <v-card-text>
+            <v-card-actions>
+              <div class="container">
+                <ul>
+                  <li class="cth">
+                    <div class="col">Starts</div>
+                    <div class="col">Ends</div>
+                    <div class="col">Assessment</div>
+                    <div class="col">Questions</div>
+                    <div class="col">Participants</div>
+                  </li>
+                  <li class="lt">
+                    <div class="col">
+                      {{ currentTournament.availableDate }}
+                    </div>
+                    <div class="col">
+                      {{ currentTournament.conclusionDate }}
+                    </div>
+                    <div class="col">
+                      {{ currentTournament.assessmentDto.title }}
+                    </div>
+                    <div class="col">
+                      {{ currentTournament.numberOfQuestions }}
+                    </div>
+                    <div class="col">
+                      {{ currentTournament.enrolledStudents.length }}
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </v-card-actions>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              text
+              @click="signButton(currentTournament)"
+              data-cy="sign"
+            >
+              {{ sign }}
+            </v-btn>
+            <v-btn color="primary" text @click="dialog = false">
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </ul>
   </div>
 </template>
@@ -96,22 +110,22 @@ import { Student } from '@/models/management/Student';
 
 @Component
 export default class AvailableTournamentsView extends Vue {
-  data() {
-    return {
-      dialog: false
-    };
-  }
+  dialog: boolean = false;
   sign: string = '';
   tournaments: Tournament[] = [];
   currentTournament: Tournament = new Tournament();
+  iscreated: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = (
-        await RemoteServices.getOpenedTournaments()
-      );
-      this.currentTournament = this.tournaments[0];
+      console.log(this.currentTournament);
+      this.tournaments = await RemoteServices.getOpenedTournaments();
+      if (this.tournaments.length != 0) {
+        this.iscreated = true;
+        this.currentTournament = this.tournaments[0];
+      }
+      console.log(this.currentTournament);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -119,6 +133,7 @@ export default class AvailableTournamentsView extends Vue {
   }
 
   async isEnrolled(t: Tournament) {
+    this.dialog = true;
     this.currentTournament = t;
     let s: Student;
     if (t.enrolledStudents.length == 0) {
@@ -144,8 +159,6 @@ export default class AvailableTournamentsView extends Vue {
     }
     await this.$router.push({ name: 'enrolled-Tournaments' });
   }
-
- 
 
   async enrollTournament(id: Number) {
     await this.$store.dispatch('loading');
