@@ -32,11 +32,6 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 })
 
-Cypress.Commands.add('justDemoAdminLogin', () => {
-    cy.visit('/')
-    cy.get('[data-cy="adminButton"]').click()
-})
-
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
@@ -62,16 +57,6 @@ Cypress.Commands.add('deleteCourseExecution', (acronym) => {
         .click()
 })
 
-Cypress.Commands.add('deleteTournament', (title) => {
-    cy.contains(title).find('#num').then(($span) => {
-        const id = parseInt($span.text())
-        cy.request('GET', 'http://localhost:8080/auth/demo/student').then((resp)=>{
-            if(resp.status===200)
-                cy.request({method:'DELETE', url: 'http://localhost:8080/tournaments/' + id + '/delete', auth:{ bearer: resp.body.token}})
-        })
-    })
-})
-
     Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) => {
         cy.contains(name)
           .parent()
@@ -83,6 +68,23 @@ Cypress.Commands.add('deleteTournament', (title) => {
         cy.get('[data-cy="Acronym"]').type(acronym)
         cy.get('[data-cy="AcademicTerm"]').type(academicTerm)
         cy.get('[data-cy="saveButton"]').click()
+    })
+
+    Cypress.Commands.add('deleteTournament', (title) => {
+        cy.contains(title).find('#num').then(($span) => {
+            const id = parseInt($span.text())
+            cy.request('GET', 'http://localhost:8080/auth/demo/student').then((resp)=>{
+                if(resp.status===200)
+                    cy.request({method:'DELETE', url: 'http://localhost:8080/tournaments/' + id + '/delete', auth:{ bearer: resp.body.token}})
+            })
+        })
+    })
+
+    //##############################TOURNAMENTS FEATURE BEGIN##########################################
+
+    Cypress.Commands.add('justDemoAdminLogin', () => {
+        cy.visit('/')
+        cy.get('[data-cy="adminButton"]').click()
     })
 
     Cypress.Commands.add('demoStudentLogin', () => {
@@ -185,6 +187,9 @@ Cypress.Commands.add('deleteTournament', (title) => {
           .children()
           .should('have.length', 5)
     })
+
+//##############################TOURNAMENTS FEATURE END##########################################
+
 
 
 

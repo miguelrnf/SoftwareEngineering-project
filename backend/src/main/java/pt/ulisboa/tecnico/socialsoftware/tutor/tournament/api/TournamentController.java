@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
 
 @RestController
 public class TournamentController {
@@ -44,6 +45,9 @@ public class TournamentController {
     }
 
     private void formatDates(TournamentDto tournament) {
+        if (tournament.getAvailableDate().equals("") || tournament.getConclusionDate().equals(""))
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Dates");
+        
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         if (tournament.getAvailableDate() != null && !tournament.getAvailableDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")){

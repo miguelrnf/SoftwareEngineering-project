@@ -55,6 +55,10 @@ public class TournamentService {
     public TournamentDto createTournament(int executionId, TournamentDto tournamentDto){
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null)
@@ -68,9 +72,6 @@ public class TournamentService {
 
         if(user.getRole() != User.Role.STUDENT)
             throw new TutorException(TOURNAMENT_PERMISSION);
-
-        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
@@ -180,14 +181,14 @@ public class TournamentService {
     }
 
     private void setValidConclusionDate(Tournament tournament, String date, DateTimeFormatter formatter){
-        if(date == null || LocalDateTime.parse(date, formatter).isBefore(LocalDateTime.now()))
+        if(date == null || date.equals("") || LocalDateTime.parse(date, formatter).isBefore(LocalDateTime.now()))
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion Date");
 
         tournament.setConclusionDate(LocalDateTime.parse(date, formatter));
     }
 
     private void setValidAvailableDate(Tournament tournament, String date, DateTimeFormatter formatter){
-        if(date == null || !LocalDateTime.parse(date, formatter).isAfter(LocalDateTime.now()))
+        if(date == null || date.equals("") || !LocalDateTime.parse(date, formatter).isAfter(LocalDateTime.now()))
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available Date");
 
         tournament.setAvailableDate(LocalDateTime.parse(date, formatter));

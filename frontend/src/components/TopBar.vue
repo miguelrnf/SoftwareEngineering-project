@@ -198,8 +198,6 @@
           </v-list>
         </v-menu>
 
-
-
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
@@ -331,29 +329,21 @@
 
         <!-- Student Group-->
         <v-list-group
-          prepend-icon="account_circle"
+          prepend-icon="ballot"
           :value="false"
           v-if="isStudent && currentCourse"
         >
           <template v-slot:activator>
-            <v-list-item-title>Student</v-list-item-title>
+            <v-list-item-content class="mobileTitle"
+              >Quizzes</v-list-item-content
+            >
           </template>
 
-          <v-list-item
-            to="/student/available"
-            v-if="isStudent && currentCourse"
-          >
+          <v-list-item to="/student/available">
             <v-list-item-action>
               <v-icon>assignment</v-icon>
             </v-list-item-action>
             <v-list-item-content>Available Quizzes</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item to="/student/createTournaments">
-            <v-list-item-action>
-              <v-icon>create</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Create Tournaments</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/create">
@@ -377,11 +367,44 @@
             <v-list-item-content>Solved Quizzes</v-list-item-content>
           </v-list-item>
 
+          <v-list-item to="/student/stats">
+            <v-list-item-action>
+              <v-icon>fas fa-user</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-group
+          prepend-icon="fas fa-trophy"
+          :value="false"
+          v-if="isStudent && currentCourse"
+        >
+          <template v-slot:activator>
+            <v-list-item-content class="mobileTitle"
+              >Tournaments</v-list-item-content
+            >
+          </template>
+
           <v-list-item to="/student/availableTournaments">
             <v-list-item-action>
               <v-icon>assignment</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Tournaments</v-list-item-content>
+            <v-list-item-content>Available</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/createTournaments">
+            <v-list-item-action>
+              <v-icon>create</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Create Tournaments</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/enrolledTournaments">
+            <v-list-item-action>
+              <v-icon>fas fa-award</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Enrolled</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/ownTournaments">
@@ -389,13 +412,6 @@
               <v-icon>assignment</v-icon>
             </v-list-item-action>
             <v-list-item-content>Own</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item to="/student/stats">
-            <v-list-item-action>
-              <v-icon>fas fa-user</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Stats</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
@@ -409,19 +425,19 @@
           <v-list-item-action>
             <v-icon>fas fa-sign-out-alt</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Logout</v-list-item-content>
+          <v-list-item-content class="mobileTitle">Logout</v-list-item-content>
         </v-list-item>
         <v-list-item :href="fenixUrl" v-else>
           <v-list-item-action>
             <v-icon>fas fa-sign-in-alt</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Login</v-list-item-content>
+          <v-list-item-content class="mobileTitle">Login</v-list-item-content>
         </v-list-item>
         <v-list-item href="https://www.worldometers.info/coronavirus/">
           <v-list-item-action>
             <v-icon>fas fa-virus</v-icon>
           </v-list-item-action>
-          <v-list-item-content>
+          <v-list-item-content class="mobileTitle">
             #STAYHOME
             <br />
             #STAYSAFE
@@ -480,7 +496,10 @@ export default class TopBar extends Vue {
 .no-active::before {
   opacity: 0 !important;
 }
-
+.mobileTitle {
+  font-weight: bold;
+  font-size: large;
+}
 nav {
   z-index: 300;
 }
