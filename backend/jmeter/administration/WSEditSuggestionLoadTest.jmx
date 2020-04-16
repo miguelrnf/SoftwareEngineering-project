@@ -65,8 +65,8 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">vaz</stringProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
@@ -245,7 +245,7 @@
               <hashTree/>
               <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assertion SuggestionId" enabled="true">
                 <stringProp name="JSON_PATH">$._id</stringProp>
-                <stringProp name="EXPECTED_VALUE">3</stringProp>
+                <stringProp name="EXPECTED_VALUE">30</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
                 <boolProp name="EXPECT_NULL">false</boolProp>
                 <boolProp name="INVERT">false</boolProp>
@@ -363,13 +363,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">

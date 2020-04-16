@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
@@ -26,6 +27,7 @@ public class SuggestionDto implements Serializable{
     private String creationDate = null;
     private String _status;
     private UserDto _student;
+    private CourseExecution _courseexecution;
 
 
     public SuggestionDto() {
@@ -35,7 +37,7 @@ public class SuggestionDto implements Serializable{
         this._id= suggestion.get_id();
         this.key=suggestion.getKey();
         this._topicsList = suggestion.get_topicsList().stream().map(TopicDto::new).collect(Collectors.toList());
-
+        this._courseexecution = suggestion.getCourse();
         this._changed=suggestion.get_changed();
         this._justification=suggestion.get_justification();
         this._student=new UserDto(suggestion.get_student());
@@ -120,6 +122,11 @@ public class SuggestionDto implements Serializable{
     public void set_student(UserDto _student) {
         this._student = _student;
     }
+
+    public void setCourse(CourseExecution _courseexecution) {
+        this._courseexecution = _courseexecution;
+    }
+
 
 
     @Override

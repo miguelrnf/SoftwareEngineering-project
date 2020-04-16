@@ -143,6 +143,8 @@ public class Suggestion {
     }
 
 
+
+
     public Boolean get_changed() {
         return _changed;
     }

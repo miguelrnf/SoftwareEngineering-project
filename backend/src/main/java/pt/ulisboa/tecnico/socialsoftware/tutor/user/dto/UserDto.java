@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import io.swagger.models.auth.In;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Set;
 
 public class UserDto implements Serializable {
     private Integer id;

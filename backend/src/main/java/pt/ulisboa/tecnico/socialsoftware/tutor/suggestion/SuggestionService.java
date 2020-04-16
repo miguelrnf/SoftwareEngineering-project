@@ -24,9 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -175,16 +173,20 @@ public class SuggestionService {
                 .collect(Collectors.toSet());
     }
 
-    private void checkIfUserHasRoleStudent(User user) {
-        if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    private boolean checkIfUserHasRoleStudent(User user) {
+        if(user.getRole().compareTo(User.Role.STUDENT) != 0) {return false;}
+
+        return true;
     }
 
     private void checkIfUserIsValid (SuggestionDto suggestionDto, Suggestion s) {
         if(!suggestionDto.get_student().getUsername().equals(s.get_student().getUsername())) throw new TutorException(ACCESS_DENIED);
     }
 
-    private void checkIfUserHasRoleTeacher(User user) {
-        if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    private boolean checkIfUserHasRoleTeacher(User user) {
+        if(user.getRole().compareTo(User.Role.TEACHER) != 0) {return false;}
+
+        return true;
     }
 
     @Retryable(
@@ -223,14 +225,47 @@ public class SuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SuggestionDto> listAllSuggestions(UserDto userdto) {
 
-        checkIfUserHasRoleStudent(checkIfUserExists(userdto.getUsername()));
+        List<SuggestionDto> array = new ArrayList<>();
+        User u = checkIfUserExists(userdto.getUsername());
 
-        List<SuggestionDto> array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+        if (checkIfUserHasRoleTeacher(u)) {
 
-        if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
-        return array;
+            for (CourseExecution Course : u.getCourseExecutions()) {
+
+                System.out.println("#####################################################################################");
+                System.out.println(Course.getId());
+                System.out.println("#####################################################################################");
+
+
+                array.addAll(suggestionRepository.listAllSuggestionsbyCourseId(Course.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList()));
+
+            }
+
+            if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+
+            return array;
+        }
+
+
+        if (checkIfUserHasRoleStudent(u)) {
+
+            System.out.println("======================================================================================");
+
+
+            array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+
+            if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+            return array;
+
+        }
+
+        throw new TutorException(ACCESS_DENIED);
+
     }
+
 
     @Retryable(
             value = { SQLException.class },
