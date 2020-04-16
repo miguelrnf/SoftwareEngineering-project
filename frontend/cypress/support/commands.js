@@ -95,6 +95,10 @@ Cypress.Commands.add('gotoSubmitPost', () => {
     cy.contains('Submit Post').click();
 });
 
+Cypress.Commands.add('gotoPosts', () => {
+    cy.contains('Posts').click();
+});
+
 Cypress.Commands.add('submitPost', (question, studentQuestion) => {
     cy.get('[data-cy="pickQ"]').type(question.concat('{downarrow}{enter}'));
     cy.get('[data-cy="typeQ"]').type(studentQuestion);
@@ -109,6 +113,6 @@ Cypress.Commands.add('deletePost', (studentQuestion) => {
         .should('have.length', 1)
         .find('[data-cy="deleteButton"]')
         .click();
-})
+});
 
 
