@@ -233,11 +233,6 @@ public class SuggestionService {
 
             for (CourseExecution Course : u.getCourseExecutions()) {
 
-                System.out.println("#####################################################################################");
-                System.out.println(Course.getId());
-                System.out.println("#####################################################################################");
-
-
                 array.addAll(suggestionRepository.listAllSuggestionsbyCourseId(Course.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList()));
 
             }
@@ -250,9 +245,6 @@ public class SuggestionService {
 
 
         if (checkIfUserHasRoleStudent(u)) {
-
-            System.out.println("======================================================================================");
-
 
             array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
 
