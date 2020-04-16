@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
@@ -104,5 +104,10 @@ public class Option implements DomainEntity {
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    public void remove() {
+        this.question = null;
+        this.questionAnswers.clear();
     }
 }

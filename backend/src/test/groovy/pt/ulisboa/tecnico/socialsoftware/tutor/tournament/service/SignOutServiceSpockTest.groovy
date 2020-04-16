@@ -46,8 +46,8 @@ class SignOutServiceSpockTest extends Specification{
     static final Integer INV_TOURNAMENT_ID = -1
     static final Integer NUMQUESTIONS = 3
     static final String NAME = "NOME"
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
 
     @Autowired
@@ -132,8 +132,8 @@ class SignOutServiceSpockTest extends Specification{
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
+        availableDate = LocalDateTime.now().plusDays(1)
+        conclusionDate = LocalDateTime.now().plusDays(2)
 
 
         STUDENT_OWNER = new User()
@@ -195,7 +195,9 @@ class SignOutServiceSpockTest extends Specification{
 
 
         courseExecution_1.addUser(userS)
+        userS.addCourse(courseExecution_1)
         courseExecution_1.addUser(user_same)
+        user_same.addCourse(courseExecution_1)
         userRepository.save(userS)
         userRepository.save(user_same)
         courseRepository.save(course)

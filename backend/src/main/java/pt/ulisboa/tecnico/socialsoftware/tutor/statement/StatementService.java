@@ -80,7 +80,10 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
-        availableQuestions = filterByAssessment(availableQuestions, quizDetails);
+        if(quizDetails.getAssessment() != null) {
+            availableQuestions = filterByAssessment(availableQuestions, quizDetails);
+        }
+        // TODO else use default assessment
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
@@ -147,7 +150,6 @@ public class StatementService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StatementQuizDto> getAvailableQuizzes(String username, int executionId) {
-        //TODO copy to tournament
         User user = userRepository.findByUsername(username);
 
         LocalDateTime now = LocalDateTime.now();
@@ -263,7 +265,7 @@ public class StatementService {
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
         Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
-                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, Integer.parseInt(quizDetails.getAssessment())));
+                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }

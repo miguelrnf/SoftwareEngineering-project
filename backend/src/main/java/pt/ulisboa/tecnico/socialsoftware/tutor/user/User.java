@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -10,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
@@ -66,6 +68,10 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Suggestion> suggestions = new HashSet<>();
+
+
     public User() {
     }
 
@@ -89,6 +95,14 @@ public class User implements UserDetails, DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);
+    }
+
+    public Set<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
     }
 
     public Integer getId() {
@@ -120,6 +134,27 @@ public class User implements UserDetails, DomainEntity {
         return name;
     }
 
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void setTournaments(Set<Tournament> tournaments) {
+        this.tournaments = tournaments;
+    }
+
+    public Set<PostQuestion> getPostQuestions() {
+        return postQuestions;
+    }
+
+    public void setPostQuestions(Set<PostQuestion> postQuestions) {
+        this.postQuestions = postQuestions;
+    }
+
+    public void addPostQuestion(PostQuestion postQuestion) {
+        this.postQuestions.add(postQuestion);
+    }
+
+
     public void setName(String name) {
         this.name = name;
     }
@@ -130,6 +165,10 @@ public class User implements UserDetails, DomainEntity {
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
+    }
+
+    public void addTournament(Tournament tournament){
+        tournaments.add(tournament);
     }
 
     public Role getRole() {
@@ -166,22 +205,6 @@ public class User implements UserDetails, DomainEntity {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
-    }
-
-    public Set<Tournament> getTournaments() {
-        return tournaments;
-    }
-
-    public void setTournaments(Set<Tournament> tournaments) {
-        this.tournaments = tournaments;
-    }
-
-    public Set<PostQuestion> getPostQuestions() {
-        return postQuestions;
-    }
-
-    public void setPostQuestions(Set<PostQuestion> postQuestions) {
-        this.postQuestions = postQuestions;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -322,10 +345,6 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
     }
 
-    public void addTournament(Tournament tournament){
-        tournaments.add(tournament);
-    }
-
     public void increaseNumberOfQuizzes(Quiz.QuizType type) {
         switch (type) {
             case PROPOSED:
@@ -372,10 +391,6 @@ public class User implements UserDetails, DomainEntity {
             default:
                 break;
         }
-    }
-
-    public void addPostQuestion(PostQuestion postQuestion) {
-        this.postQuestions.add(postQuestion);
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
@@ -461,19 +476,31 @@ public class User implements UserDetails, DomainEntity {
         return result;
     }
 
-    @Override //TODO: toString of tournaments, postquestions and quizanswers
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("id: ").append(this.id).append('\n')
-          .append("key: ").append(this.key).append('\n')
-          .append("role: ").append(this.role).append('\n')
-          .append("username: ").append(this.username).append('\n')
-          .append("name: ").append(this.name).append('\n')
-          .append("creation_date: ").append(this.creationDate).append('\n')
-          .append("quiz_answers: ").append(this.quizAnswers).append('\n')
-          .append("course_executions: ").append(this.courseExecutions).append('\n')
-          .append("tournaments: ").append(this.tournaments).append('\n')
-          .append("post_questions: ").append(this.postQuestions).append('\n');
-        return sb.toString();
+        return "User{" +
+                "id=" + id +
+                ", key=" + key +
+                ", role=" + role +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
+                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
+                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
+                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
+                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
+                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
+                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
+                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
+                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
+                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
+                ", creationDate=" + creationDate +
+                ", lastAccess=" + lastAccess +
+                ", quizAnswers=" + quizAnswers +
+                ", courseExecutions=" + courseExecutions +
+                ", tournaments=" + tournaments +
+                ", postQuestions=" + postQuestions +
+                ", suggestions=" + suggestions +
+                '}';
     }
 }

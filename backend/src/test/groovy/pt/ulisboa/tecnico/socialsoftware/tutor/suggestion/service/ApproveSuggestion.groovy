@@ -190,8 +190,6 @@ class ApproveSuggestion extends Specification{
         sug.set_student(new UserDto(userS))
 
         suggestion = new Suggestion(courseExecution, userS, sug)
-        println("-----------------------------------------------")
-        println(suggestion.dump())
 
         then: "add to repository"
         courseRepository.save(course)
@@ -206,8 +204,7 @@ class ApproveSuggestion extends Specification{
     @Unroll
     def "valid approval"(){
         when:
-        println("*+++++++++++++++++++++++++++")
-        println(suggestion.dump())
+
         sug.setStatus(String.valueOf(status))
         sug.set_justification(j as String)
         def result = suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))

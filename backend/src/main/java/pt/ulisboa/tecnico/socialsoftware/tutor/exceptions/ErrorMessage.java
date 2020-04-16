@@ -19,6 +19,7 @@ public enum ErrorMessage {
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     USERNAME_NOT_FOUND("Username %s not found"),
+    SUGGESTION_NOT_FOUND("Suggestion %s not found"),
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
@@ -51,6 +52,7 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_FOUND("Tournament not found with id %s"),
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
     TOURNAMENT_UNABLE_EDIT("Unable to edit tournament, field: %s"),
+    TOURNAMENT_UNABLE_REMOVE("Unable to remove, reason: %s"),
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
@@ -67,6 +69,7 @@ public enum ErrorMessage {
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
+    EMPTY_SUGGESTIONS_LIST ("You don't have any suggestion"),
 
 
     ACCESS_DENIED("You do not have permission to view this resource"),
@@ -76,8 +79,7 @@ public enum ErrorMessage {
     SUGGESTION_TOO_LONG("Suggestion is too long"),
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
-    JUSTIFICATION_EMPTY("No justufication"),
-    SUGGESTION_NOT_FOUND("Not found"),
+    JUSTIFICATION_EMPTY("No justification"),
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),
@@ -86,6 +88,8 @@ public enum ErrorMessage {
     INVALID_POST("The specified post does not exist"),
     NOT_YOUR_POST("You do not have permission to change somebody else's post"),
     NO_APPROVED_SUGGESTIONS("No approved suggestions"),
+    NOT_SUGGESTION_CREATOR("User not the one who created the suggestion"),
+    NO_TOPICS("No topics"),
     NO_ANSWER("No answer was given by a teacher"),
     INVALID_ANSWER_BLANK("The answer written is invalid because it is empty"),
     DIFFERENT_QUESTION("You cannot redirect when it's a different question"),

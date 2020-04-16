@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -27,7 +28,7 @@ public class Suggestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int _id;
+    private Integer _id;
 
     @Column(unique=true, nullable = false)
     private Integer key;
@@ -48,7 +49,7 @@ public class Suggestion {
     private LocalDateTime creationDate;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.TOAPPROVE;
+    public Status status = Status.TOAPPROVE;
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -56,7 +57,7 @@ public class Suggestion {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User _student;
+    private User student;
 
     public Suggestion() {
     }
@@ -64,7 +65,7 @@ public class Suggestion {
     public Suggestion(CourseExecution courseExecution, User user, SuggestionDto suggestionDto) {
         checkConsistentSuggestion(suggestionDto);
         this.key= suggestionDto.getKey();
-        this._student= user;
+        this.student= user;
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
@@ -78,6 +79,7 @@ public class Suggestion {
         this.courseExecution = courseExecution;
 
         courseExecution.addSuggestion(this);
+        user.addSuggestion(this);
 
     }
 
@@ -113,11 +115,11 @@ public class Suggestion {
     public void setCourse(CourseExecution courseExecution) {
         this.courseExecution = courseExecution;
     }
-    public int get_id() {
+    public Integer get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(Integer _id) {
         this._id = _id;
     }
 
@@ -166,10 +168,31 @@ public class Suggestion {
     }
 
     public User get_student() {
-        return _student;
+        return student;
     }
 
-    public void set_student(User _student) {
-        this._student = _student;
+    public void set_student(User student) {
+        this.student = student;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Suggestion that = (Suggestion) o;
+        return Objects.equals(_id, that._id) &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(_questionStr, that._questionStr) &&
+                Objects.equals(topics, that.topics) &&
+                Objects.equals(_changed, that._changed) &&
+                Objects.equals(_justification, that._justification) &&
+                status == that.status &&
+                Objects.equals(courseExecution, that.courseExecution) &&
+                Objects.equals(student, that.student);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id, key, _questionStr, topics, _changed, _justification, status, courseExecution, student);
     }
 }

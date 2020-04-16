@@ -1,13 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SuggestionDto implements Serializable {
@@ -44,11 +48,11 @@ public class SuggestionDto implements Serializable {
     }
 
 
-    public int get_id() {
+    public Integer get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(Integer _id) {
         this._id = _id;
     }
 
@@ -114,5 +118,27 @@ public class SuggestionDto implements Serializable {
 
     public void set_student(UserDto _student) {
         this._student = _student;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SuggestionDto that = (SuggestionDto) o;
+        return _id == that._id &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(_questionStr, that._questionStr) &&
+                Objects.equals(_topicsList, that._topicsList) &&
+                Objects.equals(_changed, that._changed) &&
+                Objects.equals(_justification, that._justification) &&
+                Objects.equals(creationDate, that.creationDate) &&
+                Objects.equals(_status, that._status) &&
+                Objects.equals(_student, that._student);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id, key, _questionStr, _topicsList, _changed, _justification, creationDate, _status, _student);
     }
 }

@@ -40,8 +40,8 @@ class GetTournamentsSpockTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
     static int tournId = 1
     static int userId = 1
@@ -199,7 +199,7 @@ class GetTournamentsSpockTest extends Specification{
         tournament2.setId(tournId++)
 
         when:
-        def result = tournamentService.getTournaments(courseExecution.getId())
+        def result = tournamentService.getTournaments()
 
         then:
         result.contains(new TournamentDto(tournament1))
@@ -218,7 +218,7 @@ class GetTournamentsSpockTest extends Specification{
         given: "nothing"
 
         when:
-        def test = tournamentService.getTournaments(courseExecution.getId())
+        def test = tournamentService.getTournaments()
 
         then:
         test.isEmpty()

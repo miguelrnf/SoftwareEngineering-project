@@ -40,8 +40,8 @@ class SignOutStudentsSpockPreformanceTest extends Specification{
     static final Integer NUMQUESTIONS = 3
     static final String TITLE = "Title"
     static final String NAME = "NOME"
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
 
     @Autowired
     UserRepository userRepository
@@ -127,8 +127,8 @@ class SignOutStudentsSpockPreformanceTest extends Specification{
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
+        availableDate = LocalDateTime.now().plusDays(1)
+        conclusionDate = LocalDateTime.now().plusDays(2)
 
         and: "a user with the role student"
         STUDENT_OWNER = new User()
@@ -186,7 +186,9 @@ class SignOutStudentsSpockPreformanceTest extends Specification{
         ass = new Assessment(courseExecution_1, tcl, assdto)
 
         courseExecution_1.addUser(userS)
+        userS.addCourse(courseExecution_1)
         courseExecution_1.addUser(user_same)
+        user_same.addCourse(courseExecution_1)
         userRepository.save(userS)
         userRepository.save(user_same)
         courseRepository.save(course)

@@ -43,8 +43,8 @@ class GetOpenedTournamentSpockTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
     static int tournId = 1
     static int userId = 1
@@ -224,8 +224,6 @@ class GetOpenedTournamentSpockTest extends Specification{
 
         where:
         status     ||       errorMessage
-        "CLOSED"   || TOURNAMENT_LIST_EMPTY
-        "OPEN"     || TOURNAMENT_LIST_EMPTY
         "CANCELED" || TOURNAMENT_LIST_EMPTY
     }
 
