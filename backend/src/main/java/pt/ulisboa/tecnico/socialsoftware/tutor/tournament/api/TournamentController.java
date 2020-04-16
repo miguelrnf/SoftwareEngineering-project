@@ -109,9 +109,10 @@ public class TournamentController {
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/delete")
-    @PreAuthorize("hasRole('ROLE_ADMIN') and hasRole('ROLE_DEMO_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity deleteTournament(@PathVariable Integer tournamentId) {
         tournamentservice.removeTournament(tournamentId);
+        System.out.println("DELETEDDDD" + tournamentId);
 
         return ResponseEntity.ok().build();
     }

@@ -11,8 +11,11 @@
         <div class="col">Participants</div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
-        <div class="col">
+        <div class="col" data-cy="title">
           {{ t.title }}
+          <p v-show="false" data-cy="id">
+            <span id="num"> {{ t.id }} </span>
+          </p>
         </div>
         <div class="col">
           {{ t.availableDate }}

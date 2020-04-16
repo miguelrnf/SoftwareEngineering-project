@@ -10,8 +10,11 @@
         <div class="col last-col"></div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
-        <div class="col">
+        <div class="col" data-cy="title">
           {{ t.title }}
+          <p v-show="false" data-cy="id">
+            <span id="num"> {{ t.id }} </span>
+          </p>
         </div>
         <div class="col">
           {{ t.availableDate }}
@@ -23,7 +26,12 @@
           {{ t.numberOfQuestions }}
         </div>
         <div>
-          <v-btn class="btn" color="primary" @click.stop="isEnrolled(t)">
+          <v-btn
+            class="btn"
+            color="primary"
+            @click.stop="isEnrolled(t)"
+            data-cy="details"
+          >
             Details
           </v-btn>
         </div>
@@ -33,6 +41,7 @@
         v-model="dialog"
         class="container"
         max-width="70%"
+        v-if="iscreated"
       >
         <v-card>
           <v-card-title class="justify-center">
@@ -75,7 +84,12 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="signButton(currentTournament)">
+            <v-btn
+              color="primary"
+              text
+              @click="signButton(currentTournament)"
+              data-cy="sign"
+            >
               {{ sign }}
             </v-btn>
             <v-btn color="primary" text @click="dialog = false">
@@ -100,12 +114,18 @@ export default class AvailableTournamentsView extends Vue {
   sign: string = '';
   tournaments: Tournament[] = [];
   currentTournament: Tournament = new Tournament();
+  iscreated: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
     try {
+      console.log(this.currentTournament);
       this.tournaments = await RemoteServices.getOpenedTournaments();
-      this.currentTournament = this.tournaments[0];
+      if (this.tournaments.length != 0) {
+        this.iscreated = true;
+        this.currentTournament = this.tournaments[0];
+      }
+      console.log(this.currentTournament);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

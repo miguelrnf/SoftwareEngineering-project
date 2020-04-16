@@ -1,4 +1,5 @@
 describe('Student walkthrough', () => {
+
   afterEach(() => {
     cy.get('.v-app-bar > .v-toolbar__content').click('bottomLeft')
     cy.contains('Logout').click()
@@ -7,43 +8,59 @@ describe('Student walkthrough', () => {
   it('list available tournaments', () => {
     cy.demoStudentLogin()
     cy.createTournament('Demo tournament 1', '30')
-    cy.wait(100)
     cy.createTournament('Demo tournament 2', '20')
-    cy.wait(100)
-    cy.createTournament('Demo tournament 3', '10')
-    cy.wait(100)
     cy.listAvailableTournaments()
-    cy.wait(3000)
+
+    cy.assertAvailableEnrolled('Demo tournament 1')
+    cy.assertAvailableEnrolled('Demo tournament 2')
+
+    cy.deleteTournament('Demo tournament 1')
+    cy.deleteTournament('Demo tournament 2')
   })
 
   it('list enrolled tournaments', () => {
     cy.demoStudentLogin()
     cy.createTournament('Demo tournament 1', '30')
-    cy.wait(100)
     cy.createTournament('Demo tournament 2', '20')
-    cy.wait(100)
-    cy.createTournament('Demo tournament 3', '10')
-    cy.wait(100)
+
     cy.listEnrolledTournaments()
-    cy.wait(3000)
+    cy.closeErrorMessage()
+
+    cy.listAvailableTournaments()
+    cy.deleteTournament('Demo tournament 1')
+    cy.deleteTournament('Demo tournament 2')
   })
 
   it('list own tournaments', () => {
     cy.demoStudentLogin()
     cy.createTournament('Demo tournament 1', '30')
-    cy.wait(100)
     cy.createTournament('Demo tournament 2', '20')
-    cy.wait(100)
-    cy.createTournament('Demo tournament 3', '10')
-    cy.wait(100)
+
     cy.listOwnTournaments()
-    cy.wait(3000)
+
+    cy.assertOwnAny('Demo tournament 1')
+    cy.assertOwnAny('Demo tournament 2')
+
+    cy.deleteTournament('Demo tournament 1')
+    cy.deleteTournament('Demo tournament 2')
   })
 
   it('list all tournaments', () => {
+    cy.demoStudentLogin()
+    cy.createTournament('Demo tournament 1', '30')
+    cy.createTournament('Demo tournament 2', '20')
+
+    cy.get('.v-app-bar > .v-toolbar__content').click('bottomLeft')
+    cy.contains('Logout').click()
+
     cy.justDemoAdminLogin()
     cy.listAllTournaments()
-    cy.wait(3000)
+
+    cy.assertOwnAny('Demo tournament 1')
+    cy.assertOwnAny('Demo tournament 2')
+
+    cy.deleteTournament('Demo tournament 1')
+    cy.deleteTournament('Demo tournament 2')
   })
 
 });
