@@ -79,6 +79,9 @@ public class SuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SuggestionDto createSuggestion(int courseId, SuggestionDto suggestionDto){
+        System.out.println("_____________________________________________________________________");
+        System.out.println(suggestionDto.toString());
+        System.out.println("_____________________________________________________________________");
         String username = suggestionDto.get_student().getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);

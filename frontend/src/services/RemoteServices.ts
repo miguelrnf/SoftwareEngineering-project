@@ -14,6 +14,7 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Suggestion from '@/models/management/Suggestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -152,11 +153,37 @@ export default class RemoteServices {
       });
   }
 
+  static createSuggestion(sugg: Suggestion): Promise<Suggestion> {
+    console.log(sugg)
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/`,
+        sugg
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static updateQuestion(question: Question): Promise<Question> {
     return httpClient
       .put(`/questions/${question.id}`, question)
       .then(response => {
         return new Question(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
+    return httpClient
+      .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/edit`, sugg)
+      .then(response => {
+        return new Suggestion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

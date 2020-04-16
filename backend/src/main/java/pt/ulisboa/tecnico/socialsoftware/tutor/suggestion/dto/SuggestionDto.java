@@ -141,4 +141,19 @@ public class SuggestionDto implements Serializable {
     public int hashCode() {
         return Objects.hash(_id, key, _questionStr, _topicsList, _changed, _justification, creationDate, _status, _student);
     }
+
+    @Override
+    public String toString() {
+        return "SuggestionDto{" +
+                "_id=" + _id +
+                ", key=" + key +
+                ", _questionStr='" + _questionStr + '\'' +
+                ", _topicsList=" + _topicsList +
+                ", _changed=" + _changed +
+                ", _justification='" + _justification + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", _status='" + _status + '\'' +
+                ", _student=" + _student +
+                '}';
+    }
 }
