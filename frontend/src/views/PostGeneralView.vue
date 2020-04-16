@@ -6,5 +6,5 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class PostManagementView extends Vue {}
+export default class PostGeneralView extends Vue {}
 </script>

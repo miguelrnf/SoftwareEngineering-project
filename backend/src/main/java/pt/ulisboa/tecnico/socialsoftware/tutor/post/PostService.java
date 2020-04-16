@@ -289,7 +289,7 @@ public class PostService {
         else {
             int questionId = question.getId();
             user.getQuizAnswers().stream().map(x -> x.getQuestionAnswers()
-                    .stream().filter(y -> y.getQuizQuestion().getQuestion().getKey().equals(questionId)))
+                    .stream().filter(y -> y.getQuizQuestion().getQuestion().getId().equals(questionId)))
                     .findAny().orElseThrow(() -> new TutorException(USER_HAS_NOT_ANSWERED, questionId));
         }
     }
@@ -315,14 +315,13 @@ public class PostService {
 
     private Post checkIfPostExists(PostDto post, Integer pid) {
         if (post != null) {
-            if (post.getKey() != null) {
+            if(post.getKey() != null) {
                 return postRepository.findByKey(post.getKey()).orElseThrow(() -> new TutorException(INVALID_POST, post.getKey()));
             }
             else {
                 return postRepository.findById(post.getId()).orElseThrow(() -> new TutorException(INVALID_POST, post.getId()));
             }
         }
-
         else {
             try {
                 return postRepository.findByKey(pid).orElseThrow(Exception::new);

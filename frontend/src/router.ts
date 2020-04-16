@@ -28,7 +28,7 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
-import PostManagementView from '@/views/PostManagementView.vue';
+import PostGeneralView from '@/views/PostGeneralView.vue';
 
 Vue.use(Router);
 
@@ -194,7 +194,7 @@ let router = new Router({
     {
       path: '/posts',
       name: 'posts',
-      component: PostManagementView,
+      component: PostGeneralView,
       children: [
         {
           path: 'submit',
@@ -206,7 +206,7 @@ let router = new Router({
           }
         },
         {
-          path: 'allp',
+          path: 'home',
           name: 'all-posts',
           component: PostsView,
           meta: {

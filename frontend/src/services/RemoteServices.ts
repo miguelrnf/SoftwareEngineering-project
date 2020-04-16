@@ -16,6 +16,7 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
 import Post from '@/models/management/Post';
 import ListPost from '@/models/management/ListPost';
 import { PostQuestion } from '@/models/management/PostQuestion';
+import { PostAnswer } from '@/models/management/PostAnswer';
 import User from '@/models/user/User';
 
 const httpClient = axios.create();
@@ -597,6 +598,24 @@ export default class RemoteServices {
       .post(
         `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/submit`,
         postQ
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async postAnswer(post: Post): Promise<Post> {
+    if (post.answer != null) {
+      post.answer.post = new Post();
+      post.answer.post.id = post.id;
+    }
+    return httpClient
+      .post(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${post.id}/answer`,
+        post.answer
       )
       .then(response => {
         return new Post(response.data);

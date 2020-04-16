@@ -31,12 +31,25 @@
       <p class="headline font-weight-black">
         <span v-html="convertMarkDown(post.question.question.content)" />
       </p>
-      <div class="title text-left">
+      <div class="headline text-left">
         <span v-html="convertMarkDown(post.question.studentQuestion)" />
       </div>
       <div class="text-right">
         by
         <span v-html="convertMarkDown(post.question.user.username)" />
+      </div>
+    </v-card-text>
+    <br />
+    <v-card-text class="box-part" v-if="post.answer != null && post.answer.teacherAnswer !== ''">
+      <p class="subtitle-1 font-weight-light">
+        <span v-html="convertMarkDown('Answer:')" />
+      </p>
+      <p class="headline font-weight-dark">
+        <span v-html="convertMarkDown(post.answer.teacherAnswer)" />
+      </p>
+      <div class="text-right">
+        by
+        <span v-html="convertMarkDown(post.answer.user.username)" />
       </div>
     </v-card-text>
   </v-card>
@@ -60,6 +73,13 @@ export default class ShowPost extends Vue {
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
+
 }
 </script>
 
+<style>
+.box-part {
+  border-radius: 10px;
+  border: 2px solid dimgrey;
+}
+</style>

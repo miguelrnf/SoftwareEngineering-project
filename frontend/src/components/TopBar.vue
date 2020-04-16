@@ -101,7 +101,7 @@
                 <v-list-item-title>ImpExp</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/posts/allp">
+            <v-list-item to="/posts/home">
               <v-list-item-action>
                 <v-icon>fas fa-book</v-icon>
               </v-list-item-action>
@@ -152,7 +152,7 @@
                 <v-list-item-title>Solved</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/posts/allp">
+            <v-list-item to="/posts/home">
               <v-list-item-action>
                 <v-icon>fas fa-book</v-icon>
               </v-list-item-action>
@@ -287,7 +287,7 @@
               <v-list-item-title>ImpExp</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/posts/allp">
+          <v-list-item to="/posts/home">
             <v-list-item-action>
               <v-icon>fas fa-book</v-icon>
             </v-list-item-action>
@@ -336,7 +336,7 @@
             <v-list-item-content>Solved Quizzes</v-list-item-content>
           </v-list-item>
 
-          <v-list-item to="/posts/allp">
+          <v-list-item to="/posts/home">
             <v-list-item-action>
               <v-icon>fas fa-book</v-icon>
             </v-list-item-action>
