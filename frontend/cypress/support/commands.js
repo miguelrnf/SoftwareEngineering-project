@@ -112,7 +112,18 @@ Cypress.Commands.add('deletePost', (studentQuestion) => {
         .parent()
         .should('have.length', 1)
         .find('[data-cy="deleteButton"]')
-        .click();
+        .click({force: true});
+});
+
+Cypress.Commands.add('viewPost', (studentQuestion) => {
+    cy.contains(studentQuestion)
+      .parent()
+      .should('have.length', 1)
+      .parent()
+      .should('have.length', 1)
+      .find('[data-cy="showButton"]')
+      .click({force: true});
+
 });
 
 

@@ -50,7 +50,12 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="showPostDialog(item)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="showPostDialog(item)"
+              data-cy="showButton"
               >visibility</v-icon
             >
           </template>
