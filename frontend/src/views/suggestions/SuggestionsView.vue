@@ -201,7 +201,7 @@ export default class SuggestionsView extends Vue {
     try {
       [this.topics] = await Promise.all([
         RemoteServices.getTopics()
-        //RemoteServices.getQuestions() //TODO ALTERAR
+
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
