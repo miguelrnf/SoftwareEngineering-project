@@ -1,14 +1,17 @@
 describe('List Posts', () => {
-    beforeEach(() => {
+    before(() => {
         cy.demoStudentLoginPosts();
         cy.gotoSubmitPost();
         cy.submitPost(' ', '[TEST§1] I dont understand');
     });
 
     afterEach(() => {
-        cy.deletePost('[TEST§1] I dont understand');
         cy.contains('Logout').parent().click();
     });
+
+    after(() => {
+        cy.deletePost('[TEST§1] I dont understand');
+    })
 
     it('list posts as student', () => {
         cy.demoStudentLoginPosts();

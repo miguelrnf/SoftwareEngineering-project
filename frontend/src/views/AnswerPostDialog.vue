@@ -18,7 +18,6 @@
         "
       ></v-textarea>
     </v-card>
-
   </v-dialog>
 </template>
 

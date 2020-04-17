@@ -29,7 +29,7 @@
       <template v-slot:item.title="{ item }">
         <p
           v-html="convertMarkDownNoFigure(item.question.question.title, null)"
-          @click="showPostDialog(item)"
+          @click="showPostOpenDialog(item)"
       /></template>
 
       <template v-slot:item.question="{ item }">
@@ -40,7 +40,7 @@
               null
             )
           "
-          @click="showPostDialog(item)"
+          @click="showPostOpenDialog(item)"
       /></template>
 
       <template v-slot:item.user="{ item }">
@@ -54,25 +54,38 @@
               small
               class="mr-2"
               v-on="on"
-              @click="showPostDialog(item)"
+              @click="showPostOpenDialog(item)"
               data-cy="showButton"
               >visibility</v-icon
             >
           </template>
           <span>Show Post</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isOwner">
+        <v-tooltip bottom v-if="isOwner(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               small
               class="mr-2"
               v-on="on"
-              @click="editPost(item)"
+              @click="editPostOpenDialog(item)"
               data-cy="editButton"
               >edit</v-icon
             >
           </template>
           <span>Edit Post</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isTeacher() && item.answer !== null">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              v-if="isTeacher()"
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editAnswerOpenDialog(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Answer</span>
         </v-tooltip>
         <v-tooltip bottom v-if="$store.getters.isTeacher">
           <template v-slot:activator="{ on }">
@@ -82,7 +95,7 @@
           </template>
           <span>Redirect Post</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isOwner(item) || isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
               small
@@ -98,27 +111,38 @@
         </v-tooltip>
       </template>
       <template v-slot:item.status="{ item }">
-        <post-status-buttons :post="item" data-cy="StatusButtons"></post-status-buttons>
+        <post-status-buttons
+          :post="item"
+          data-cy="StatusButtons"
+        ></post-status-buttons>
       </template>
     </v-data-table>
     <edit-post-dialog
       v-if="currentPost"
       v-model="editPostDialog"
       :post="currentPost"
-      v-on:save-post="onSavePost"
-      v-on:close-show-post-dialog="onCloseDialog"
+      v-on:save-post-edit="onSavePost"
+      v-on:close-edit-post-dialog="onCloseDialog"
+    />
+    <edit-answer-dialog
+      v-if="currentPost && currentPost.answer"
+      v-model="editAnswerDialog"
+      :post="currentPost"
+      v-on:save-post-answer="onSavePost"
+      v-on:close-edit-answer-dialog="onCloseDialog"
     />
     <show-post-dialog
       v-if="currentPost"
       :dialog="postDialog"
       :post="currentPost"
+      v-on:save-post="onSavePost"
       v-on:close-show-post-dialog="onCloseDialog"
     />
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
@@ -127,11 +151,13 @@ import Post from '@/models/management/Post';
 import PostViewDialog from '@/views/PostViewDialog.vue';
 import EditPostDialog from './EditPostDialog.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
+import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 
 @Component({
   components: {
     'show-post-dialog': PostViewDialog,
     'edit-post-dialog': EditPostDialog,
+    'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons
   }
 })
@@ -142,6 +168,7 @@ export default class PostsView extends Vue {
   totalFilteredPosts: number = 0;
   currentPost: Post | null = null;
   editPostDialog: boolean = false;
+  editAnswerDialog: boolean = false;
   postDialog: boolean = false;
   search: string = '';
   perPage: number = 5;
@@ -174,7 +201,7 @@ export default class PostsView extends Vue {
     try {
       let res = await RemoteServices.viewPosts(this.perPage, this.page);
       if (res.lists != undefined) {
-        this.posts = res.lists;
+        this.posts = res.lists.reverse();
         this.filteredPosts = res.lists;
       }
       if (res.totalPosts != undefined) {
@@ -188,7 +215,7 @@ export default class PostsView extends Vue {
   }
 
   async created() {
-    this.getPage();
+    await this.getPage();
   }
 
   //Pagination is done server-side --> can only search for posts in same page
@@ -224,7 +251,7 @@ export default class PostsView extends Vue {
     return convertMarkDownNoFigure(text, image);
   }
 
-  showPostDialog(post: Post) {
+  showPostOpenDialog(post: Post) {
     this.currentPost = post;
     this.postDialog = true;
   }
@@ -233,9 +260,14 @@ export default class PostsView extends Vue {
     this.postDialog = false;
   }
 
-  editPost(post: Post) {
+  editPostOpenDialog(post: Post) {
     this.currentPost = post;
     this.editPostDialog = true;
+  }
+
+  editAnswerOpenDialog(post: Post) {
+    this.currentPost = post;
+    this.editAnswerDialog = true;
   }
 
   isOwner(post: Post): boolean {
@@ -248,15 +280,25 @@ export default class PostsView extends Vue {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.posts.unshift(post);
     this.editPostDialog = false;
+    this.editAnswerDialog = false;
     this.currentPost = null;
-    this.postDialog = false;
+  }
+
+  isTeacher(): boolean {
+    return this.$store.getters.isTeacher;
   }
 
   async deletePost(post: Post) {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.deletePost(post.id);
-      await this.getPage();
+      if (this.perPage != -1) {
+        if (this.posts.length == 1 && this.page > 1) this.page = this.page - 1;
+        await this.getPage();
+      } else {
+        this.posts = this.posts.filter(p => p.id != post.id);
+        this.filteredPosts = this.posts;
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

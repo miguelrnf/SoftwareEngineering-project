@@ -5,7 +5,7 @@ export default class Post {
   id!: number;
   key: number | null = null;
   question!: PostQuestion;
-  answer?: PostAnswer | null;
+  answer?: PostAnswer | null = null;
   postStatus!: boolean;
   discussStatus!: boolean;
 

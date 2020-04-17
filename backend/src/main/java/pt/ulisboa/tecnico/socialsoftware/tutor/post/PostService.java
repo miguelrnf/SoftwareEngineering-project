@@ -235,8 +235,9 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ListPostsDto postPagination(int perPage, int page) {
         if (perPage == - 1) perPage = postRepository.getTotalPosts();
-        int offset = page * perPage - perPage;
-        List<Post> posts = postRepository.findByPage(perPage, offset).orElse(null);
+        //int offset = page * perPage - perPage;
+        int offset = postRepository.getTotalPosts() - page * perPage;
+        List<Post> posts = postRepository.findByPage(perPage, Math.max(offset, 0)).orElse(null);
         List<PostDto> postDto = posts != null ? posts.stream().map(PostDto::new).collect(Collectors.toList()) : null;
         ListPostsDto dto = new ListPostsDto();
         dto.setLists(postDto);

@@ -4,7 +4,11 @@
       class="ma-2"
       small
       label
-      v-if="getColor(post.discussStatus) === 'red' && isOwner(post)"
+      v-if="
+        getColor(post.discussStatus) === 'red' &&
+          isOwner(post) &&
+          post.answer != null
+      "
       :color="getColor(post.discussStatus)"
       dark
       @click="changeDiscussStatus(post)"
@@ -15,7 +19,11 @@
       class="ma-2"
       small
       label
-      v-if="getColor(post.discussStatus) === 'green' && isOwner(post)"
+      v-if="
+        getColor(post.discussStatus) === 'green' &&
+          isOwner(post) &&
+          post.answer != null
+      "
       :color="getColor(post.discussStatus)"
       dark
       @click="changeDiscussStatus(post)"
@@ -26,7 +34,10 @@
       class="ma-2"
       small
       label
-      v-if="getColor(post.discussStatus) === 'red' && !isOwner(post)"
+      v-if="
+        getColor(post.discussStatus) === 'red' &&
+          (!isOwner(post) || post.answer == null)
+      "
       :color="getColor(post.discussStatus)"
       dark
       >{{ 'Unresolved' }}</v-chip
@@ -35,7 +46,10 @@
       class="ma-2"
       small
       label
-      v-if="getColor(post.discussStatus) === 'green' && !isOwner(post)"
+      v-if="
+        getColor(post.discussStatus) === 'green' &&
+          (!isOwner(post) || post.answer == null)
+      "
       :color="getColor(post.discussStatus)"
       dark
       >{{ 'Resolved' }}</v-chip
@@ -87,6 +101,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import RemoteServices from '../services/RemoteServices';
+import { PostAnswer } from '@/models/management/PostAnswer';
 
 @Component
 export default class PostStatusButtons extends Vue {

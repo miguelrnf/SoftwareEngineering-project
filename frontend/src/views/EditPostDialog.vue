@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     :value="dialog"
-    @input="$emit('close-show-post-dialog', false)"
-    @keydown.esc="$emit('close-show-post-dialog', false)"
+    @input="$emit('close-edit-post-dialog', false)"
+    @keydown.esc="$emit('close-edit-post-dialog', false)"
     max-width="75%"
     max-height="80%"
   >
@@ -17,10 +17,9 @@
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
-              <v-text-field
-                v-model="editPost.question.question.title"
-                label="Title"
-              />
+              <v-card-title>{{
+                editPost.question.question.title
+              }}</v-card-title>
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
@@ -28,6 +27,7 @@
                 rows="10"
                 v-model="editPost.question.studentQuestion"
                 label="Question"
+                @keydown.enter.exact="savePostEdit() && $emit('close-edit-post-dialog', false)"
                 data-cy="dialogEditPost"
               ></v-textarea>
             </v-flex>
@@ -37,7 +37,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('close-show-post-dialog')" data-cy="cancelButton"
+        <v-btn color="blue darken-1" @click="$emit('close-edit-post-dialog')" data-cy="cancelButton"
           >Cancel</v-btn
         >
         <v-btn color="blue darken-1" @click="savePostEdit" data-cy="saveEditButton"
@@ -50,7 +50,6 @@
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 import Post from '@/models/management/Post';
 
@@ -65,15 +64,6 @@ export default class EditPostDialog extends Vue {
     this.editPost = new Post(this.post);
   }
 
-  // TODO use EasyMDE with these configs
-  // markdownConfigs: object = {
-  //   status: false,
-  //   spellChecker: false,
-  //   insertTexts: {
-  //     image: ['![image][image]', '']
-  //   }
-  // };
-
   async savePostEdit() {
     if (
       !this.editPost.question ||
@@ -86,7 +76,7 @@ export default class EditPostDialog extends Vue {
     if (this.editPost && this.editPost.id != null) {
       try {
         const result = await RemoteServices.updatePost(this.editPost);
-        this.$emit('save-post', result);
+        this.$emit('save-post-edit', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

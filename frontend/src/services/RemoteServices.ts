@@ -639,7 +639,6 @@ export default class RemoteServices {
   }
 
   static async updatePost(post: Post): Promise<Post> {
-    console.log(post.question as PostQuestion);
     return httpClient
       .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${post.id}/edit`, post.question as PostQuestion)
       .then(response => {
@@ -677,6 +676,17 @@ export default class RemoteServices {
       .delete(
         `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
       )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateAnswer(postA: PostAnswer): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${postA.post.id}/answer/edit`, postA)
       .then(response => {
         return new Post(response.data);
       })

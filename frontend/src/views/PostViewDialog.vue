@@ -54,6 +54,7 @@ export default class PostViewDialog extends Vue {
     this.post.answer = new PostAnswer();
     this.post.answer.teacherAnswer = answer;
     this.post.answer.user = this.$store.getters.getUser;
+    this.post.answer.post = this.post;
     await RemoteServices.postAnswer(this.post);
   }
 }
