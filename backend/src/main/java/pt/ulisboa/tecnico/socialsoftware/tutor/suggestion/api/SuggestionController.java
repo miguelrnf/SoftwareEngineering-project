@@ -42,32 +42,19 @@ public class SuggestionController {
     }
 
     @PutMapping(value = "/courses/{courseExecutionId}/suggestions/edit")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
     public SuggestionDto editSuggestion(Principal principal,@PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
         return this.suggestionService.editSuggestion(suggDto);
     }
 
     @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listall")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
-    public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId, @RequestBody(required = false) UserDto userdto) {
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId) {
 
-        UserDto user;
+        User user = (User)((Authentication)principal).getPrincipal();
 
-        if (userdto == null) {
-
-            User loggedin = (User)((Authentication)principal).getPrincipal();
-            user = new UserDto(loggedin);
-
-        }
-
-        else {
-
-            user = userdto;
-
-        }
-
-        return this.suggestionService.listAllSuggestions(user);
+        return this.suggestionService.listAllSuggestions(new UserDto(user));
     }
 
 

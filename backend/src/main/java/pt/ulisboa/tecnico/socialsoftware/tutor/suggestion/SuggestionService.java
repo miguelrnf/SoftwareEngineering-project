@@ -96,7 +96,11 @@ public class SuggestionService {
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
+
+        topics.forEach(topic -> topic.addSuggestion(suggestion));
+
         entityManager.persist(suggestion);
+
         return new SuggestionDto(suggestion);
     }
 
@@ -229,6 +233,7 @@ public class SuggestionService {
     public List<SuggestionDto> listAllSuggestions(UserDto userdto) {
 
         List<SuggestionDto> array = new ArrayList<>();
+        List<Suggestion> tmp = new ArrayList<>();
         User u = checkIfUserExists(userdto.getUsername());
 
         if (checkIfUserHasRoleTeacher(u)) {
@@ -249,11 +254,13 @@ public class SuggestionService {
 
         if (checkIfUserHasRoleStudent(u)) {
 
-            array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+           // array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+            System.out.println(userdto.getUsername());
+            System.out.println("....................................._:_____________________________________________________________");
+            tmp = suggestionRepository.findAll().stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+            if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
-            if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
-
-            return array;
+            return tmp.stream().map(SuggestionDto::new).collect(Collectors.toList());
 
         }
 
