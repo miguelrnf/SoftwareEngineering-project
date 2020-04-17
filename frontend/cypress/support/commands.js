@@ -126,4 +126,18 @@ Cypress.Commands.add('viewPost', (studentQuestion) => {
 
 });
 
+Cypress.Commands.add('editPost', (studentQuestion, newQuestion) => {
+    cy.contains(studentQuestion)
+      .parent()
+      .should('have.length', 1)
+      .parent()
+      .should('have.length', 1)
+      .find('[data-cy="editButton"]')
+      .click({force: true})
+      .get('[data-cy="dialogEditPost"]')
+      .type('{selectall}{backspace}'.concat(newQuestion))
+      .get('[data-cy="saveEditButton"]')
+      .click({force: true});
+});
+
 

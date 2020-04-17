@@ -9,7 +9,7 @@
     <v-card>
       <v-card-title>
         <span class="headline">
-          {{ editPost && editPost.id === null ? 'New Post' : 'Edit Post' }}
+          {{ 'Edit Post' }}
         </span>
       </v-card-title>
 
@@ -28,6 +28,7 @@
                 rows="10"
                 v-model="editPost.question.studentQuestion"
                 label="Question"
+                data-cy="dialogEditPost"
               ></v-textarea>
             </v-flex>
           </v-layout>
@@ -36,10 +37,12 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('close-show-post-dialog')"
+        <v-btn color="blue darken-1" @click="$emit('close-show-post-dialog')" data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="savePost">Save Edit</v-btn>
+        <v-btn color="blue darken-1" @click="savePostEdit" data-cy="saveEditButton"
+          >Save Edit</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -71,13 +74,12 @@ export default class EditPostDialog extends Vue {
   //   }
   // };
 
-  async savePost() {
+  async savePostEdit() {
     if (
-      this.editPost &&
-      (!this.editPost.question.question?.title ||
-        !this.editPost.question.studentQuestion)
+      !this.editPost.question ||
+      this.editPost.question.studentQuestion === ''
     ) {
-      await this.$store.dispatch('error', 'Post must have title and content');
+      await this.$store.dispatch('error', 'Post must have content');
       return;
     }
 

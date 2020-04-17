@@ -63,7 +63,12 @@
         </v-tooltip>
         <v-tooltip bottom v-if="isOwner">
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editPost(item)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editPost(item)"
+              data-cy="editButton"
               >edit</v-icon
             >
           </template>
