@@ -8,6 +8,7 @@
       :color="getColor(post.discussStatus)"
       dark
       @click="changeDiscussStatus(post)"
+      data-cy="DiscussStatusButton"
       >{{ 'Unresolved' }}</v-chip
     >
     <v-chip
@@ -18,6 +19,7 @@
       :color="getColor(post.discussStatus)"
       dark
       @click="changeDiscussStatus(post)"
+      data-cy="DiscussStatusButton"
       >{{ 'Resolved' }}</v-chip
     >
     <v-chip
@@ -46,6 +48,7 @@
       :color="getColor2(post.postStatus)"
       dark
       @click="changePostStatus(post)"
+      data-cy="PostStatusButton"
       >{{ 'Open' }}</v-chip
     >
     <v-chip
@@ -56,6 +59,7 @@
       :color="getColor2(post.postStatus)"
       dark
       @click="changePostStatus(post)"
+      data-cy="PostStatusButton"
       >{{ 'Closed' }}</v-chip
     >
     <v-chip

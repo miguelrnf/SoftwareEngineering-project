@@ -79,13 +79,13 @@ Cypress.Commands.add('demoStudentLoginPosts', () => {
     cy.visit('/');
     cy.get('[data-cy="studentButton"]').click();
     cy.get('[data-cy="Student"]').click();
-})
+});
 
 Cypress.Commands.add('demoTeacherLoginPosts', () => {
     cy.visit('/');
     cy.get('[data-cy="teacherButton"]').click();
     cy.contains('Management').click();
-})
+});
 
 Cypress.Commands.add('gotoPosts', () => {
     cy.contains('Posts').click();
@@ -123,7 +123,6 @@ Cypress.Commands.add('viewPost', (studentQuestion) => {
       .should('have.length', 1)
       .find('[data-cy="showButton"]')
       .click({force: true});
-
 });
 
 Cypress.Commands.add('editPost', (studentQuestion, newQuestion) => {
@@ -137,6 +136,18 @@ Cypress.Commands.add('editPost', (studentQuestion, newQuestion) => {
       .get('[data-cy="dialogEditPost"]')
       .type('{selectall}{backspace}'.concat(newQuestion))
       .get('[data-cy="saveEditButton"]')
+      .click({force: true});
+});
+
+Cypress.Commands.add('pressStatusButton', (studentQuestion, button) => {
+    cy.contains(studentQuestion)
+      .parent()
+      .should('have.length', 1)
+      .parent()
+      .should('have.length', 1)
+      .get('[data-cy="StatusButtons"]')
+      .children()
+      .get('[data-cy="'.concat(button).concat('"]'))
       .click({force: true});
 });
 

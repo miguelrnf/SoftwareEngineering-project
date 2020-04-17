@@ -98,7 +98,7 @@
         </v-tooltip>
       </template>
       <template v-slot:item.status="{ item }">
-        <post-status-buttons :post="item"></post-status-buttons>
+        <post-status-buttons :post="item" data-cy="StatusButtons"></post-status-buttons>
       </template>
     </v-data-table>
     <edit-post-dialog
