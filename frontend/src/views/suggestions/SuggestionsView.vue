@@ -199,10 +199,9 @@ export default class SuggestionsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      [this.topics] = await Promise.all([
-        RemoteServices.getTopics()
+      this.topics = await RemoteServices.getTopics();
+      this.suggestions = await RemoteServices.getSuggestions();
 
-      ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -295,10 +294,11 @@ export default class SuggestionsView extends Vue {
 
 
   async onSaveSuggestion(sugg: Suggestion) {
-    this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
+    //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
     this.suggestions.unshift(sugg);
     this.editSuggestionDialog = false;
     this.currentSuggestion = null;
+
   }
 
   async exportCourseQuestions() {
