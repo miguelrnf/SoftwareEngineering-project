@@ -48,14 +48,27 @@ public class SuggestionController {
         return this.suggestionService.editSuggestion(suggDto);
     }
 
+    @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listall")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId, @RequestBody(required = false) UserDto userdto) {
 
+        UserDto user;
 
-    /*
-    @DeleteMapping("/topics/{topicId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#topicId, 'TOPIC.ACCESS')")
-    public ResponseEntity removeTopic(@PathVariable Integer topicId) {
-        topicService.removeTopic(topicId);
-        return ResponseEntity.ok().build();
-    }*/
+        if (userdto == null) {
+
+            User loggedin = (User)((Authentication)principal).getPrincipal();
+            user = new UserDto(loggedin);
+
+        }
+
+        else {
+
+            user = userdto;
+
+        }
+
+        return this.suggestionService.listAllSuggestions(user);
+    }
+
 
 }

@@ -78,7 +78,8 @@ public enum ErrorMessage {
     SUGGESTION_TOO_LONG("Suggestion is too long"),
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
-    JUSTIFICATION_EMPTY("No justification"),
+    JUSTIFICATION_EMPTY("No justufication"),
+
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),

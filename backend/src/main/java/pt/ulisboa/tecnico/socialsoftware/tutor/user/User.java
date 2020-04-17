@@ -101,6 +101,7 @@ public class User implements UserDetails , DomainEntity {
         this.suggestions.add(suggestion);
     }
 
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);
