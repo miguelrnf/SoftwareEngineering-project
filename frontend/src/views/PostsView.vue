@@ -77,7 +77,6 @@
         <v-tooltip bottom v-if="isTeacher() && item.answer !== null">
           <template v-slot:activator="{ on }">
             <v-icon
-              v-if="isTeacher()"
               small
               class="mr-2"
               v-on="on"
@@ -128,7 +127,7 @@
       v-if="currentPost && currentPost.answer"
       v-model="editAnswerDialog"
       :post="currentPost"
-      v-on:save-post-answer="onSavePost"
+      v-on:save-post-edit-answer="onSavePost"
       v-on:close-edit-answer-dialog="onCloseDialog"
     />
     <show-post-dialog
@@ -152,13 +151,15 @@ import PostViewDialog from '@/views/PostViewDialog.vue';
 import EditPostDialog from './EditPostDialog.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
+import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
 
 @Component({
   components: {
     'show-post-dialog': PostViewDialog,
     'edit-post-dialog': EditPostDialog,
     'edit-answer-dialog': EditAnswerDialog,
-    'post-status-buttons': PostStatusButtons
+    'post-status-buttons': PostStatusButtons,
+    'answer-post-dialog': AnswerPostDialog
   }
 })
 export default class PostsView extends Vue {

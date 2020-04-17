@@ -115,6 +115,20 @@ Cypress.Commands.add('deletePost', (studentQuestion) => {
         .click({force: true});
 });
 
+Cypress.Commands.add('answerPost', (studentQuestion, teacherAnswer) => {
+    cy.contains(studentQuestion)
+      .parent()
+      .should('have.length', 1)
+      .parent()
+      .should('have.length', 1)
+      .find('[data-cy="showButton"]')
+      .click({force: true})
+      .get('[data-cy="answerPostButton"]')
+      .click({force: true})
+      .get('[data-cy="typeAnswer"]')
+      .type(teacherAnswer.concat('{enter}{esc}'));
+});
+
 Cypress.Commands.add('viewPost', (studentQuestion) => {
     cy.contains(studentQuestion)
       .parent()
@@ -145,9 +159,8 @@ Cypress.Commands.add('pressStatusButton', (studentQuestion, button) => {
       .should('have.length', 1)
       .parent()
       .should('have.length', 1)
-      .get('[data-cy="StatusButtons"]')
-      .children()
-      .get('[data-cy="'.concat(button).concat('"]'))
+      .find('[data-cy=StatusButtons]')
+      .find('[data-cy="'.concat(button).concat('"]'))
       .click({force: true});
 });
 

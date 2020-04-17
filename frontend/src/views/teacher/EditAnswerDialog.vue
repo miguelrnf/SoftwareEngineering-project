@@ -77,7 +77,7 @@ export default class EditAnswerDialog extends Vue {
         this.newAnswer.answer.post = new Post();
         this.newAnswer.answer.post.id = this.post.id;
         await RemoteServices.updateAnswer(this.newAnswer.answer);
-        this.$emit('save-post-answer', this.newAnswer);
+        this.$emit('save-post-edit-answer', this.newAnswer);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

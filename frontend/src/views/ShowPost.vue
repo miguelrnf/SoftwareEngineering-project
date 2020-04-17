@@ -74,7 +74,7 @@
       v-if="post.answer"
       v-model="editAnswerDialog"
       :post="post"
-      v-on:save-post-answer="onSavePostEvent"
+      v-on:save-post-edit-answer="onSavePostEvent"
       v-on:close-edit-answer-dialog="onCloseEditAnswerDialog"
     />
   </v-card>

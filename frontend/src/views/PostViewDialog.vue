@@ -16,7 +16,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn v-if="post.answer == null && this.$store.getters.isTeacher" dark color="blue darken-1" @click="acceptAnswer = true">answer</v-btn>
+        <v-btn v-if="post.answer == null && this.$store.getters.isTeacher" dark color="blue darken-1" @click="acceptAnswer = true" data-cy="answerPostButton">answer</v-btn>
         <v-btn dark color="blue darken-1" @click="$emit('close-show-post-dialog')">close</v-btn>
       </v-card-actions>
     </v-card>

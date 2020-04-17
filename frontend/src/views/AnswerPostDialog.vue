@@ -12,10 +12,11 @@
         filled
         label="TYPE YOUR ANSWER"
         v-model="answer"
-        @keydown.enter="
+        @keydown.enter.exact="
           $emit('close-post-answered-dialog', answer) &&
             $emit('close-answer-post-dialog', false)
         "
+        data-cy="typeAnswer"
       ></v-textarea>
     </v-card>
   </v-dialog>
