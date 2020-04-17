@@ -65,15 +65,15 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">vaz</stringProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="username">afonso</stringProp>
+          <stringProp name="password">afonso</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">	
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (4,676,&apos;sugestao&apos;,null,4,&apos;TOAPPROVE&apos;,&apos;2019-10-23 16:11:51.598289&apos;,11);
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (4,676,&apos;sugestao&apos;,null,3,&apos;TOAPPROVE&apos;,&apos;2019-10-23 16:11:51.598289&apos;,11);
 	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,4);
 
 	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (2,676,&apos;sugestao&apos;,null,2,&apos;TOAPPROVE&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11);
