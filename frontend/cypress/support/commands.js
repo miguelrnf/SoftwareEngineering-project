@@ -31,6 +31,7 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 })
 
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
@@ -69,3 +70,28 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
     cy.get('[data-cy="saveButton"]').click()
 })
 
+//################################################# Suggestion feature
+
+Cypress.Commands.add('demoStudentLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="studentButton"]').click()
+    cy.get('[data-cy="quizzes"]').click()
+    cy.contains('Suggestions').click()
+})
+
+Cypress.Commands.add('createSuggestion', (content) => {
+    cy.get('[data-cy="createButton"]').click()
+    cy.get('[data-cy="content"]').type(content)
+    cy.get('[data-cy="topics"]').type('a'.concat('{downarrow}{enter}'))
+    cy.get('[data-cy="saveButton"]').click()
+})
+
+
+
+Cypress.Commands.add('createBlankSuggestion', (content) => {
+    cy.visit('/')
+    cy.get('[data-cy="Quizzes"]').click()
+    cy.contains('Suggestions').click()
+    cy.get('[data-cy="createButton"]').click()
+    cy.get('[data-cy="saveButton"]').click()
+})

@@ -29,6 +29,7 @@
                 rows="10"
                 v-model="editSuggestion._questionStr"
                 label="Content"
+                data-cy="content"
               ></v-textarea>
             </v-flex>
             <!--<v-flex
@@ -53,7 +54,7 @@
           </v-layout>
         </v-container>
       </v-card-text>
-      <v-form>
+      <v-card-text>
         <v-autocomplete
                 v-model="questionTopics"
                 :items="topics"
@@ -62,6 +63,8 @@
                 item-text="name"
                 item-value="name"
                 @change="saveTopics"
+
+                data-cy="topics"
         >
           <template v-slot:selection="data">
             <v-chip
@@ -80,13 +83,13 @@
             </v-list-item-content>
           </template>
         </v-autocomplete>
-      </v-form>
+      </v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn color="blue darken-1" @click="$emit('dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveSuggestion">Save</v-btn>
+        <v-btn color="blue darken-1" @click="saveSuggestion" data-cy="saveButton">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
