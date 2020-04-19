@@ -5,11 +5,11 @@ import User from '@/models/user/User';
 export default class Suggestion {
   id: number | null = null;
   //title: string = '';
-  status: string = 'AVAILABLE';
+  status: string = 'TOAPPROVE';
   creationDate!: string | null;
   sequence: number | null = null;
   changed: boolean = false;
-  justification: string = '';
+  _justification: string = '';
   _student!: User | null;
   _questionStr: string = '';
 
@@ -25,7 +25,7 @@ export default class Suggestion {
       this.status = jsonObj.status;
       this.creationDate = jsonObj.creationDate;
       this.changed = jsonObj.changed;
-      this.justification = jsonObj.justification;
+      this._justification = jsonObj._justification;
       this._student = jsonObj._student;
       this._questionStr = jsonObj._questionStr;
 

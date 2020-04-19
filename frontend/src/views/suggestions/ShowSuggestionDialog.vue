@@ -27,6 +27,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
+               data-cy="close"
           >close</v-btn
         >
       </v-card-actions>
