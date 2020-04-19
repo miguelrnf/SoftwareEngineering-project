@@ -12,6 +12,7 @@
       <v-container>
         <p>Assessment</p>
         <v-btn-toggle
+          v-if="availableAssessments.length > 0"
           v-model="tournamentManager.assessmentId"
           mandatory
           class="button-group"
@@ -25,6 +26,9 @@
             >{{ assessment.title }}</v-btn
           >
         </v-btn-toggle>
+        <v-card-text v-if="availableAssessments.length === 0" class="message">
+          {{ 'NO ASSESSMENTS FOUND' }}
+        </v-card-text>
       </v-container>
       <v-container>
         <p class="pl-0">Number of Questions</p>
@@ -121,6 +125,10 @@ export default class CreateTournamentView extends Vue {
   border-width: 10px;
   border-style: solid;
   border-color: #818181;
+}
+
+.message {
+  font-weight: bold;
 }
 
 .button-group {
