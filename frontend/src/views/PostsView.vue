@@ -81,6 +81,7 @@
               class="mr-2"
               v-on="on"
               @click="editAnswerOpenDialog(item)"
+              data-cy="editAnswerButton"
               >edit</v-icon
             >
           </template>
@@ -259,6 +260,8 @@ export default class PostsView extends Vue {
 
   onCloseDialog() {
     this.postDialog = false;
+    this.editPostDialog = false;
+    this.editAnswerDialog = false;
   }
 
   editPostOpenDialog(post: Post) {

@@ -20,11 +20,12 @@
               <v-textarea
                 outline
                 rows="10"
-                v-model="newAnswer.answer.teacherAnswer"
+                v-model="answer"
                 label="Answer"
                 @keyup.enter.exact="
                   editAnswer() && $emit('close-edit-answer-dialog', false)
                 "
+                data-cy="editAnswerBox"
               ></v-textarea>
             </v-flex>
           </v-layout>
@@ -55,31 +56,23 @@ export default class EditAnswerDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Post, required: true }) readonly post!: Post;
 
-  newAnswer!: Post;
-
-  created() {
-    this.newAnswer = new Post(this.post);
-  }
-
-  // TODO use EasyMDE with these configs
-  // markdownConfigs: object = {
-  //   status: false,
-  //   spellChecker: false,
-  //   insertTexts: {
-  //     image: ['![image][image]', '']
-  //   }
-  // };
+  answer: string = '';
 
   async editAnswer() {
-    if (this.newAnswer.answer) {
-      try {
-        this.newAnswer.answer.post = new Post();
-        this.newAnswer.answer.post.id = this.post.id;
-        await RemoteServices.updateAnswer(this.newAnswer.answer);
-        this.$emit('save-post-edit-answer', this.newAnswer);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+    if (this.answer.trim() == '') {
+      await this.$store.dispatch('error', 'Error: Answer must have content ');
+      return;
+    }
+
+    try {
+      let newAnswer = new PostAnswer();
+      newAnswer.post = new Post();
+      newAnswer.post.id = this.post.id;
+      newAnswer.teacherAnswer = this.answer;
+      await RemoteServices.updateAnswer(newAnswer);
+      this.$emit('save-post-edit-answer', newAnswer);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
   }
 }

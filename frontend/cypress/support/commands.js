@@ -161,6 +161,18 @@ Cypress.Commands.add('editPost', (studentQuestion, newQuestion) => {
       .click({force: true});
 });
 
+Cypress.Commands.add('editAnswer', (studentQuestion, newAnswer) => {
+    cy.contains(studentQuestion)
+      .parent()
+      .should('have.length', 1)
+      .parent()
+      .should('have.length', 1)
+      .find('[data-cy="editAnswerButton"]')
+      .click({force: true})
+      .get('[data-cy="editAnswerBox"]')
+      .type('{selectall}{backspace}'.concat(newAnswer).concat('{enter}'));
+});
+
 Cypress.Commands.add('pressStatusButton', (studentQuestion, button) => {
     cy.contains(studentQuestion)
       .parent()

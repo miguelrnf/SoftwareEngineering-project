@@ -1,4 +1,4 @@
-describe('Post Buttons', () => {
+describe('Submit Answer', () => {
     beforeEach(() => {
         cy.demoStudentLoginPosts();
         cy.gotoSubmitPost();
