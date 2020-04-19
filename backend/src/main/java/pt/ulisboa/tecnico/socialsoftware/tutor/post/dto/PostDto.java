@@ -3,12 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostDto implements Serializable {
     private Integer id;
     private Integer key;
     private PostQuestionDto question;
     private PostAnswerDto answer;
+    private List<PostCommentDto> comments;
     private Boolean postStatus;
     private Boolean discussStatus;
 
@@ -20,6 +23,8 @@ public class PostDto implements Serializable {
         this.key = p.getKey();
         this.question = p.getQuestion() != null ? new PostQuestionDto(p.getQuestion()) : null;
         this.answer = p.getAnswer() != null ? new PostAnswerDto(p.getAnswer()) : null;
+        this.comments = p.getComments() != null ? p.getComments().stream()
+                .map(x -> new PostCommentDto(x, true)).collect(Collectors.toList()) : null;
         this.postStatus = p.getPostStatus();
         this.discussStatus = p.getDiscussStatus();
     }
@@ -84,6 +89,14 @@ public class PostDto implements Serializable {
         this.discussStatus = discussStatus;
     }
 
+    public List<PostCommentDto> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<PostCommentDto> comments) {
+        this.comments = comments;
+    }
+
     @Override
     public String toString() {
         return "PostDto{" +
@@ -91,6 +104,7 @@ public class PostDto implements Serializable {
                 ", key=" + key +
                 ", question=" + question +
                 ", answer=" + answer +
+                ", comments=" + comments +
                 ", postStatus=" + postStatus +
                 ", discussStatus=" + discussStatus +
                 '}';

@@ -1,9 +1,10 @@
 <template>
   <v-dialog
+    overflowed
+    scrollable
     :value="dialog"
     @input="$emit('close-show-post-dialog', false)"
     @keydown.esc="$emit('close-show-post-dialog', false)"
-    max-width="75%"
   >
     <v-card>
       <v-card-title>
@@ -12,8 +13,11 @@
 
       <v-card-text class="text-left">
         <show-post :post="post" />
+        <show-commnents
+          :comments="post.comments"
+          :post="post"
+        ></show-commnents>
       </v-card-text>
-
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -32,6 +36,7 @@
         >
       </v-card-actions>
     </v-card>
+    <!--TODO - MAKE THIS DIALOG A TEXT FIELD-->
     <answer-post
       v-if="acceptAnswer"
       :post="post"
@@ -50,17 +55,21 @@ import ShowPost from '@/views/ShowPost.vue';
 import AnswerPost from '@/views/AnswerPostDialog.vue';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import RemoteServices from '@/services/RemoteServices';
+import ShowComments from '@/views/ShowComments.vue';
+import { PostComment } from '@/models/management/PostComment';
 
 @Component({
   components: {
     'show-post': ShowPost,
-    'answer-post': AnswerPost
+    'answer-post': AnswerPost,
+    'show-commnents': ShowComments
   }
 })
 export default class PostViewDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
   @Prop({ type: Post, required: true }) readonly post!: Post;
   acceptAnswer: boolean = false;
+  comment: string = '';
 
   async submitAnswer(answer: string) {
     if (answer != '') {

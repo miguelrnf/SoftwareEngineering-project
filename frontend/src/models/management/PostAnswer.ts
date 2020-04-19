@@ -1,5 +1,4 @@
 import Post from '@/models/management/Post';
-import Question from '@/models/management/Question';
 import User from '@/models/user/User';
 
 export class PostAnswer {

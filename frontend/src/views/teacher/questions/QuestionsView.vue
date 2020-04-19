@@ -228,7 +228,6 @@ export default class QuestionsView extends Vue {
 
   customFilter(value: string, search: string, question: Question) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
-    console.log('DASDASDASDASDASd');
     return (
       search != null &&
       JSON.stringify(question)

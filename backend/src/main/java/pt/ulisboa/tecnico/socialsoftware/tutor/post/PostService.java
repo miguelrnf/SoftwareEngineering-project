@@ -248,7 +248,13 @@ public class PostService {
     }
 
     private PostComment checkIfCommentParentExists(PostCommentDto dto) {
-        return commentRepository.findByKey(dto.getParent().getKey()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
+        if(dto.getKey() != null) {
+            return commentRepository.findByKey(dto.getParent().getKey()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
+        }
+        else {
+            return commentRepository.findById(dto.getParent().getId()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
+        }
+
     }
 
     private void checkIfPostsHaveSameQuestion(PostDto postDto1, PostDto postDto2) {

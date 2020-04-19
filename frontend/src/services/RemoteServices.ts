@@ -18,6 +18,7 @@ import ListPost from '@/models/management/ListPost';
 import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import User from '@/models/user/User';
+import { PostComment } from '@/models/management/PostComment';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -687,6 +688,17 @@ export default class RemoteServices {
   static async updateAnswer(postA: PostAnswer): Promise<Post> {
     return httpClient
       .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${postA.post.id}/answer/edit`, postA)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async writeComment(postC: PostComment): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${postC.post.id}/comment`, postC)
       .then(response => {
         return new Post(response.data);
       })

@@ -59,7 +59,6 @@ export default class EditAnswerDialog extends Vue {
 
   created() {
     this.newAnswer = new Post(this.post);
-    console.log(this.newAnswer);
   }
 
   // TODO use EasyMDE with these configs

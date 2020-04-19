@@ -33,7 +33,7 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 export default class AnswerPostDialog extends Vue {
   @Prop({ type: Post, required: true }) readonly post!: Post;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-  maxSize: number = 10;
+  maxSize: number = 1024;
   answer: string = '';
 }
 </script>

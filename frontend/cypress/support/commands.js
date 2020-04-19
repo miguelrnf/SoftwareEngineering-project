@@ -139,6 +139,14 @@ Cypress.Commands.add('viewPost', (studentQuestion) => {
       .click({force: true});
 });
 
+Cypress.Commands.add('comment', (type, comment) => {
+      cy.get('[data-cy="'.concat(type).concat('Button"]'))
+        .click({force: true})
+        .get('[data-cy="'.concat(type).concat('Box"]'))
+        .click({force: true})
+        .type(comment.concat('{enter}{esc}'));
+});
+
 Cypress.Commands.add('editPost', (studentQuestion, newQuestion) => {
     cy.contains(studentQuestion)
       .parent()
