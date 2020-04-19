@@ -66,6 +66,7 @@
 
                 data-cy="topics"
         >
+
           <template v-slot:selection="data">
             <v-chip
                     v-bind="data.attrs"
