@@ -144,7 +144,7 @@ public class TournamentService {
 
     private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){
 
-        if(assessmentDto == null)
+        if( assessmentDto == null || (assessmentDto.getId() == null && assessmentDto.getTitle().equals("")))
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "AssessmentDto");
 
         int assessmentId = assessmentDto.getId();
