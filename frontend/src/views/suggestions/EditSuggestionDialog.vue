@@ -29,6 +29,7 @@
                 rows="10"
                 v-model="editSuggestion._questionStr"
                 label="Content"
+                outlined
                 data-cy="content"
               ></v-textarea>
             </v-flex>
@@ -62,10 +63,14 @@
                 return-object
                 item-text="name"
                 item-value="name"
+                label="Topics"
+                outlined
                 @change="saveTopics"
                 label="Topics"
                 data-cy="topics"
         >
+
+
           <template v-slot:selection="data">
             <v-chip
                     v-bind="data.attrs"
@@ -87,7 +92,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn color="blue darken-1" @click="$emit('dialog', false)"
-          >Cancel</v-btn
+          data-cy="cancel">Cancel</v-btn
         >
         <v-btn color="blue darken-1" @click="saveSuggestion" data-cy="saveButton">Save</v-btn>
       </v-card-actions>

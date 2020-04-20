@@ -93,10 +93,20 @@ Cypress.Commands.add('createSuggestion', (content) => {
     cy.get('[data-cy="saveButton"]').click()
 })
 
+Cypress.Commands.add('listSuggestion', (contentPart) => {
+    cy.get('[data-cy="search"]').type(contentPart.concat('{downarrow}{enter}'))
+    cy.get('tbody > :nth-child(1) > :nth-child(5) > :nth-child(1)').click()
+    cy.get('[data-cy="close"]').click()
+})
+
+Cypress.Commands.add('notfoundSuggestion', (contentPart) => {
+    cy.get('[data-cy="search"]').type(contentPart.concat('{downarrow}{enter}'))
+
+})
+
 
 
 Cypress.Commands.add('createBlankSuggestion', (content) => {
-    cy.visit('/')
     cy.get('[data-cy="Quizzes"]').click()
     cy.contains('Suggestions').click()
     cy.get('[data-cy="createButton"]').click()
