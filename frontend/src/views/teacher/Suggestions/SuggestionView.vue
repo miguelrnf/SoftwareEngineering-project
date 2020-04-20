@@ -236,7 +236,7 @@
 
         onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
             let sugg = this.suggestions.find(
-                (sugg: Suggestion) => sugg.id == suggestionId
+                (sugg: Suggestion) => sugg._id == suggestionId
             );
             if (sugg) {
                 sugg._topicsList = topics;

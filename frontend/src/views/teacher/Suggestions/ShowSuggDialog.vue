@@ -38,7 +38,7 @@
                 <v-textarea
                         outline
                         rows="10"
-                        v-model="suggestion._justification"
+                        v-model="justification"
                         label="Content"
                         data-cy="content"
                 ></v-textarea>
@@ -83,6 +83,7 @@
         @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
         @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
+        justification : string = '';
 
         async ApproveSuggestion() {
             this.suggestion.status = 'APPROVED'
@@ -96,8 +97,13 @@
             this.suggestion.status = 'REJECTED'
 
             if (
-                this.suggestion._justification == '') {
+                this.justification == '') {
                 this.suggestion._justification = 'No justification was given';
+            }
+            else {
+
+                this.suggestion._justification = this.justification;
+
             }
 
             const result = await RemoteServices.approveSuggestion(this.suggestion);
@@ -107,7 +113,6 @@
 
 
         closeQuestionDialog() {
-            console.log(123123123);
 
             this.$emit('close-show-suggestion-dialog');
         }

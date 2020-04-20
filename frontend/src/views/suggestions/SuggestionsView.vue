@@ -228,7 +228,7 @@ export default class SuggestionsView extends Vue {
 
   onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
     let sugg = this.suggestions.find(
-      (sugg: Suggestion) => sugg.id == suggestionId
+      (sugg: Suggestion) => sugg._id == suggestionId
     );
     if (sugg) {
       sugg._topicsList = topics;
@@ -291,7 +291,7 @@ export default class SuggestionsView extends Vue {
 
   duplicateSuggestion(sugg: Suggestion) {
     this.currentSuggestion = new Suggestion(sugg);
-    this.currentSuggestion.id = null;
+    this.currentSuggestion._id = null;
     this.editSuggestionDialog = true;
   }
 
