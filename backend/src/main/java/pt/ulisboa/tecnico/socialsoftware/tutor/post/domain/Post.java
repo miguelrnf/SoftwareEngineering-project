@@ -128,7 +128,7 @@ public class Post {
     }
 
     public void remove() {
-        this.question.setPost(null);
+        this.question.remove();
         if(this.comments != null)
             this.comments.forEach(x -> x.setPost(null));
         this.comments = null;

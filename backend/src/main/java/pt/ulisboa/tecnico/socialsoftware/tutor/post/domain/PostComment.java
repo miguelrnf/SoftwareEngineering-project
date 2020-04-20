@@ -22,7 +22,7 @@ public class PostComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique=false)
     private Integer key;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -52,6 +52,7 @@ public class PostComment {
         int maxLength = 1024;
         this.user = u;
         this.key = key;
+        if (dto.getCreationDate() == null) dto.setCreationDate(LocalDateTime.now());
         checkPostCommentConsistency(dto.getCreationDate(), dto.getComment(), maxLength);
         this.creationDate = dto.getCreationDate();
         this.comment = dto.getComment();
@@ -59,7 +60,7 @@ public class PostComment {
     }
 
     private void checkPostCommentConsistency(LocalDateTime creationDate, String comment, int length) {
-        if(creationDate == null || creationDate.isAfter(LocalDateTime.now()))
+        if(creationDate.isAfter(LocalDateTime.now()))
             throw new TutorException(ErrorMessage.INVALID_CREATION_DATE);
         if(comment == null || comment.isEmpty() || comment.length() > length)
             throw new TutorException(ErrorMessage.INVALID_COMMENT);
@@ -139,9 +140,10 @@ public class PostComment {
                 "id=" + id +
                 ", key=" + key +
                 ", user=" + user +
-                ", post=" + post +
                 ", creationDate=" + creationDate +
                 ", comment='" + comment + '\'' +
+                ", parent=" + parent +
+                ", children=" + children +
                 '}';
     }
 }

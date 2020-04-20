@@ -13,6 +13,12 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Post from '@/models/management/Post';
+import ListPost from '@/models/management/ListPost';
+import { PostQuestion } from '@/models/management/PostQuestion';
+import { PostAnswer } from '@/models/management/PostAnswer';
+import User from '@/models/user/User';
+import { PostComment } from '@/models/management/PostComment';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -569,6 +575,132 @@ export default class RemoteServices {
         );
         document.body.appendChild(link);
         link.click();
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async viewPosts(perPage: number, page: number): Promise<ListPost> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${perPage}/${page}`
+      )
+      .then(response => {
+        return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async submitPost(postQ: PostQuestion): Promise<Post> {
+    return httpClient
+      .post(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/submit`,
+        postQ
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async postAnswer(post: Post): Promise<Post> {
+    if (post.answer != null) {
+      post.answer.post = new Post();
+      post.answer.post.id = post.id;
+    }
+    return httpClient
+      .post(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${post.id}/answer`,
+        post.answer
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getPost(id: number): Promise<Post> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updatePost(post: Post): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${post.id}/edit`, post.question as PostQuestion)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeDiscussStatus(id: number): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/discuss`)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changePostStatus(id: number): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/status`)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deletePost(id: number): Promise<Post> {
+    return httpClient
+      .delete(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}`
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateAnswer(postA: PostAnswer): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${postA.post.id}/answer/edit`, postA)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async writeComment(postC: PostComment): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${postC.post.id}/comment`, postC)
+      .then(response => {
+        return new Post(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

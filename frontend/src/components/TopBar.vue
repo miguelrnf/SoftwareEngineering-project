@@ -101,12 +101,20 @@
                 <v-list-item-title>ImpExp</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/posts/home">
+              <v-list-item-action>
+                <v-icon>fas fa-book</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Posts</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark data-cy="Student">
               Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -142,6 +150,22 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Solved</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/posts/home">
+              <v-list-item-action>
+                <v-icon>fas fa-book</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Posts</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/posts/submit">
+              <v-list-item-action>
+                <v-icon>fas fa-plus</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Submit Post</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -213,7 +237,7 @@
           v-if="isTeacher && currentCourse"
         >
           <template v-slot:activator>
-            <v-list-item-title>Management</v-list-item-title>
+            <v-list-item-title data-cy="Management"> Management</v-list-item-title>
           </template>
           <v-list-item to="/management/questions">
             <v-list-item-action>
@@ -263,6 +287,12 @@
               <v-list-item-title>ImpExp</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/posts/home">
+            <v-list-item-action>
+              <v-icon>fas fa-book</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Posts List</v-list-item-content>
+          </v-list-item>
         </v-list-group>
 
         <!-- Student Group-->
@@ -306,11 +336,25 @@
             <v-list-item-content>Solved Quizzes</v-list-item-content>
           </v-list-item>
 
+          <v-list-item to="/posts/home">
+            <v-list-item-action>
+              <v-icon>fas fa-book</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Posts List</v-list-item-content>
+          </v-list-item>
+
           <v-list-item to="/student/stats">
             <v-list-item-action>
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/posts/submit">
+            <v-list-item-action>
+              <v-icon>fas fa-plus</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Submit Post</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
