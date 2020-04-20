@@ -18,6 +18,8 @@ import QuizView from './views/student/quiz/QuizView.vue';
 import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
+import TeacherSuggView from './views/teacher/Suggestions/SuggestionView.vue';
+import ShowSuggDialog from './views/teacher/Suggestions/ShowSuggDialog.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
@@ -26,6 +28,7 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import SuggestionsView from '@/views/suggestions/SuggestionsView.vue';
+
 
 Vue.use(Router);
 
@@ -74,7 +77,7 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'suggestions-management',
-          component: SuggestionsView,
+          component: TeacherSuggView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Suggestions',
             requiredAuth: 'Teacher'
@@ -110,9 +113,9 @@ let router = new Router({
         {
           path: 'students',
           name: 'students-management',
-          component: StudentsView,
+          component: TeacherSuggView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Students',
+            title: process.env.VUE_APP_NAME + ' - Teacher',
             requiredAuth: 'Teacher'
           }
         },

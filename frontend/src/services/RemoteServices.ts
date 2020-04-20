@@ -203,6 +203,17 @@ export default class RemoteServices {
       });
   }
 
+  static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
+    return httpClient
+        .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`, sugg)
+        .then(response => {
+          return new Suggestion(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
   static deleteQuestion(questionId: number) {
     return httpClient.delete(`/questions/${questionId}`).catch(async error => {
       throw Error(await this.errorMessage(error));

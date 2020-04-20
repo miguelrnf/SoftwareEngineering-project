@@ -65,9 +65,11 @@
       </template>-->
 
       <template v-slot:item.status="{ item }">
-            <v-chip :color="getStatusColor(item)" small>
-              <span>{{ item.status }}</span>
-            </v-chip>
+        <v-chip
+                v-if="item.status"
+                :color="getStatusColor(item.status)" small>
+          <span>{{ item.status }}</span>
+        </v-chip>
       </template>
 
 

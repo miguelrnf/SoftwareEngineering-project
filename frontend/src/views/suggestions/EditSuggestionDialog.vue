@@ -63,7 +63,7 @@
                 item-text="name"
                 item-value="name"
                 @change="saveTopics"
-
+                label="Topics"
                 data-cy="topics"
         >
           <template v-slot:selection="data">

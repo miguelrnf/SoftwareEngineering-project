@@ -3,13 +3,13 @@ import Topic from '@/models/management/Topic';
 import User from '@/models/user/User';
 
 export default class Suggestion {
-  id: number | null = null;
+  _id: number | null = null;
   //title: string = '';
-  status: string = 'AVAILABLE';
+  status: string = 'TOAPPROVE';
   creationDate!: string | null;
   sequence: number | null = null;
   changed: boolean = false;
-  justification: string = '';
+  _justification: string = '';
   _student!: User | null;
   _questionStr: string = '';
 
@@ -20,12 +20,12 @@ export default class Suggestion {
 
   constructor(jsonObj?: Suggestion) {
     if (jsonObj) {
-      this.id = jsonObj.id;
+      this._id = jsonObj._id;
       //this.title = jsonObj.title;
       this.status = jsonObj.status;
       this.creationDate = jsonObj.creationDate;
       this.changed = jsonObj.changed;
-      this.justification = jsonObj.justification;
+      this._justification = jsonObj._justification;
       this._student = jsonObj._student;
       this._questionStr = jsonObj._questionStr;
 

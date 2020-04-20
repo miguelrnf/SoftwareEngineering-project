@@ -114,10 +114,17 @@ public class SuggestionService {
         User user = checkIfUserExists(username);
         if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
 
-        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
 
-        suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()) );
-        suggestion.set_justification(suggestionDto.get_justification());
+        suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()));
+
+        if (suggestionDto.getStatus() == "REJECTED") {
+
+            suggestion.set_justification(suggestionDto.get_justification());
+
+        }
+
+
 
 
         return new SuggestionDto(suggestion);
@@ -149,7 +156,7 @@ public class SuggestionService {
 
         if(!user.getUsername().equals(suggestionDto.get_student().getUsername()))  throw new TutorException(NOT_SUGGESTION_CREATOR);
 
-        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
 
         entityManager.remove(suggestion);
     }
@@ -161,8 +168,8 @@ public class SuggestionService {
         return u;
     }
 
-    private Suggestion checkIfSuggestionExists(int suggestionKey) {
-        return suggestionRepository.findByKey(suggestionKey).orElseThrow(() -> new TutorException(SUGGESTION_NOT_FOUND));
+    private Suggestion checkIfSuggestionExists(int suggestionId) {
+        return suggestionRepository.findById(suggestionId).orElseThrow(() -> new TutorException(SUGGESTION_NOT_FOUND));
     }
 
     private  Set<Topic> checkIfTopicExists(int courseId, SuggestionDto suggestionDto) {
@@ -203,7 +210,7 @@ public class SuggestionService {
     public SuggestionDto editSuggestion(SuggestionDto suggestionDto) {
 
         checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
-        Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion s = checkIfSuggestionExists(suggestionDto.get_id());
         checkIfUserIsValid (suggestionDto,s);
 
         if (s.get_questionStr().isEmpty()) {
@@ -276,7 +283,7 @@ public class SuggestionService {
     public Suggestion.Status SeeSuggestionStatus(SuggestionDto suggestionDto) {
 
         checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
-        Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion s = checkIfSuggestionExists(suggestionDto.get_id());
         checkIfUserIsValid (suggestionDto,s);
 
         return s.getStatus();
