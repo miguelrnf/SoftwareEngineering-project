@@ -46,8 +46,8 @@ class SignOutServiceSpockTest extends Specification{
     static final Integer INV_TOURNAMENT_ID = -1
     static final Integer NUMQUESTIONS = 3
     static final String NAME = "NOME"
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
 
     @Autowired
@@ -132,8 +132,8 @@ class SignOutServiceSpockTest extends Specification{
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
+        availableDate = LocalDateTime.now().plusDays(1)
+        conclusionDate = LocalDateTime.now().plusDays(2)
 
 
         STUDENT_OWNER = new User()
@@ -150,8 +150,7 @@ class SignOutServiceSpockTest extends Specification{
         and: "a tournamentDto"
         TOURNAMENTDTO = new TournamentDto()
         TOURNAMENTDTO.setId(1)
-        TOURNAMENTDTO.setKey(1)
-        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED)
+        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
         TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
@@ -187,7 +186,7 @@ class SignOutServiceSpockTest extends Specification{
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -196,7 +195,9 @@ class SignOutServiceSpockTest extends Specification{
 
 
         courseExecution_1.addUser(userS)
+        userS.addCourse(courseExecution_1)
         courseExecution_1.addUser(user_same)
+        user_same.addCourse(courseExecution_1)
         userRepository.save(userS)
         userRepository.save(user_same)
         courseRepository.save(course)
@@ -215,11 +216,11 @@ class SignOutServiceSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId() as Integer, STUDENT_SAME_CE.getUsername() as String, result.getId())
+        tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername() as String, result.getId())
 
         then:
         def tournamentTest = tournamentRepository.findById(result.getId())
-        def result2 = tournamentTest.get().getEnrolledStudents().getAt(0)
+        def result2 = tournamentTest.get().getEnrolledStudents()[0]
         def result5 = user_same.getTournaments()
 
         result2.username == USERNAME_2

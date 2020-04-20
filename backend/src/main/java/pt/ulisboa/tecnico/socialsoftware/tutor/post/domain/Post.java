@@ -17,7 +17,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique=false, nullable = false) //TODO
     private Integer key;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
@@ -42,7 +42,14 @@ public class Post {
     }
 
     public Post(Integer key, PostQuestion question) {
-        this.key = key;
+        if(key == 0) this.key = 1;
+        else this.key = key;
+        this.question = question;
+        this.postStatus = true;
+        this.discussStatus = false;
+    }
+
+    public Post(PostQuestion question) {
         this.question = question;
         this.postStatus = true;
         this.discussStatus = false;
@@ -121,7 +128,7 @@ public class Post {
     }
 
     public void remove() {
-        this.question.setPost(null);
+        this.question.remove();
         if(this.comments != null)
             this.comments.forEach(x -> x.setPost(null));
         this.comments = null;
@@ -129,5 +136,19 @@ public class Post {
 
     public void changeDiscussStatus() {
         this.discussStatus = !this.discussStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", key=" + key +
+                ", question=" + question +
+                ", answer=" + answer +
+                ", postStatus=" + postStatus +
+                ", discussStatus=" + discussStatus +
+                ", creationDate=" + creationDate +
+                ", comments=" + comments +
+                '}';
     }
 }

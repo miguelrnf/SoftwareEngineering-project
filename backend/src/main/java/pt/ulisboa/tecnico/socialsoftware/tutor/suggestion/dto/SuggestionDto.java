@@ -1,20 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class SuggestionDto {
+public class SuggestionDto implements Serializable{
 
-    private int _id;
+
+    private Integer _id;
     private Integer key;
     private String _questionStr;
     private List<TopicDto> _topicsList = new ArrayList<>();
@@ -23,16 +24,17 @@ public class SuggestionDto {
     private String creationDate = null;
     private String _status;
     private UserDto _student;
+    private CourseExecution _courseexecution;
 
 
-    public SuggestionDto() {
+    public SuggestionDto(){
     }
 
     public SuggestionDto(Suggestion suggestion) {
         this._id= suggestion.get_id();
         this.key=suggestion.getKey();
         this._topicsList = suggestion.get_topicsList().stream().map(TopicDto::new).collect(Collectors.toList());
-
+        this._courseexecution = suggestion.getCourse();
         this._changed=suggestion.get_changed();
         this._justification=suggestion.get_justification();
         this._student=new UserDto(suggestion.get_student());
@@ -46,11 +48,11 @@ public class SuggestionDto {
     }
 
 
-    public int get_id() {
+    public Integer get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(Integer _id) {
         this._id = _id;
     }
 
@@ -116,5 +118,47 @@ public class SuggestionDto {
 
     public void set_student(UserDto _student) {
         this._student = _student;
+    }
+
+    public void setCourse(CourseExecution _courseexecution) {
+        this._courseexecution = _courseexecution;
+    }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SuggestionDto that = (SuggestionDto) o;
+        return _id == that._id &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(_questionStr, that._questionStr) &&
+                Objects.equals(_topicsList, that._topicsList) &&
+                Objects.equals(_changed, that._changed) &&
+                Objects.equals(_justification, that._justification) &&
+                Objects.equals(creationDate, that.creationDate) &&
+                Objects.equals(_status, that._status) &&
+                Objects.equals(_student, that._student);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id, key, _questionStr, _topicsList, _changed, _justification, creationDate, _status, _student);
+    }
+
+    @Override
+    public String toString() {
+        return "SuggestionDto{" +
+                "_id=" + _id +
+                ", key=" + key +
+                ", _questionStr='" + _questionStr + '\'' +
+                ", _topicsList=" + _topicsList +
+                ", _changed=" + _changed +
+                ", _justification='" + _justification + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", _status='" + _status + '\'' +
+                ", _student=" + _student +
+                '}';
     }
 }

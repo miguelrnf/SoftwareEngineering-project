@@ -13,12 +13,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_UNABLE_REMOVE;
 
 @Entity
 @Table(name = "tournaments",
-       indexes = {
-        @Index(name = "tournament_indx_0", columnList = "key")
-       }
+        indexes = {
+                @Index(name = "tournament_indx_0", columnList = "id")
+        }
 )
 public class Tournament {
 
@@ -29,9 +30,6 @@ public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(unique=true, nullable = false)
-    private Integer key;
 
     @Column(nullable = false)
     private String title;
@@ -67,14 +65,12 @@ public class Tournament {
     private Set<User> enrolledStudents = new HashSet<>();
 
     public Tournament(){
-
     }
 
     public Tournament(TournamentDto tournamentDto, User user, Assessment assessment){
 
-        this.key = tournamentDto.getKey();
         setTitle(tournamentDto.getTitle());
-        this.status = tournamentDto.getStatus();
+        setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
@@ -85,10 +81,6 @@ public class Tournament {
 
     public Integer getId() {
         return id;
-    }
-
-    public Integer getKey() {
-        return key;
     }
 
     public String getTitle() {
@@ -109,10 +101,6 @@ public class Tournament {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setKey(Integer key) {
-        this.key = key;
     }
 
     public void setTitle(String title) {
@@ -203,11 +191,47 @@ public class Tournament {
         this.assessment = assessment;
     }
 
+    public TournamentStatus checkStatus(){
+        if(status == TournamentStatus.CANCELED)
+            return TournamentStatus.CANCELED;
+        if(LocalDateTime.now().isBefore(availableDate))
+            this.setStatus(TournamentStatus.CREATED);
+        else if(LocalDateTime.now().isBefore(conclusionDate))
+            this.setStatus(TournamentStatus.OPEN);
+        else
+            this.setStatus(TournamentStatus.CLOSED);
+        return status;
+    }
+
+    public void remove() {
+        checkCanRemove();
+
+        for(User s : this.enrolledStudents){
+            s.getTournaments().remove(this);
+        }
+        this.enrolledStudents.clear();
+        this.owner = null;
+        this.assessment = null;
+
+        courseExecution.getTournaments().remove(this);
+        courseExecution = null;
+    }
+
+    public void checkCanRemove() {
+        if( checkStatus() == TournamentStatus.OPEN)
+            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament is open");
+
+        if( checkStatus() == TournamentStatus.CREATED && !enrolledStudents.isEmpty())
+            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament has enrolled students");
+
+
+    }
+
+
     @Override
     public String toString() {
         return "Tournament{" +
                 "id=" + id +
-                ", key=" + key +
                 ", title='" + title + '\'' +
                 ", numberOfQuestions=" + numberOfQuestions +
                 ", creationDate=" + creationDate +

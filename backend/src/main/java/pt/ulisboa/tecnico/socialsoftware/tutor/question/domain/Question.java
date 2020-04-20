@@ -1,19 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -24,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         indexes = {
                 @Index(name = "question_indx_0", columnList = "key")
         })
-public class Question {
+public class Question implements DomainEntity {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -34,7 +32,6 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
     private Integer key;
 
     @Column(columnDefinition = "TEXT")
@@ -70,9 +67,6 @@ public class Question {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=false)
-    private Set<PostQuestion> postQuestions = new HashSet<>();
-
     public Question() {
     }
 
@@ -82,6 +76,7 @@ public class Question {
         this.key = questionDto.getKey();
         this.content = questionDto.getContent();
         this.status = Status.valueOf(questionDto.getStatus());
+        this.creationDate = LocalDateTime.parse(questionDto.getCreationDate(), Course.formatter);
 
         this.course = course;
         course.addQuestion(this);
@@ -101,6 +96,11 @@ public class Question {
         }
     }
 
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuestion(this);
+    }
+
     public Integer getId() {
         return id;
     }
@@ -110,10 +110,29 @@ public class Question {
     }
 
     public Integer getKey() {
+        if (this.key == null)
+            generateKeys();
+
         return key;
     }
 
-    public void setKey(Integer key) {
+    private void generateKeys() {
+        Integer max = this.course.getQuestions().stream()
+                .filter(question -> question.key != null)
+                .map(Question::getKey)
+                .max(Comparator.comparing(Integer::valueOf))
+                .orElse(0);
+
+        List<Question> nullKeyQuestions = this.course.getQuestions().stream()
+            .filter(question -> question.key == null).collect(Collectors.toList());
+
+        for (Question question: nullKeyQuestions) {
+                max = max + 1;
+                question.key = max;
+        }
+    }
+
+   public void setKey(Integer key) {
         this.key = key;
     }
 
@@ -204,14 +223,6 @@ public class Question {
 
     public void addTopic(Topic topic) {
         topics.add(topic);
-    }
-
-    public Set<PostQuestion> getPostQuestions() {
-        return postQuestions;
-    }
-
-    public void setPostQuestions(Set<PostQuestion> postQuestions) {
-        this.postQuestions = postQuestions;
     }
 
     public void remove() {

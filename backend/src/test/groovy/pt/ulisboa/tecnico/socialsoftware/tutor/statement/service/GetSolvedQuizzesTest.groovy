@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerR
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -161,13 +162,17 @@ class GetSolvedQuizzesTest extends Specification {
             return new AnswerService()
         }
         @Bean
-        AnswersXmlImport aswersXmlImport() {
+        AnswersXmlImport answersXmlImport() {
             return new AnswersXmlImport()
         }
         @Bean
         QuizService quizService() {
             return new QuizService()
         }
-    }
 
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
+        }
+    }
 }

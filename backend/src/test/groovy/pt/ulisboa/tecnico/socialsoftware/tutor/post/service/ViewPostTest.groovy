@@ -15,7 +15,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -25,7 +24,7 @@ class ViewPostTest extends Specification{
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
     public static final int VALID_KEY = 1
-    public static final int VALID_KEY_2 = 2
+    public static final int VALID_KEY_2 = -1
     public static final int VALID_ID_1 = 1
     public static final int VALID_ID_2 = 2
     public static final String VALID_NAME_1 = "Ben Dover"
@@ -106,12 +105,15 @@ class ViewPostTest extends Specification{
         VALID_P = new Post()
         VALID_P.setKey(VALID_KEY)
         VALID_P.setQuestion(VALID_PQ)
+        VALID_U.addPostQuestion(VALID_PQ)
+        VALID_PQ.setPost(VALID_P)
 
         and: "an invalid post because it will not be saved"
         INVALID_P  = new Post()
         INVALID_P.setKey(VALID_KEY_2)
         INVALID_P.setQuestion((VALID_PQ_2))
-
+        VALID_U.addPostQuestion(VALID_PQ_2)
+        VALID_PQ_2.setPost(INVALID_P)
     }
 
     def setup() {
@@ -178,7 +180,7 @@ class ViewPostTest extends Specification{
     @Unroll
     def "no post to be viewed"() {
         when:
-        postService.deletePost(new PostDto(post))
+        postService.deletePost(post.getKey(), post.getQuestion().getUser())
         postService.viewPost(new PostDto(post).getKey())
 
         then:

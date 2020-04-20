@@ -1,5 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;

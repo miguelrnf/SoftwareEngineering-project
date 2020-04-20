@@ -3,12 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class PostCommentDto {
+public class PostCommentDto implements Serializable {
     private Integer id;
     private Integer key;
     private UserDto user;
@@ -25,12 +26,18 @@ public class PostCommentDto {
         this.id = pc.getId();
         this.key = pc.getKey();
         this.user = new UserDto(pc.getUser());
-        this.post = new PostDto(pc.getPost());
+        this.post = new PostDto();
+        this.post.setId(pc.getPost().getId());
+        this.post.setKey(pc.getPost().getKey());
         this.creationDate = pc.getCreationDate();
         this.comment = pc.getComment();
         if(pc.getParent() != null && !isChild)
             this.parent = new PostCommentDto(pc.getParent(), true);
-        if(!pc.getChildren().isEmpty() && !isChild)
+        if(pc.getParent() != null && isChild) {
+            this.parent = new PostCommentDto();
+            this.parent.setId(pc.getParent().getId());
+        }
+        if(!pc.getChildren().isEmpty())
             this.children = pc.getChildren().stream().map(x -> new PostCommentDto(x, true)).collect(Collectors.toSet());
     }
 
@@ -96,5 +103,18 @@ public class PostCommentDto {
 
     public void setChildren(Set<PostCommentDto> children) {
         this.children = children;
+    }
+
+    @Override
+    public String toString() {
+        return "PostCommentDto{" +
+                "id=" + id +
+                ", key=" + key +
+                ", user=" + user +
+                ", creationDate=" + creationDate +
+                ", comment='" + comment + '\'' +
+                ", parent=" + parent +
+                ", children=" + children +
+                '}';
     }
 }

@@ -209,8 +209,6 @@ class ApprovedListTest extends Specification {
         suggestion = new Suggestion(courseExecution, userS, sug)
         suggestion2 = new Suggestion(courseExecution, userS, sug2)
 
-        println("-----------------------------------------------")
-        println(suggestion.dump())
 
         then: "add to repository"
         courseRepository.save(course)

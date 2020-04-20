@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -35,6 +36,9 @@ class DeletePostTest extends Specification {
 
     @Autowired
     PostService postService
+
+    @Autowired
+    PostQuestionRepository postQuestionRepository;
 
     @Autowired
     PostRepository postRepository
@@ -86,11 +90,13 @@ class DeletePostTest extends Specification {
         VALID_PQ.setQuestion(VALID_Q)
         VALID_PQ.setUser(VALID_U)
         VALID_PQ.setStudentQuestion(VALID_STUDENT_QUESTION)
+        VALID_U.addPostQuestion(VALID_PQ)
 
         and: "a valid post"
         VALID_P = new Post()
         VALID_P.setKey(VALID_KEY)
         VALID_P.setQuestion(VALID_PQ)
+        VALID_PQ.setPost(VALID_P)
 
         and: "a post with an invalid key"
         INVALID_P_KEY = new Post()
@@ -150,12 +156,9 @@ class DeletePostTest extends Specification {
     @Unroll
     def "valid deletion"() {
         when:
-        def result = postService.deletePost(new PostDto(tocheck))
+        def result = postService.deletePost(tocheck.getKey(), tocheck.getQuestion().getUser())
 
         then:
-        result.getKey() == expected.getKey()
-        result.getQuestion().getQuestion().getKey() == expected.getQuestion().getQuestion().getKey()
-        result.getQuestion().getStudentQuestion() == expected.getQuestion().getStudentQuestion()
         postRepository.findByKey(expected.getKey()) == Optional.empty()
 
         where:
@@ -166,17 +169,17 @@ class DeletePostTest extends Specification {
     @Unroll
     def "invalid deletions"() {
         when:
-        postService.deletePost(new PostDto(tocheck as Post))
+        postService.deletePost(tocheck.getKey(), tocheck.getQuestion().getUser())
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        tocheck                 ||   expected
-        INVALID_P_KEY           ||   ErrorMessage.INVALID_POST.label
-        INVALID_P_NOT_SAVED     ||   ErrorMessage.INVALID_POST.label
-        INVALID_P_NOT_ANSWERED  ||   ErrorMessage.NOT_YOUR_POST.label
+        tocheck                         ||   expected
+        INVALID_P_KEY as Post           ||   ErrorMessage.INVALID_POST.label
+        INVALID_P_NOT_SAVED as Post     ||   ErrorMessage.INVALID_POST.label
+        INVALID_P_NOT_ANSWERED as Post  ||   ErrorMessage.NOT_YOUR_POST.label
     }
 
     @TestConfiguration

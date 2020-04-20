@@ -5,11 +5,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -31,7 +33,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    
+
     @Column(unique=true)
     private String username;
 
@@ -63,7 +65,11 @@ public class User implements UserDetails {
     @ManyToMany
     private Set<Tournament> tournaments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Suggestion> suggestions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
     public User() {
@@ -84,6 +90,19 @@ public class User implements UserDetails {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitUser(this);
+    }
+
+    public Set<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
     }
 
     public Integer getId() {
@@ -114,6 +133,7 @@ public class User implements UserDetails {
     public String getName() {
         return name;
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -243,7 +263,7 @@ public class User implements UserDetails {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                     .sum();
-            return numberOfInClassAnswers;
+        return numberOfInClassAnswers;
     }
 
     public void setNumberOfInClassAnswers(Integer numberOfInClassAnswers) {
@@ -276,7 +296,7 @@ public class User implements UserDetails {
                             questionAnswer.getOption().getCorrect())
                     .count();
 
-            return numberOfCorrectTeacherAnswers;
+        return numberOfCorrectTeacherAnswers;
     }
 
     public void setNumberOfCorrectTeacherAnswers(Integer numberOfCorrectTeacherAnswers) {
@@ -290,7 +310,7 @@ public class User implements UserDetails {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
+                            questionAnswer.getOption().getCorrect())
                     .count();
 
         return numberOfCorrectInClassAnswers;
@@ -307,7 +327,7 @@ public class User implements UserDetails {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
+                            questionAnswer.getOption().getCorrect())
                     .count();
 
         return numberOfCorrectStudentAnswers;
@@ -454,5 +474,33 @@ public class User implements UserDetails {
         }
 
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", key=" + key +
+                ", role=" + role +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
+                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
+                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
+                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
+                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
+                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
+                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
+                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
+                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
+                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
+                ", creationDate=" + creationDate +
+                ", lastAccess=" + lastAccess +
+                ", quizAnswers=" + quizAnswers +
+                ", courseExecutions=" + courseExecutions +
+                ", tournaments=" + tournaments +
+                ", postQuestions=" + postQuestions +
+                ", suggestions=" + suggestions +
+                '}';
     }
 }

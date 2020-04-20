@@ -32,9 +32,7 @@ import spock.lang.Unroll
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_AVAILABLE
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION_ENROLL
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class EnrollStudentsSpockTest extends Specification{
@@ -52,8 +50,8 @@ class EnrollStudentsSpockTest extends Specification{
     static final Integer NUMQUESTIONS = 3
     static final String TITLE = "Title"
     static final String NAME = "NOME"
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
 
     @Autowired
@@ -160,8 +158,8 @@ class EnrollStudentsSpockTest extends Specification{
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now().plusDays(1)
+        availableDate = LocalDateTime.now().plusDays(1)
+        conclusionDate = LocalDateTime.now().plusDays(2)
 
         TEACHER = new User()
         TEACHER.setId(4)
@@ -195,8 +193,7 @@ class EnrollStudentsSpockTest extends Specification{
         and: "a tournamentDto"
         TOURNAMENTDTO = new TournamentDto()
         TOURNAMENTDTO.setId(1)
-        TOURNAMENTDTO.setKey(1)
-        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED)
+        TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
         TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
@@ -235,7 +232,7 @@ class EnrollStudentsSpockTest extends Specification{
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -244,10 +241,15 @@ class EnrollStudentsSpockTest extends Specification{
 
 
         courseExecution_1.addUser(userS)
+        userS.addCourse(courseExecution_1)
         courseExecution_1.addUser(userT)
+        userT.addCourse(courseExecution_1)
         courseExecution_1.addUser(userA)
+        userA.addCourse(courseExecution_1)
         courseExecution_1.addUser(user_same)
+        user_same.addCourse(courseExecution_1)
         courseExecution_2.addUser(user_other)
+        user_other.addCourse(courseExecution_2)
 
         userRepository.save(userS)
         userRepository.save(user_same)
@@ -270,11 +272,11 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId(), STUDENT_SAME_CE.getUsername(), result.getId())
+        tournamentService.enrollStudent(STUDENT_SAME_CE.getUsername(), result.getId())
 
         then:
         def tournamentTest = tournamentRepository.findById(result.getId())
-        def result2 = tournamentTest.get().getEnrolledStudents().getAt(0)
+        def result2 = tournamentTest.get().getEnrolledStudents()[0]
 
         result2.username == USERNAME_2
         result2.id == 2
@@ -290,7 +292,7 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId(), user.getUsername(), result.getId())
+        tournamentService.enrollStudent(user.getUsername(), result.getId())
 
         then:
         def error = thrown(TutorException)
@@ -303,19 +305,19 @@ class EnrollStudentsSpockTest extends Specification{
     }
 
     @Unroll
-   def "invalid arguments: tournamentSate=#tournameSate || errorMessage=#errorMessage "() {
-       given:
-       assdto.setId(tempId++)
-       TOURNAMENTDTO.setAssessmentDto(assdto)
-       TOURNAMENTDTO.setStatus(tournamentStatus)
-       def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
+    def "invalid arguments: tournamentSate=#tournameSate || errorMessage=#errorMessage "() {
+        given:
+        assdto.setId(tempId++)
+        TOURNAMENTDTO.setAssessmentDto(assdto)
+        TOURNAMENTDTO.setStatus(tournamentStatus.name())
+        def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
-       when:
-       tournamentService.enrollStudent(courseExecution_1.getId(), STUDENT_OTHER_CE.getUsername(), result.getId())
+        when:
+        tournamentService.enrollStudent(STUDENT_OTHER_CE.getUsername(), result.getId())
 
-       then:
-       def error = thrown(TutorException)
-       error.errorMessage == errorMessage
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == errorMessage
 
         where:
         tournamentStatus                       || errorMessage
@@ -331,7 +333,7 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_2.getId(), STUDENT_OTHER_CE.getUsername(), result.getId())
+        tournamentService.enrollStudent(STUDENT_OTHER_CE.getUsername(), result.getId())
 
         then:
         def error = thrown(TutorException)
@@ -346,7 +348,7 @@ class EnrollStudentsSpockTest extends Specification{
         def result = tournamentService.createTournament(courseExecution_1.getId() , TOURNAMENTDTO)
 
         when:
-        tournamentService.enrollStudent(courseExecution_1.getId() as Integer, username, result.getId() as Integer)
+        tournamentService.enrollStudent(username, result.getId() as Integer)
 
         then:
         def error = thrown(TutorException)

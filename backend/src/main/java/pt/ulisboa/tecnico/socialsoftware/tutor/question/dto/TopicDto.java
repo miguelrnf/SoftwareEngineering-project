@@ -9,7 +9,6 @@ import java.util.Objects;
 public class TopicDto implements Serializable {
     private Integer id;
     private String name;
-    private String parentTopic;
     private Integer numberOfQuestions;
 
     public TopicDto() {
@@ -18,10 +17,10 @@ public class TopicDto implements Serializable {
     public TopicDto(Topic topic) {
         this.id = topic.getId();
         this.name = topic.getName();
-        if (topic.getParentTopic() != null) {
-            this.parentTopic = topic.getParentTopic().getName();
-        }
         this.numberOfQuestions = topic.getQuestions().size();
+    }
+
+    public TopicDto(TopicDto topicDto) {
     }
 
     public Integer getId() {
@@ -40,14 +39,6 @@ public class TopicDto implements Serializable {
         this.name = name;
     }
 
-    public String getParentTopic() {
-        return parentTopic;
-    }
-
-    public void setParentTopic(String parentTopic) {
-        this.parentTopic = parentTopic;
-    }
-
     public Integer getNumberOfQuestions() {
         return numberOfQuestions;
     }
@@ -61,7 +52,6 @@ public class TopicDto implements Serializable {
         return "TopicDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", parentTopic='" + parentTopic + '\'' +
                 '}';
     }
 
@@ -74,8 +64,7 @@ public class TopicDto implements Serializable {
 
         if (!Objects.equals(id, topicDto.id)) return false;
         if (!Objects.equals(name, topicDto.name)) return false;
-        if (!Objects.equals(parentTopic, topicDto.parentTopic))
-            return false;
+
         return Objects.equals(numberOfQuestions, topicDto.numberOfQuestions);
     }
 
@@ -83,7 +72,6 @@ public class TopicDto implements Serializable {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (parentTopic != null ? parentTopic.hashCode() : 0);
         result = 31 * result + (numberOfQuestions != null ? numberOfQuestions.hashCode() : 0);
         return result;
     }

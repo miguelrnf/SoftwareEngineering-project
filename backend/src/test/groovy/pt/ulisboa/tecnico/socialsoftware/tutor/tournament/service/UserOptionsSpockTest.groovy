@@ -33,7 +33,6 @@ import spock.lang.Unroll
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ASSESSMENT_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NOT_ENOUGH_QUESTIONS_TOURNAMENT
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
 
@@ -45,9 +44,9 @@ class UserOptionsSpockTest extends Specification{
     static final USERNAME_1 = 'username1'
     static final NAME = 'name'
     static final NUMQUESTIONS = 3
-    static final DATEBEFORE = LocalDateTime.now().minusDays(1)
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATEBEFORE = LocalDateTime.now().minusDays(2)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
 
     @Autowired
@@ -138,12 +137,11 @@ class UserOptionsSpockTest extends Specification{
         and: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
-        tournamentDto.setKey(1)
-        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED)
+        tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setNumberOfQuestions(3)
-        tournamentDto.setAvailableDate(LocalDateTime.now().format(formatter))
-        tournamentDto.setConclusionDate(LocalDateTime.now().plusDays(1).format(formatter))
+        tournamentDto.setAvailableDate(DATENOW.format(formatter))
+        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
         tournamentDto.setTitle("Title")
 
         and: "a topic dto"
@@ -199,7 +197,7 @@ class UserOptionsSpockTest extends Specification{
         userS.setRole(User.Role.STUDENT)
         userS.setUsername(USERNAME_1)
         topic = new Topic(course, topicDto)
-        topicConjunction = new TopicConjunction(topicConjunctionDto)
+        topicConjunction = new TopicConjunction()
 
         then:"add to repository"
         userRepository.save(userS)
