@@ -79,6 +79,7 @@
                                 class="mr-2"
                                 v-on="on"
                                 @click="showSuggestionDialog(item)"
+                                data-cy="showSuggestionButton"
                         >visibility</v-icon
                         >
                     </template>
@@ -92,6 +93,7 @@
                                 class="mr-2"
                                 v-on="on"
                                 @click="ApproveSuggestion(item)"
+                                data-cy="quickApproveButton"
                         >done</v-icon
                         >
                     </template>
@@ -104,6 +106,7 @@
                                 class="mr-2"
                                 v-on="on"
                                 @click="RejectSuggestion(item)"
+                                data-cy="quickRejectButton"
                         >highlight_off</v-icon
                         >
                     </template>
@@ -203,13 +206,12 @@
             }
         }
 
-
-
         async created() {
             await this.$store.dispatch('loading');
             try {
                 this.topics = await RemoteServices.getTopics();
                 this.suggestions = await RemoteServices.getSuggestions();
+                this.suggestions.reverse();
 
             } catch (error) {
                 await this.$store.dispatch('error', error);

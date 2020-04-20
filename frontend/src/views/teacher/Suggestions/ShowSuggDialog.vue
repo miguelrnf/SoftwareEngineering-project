@@ -10,22 +10,22 @@
             <v-card-title>
                 <span class="headline">{{ 'Suggestion' }}</span>
             </v-card-title>
-            <v-subheader><bold>Creation Date:</bold></v-subheader>
+            <v-subheader>Creation Date:</v-subheader>
             <v-card-text class="text-left">
                 <span>{{suggestion.creationDate}}</span>
             </v-card-text>
 
-            <v-subheader><bold>Student Username:</bold></v-subheader>
+            <v-subheader>Student Username:</v-subheader>
             <v-card-text class="text-left">
                 <span>{{suggestion._student.username}}</span>
             </v-card-text>
 
-            <v-subheader><bold>Question Content:</bold></v-subheader>
+            <v-subheader>Question Content:</v-subheader>
             <v-card-text class="text-left">
                 <span>{{suggestion._questionStr}}</span>
             </v-card-text>
 
-            <v-subheader><bold>Question Topics:</bold></v-subheader>
+            <v-subheader>Question Topics:</v-subheader>
             <ul>
                 <li v-for="option in suggestion._topicsList" :key="option.id">
                     <span class="text-left">{{option.name}}</span>
@@ -50,13 +50,19 @@
             <v-card-actions>
                 <v-spacer />
                 <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
+                       data-cy="closeSuggestionButton"
+
                 >close</v-btn>
 
                 <h1 v-if="suggestion.status!='REJECTED' && suggestion.status!='APPROVED'">
-                <v-btn dark color="green darken-1" @click="ApproveSuggestion(item)"
+                <v-btn dark color="green darken-1" @click="ApproveSuggestion()"
+                       data-cy="approveSuggestionButton"
+
                 >Approve</v-btn>
 
-                <v-btn dark color="red darken-1" @click="RejectSuggestion(item)"
+                <v-btn dark color="red darken-1" @click="RejectSuggestion()"
+                       data-cy="rejectSuggestionButton"
+
                 >Reject</v-btn>
 
                 </h1>
@@ -78,25 +84,23 @@
         @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
 
-        async ApproveSuggestion(sugg: Suggestion) {
-            sugg.status = 'APPROVED'
-            const result = await RemoteServices.approveSuggestion(sugg);
+        async ApproveSuggestion() {
+            this.suggestion.status = 'APPROVED'
+
+            const result = await RemoteServices.approveSuggestion(this.suggestion);
             this.$emit('approve-question', result);
 
         }
 
-
-
-        async RejectSuggestion(sugg: Suggestion) {
-            sugg.status = 'REJECTED'
+        async RejectSuggestion() {
+            this.suggestion.status = 'REJECTED'
 
             if (
-                this.suggestion._justification == null) {
-                sugg._justification = 'No justification was given';
-                return;
+                this.suggestion._justification == '') {
+                this.suggestion._justification = 'No justification was given';
             }
 
-            const result = await RemoteServices.approveSuggestion(sugg);
+            const result = await RemoteServices.approveSuggestion(this.suggestion);
             this.$emit('approve-question', result);
         }
 

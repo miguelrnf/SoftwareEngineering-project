@@ -47,7 +47,8 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark
+            data-cy="management">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>

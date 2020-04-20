@@ -72,10 +72,17 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
 
 //################################################# Suggestion feature
 
-Cypress.Commands.add('demoStudentLogin', () => {
+Cypress.Commands.add('demoStudentLoginSuggestion', () => {
     cy.visit('/')
     cy.get('[data-cy="studentButton"]').click()
     cy.get('[data-cy="quizzes"]').click()
+    cy.contains('Suggestions').click()
+})
+
+Cypress.Commands.add('demoTeacherLoginSuggestion', () => {
+    cy.visit('/')
+    cy.get('[data-cy="teacherButton"]').click()
+    cy.get('[data-cy="management"]').click()
     cy.contains('Suggestions').click()
 })
 
@@ -95,3 +102,38 @@ Cypress.Commands.add('createBlankSuggestion', (content) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="saveButton"]').click()
 })
+
+Cypress.Commands.add('QuickApproveSuggestion', (content) => {
+    cy.contains(content)
+    cy.get('[data-cy="quickApproveButton"]').first().click({force: true})
+})
+
+Cypress.Commands.add('QuickRejectSuggestion', (content) => {
+    cy.contains(content)
+    cy.get('[data-cy="quickRejectButton"]').first().click({force: true})
+
+})
+
+Cypress.Commands.add('ShowSuggestion', (content) => {
+    cy.contains(content)
+    cy.get('[data-cy="showSuggestionButton"]').first().click({force: true})
+
+})
+
+Cypress.Commands.add('CloseSuggestion', (content) => {
+    cy.get('[data-cy="closeSuggestionButton"]').click({force: true})
+
+})
+
+Cypress.Commands.add('ApproveSuggestion', (content) => {
+    cy.get('[data-cy="approveSuggestionButton"]').click({force: true})
+
+})
+
+Cypress.Commands.add('RejectSuggestion', (content) => {
+    cy.get('[data-cy="rejectSuggestionButton"]').click({force: true})
+
+})
+
+
+
