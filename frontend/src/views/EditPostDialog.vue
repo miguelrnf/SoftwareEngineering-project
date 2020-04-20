@@ -13,21 +13,23 @@
         </span>
       </v-card-title>
 
-      <v-card-text class="text-left" v-if="editPost">
+      <v-card-text class="text-left">
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
               <v-card-title>{{
-                editPost.question.question.title
+                post.question.question.title
               }}</v-card-title>
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
                 outline
                 rows="10"
-                v-model="editPost.question.studentQuestion"
+                v-model="editedQuestion"
                 label="Question"
-                @keydown.enter.exact="savePostEdit() && $emit('close-edit-post-dialog', false)"
+                @keydown.enter.exact="
+                  savePostEdit() && $emit('close-edit-post-dialog', false)
+                "
                 data-cy="dialogEditPost"
               ></v-textarea>
             </v-flex>
@@ -37,10 +39,16 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('close-edit-post-dialog')" data-cy="cancelButton"
+        <v-btn
+          color="blue darken-1"
+          @click="$emit('close-edit-post-dialog')"
+          data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="savePostEdit" data-cy="saveEditButton"
+        <v-btn
+          color="blue darken-1"
+          @click="savePostEdit"
+          data-cy="saveEditButton"
           >Save Edit</v-btn
         >
       </v-card-actions>
@@ -58,28 +66,22 @@ export default class EditPostDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Post, required: true }) readonly post!: Post;
 
-  editPost!: Post;
-
-  created() {
-    this.editPost = new Post(this.post);
-  }
+  editedQuestion: string = '';
 
   async savePostEdit() {
-    if (
-      !this.editPost.question ||
-      this.editPost.question.studentQuestion === ''
-    ) {
-      await this.$store.dispatch('error', 'Post must have content');
+    if (this.editedQuestion.trim() == '') {
+      await this.$store.dispatch('error', 'Error: Post must have content ');
       return;
     }
 
-    if (this.editPost && this.editPost.id != null) {
-      try {
-        const result = await RemoteServices.updatePost(this.editPost);
-        this.$emit('save-post-edit', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+    try {
+      let editedPost = new Post(this.post);
+      editedPost.question.studentQuestion = this.editedQuestion;
+      const result = await RemoteServices.updatePost(editedPost);
+      this.$emit('save-post-edit', result);
+      this.post.question.studentQuestion = this.editedQuestion;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
   }
 }
