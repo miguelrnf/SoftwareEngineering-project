@@ -134,26 +134,6 @@ public class User implements UserDetails, DomainEntity {
         return name;
     }
 
-    public Set<Tournament> getTournaments() {
-        return tournaments;
-    }
-
-    public void setTournaments(Set<Tournament> tournaments) {
-        this.tournaments = tournaments;
-    }
-
-    public Set<PostQuestion> getPostQuestions() {
-        return postQuestions;
-    }
-
-    public void setPostQuestions(Set<PostQuestion> postQuestions) {
-        this.postQuestions = postQuestions;
-    }
-
-    public void addPostQuestion(PostQuestion postQuestion) {
-        this.postQuestions.add(postQuestion);
-    }
-
 
     public void setName(String name) {
         this.name = name;
@@ -165,10 +145,6 @@ public class User implements UserDetails, DomainEntity {
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
-    }
-
-    public void addTournament(Tournament tournament){
-        tournaments.add(tournament);
     }
 
     public Role getRole() {
@@ -222,13 +198,6 @@ public class User implements UserDetails, DomainEntity {
     public void setPostQuestions(Set<PostQuestion> postQuestions) {
         this.postQuestions = postQuestions;
     }
-
-    public void addSuggestion(Suggestion suggestion) {
-        this.suggestions.add(suggestion);
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
-    private Set<Suggestion> suggestions = new HashSet<>();
 
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
