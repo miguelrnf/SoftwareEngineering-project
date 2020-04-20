@@ -123,7 +123,7 @@
       </template>
     </v-data-table>
     <edit-suggestion-dialog
-      v-if="currentSuggestion"
+      v-if="currentSuggestion && editSuggestionDialog"
       v-model="editSuggestionDialog"
       :suggestion="currentSuggestion"
       :topics="topics"
@@ -131,7 +131,7 @@
       v-on:save-suggestion="onSaveSuggestion"
     />
     <show-suggestion-dialog
-      v-if="currentSuggestion"
+      v-if="currentSuggestion && questionDialog"
       :dialog="questionDialog"
       :suggestion="currentSuggestion"
       v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"

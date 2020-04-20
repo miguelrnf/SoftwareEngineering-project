@@ -57,27 +57,24 @@
       </v-card-text>
       <v-card-text>
         <v-autocomplete
-                v-model="questionTopics"
-                :items="topics"
-                multiple
-                return-object
-                item-text="name"
-                item-value="name"
-                label="Topics"
-                outlined
-                @change="saveTopics"
-                label="Topics"
-                data-cy="topics"
+          v-model="questionTopics"
+          :items="topics"
+          multiple
+          return-object
+          item-text="name"
+          item-value="name"
+          label="Topics"
+          outlined
+          @change="saveTopics"
+          data-cy="topics"
         >
-
-
           <template v-slot:selection="data">
             <v-chip
-                    v-bind="data.attrs"
-                    :input-value="data.selected"
-                    close
-                    @click="data.select"
-                    @click:close="removeTopic(data.item)"
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              @click="data.select"
+              @click:close="removeTopic(data.item)"
             >
               {{ data.item.name }}
             </v-chip>
@@ -91,18 +88,22 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('dialog', false)"
-          data-cy="cancel">Cancel</v-btn
+        <v-btn
+          color="blue darken-1"
+          @click="$emit('dialog', false)"
+          data-cy="cancel"
+          >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveSuggestion" data-cy="saveButton">Save</v-btn>
+        <v-btn
+          color="blue darken-1"
+          @click="saveSuggestion"
+          data-cy="saveButton"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
-
 </template>
-
-
-
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
@@ -119,7 +120,9 @@ export default class EditSuggestionDialog extends Vue {
 
   editSuggestion!: Suggestion;
 
-  questionTopics: Topic[] = JSON.parse(JSON.stringify(this.suggestion._topicsList));
+  questionTopics: Topic[] = JSON.parse(
+    JSON.stringify(this.suggestion._topicsList)
+  );
 
   created() {
     /*if (
@@ -145,23 +148,17 @@ export default class EditSuggestionDialog extends Vue {
   //   }
   // };
 
-
-
-    async saveSuggestion() {
-    if (
-      this.editSuggestion &&
-      (!this.editSuggestion._questionStr)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Suggestion must have content'
-      );
+  async saveSuggestion() {
+    if (this.editSuggestion && !this.editSuggestion._questionStr) {
+      await this.$store.dispatch('error', 'Suggestion must have content');
       return;
     }
 
-    if (this.editSuggestion && this.editSuggestion.id != null) {
+    if (this.editSuggestion && this.editSuggestion._id != null) {
       try {
-        const result = await RemoteServices.updateSuggestion(this.editSuggestion);
+        const result = await RemoteServices.updateSuggestion(
+          this.editSuggestion
+        );
         this.$emit('save-suggestion', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
@@ -171,7 +168,9 @@ export default class EditSuggestionDialog extends Vue {
         this.editSuggestion._questionStr = this.editSuggestion._questionStr;
         this.editSuggestion._student = this.$store.getters.getUser;
         this.editSuggestion._topicsList = this.questionTopics;
-        const result = await RemoteServices.createSuggestion(this.editSuggestion);
+        const result = await RemoteServices.createSuggestion(
+          this.editSuggestion
+        );
         this.$emit('save-suggestion', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
@@ -180,7 +179,7 @@ export default class EditSuggestionDialog extends Vue {
   }
 
   async saveTopics() {
-    if (this.suggestion.id) {
+    if (this.suggestion._id) {
       try {
         this.suggestion._topicsList = this.questionTopics;
       } catch (error) {
@@ -189,15 +188,15 @@ export default class EditSuggestionDialog extends Vue {
     }
 
     this.$emit(
-            'question-changed-topics',
-            this.suggestion.id,
-            this.questionTopics
+      'question-changed-topics',
+      this.suggestion._id,
+      this.questionTopics
     );
   }
 
   removeTopic(topic: Topic) {
     this.questionTopics = this.questionTopics.filter(
-            element => element.id != topic.id
+      element => element.id != topic.id
     );
     this.saveTopics();
   }
