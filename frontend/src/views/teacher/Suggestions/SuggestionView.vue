@@ -189,7 +189,7 @@
             },
 
             {
-                text: 'Actions',
+                text: 'Quick Actions',
                 value: 'action',
                 align: 'center',
                 sortable: false
