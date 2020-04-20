@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
-
 import java.util.List;
 
 public class ListPostsDto {

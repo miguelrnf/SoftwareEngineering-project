@@ -38,8 +38,8 @@ class CreateTournamentServiceSpockPreformanceTest extends Specification {
     static final USERNAME_1 = 'username1'
     static final TITLE = 'first tournament'
     static final NUMQUESTIONS = 3
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static final NAME = 'name'
 
     @Autowired

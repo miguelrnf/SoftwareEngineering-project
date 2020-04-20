@@ -150,7 +150,6 @@ public class StatementService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StatementQuizDto> getAvailableQuizzes(String username, int executionId) {
-        //TODO copy to tournament
         User user = userRepository.findByUsername(username);
 
         LocalDateTime now = LocalDateTime.now();

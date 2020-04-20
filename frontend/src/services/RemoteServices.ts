@@ -13,12 +13,13 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { Tournament } from '@/models/management/Tournament';
 import Post from '@/models/management/Post';
 import ListPost from '@/models/management/ListPost';
 import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
-import User from '@/models/user/User';
 import { PostComment } from '@/models/management/PostComment';
+
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -245,6 +246,100 @@ export default class RemoteServices {
       )
       .then(response => {
         return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getOpenedTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/open`
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getOwnTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/own/${Store.getters.getUser.username}`
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getEnrolledTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/enrolled/${Store.getters.getUser.username}`
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async enrollTournament(tournamentId: Number): Promise<Tournament> {
+    return httpClient
+      .put(`/tournament/${tournamentId}/opened/enroll`)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async unenrollTournament(tournamentId: Number): Promise<Tournament> {
+    return httpClient
+      .put(`/tournament/${tournamentId}/opened/unenroll`)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createNewTournament(params: object): Promise<Tournament> {
+    return httpClient
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`,
+        params
+      )
+      .then(response => {
+        return new Tournament(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

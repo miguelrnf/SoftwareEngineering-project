@@ -42,6 +42,14 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/admin/tournaments">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>All Tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -114,7 +122,51 @@
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Tournament
+              <v-icon>fas fa-trophy</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/student/createTournaments">
+              <v-list-item-action>
+                <v-icon>create</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Create</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/availableTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-list-ul</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Available</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/enrolledTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-award</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Enrolled</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/ownTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-user</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Own</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
+          <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark data-cy="Student">
+
               Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -195,6 +247,13 @@
         <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
+
+        <v-btn href="https://www.worldometers.info/coronavirus/" text dark>
+          #STAYHOME
+          <br />
+          #STAYSAFE
+          <v-icon>fas fa-virus</v-icon>
+        </v-btn>
       </v-toolbar-items>
     </v-app-bar>
 
@@ -224,9 +283,13 @@
             <v-list-item-action>
               <v-icon>fas fa-school</v-icon>
             </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Manage Courses</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-content>Manage Courses</v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/admin/tournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>All Tournaments</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
@@ -297,18 +360,17 @@
 
         <!-- Student Group-->
         <v-list-group
-          prepend-icon="account_circle"
+          prepend-icon="ballot"
           :value="false"
           v-if="isStudent && currentCourse"
         >
           <template v-slot:activator>
-            <v-list-item-title>Student</v-list-item-title>
+            <v-list-item-content class="mobileTitle"
+              >Quizzes</v-list-item-content
+            >
           </template>
 
-          <v-list-item
-            to="/student/available"
-            v-if="isStudent && currentCourse"
-          >
+          <v-list-item to="/student/available">
             <v-list-item-action>
               <v-icon>assignment</v-icon>
             </v-list-item-action>
@@ -358,6 +420,46 @@
           </v-list-item>
         </v-list-group>
 
+        <v-list-group
+          prepend-icon="fas fa-trophy"
+          :value="false"
+          v-if="isStudent && currentCourse"
+        >
+          <template v-slot:activator>
+            <v-list-item-content class="mobileTitle"
+              >Tournaments</v-list-item-content
+            >
+          </template>
+
+          <v-list-item to="/student/availableTournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Available</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/createTournaments">
+            <v-list-item-action>
+              <v-icon>create</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Create Tournaments</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/enrolledTournaments">
+            <v-list-item-action>
+              <v-icon>fas fa-award</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Enrolled</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/ownTournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Own</v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
           <v-list-item-action>
             <v-icon>fas fa-book</v-icon>
@@ -368,13 +470,23 @@
           <v-list-item-action>
             <v-icon>fas fa-sign-out-alt</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Logout</v-list-item-content>
+          <v-list-item-content class="mobileTitle">Logout</v-list-item-content>
         </v-list-item>
         <v-list-item :href="fenixUrl" v-else>
           <v-list-item-action>
             <v-icon>fas fa-sign-in-alt</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Login</v-list-item-content>
+          <v-list-item-content class="mobileTitle">Login</v-list-item-content>
+        </v-list-item>
+        <v-list-item href="https://www.worldometers.info/coronavirus/">
+          <v-list-item-action>
+            <v-icon>fas fa-virus</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+            #STAYHOME
+            <br />
+            #STAYSAFE
+          </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -429,7 +541,10 @@ export default class TopBar extends Vue {
 .no-active::before {
   opacity: 0 !important;
 }
-
+.mobileTitle {
+  font-weight: bold;
+  font-size: large;
+}
 nav {
   z-index: 300;
 }

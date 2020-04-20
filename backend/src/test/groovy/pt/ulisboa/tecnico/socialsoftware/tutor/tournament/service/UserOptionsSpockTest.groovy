@@ -44,9 +44,9 @@ class UserOptionsSpockTest extends Specification{
     static final USERNAME_1 = 'username1'
     static final NAME = 'name'
     static final NUMQUESTIONS = 3
-    static final DATEBEFORE = LocalDateTime.now().minusDays(1)
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATEBEFORE = LocalDateTime.now().minusDays(2)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
 
     @Autowired
@@ -140,8 +140,8 @@ class UserOptionsSpockTest extends Specification{
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setNumberOfQuestions(3)
-        tournamentDto.setAvailableDate(LocalDateTime.now().format(formatter))
-        tournamentDto.setConclusionDate(LocalDateTime.now().plusDays(1).format(formatter))
+        tournamentDto.setAvailableDate(DATENOW.format(formatter))
+        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
         tournamentDto.setTitle("Title")
 
         and: "a topic dto"

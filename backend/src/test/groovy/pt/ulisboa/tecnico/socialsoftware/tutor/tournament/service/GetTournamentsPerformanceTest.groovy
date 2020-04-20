@@ -40,8 +40,8 @@ class GetTournamentsPerformanceTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
 
     @Autowired
     TournamentService tournamentService
@@ -191,7 +191,7 @@ class GetTournamentsPerformanceTest extends Specification{
         tournamentService.createTournament(courseExecution.getId(), tournamentDto2)
 
         when:
-        1.upto(500000, {tournamentService.getTournaments(courseExecution.getId())})
+        1.upto(500000, {tournamentService.getTournaments()})
 
         then:
         true

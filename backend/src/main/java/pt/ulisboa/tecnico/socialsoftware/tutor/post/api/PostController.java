@@ -17,7 +17,6 @@ import java.util.Set;
 
 @RestController
 public class PostController {
-    private static Logger logger = LoggerFactory.getLogger(PostController.class);
 
     private PostService postService;
 

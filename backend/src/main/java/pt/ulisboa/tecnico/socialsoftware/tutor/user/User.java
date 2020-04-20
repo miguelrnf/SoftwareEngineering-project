@@ -7,10 +7,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
@@ -65,6 +65,10 @@ public class User implements UserDetails, DomainEntity {
     @ManyToMany
     private Set<Tournament> tournaments = new HashSet<>();
 
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Suggestion> suggestions = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
@@ -91,6 +95,14 @@ public class User implements UserDetails, DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);
+    }
+
+    public Set<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
     }
 
     public Integer getId() {
@@ -121,6 +133,7 @@ public class User implements UserDetails, DomainEntity {
     public String getName() {
         return name;
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -185,13 +198,6 @@ public class User implements UserDetails, DomainEntity {
     public void setPostQuestions(Set<PostQuestion> postQuestions) {
         this.postQuestions = postQuestions;
     }
-
-    public void addSuggestion(Suggestion suggestion) {
-        this.suggestions.add(suggestion);
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
-    private Set<Suggestion> suggestions = new HashSet<>();
 
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
@@ -468,5 +474,33 @@ public class User implements UserDetails, DomainEntity {
         }
 
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", key=" + key +
+                ", role=" + role +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
+                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
+                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
+                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
+                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
+                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
+                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
+                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
+                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
+                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
+                ", creationDate=" + creationDate +
+                ", lastAccess=" + lastAccess +
+                ", quizAnswers=" + quizAnswers +
+                ", courseExecutions=" + courseExecutions +
+                ", tournaments=" + tournaments +
+                ", postQuestions=" + postQuestions +
+                ", suggestions=" + suggestions +
+                '}';
     }
 }

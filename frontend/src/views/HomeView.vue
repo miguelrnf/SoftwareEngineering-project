@@ -78,7 +78,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Store from '@/store';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class HomeView extends Vue {
