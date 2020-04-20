@@ -118,4 +118,23 @@ public class PostQuestion {
     public void setEdited(Boolean edited) {
         isEdited = edited;
     }
+
+    public void remove() {
+        this.user.getPostQuestions().remove(this);
+        this.post = null;
+    }
+
+    @Override
+    public String toString() {
+        return "PostQuestion{" +
+                "id=" + id +
+                ", post_id=" + post.getId() +
+                ", post_key=" + post.getKey() +
+                ", question_id=" + question.getId() +
+                ", user=" + user +
+                ", studentQuestion='" + studentQuestion + '\'' +
+                ", creationDate=" + creationDate +
+                ", isEdited=" + isEdited +
+                '}';
+    }
 }

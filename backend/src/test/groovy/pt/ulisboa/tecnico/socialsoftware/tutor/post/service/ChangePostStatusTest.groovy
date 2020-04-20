@@ -91,11 +91,13 @@ class ChangePostStatusTest extends Specification {
         VALID_PQ.setQuestion(VALID_Q)
         VALID_PQ.setUser(VALID_U)
         VALID_PQ.setStudentQuestion(VALID_STUDENT_QUESTION)
+        VALID_U.addPostQuestion(VALID_PQ)
 
         and: "a valid post"
         VALID_P = new Post()
         VALID_P.setKey(VALID_KEY)
         VALID_P.setQuestion(VALID_PQ)
+        VALID_PQ.setPost(VALID_P)
 
         and: "a valid user that does not own the post"
         INVALID_U_NOT_OWNER = new User()
@@ -140,7 +142,7 @@ class ChangePostStatusTest extends Specification {
     @Unroll
     def "valid status change"() {
         when:
-        def result = postService.changePostStatus(new PostDto(VALID_P), new UserDto(u))
+        def result = postService.changePostStatus(expected.getKey(), u)
 
         then:
         result.getPostStatus() != expected.getPostStatus()
@@ -154,7 +156,7 @@ class ChangePostStatusTest extends Specification {
     @Unroll
     def "invalid status change"() {
         when:
-        postService.changePostStatus(new PostDto(VALID_P), new UserDto(u))
+        postService.changePostStatus(VALID_KEY, u)
 
         then:
         def result = thrown(TutorException)
