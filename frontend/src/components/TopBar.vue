@@ -55,7 +55,8 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark
+            data-cy="management">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -107,6 +108,14 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>ImpExp</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/suggestions">
+              <v-list-item-action>
+                <v-icon>question_answer</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Suggestions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/posts/home">
@@ -220,6 +229,14 @@
                 <v-list-item-title>Submit Post</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/student/suggestions">
+              <v-list-item-action>
+                <v-icon>question_answer</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Suggestions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -309,6 +326,13 @@
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
             </v-list-item-content>
+          </v-list-item><v-list-item to="/management/suggestions">
+            <v-list-item-action>
+              <v-icon>question_answer</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Suggestions</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/topics">
             <v-list-item-action>
@@ -396,6 +420,13 @@
               <v-icon>done</v-icon>
             </v-list-item-action>
             <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/suggestions">
+            <v-list-item-action>
+              <v-icon>question_answer</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Suggestions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/posts/home">

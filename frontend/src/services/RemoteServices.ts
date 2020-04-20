@@ -13,6 +13,7 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
 import Post from '@/models/management/Post';
 import ListPost from '@/models/management/ListPost';
@@ -111,6 +112,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getSuggestions(): Promise<Suggestion[]> {
+    return httpClient
+      .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/listall`)
+      .then(response => {
+        return response.data.map((suggestion: any) => {
+          return new Suggestion(suggestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
       .get(
@@ -158,6 +172,21 @@ export default class RemoteServices {
       });
   }
 
+  static createSuggestion(sugg: Suggestion): Promise<Suggestion> {
+    return httpClient
+        .post(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/`,
+            sugg
+        )
+        .then(response => {
+          return new Suggestion(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+
   static async updateQuestion(question: Question): Promise<Question> {
     return httpClient
       .put(`/questions/${question.id}`, question)
@@ -167,6 +196,28 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
+    return httpClient
+      .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/edit`, sugg)
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
+    return httpClient
+        .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`, sugg)
+        .then(response => {
+          return new Suggestion(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
   }
 
   static async deleteQuestion(questionId: number) {

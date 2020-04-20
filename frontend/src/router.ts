@@ -24,12 +24,18 @@ import TournamentsView from '@/views/admin/TournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournament/CreateTournamentsView.vue';
 import PostsView from '@/views/PostsView.vue';
 import PostPostView from '@/views/student/PostPostView.vue';
+
+import TeacherSuggView from './views/teacher/Suggestions/SuggestionView.vue';
+import ShowSuggDialog from './views/teacher/Suggestions/ShowSuggDialog.vue';
+
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
+import SuggestionsView from '@/views/suggestions/SuggestionsView.vue';
+
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
 import PostGeneralView from '@/views/PostGeneralView.vue';
 
@@ -78,6 +84,15 @@ let router = new Router({
           }
         },
         {
+          path: 'suggestions',
+          name: 'suggestions-management',
+          component: TeacherSuggView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Suggestions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
           path: 'topics',
           name: 'topics-management',
           component: TopicsView,
@@ -107,9 +122,9 @@ let router = new Router({
         {
           path: 'students',
           name: 'students-management',
-          component: StudentsView,
+          component: TeacherSuggView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Students',
+            title: process.env.VUE_APP_NAME + ' - Teacher',
             requiredAuth: 'Teacher'
           }
         },
@@ -216,6 +231,15 @@ let router = new Router({
           component: StatsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Stats',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'suggestions',
+          name: 'suggestions',
+          component: SuggestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Suggestions',
             requiredAuth: 'Student'
           }
         },
