@@ -80,7 +80,7 @@ class SubmitPostPerformanceTest extends Specification {
         userRepository.save(user)
 
         when: "5000 posts get submitted"
-        1.upto(5000, {
+        1.upto(50, {
             postService.submitPost(11, pq)
         })
         

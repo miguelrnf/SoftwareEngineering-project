@@ -131,6 +131,7 @@ class ChangeDiscussStatus extends Specification{
         VALID_P.setKey(VALID_KEY_2)
         VALID_P.setQuestion(VALID_PQ)
         VALID_P.setAnswer(VALID_PA)
+        VALID_PQ.setPost(VALID_P)
 
         and: "a valid user that does not own the post"
         INVALID_U_NOT_OWNER = new User()
@@ -202,7 +203,7 @@ class ChangeDiscussStatus extends Specification{
         when:
         def dto = new PostDto(post)
         dto.getQuestion().setUser(new UserDto(user))
-        def result = postService.changeDiscussStatus(dto)
+        def result = postService.changeDiscussStatus(expected.getKey(), user)
 
         then:
         result.getDiscussStatus() != expected.getDiscussStatus()
@@ -219,7 +220,7 @@ class ChangeDiscussStatus extends Specification{
         when:
         def dto = new PostDto(post)
         dto.getQuestion().setUser(new UserDto(user))
-        postService.changeDiscussStatus(dto)
+        postService.changeDiscussStatus(VALID_KEY, user)
 
         then:
         def result = thrown(TutorException)

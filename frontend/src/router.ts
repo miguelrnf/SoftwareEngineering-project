@@ -22,7 +22,8 @@ import AvailableTournamentsView from '@/views/student/tournament/AvailableTourna
 import OwnTournamentsView from '@/views/student/tournament/OwnTournamentsView.vue';
 import TournamentsView from '@/views/admin/TournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournament/CreateTournamentsView.vue';
-
+import PostsView from '@/views/PostsView.vue';
+import PostPostView from '@/views/student/PostPostView.vue';
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
@@ -30,6 +31,8 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
+import PostGeneralView from '@/views/PostGeneralView.vue';
+
 
 Vue.use(Router);
 
@@ -224,6 +227,31 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Scan',
             requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: PostGeneralView,
+      children: [
+        {
+          path: 'submit',
+          name: 'submit-post',
+          component: PostPostView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'home',
+          name: 'all-posts',
+          component: PostsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'None'
           }
         }
       ]
