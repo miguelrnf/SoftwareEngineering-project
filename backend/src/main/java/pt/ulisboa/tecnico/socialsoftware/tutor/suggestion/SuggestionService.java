@@ -24,7 +24,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -77,9 +80,6 @@ public class SuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SuggestionDto createSuggestion(int courseId, SuggestionDto suggestionDto){
-        System.out.println("_____________________________________________________________________");
-        System.out.println(suggestionDto.toString());
-        System.out.println("_____________________________________________________________________");
         String username = suggestionDto.get_student().getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
@@ -262,8 +262,6 @@ public class SuggestionService {
         if (checkIfUserHasRoleStudent(u)) {
 
            // array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
-            System.out.println(userdto.getUsername());
-            System.out.println("....................................._:_____________________________________________________________");
             tmp = suggestionRepository.findAll().stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
