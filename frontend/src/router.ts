@@ -33,7 +33,6 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
 import PostGeneralView from '@/views/PostGeneralView.vue';
 
-
 Vue.use(Router);
 
 let router = new Router({

@@ -18,7 +18,6 @@ import Post from '@/models/management/Post';
 import ListPost from '@/models/management/ListPost';
 import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
-import User from '@/models/user/User';
 import { PostComment } from '@/models/management/PostComment';
 
 
