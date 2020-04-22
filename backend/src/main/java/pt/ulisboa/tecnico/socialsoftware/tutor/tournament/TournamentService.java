@@ -299,7 +299,7 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Tournament.TournamentStatus cancelTournament(int tournamentId, String username) {
+    public TournamentDto cancelTournament(int tournamentId, String username) {
        User user = findUsername(username);
        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
@@ -310,7 +310,8 @@ public class TournamentService {
            throw new TutorException(TOURNAMENT_INVALID_STATUS, "open");
 
        tournament.setStatus(Tournament.TournamentStatus.CANCELED);
+       tournament.checkStatus();
 
-       return tournament.checkStatus();
+       return new TournamentDto(tournament);
     }
 }

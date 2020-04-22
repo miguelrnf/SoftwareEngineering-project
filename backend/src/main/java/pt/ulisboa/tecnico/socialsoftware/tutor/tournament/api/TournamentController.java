@@ -112,9 +112,9 @@ public class TournamentController {
         return this.tournamentservice.getEnrolledTournaments(username, executionId);
     }
 
-    @GetMapping("/tournament/{tournamentId}/cancel")
+    @PutMapping("/tournament/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
-    public Tournament.TournamentStatus cancelTournament (Principal principal, @PathVariable Integer tournamentId) {
+    public TournamentDto cancelTournament (Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null)
