@@ -53,6 +53,9 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
     TOURNAMENT_UNABLE_EDIT("Unable to edit tournament, field: %s"),
     TOURNAMENT_UNABLE_REMOVE("Unable to remove, reason: %s"),
+    TOURNAMENT_PERMISSION_CANCEL("Only owner can cancel the tournament"),
+    TOURNAMENT_INVALID_STATUS("Tournament is %s"),
+
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
