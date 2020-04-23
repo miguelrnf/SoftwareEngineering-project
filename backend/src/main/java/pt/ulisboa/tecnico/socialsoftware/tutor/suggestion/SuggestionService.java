@@ -6,12 +6,18 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
@@ -24,10 +30,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -48,6 +51,9 @@ public class SuggestionService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -83,7 +89,8 @@ public class SuggestionService {
         String username = suggestionDto.get_student().getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
-        checkIfUserHasRoleStudent(user);
+
+        if(user.getRole().compareTo(User.Role.STUDENT) != 0) {throw new TutorException(USER_HAS_WRONG_ROLE);}
 
         Set<Topic> topics = checkIfTopicExists(course.getCourse().getId(), suggestionDto);
 
@@ -261,7 +268,6 @@ public class SuggestionService {
 
         if (checkIfUserHasRoleStudent(u)) {
 
-           // array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
             tmp = suggestionRepository.findAll().stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
@@ -286,4 +292,55 @@ public class SuggestionService {
 
         return s.getStatus();
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionDto addQuestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
+        String username = userDto.getUsername();
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
+
+        QuestionDto questionDto = suggestionToQuestion(suggestionDto);
+
+        if (questionDto.getCreationDate() == null) {
+            questionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
+        }
+
+        Question question = new Question(course, questionDto);
+
+        question.updateTopics(suggestion.get_topicsList());
+//falta adicionar novas infos
+        questionRepository.save(question);
+
+        return new QuestionDto(question);
+    }
+
+    private QuestionDto suggestionToQuestion(SuggestionDto sugg){
+        if (sugg.getStatus() != "APPROVED") throw new TutorException(SUGGESTION_NOT_APPROVED);
+
+        if (sugg.getTitle().trim().length() == 0 ||
+                sugg.get_questionStr().trim().length() == 0 ||
+                sugg.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
+            throw new TutorException(QUESTION_MISSING_DATA);
+        }
+
+        if (sugg.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
+            throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
+        }
+
+        QuestionDto questionDto = new QuestionDto();
+
+        questionDto.setContent(sugg.get_questionStr());
+        questionDto.setTitle(sugg.getTitle());
+        questionDto.setOptions(sugg.getOptions());
+        questionDto.setStatus(Question.Status.AVAILABLE.name());
+
+        return questionDto;
+    }
+
 }
