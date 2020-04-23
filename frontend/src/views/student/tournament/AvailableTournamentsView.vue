@@ -25,7 +25,7 @@
         <div class="col">
           {{ t.numberOfQuestions }}
         </div>
-        <div>
+        <div class="col">
           <v-btn
             class="btn"
             color="primary"
@@ -119,13 +119,11 @@ export default class AvailableTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      console.log(this.currentTournament);
       this.tournaments = await RemoteServices.getOpenedTournaments();
       if (this.tournaments.length != 0) {
         this.iscreated = true;
         this.currentTournament = this.tournaments[0];
       }
-      console.log(this.currentTournament);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -245,16 +243,12 @@ export default class AvailableTournamentsView extends Vue {
       flex-basis: 25% !important;
       margin: auto; /* Important */
       text-align: center;
+      word-wrap: break-word;
     }
 
     .list-row {
       background-color: #ffffff;
       box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
-      display: flex;
-    }
-
-    .btn {
-      flex-basis: 20% !important;
       display: flex;
     }
   }
