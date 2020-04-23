@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -51,5 +53,11 @@ public class SuggestionController {
         return this.suggestionService.listAllSuggestions(new UserDto(user));
     }
 
+    @PostMapping(value = "/courses/{courseId}/suggestions/newquestion")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public QuestionDto addQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody SuggestionDto suggDto) {
+        User user = (User)((Authentication)principal).getPrincipal();
+        return this.suggestionService.addQuestion(courseId, suggDto, new UserDto(user));
+    }
 
 }
