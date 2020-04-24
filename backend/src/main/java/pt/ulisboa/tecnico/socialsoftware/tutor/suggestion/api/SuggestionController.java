@@ -54,7 +54,7 @@ public class SuggestionController {
     }
 
     @PostMapping(value = "/courses/{courseId}/suggestions/newquestion")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')) or hasRole('ROLE_ADMIN')")
     public QuestionDto addQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
         return this.suggestionService.addQuestion(courseId, suggDto, new UserDto(user));

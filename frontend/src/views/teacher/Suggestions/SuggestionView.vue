@@ -27,7 +27,6 @@
 
             <template v-slot:item._questionStr="{ item }">
                 <p
-                        v-html="convertMarkDownNoFigure(item._questionStr, null)"
                         @click="showSuggestionDialog(item)"
                 /></template>
 
@@ -112,6 +111,20 @@
                     </template>
                     <span>Reject Suggestion</span>
                 </v-tooltip>
+
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-icon
+                                small
+                                class="mr-2"
+                                v-on="on"
+                                @click="AddQuestion(item)"
+                                data-cy="addQuestionButton"
+                        >fas fa-book-medical</v-icon
+                        >
+                    </template>
+                    <span>Reject Suggestion</span>
+                </v-tooltip>
                 <!--  <v-tooltip bottom>
                    <template v-slot:activator="{ on }">
                      <v-icon
@@ -141,6 +154,13 @@
                 :suggestion="currentSuggestion"
                 v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
         />
+        <add-question-dialog
+                v-if="currentSuggestion"
+                v-model="addQuestionDialog"
+                :suggestion="currentSuggestion"
+                :dialog="addQuestionDialog"
+                v-on:save-suggestion="onSaveSuggestion"
+        />
     </v-card>
 </template>
 
@@ -158,12 +178,14 @@
     import ShowSuggestionDialog from '@/views/suggestions/ShowSuggestionDialog.vue';
     import ApproveSuggDialogue from '@/views/teacher/Suggestions/ApproveSuggDialogue.vue';
     import ShowSuggDialog from '@/views/teacher/Suggestions/ShowSuggDialog.vue';
+    import AddQuestionDialog from '@/views/teacher/Suggestions/AddQuestionDialog.vue';
 
     @Component({
         components: {
             'show-suggestion-dialog': ShowSuggDialog,
             'approve-suggestion-dialog': ApproveSuggDialogue,
-            'edit-question-topics': EditQuestionTopics
+            'edit-question-topics': EditQuestionTopics,
+            'add-question-dialog': AddQuestionDialog
         }
     })
     export default class SuggestionsView extends Vue {
@@ -172,8 +194,9 @@
         currentSuggestion: Suggestion | null = null;
         approveSuggDialog: boolean = false ;
         questionDialog: boolean = false;
+        addQuestionDialog: boolean = false;
         search: string = '';
-        statusList = ['TOAPPROVE', 'APPROVED', 'REJECTED'];
+        statusList = ['TOAPPROVE', 'APPROVED', 'REJECTED', 'QUESTION'];
 
         headers: object = [
             { text: 'Suggestion', value: '_questionStr', align: 'left' },
@@ -229,9 +252,7 @@
             );
         }
 
-        convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-            return convertMarkDownNoFigure(text, image);
-        }
+
 
 
         onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
@@ -295,7 +316,6 @@
         }
 
 
-
         async RejectSuggestion(sugg: Suggestion) {
             sugg.status = 'REJECTED'
             sugg._justification = 'No justification was given'
@@ -303,13 +323,18 @@
             this.$emit('approve-question', result);
         }
 
+        async AddQuestion(sugg: Suggestion) {
+            this.currentSuggestion = sugg;
+            this.addQuestionDialog = true;
+        }
+
 
         async onSaveSuggestion(sugg: Suggestion) {
             //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
             this.suggestions.unshift(sugg);
             this.approveSuggDialog = false;
+            this.addQuestionDialog = false;
             this.currentSuggestion = null;
-
         }
 
         async exportCourseQuestions() {
