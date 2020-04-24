@@ -22,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         })
 public class Suggestion {
     public enum Status {
-        TOAPPROVE, APPROVED, REJECTED
+        TOAPPROVE, APPROVED, REJECTED, QUESTION
     }
 
     @Id

@@ -313,6 +313,8 @@ public class SuggestionService {
 
         Question question = new Question(course, questionDto);
 
+        suggestion.setStatus(Suggestion.Status.QUESTION);
+
         question.updateTopics(suggestion.get_topicsList());
 //falta adicionar novas infos
         questionRepository.save(question);
