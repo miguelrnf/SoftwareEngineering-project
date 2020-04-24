@@ -321,7 +321,7 @@ public class SuggestionService {
     }
 
     private QuestionDto suggestionToQuestion(SuggestionDto sugg){
-        if (sugg.getStatus() != "APPROVED") throw new TutorException(SUGGESTION_NOT_APPROVED);
+        if (!sugg.getStatus().equals("APPROVED")) throw new TutorException(SUGGESTION_NOT_APPROVED);
 
         if (sugg.getTitle().trim().length() == 0 ||
                 sugg.get_questionStr().trim().length() == 0 ||
