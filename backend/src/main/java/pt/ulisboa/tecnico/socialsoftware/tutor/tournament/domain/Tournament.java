@@ -4,6 +4,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -53,6 +54,10 @@ public class Tournament {
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
+    @OneToOne
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
@@ -97,6 +102,14 @@ public class Tournament {
 
     public Set<User> getEnrolledStudents() {
         return enrolledStudents;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
     }
 
     public void setId(Integer id) {
