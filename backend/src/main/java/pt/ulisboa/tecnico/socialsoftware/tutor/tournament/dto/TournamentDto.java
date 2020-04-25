@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
@@ -24,7 +23,6 @@ public class TournamentDto implements Serializable {
     private String title;
     private UserDto owner;
     private String status = "CREATED";
-    private StatementQuizDto statementQuizDto;
     private List<UserDto> enrolledStudents = new ArrayList<>();
 
     @Transient
@@ -115,14 +113,6 @@ public class TournamentDto implements Serializable {
 
     public void setEnrolledStudents(List<UserDto> enrolledStudents) {
         this.enrolledStudents = enrolledStudents;
-    }
-
-    public StatementQuizDto getStatementQuizDto() {
-        return statementQuizDto;
-    }
-
-    public void setStatementQuizDto(StatementQuizDto statementQuizDto) {
-        this.statementQuizDto = statementQuizDto;
     }
 
     public LocalDateTime getCreationDateDate() {

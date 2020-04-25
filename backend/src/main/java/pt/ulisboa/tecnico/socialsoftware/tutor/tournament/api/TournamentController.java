@@ -6,10 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -123,18 +120,6 @@ public class TournamentController {
             throw new TutorException(AUTHENTICATION_ERROR);
 
         return this.tournamentservice.cancelTournament(tournamentId, user.getUsername());
-    }
-
-    @PostMapping("/executions/{tournamentId}/quiz/generate")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
-    public StatementQuizDto getNewTournamentQuiz(Principal principal, @PathVariable int tournamentId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if(user == null){
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
-
-        return tournamentservice.generateTournamentQuiz(user.getUsername(), tournamentId);
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/delete") //ONLY FOR CLEAN DATABASE AFTER EACH TEST

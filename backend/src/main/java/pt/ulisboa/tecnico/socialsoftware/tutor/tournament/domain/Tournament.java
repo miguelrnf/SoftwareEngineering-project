@@ -4,17 +4,20 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_UNABLE_REMOVE;
 
 @Entity
 @Table(name = "tournaments",
@@ -204,20 +207,7 @@ public class Tournament {
         this.assessment = assessment;
     }
 
-    public TournamentStatus checkStatus(){
-        if(status == TournamentStatus.CANCELED)
-            return TournamentStatus.CANCELED;
-        if(LocalDateTime.now().isBefore(availableDate))
-            this.setStatus(TournamentStatus.CREATED);
-        else if(LocalDateTime.now().isBefore(conclusionDate))
-            this.setStatus(TournamentStatus.OPEN);
-        else
-            this.setStatus(TournamentStatus.CLOSED);
-        return status;
-    }
-
     public void remove() {
-        checkCanRemove();
 
         for(User s : this.enrolledStudents){
             s.getTournaments().remove(this);
@@ -230,14 +220,16 @@ public class Tournament {
         courseExecution = null;
     }
 
-    public void checkCanRemove() {
-        if( checkStatus() == TournamentStatus.OPEN)
-            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament is open");
+    public void generateQuiz(List<Question> questions, Quiz quiz) {
+        this.setQuiz(quiz);
+        IntStream.range(0,questions.size())
+                .forEach(index -> new QuizQuestion(this.quiz, questions.get(index), index));
 
-        if( checkStatus() == TournamentStatus.CREATED && !enrolledStudents.isEmpty())
-            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament has enrolled students");
-
-
+        this.quiz.setAvailableDate(this.availableDate);
+        this.quiz.setConclusionDate(this.conclusionDate);
+        this.quiz.setCreationDate(LocalDateTime.now());
+        this.quiz.setType(Quiz.QuizType.TOURNAMENT);
+        this.quiz.setTitle(this.title);
     }
 
 
