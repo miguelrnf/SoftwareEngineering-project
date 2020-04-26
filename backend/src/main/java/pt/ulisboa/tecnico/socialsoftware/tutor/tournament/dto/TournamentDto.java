@@ -52,7 +52,6 @@ public class TournamentDto implements Serializable {
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
         this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
-
     }
 
     public Integer getId() {

@@ -27,7 +27,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
         })
 public class Quiz implements DomainEntity {
     public enum QuizType {
-        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS
+        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS, TOURNAMENT
     }
 
     @Id

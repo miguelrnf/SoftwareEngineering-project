@@ -4,20 +4,28 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
@@ -40,13 +48,13 @@ class GetOpenedTournamentSpockTest extends Specification{
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final USERNAME_1 = 'username1'
+    static final USERNAME_2 = 'username2'
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now().plusDays(1)
+    static final DATENOW = LocalDateTime.now()
     static final DATETOMORROW = LocalDateTime.now().plusDays(2)
     static int tempId = 1
-    static int tournId = 1
     static int userId = 1
 
     @Autowired
@@ -72,6 +80,12 @@ class GetOpenedTournamentSpockTest extends Specification{
 
     @Autowired
     AssessmentRepository assessmentRepository
+
+    @Autowired
+    QuizRepository quizRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def assdto
@@ -101,6 +115,9 @@ class GetOpenedTournamentSpockTest extends Specification{
     def STUDENT
 
     @Shared
+    def user_s
+
+    @Shared
     def course
 
     @Shared
@@ -111,6 +128,12 @@ class GetOpenedTournamentSpockTest extends Specification{
 
     @Shared
     def formatter
+
+    @Shared
+    def questionOne
+
+    @Shared
+    def questionTwo
 
     def setupSpec() {
 
@@ -125,19 +148,17 @@ class GetOpenedTournamentSpockTest extends Specification{
         and: "some tournamentDtos"
         tournamentDto1 = new TournamentDto()
         tournamentDto1.setId(1)
-        tournamentDto1.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
-        tournamentDto1.setNumberOfQuestions(3)
+        tournamentDto1.setNumberOfQuestions(1)
         tournamentDto1.setAvailableDate(DATENOW.format(formatter))
         tournamentDto1.setConclusionDate(DATETOMORROW.format(formatter))
-
 
         tournamentDto2 = new TournamentDto()
         tournamentDto2.setId(2)
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
-        tournamentDto2.setNumberOfQuestions(3)
+        tournamentDto2.setNumberOfQuestions(1)
         tournamentDto2.setAvailableDate(DATENOW.format(formatter))
         tournamentDto2.setConclusionDate(DATETOMORROW.format(formatter))
     }
@@ -150,6 +171,10 @@ class GetOpenedTournamentSpockTest extends Specification{
         user.setKey(2)
         user.setRole(User.Role.STUDENT)
         user.setUsername(USERNAME_1)
+        user_s = new User()
+        user_s.setKey(3)
+        user_s.setRole(User.Role.STUDENT)
+        user_s.setUsername(USERNAME_2)
 
         and: "a topic dto"
         topicDto = new TopicDto()
@@ -168,6 +193,24 @@ class GetOpenedTournamentSpockTest extends Specification{
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
         topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
+
+        and:"questions"
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        course.addQuestion(questionOne)
+        questionOne.addTopic(topic)
+        topic.addQuestion(questionOne)
+
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        course.addQuestion(questionTwo)
+        questionTwo.addTopic(topic)
+        topic.addQuestion(questionTwo)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
@@ -179,54 +222,51 @@ class GetOpenedTournamentSpockTest extends Specification{
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(user)
+        userRepository.save(user_s)
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)
         assessmentRepository.save(ass)
+        questionRepository.save(questionOne)
+        questionRepository.save(questionTwo)
     }
 
     def "show tournaments"(){
         //available tournaments exist and are listed
         given: "two tournaments"
         assdto.setId(tempId++)
-        tournamentDto2.setStatus(Tournament.TournamentStatus.CREATED.name())
+        tournamentDto1.setStatus(Tournament.TournamentStatus.OPEN.name())
+        tournamentDto2.setStatus(Tournament.TournamentStatus.OPEN.name())
         tournamentDto1.setAssessmentDto(assdto)
         tournamentDto2.setAssessmentDto(assdto)
-        tournamentService.createTournament(courseExecution.id, tournamentDto1)
-        tournamentService.createTournament(courseExecution.id, tournamentDto2)
         def tournament1 = new Tournament(tournamentDto1, user, ass)
         def tournament2 = new Tournament(tournamentDto2, user, ass)
-        tournament1.setId(tournId++)
-        tournament2.setId(tournId++)
+        tournament1.setCourseExecution(courseExecution)
+        tournament2.setCourseExecution(courseExecution)
+        courseExecution.addTournament(tournament1)
+        courseExecution.addTournament(tournament2)
+        tournament1.getEnrolledStudents().add(user)
+        tournament2.getEnrolledStudents().add(user)
+        tournament1.getEnrolledStudents().add(user_s)
+        tournament2.getEnrolledStudents().add(user_s)
+        tournamentRepository.save(tournament1)
+        tournamentRepository.save(tournament2)
 
         when:
-        def result = tournamentService.listTournaments(courseExecution.getId())
+        def result = tournamentService.listOpenedTournaments(courseExecution.id)
 
         then:
         result.contains(new TournamentDto(tournament1))
         result.contains(new TournamentDto(tournament2))
         result.size() == 2
+        tournament1.getQuiz().getAvailableDate().format(formatter) == tournamentDto1.getAvailableDate()
+        tournament1.getQuiz().getConclusionDate().format(formatter) == tournamentDto1.getConclusionDate()
+        tournament1.getQuiz().getTitle() == tournamentDto1.getTitle()
+        tournament1.getQuiz().getType() == Quiz.QuizType.TOURNAMENT
+        tournament2.getQuiz().getAvailableDate().format(formatter) == tournamentDto2.getAvailableDate()
+        tournament2.getQuiz().getConclusionDate().format(formatter) == tournamentDto2.getConclusionDate()
+        tournament2.getQuiz().getTitle() == tournamentDto2.getTitle()
+        tournament2.getQuiz().getType() == Quiz.QuizType.TOURNAMENT
     }
-
-    @Unroll
-    def "tournament with status=#status || errorMessage=#errorMessage "() {
-        given:
-        assdto.setId(tempId++)
-        tournamentDto2.setStatus(status)
-        tournamentDto2.setAssessmentDto(assdto)
-        tournamentService.createTournament(courseExecution.id, tournamentDto2)
-
-        when:
-        tournamentService.listTournaments(courseExecution.getId())
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == errorMessage
-
-        where:
-        status     ||       errorMessage
-        "CANCELED" || TOURNAMENT_LIST_EMPTY
-    }
-
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
@@ -234,6 +274,26 @@ class GetOpenedTournamentSpockTest extends Specification{
         @Bean
         TournamentService tournamentService() {
             return new TournamentService()
+        }
+
+        @Bean
+        QuizService quizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService answerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        AnswersXmlImport answersXmlImport() {
+            return new AnswersXmlImport()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }
