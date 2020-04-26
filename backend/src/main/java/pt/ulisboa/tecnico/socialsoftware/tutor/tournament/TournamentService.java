@@ -6,7 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -31,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,9 +57,6 @@ public class TournamentService {
 
     @Autowired
     private QuestionRepository questionRepository;
-
-    @Autowired
-    private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -120,6 +117,23 @@ public class TournamentService {
                         .getCourseExecution().getId().equals(courseExecutionId))
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
+        if(temp.isEmpty())
+            throw new TutorException(TOURNAMENT_LIST_EMPTY);
+
+        return temp;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listOpenedTournaments(int courseExecutionId) {
+        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+                .filter(tournament -> this.checkStatus(tournament).equals(Tournament.TournamentStatus.OPEN) && tournament
+                        .getCourseExecution().getId().equals(courseExecutionId))
+                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+                .collect(Collectors.toList());
+
         if(temp.isEmpty())
             throw new TutorException(TOURNAMENT_LIST_EMPTY);
 
@@ -395,4 +409,5 @@ public class TournamentService {
 
         new QuizDto(quiz, true);
     }
+
 }

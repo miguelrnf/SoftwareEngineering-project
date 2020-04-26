@@ -225,10 +225,10 @@ public class Tournament {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this.quiz, questions.get(index), index));
 
+        this.quiz.setType(Quiz.QuizType.TOURNAMENT);
         this.quiz.setAvailableDate(this.availableDate);
         this.quiz.setConclusionDate(this.conclusionDate);
         this.quiz.setCreationDate(LocalDateTime.now());
-        this.quiz.setType(Quiz.QuizType.TOURNAMENT);
         this.quiz.setTitle(this.title);
     }
 

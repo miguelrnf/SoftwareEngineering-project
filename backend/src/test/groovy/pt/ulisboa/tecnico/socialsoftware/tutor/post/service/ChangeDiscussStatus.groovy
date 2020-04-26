@@ -187,7 +187,6 @@ class ChangeDiscussStatus extends Specification{
         postAnswered.setAnswer(answer)
 
         then: "add to repository"
-        println(user1.dump())
         userRepository.save(user1)
         userRepository.save(user2)
         userRepository.save(user3)

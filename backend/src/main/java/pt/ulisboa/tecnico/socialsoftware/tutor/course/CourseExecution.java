@@ -164,4 +164,11 @@ public class CourseExecution {
     }
 
     public void addSuggestion(Suggestion suggestion) {this.suggestions.add(suggestion); }
+
+    @Override
+    public String toString() {
+        return "CourseExecution{" +
+                "id=" + id +
+                '}';
+    }
 }
