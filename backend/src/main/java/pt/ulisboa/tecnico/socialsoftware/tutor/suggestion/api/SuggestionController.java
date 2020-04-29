@@ -3,17 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
@@ -34,7 +28,7 @@ public class SuggestionController {
         return this.suggestionService.createSuggestion(courseExecutionId, suggDto);
     }
 
-    @PutMapping(value = "/courses/{courseExecutionId}/suggestions")
+    @PutMapping(value = "/courses/{courseExecutionId}/suggestions/approve")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
     public SuggestionDto approveSuggestion(Principal principal, @PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
@@ -42,20 +36,20 @@ public class SuggestionController {
     }
 
     @PutMapping(value = "/courses/{courseExecutionId}/suggestions/edit")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
     public SuggestionDto editSuggestion(Principal principal,@PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
         return this.suggestionService.editSuggestion(suggDto);
     }
 
+    @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listall")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId) {
 
+        User user = (User)((Authentication)principal).getPrincipal();
 
-    /*
-    @DeleteMapping("/topics/{topicId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#topicId, 'TOPIC.ACCESS')")
-    public ResponseEntity removeTopic(@PathVariable Integer topicId) {
-        topicService.removeTopic(topicId);
-        return ResponseEntity.ok().build();
-    }*/
+        return this.suggestionService.listAllSuggestions(new UserDto(user));
+    }
+
 
 }

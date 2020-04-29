@@ -100,10 +100,10 @@ class SuggestionDashboard extends Specification {
     def INVALID_U_UNAME
 
     @Shared
-    def INVALID_U_ROLE
+    def VALID_U_ROLE
 
     @Shared
-    def VALID_TOPIC
+    def VALID_U_ROLEdto
 
     @Shared
     def VALID_TOPIC_LIST
@@ -118,7 +118,7 @@ class SuggestionDashboard extends Specification {
     def FORMATTER
 
     @Shared
-    def INVALID_SUGGESTION_E
+    def VALID_COURSE
 
     @Shared
     def INVALID_SUGGESTION_F
@@ -137,6 +137,7 @@ class SuggestionDashboard extends Specification {
 
     def course
     def courseExecution
+    def courseexec
 
     def setupSpec() {
         given: "a user with an invalid uid"
@@ -148,11 +149,22 @@ class SuggestionDashboard extends Specification {
         and: ""
         FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
+        and: "valid course"
+        VALID_COURSE = new HashSet<CourseExecution>()
+        VALID_COURSE.add (new CourseExecution(new Course(COURSE_NAME, "TECNICO" as Course.Type), ACRONYM, ACADEMIC_TERM, "TECNICO" as Course.Type))
+
         and: "a user with the role teacher"
-        INVALID_U_ROLE = new User()
-        INVALID_U_ROLE.setId(VALID_ID)
-        INVALID_U_ROLE.setRole(User.Role.TEACHER)
-        INVALID_U_ROLE.setUsername(VALID_USERNAME_TEACHER)
+        VALID_U_ROLE = new User()
+        VALID_U_ROLE.setId(VALID_ID)
+        VALID_U_ROLE.setRole(User.Role.TEACHER)
+        VALID_U_ROLE.setUsername(VALID_USERNAME_TEACHER)
+        VALID_U_ROLE.setCourseExecutions(VALID_COURSE)
+
+        and: "a user with the role teacherdto"
+        VALID_U_ROLEdto = new UserDto(VALID_U_ROLE)
+        VALID_U_ROLEdto.setId(VALID_ID)
+        VALID_U_ROLEdto.setRole(User.Role.TEACHER)
+        VALID_U_ROLEdto.setUsername(VALID_USERNAME_TEACHER)
 
         and: "a user with an invalid username"
         INVALID_U_UNAME = new User()
@@ -183,12 +195,13 @@ class SuggestionDashboard extends Specification {
 
         and: "valid suggesiton"
         VALID_SUGGESTION = new SuggestionDto()
-        VALID_SUGGESTION.set_id(1)
+        VALID_SUGGESTION.set_id(2)
         VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
         VALID_SUGGESTION.set_changed(null)
+        VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
         VALID_SUGGESTION.set_student(VALID_Udto)
 
         and: "a valid user - STUDENT "
@@ -211,13 +224,16 @@ class SuggestionDashboard extends Specification {
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
+        courseexec = new HashSet<CourseExecution>()
+        courseexec.add(courseExecution)
+
 
         and: "a user with the role teacher"
         def userT = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
+        userT.setCourseExecutions(courseexec)
 
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
-
 
 
         and: "a user with the role student that didn't create that suggestion"
@@ -234,6 +250,7 @@ class SuggestionDashboard extends Specification {
         suggestion.set_questionStr(SUGGESTION_CONTENT)
         suggestion.setKey(VALID_KEY)
         suggestion.setCreationDate(LocalDateTime.now())
+        suggestion.setCourse(courseExecution)
 
         then: "add to repository"
         courseRepository.save(course)
@@ -247,9 +264,10 @@ class SuggestionDashboard extends Specification {
     }
 
     @Unroll
-    def "valid suggestion list"() {
+    def "valid suggestion status as a student"() {
+
         when:
-        def result = suggestionService.listAllSuggestions(new UserDto(u as User))
+        def result = suggestionService.listAllSuggestions(u)
 
 
         then:
@@ -261,8 +279,29 @@ class SuggestionDashboard extends Specification {
 
         where:
         s                  | l                | u
-        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_U
+        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_Udto
     }
+
+    @Unroll
+    def "valid suggestion status as a teacher"() {
+
+        when:
+        def result = suggestionService.listAllSuggestions(u)
+
+
+        then:
+        result.size().equals(VALID_SUGGESTION_LIST.size())
+
+        for(int i = 0; i < result.size(); i++)
+            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
+
+
+        where:
+        s                  | l                | u
+        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_U_ROLEdto
+    }
+
+
 
     @Unroll
     def "empty suggestions list"() {
@@ -277,7 +316,7 @@ class SuggestionDashboard extends Specification {
         where:
         s                  | l                | u                     | expected
         SUGGESTION_CONTENT | VALID_TOPIC_LIST | VALID_U1              | ErrorMessage.EMPTY_SUGGESTIONS_LIST.label
-        SUGGESTION_CONTENT | VALID_TOPIC_LIST | INVALID_U_ROLE        | ErrorMessage.USER_HAS_WRONG_ROLE.label
+        SUGGESTION_CONTENT | VALID_TOPIC_LIST | VALID_U_ROLEdto       | ErrorMessage.EMPTY_SUGGESTIONS_LIST.label
 
 
     }

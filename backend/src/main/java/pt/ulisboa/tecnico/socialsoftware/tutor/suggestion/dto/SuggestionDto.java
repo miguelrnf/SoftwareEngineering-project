@@ -1,20 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class SuggestionDto implements Serializable {
+public class SuggestionDto implements Serializable{
+
 
     private Integer _id;
     private Integer key;
@@ -25,6 +24,7 @@ public class SuggestionDto implements Serializable {
     private String creationDate = null;
     private String _status;
     private UserDto _student;
+    private CourseExecution _courseexecution;
 
 
     public SuggestionDto(){
@@ -34,7 +34,7 @@ public class SuggestionDto implements Serializable {
         this._id= suggestion.get_id();
         this.key=suggestion.getKey();
         this._topicsList = suggestion.get_topicsList().stream().map(TopicDto::new).collect(Collectors.toList());
-
+        this._courseexecution = suggestion.getCourse();
         this._changed=suggestion.get_changed();
         this._justification=suggestion.get_justification();
         this._student=new UserDto(suggestion.get_student());
@@ -120,6 +120,11 @@ public class SuggestionDto implements Serializable {
         this._student = _student;
     }
 
+    public void setCourse(CourseExecution _courseexecution) {
+        this._courseexecution = _courseexecution;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -140,5 +145,20 @@ public class SuggestionDto implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(_id, key, _questionStr, _topicsList, _changed, _justification, creationDate, _status, _student);
+    }
+
+    @Override
+    public String toString() {
+        return "SuggestionDto{" +
+                "_id=" + _id +
+                ", key=" + key +
+                ", _questionStr='" + _questionStr + '\'' +
+                ", _topicsList=" + _topicsList +
+                ", _changed=" + _changed +
+                ", _justification='" + _justification + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", _status='" + _status + '\'' +
+                ", _student=" + _student +
+                '}';
     }
 }

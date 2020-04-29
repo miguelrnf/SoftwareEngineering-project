@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -95,7 +96,11 @@ public class SuggestionService {
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
+
+        topics.forEach(topic -> topic.addSuggestion(suggestion));
+
         entityManager.persist(suggestion);
+
         return new SuggestionDto(suggestion);
     }
 
@@ -109,10 +114,17 @@ public class SuggestionService {
         User user = checkIfUserExists(username);
         if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
 
-        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
 
-        suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()) );
-        suggestion.set_justification(suggestionDto.get_justification());
+        suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()));
+
+        if (suggestionDto.getStatus() == "REJECTED") {
+
+            suggestion.set_justification(suggestionDto.get_justification());
+
+        }
+
+
 
 
         return new SuggestionDto(suggestion);
@@ -144,7 +156,7 @@ public class SuggestionService {
 
         if(!user.getUsername().equals(suggestionDto.get_student().getUsername()))  throw new TutorException(NOT_SUGGESTION_CREATOR);
 
-        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
 
         entityManager.remove(suggestion);
     }
@@ -156,8 +168,8 @@ public class SuggestionService {
         return u;
     }
 
-    private Suggestion checkIfSuggestionExists(int suggestionKey) {
-        return suggestionRepository.findByKey(suggestionKey).orElseThrow(() -> new TutorException(SUGGESTION_NOT_FOUND));
+    private Suggestion checkIfSuggestionExists(int suggestionId) {
+        return suggestionRepository.findById(suggestionId).orElseThrow(() -> new TutorException(SUGGESTION_NOT_FOUND));
     }
 
     private  Set<Topic> checkIfTopicExists(int courseId, SuggestionDto suggestionDto) {
@@ -175,16 +187,20 @@ public class SuggestionService {
                 .collect(Collectors.toSet());
     }
 
-    private void checkIfUserHasRoleStudent(User user) {
-        if(user.getRole().compareTo(User.Role.STUDENT) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    private boolean checkIfUserHasRoleStudent(User user) {
+        if(user.getRole().compareTo(User.Role.STUDENT) != 0) {return false;}
+
+        return true;
     }
 
     private void checkIfUserIsValid (SuggestionDto suggestionDto, Suggestion s) {
         if(!suggestionDto.get_student().getUsername().equals(s.get_student().getUsername())) throw new TutorException(ACCESS_DENIED);
     }
 
-    private void checkIfUserHasRoleTeacher(User user) {
-        if(user.getRole().compareTo(User.Role.TEACHER) != 0) throw new TutorException(USER_HAS_WRONG_ROLE);
+    private boolean checkIfUserHasRoleTeacher(User user) {
+        if(user.getRole().compareTo(User.Role.TEACHER) != 0) {return false;}
+
+        return true;
     }
 
     @Retryable(
@@ -194,7 +210,7 @@ public class SuggestionService {
     public SuggestionDto editSuggestion(SuggestionDto suggestionDto) {
 
         checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
-        Suggestion s = checkIfSuggestionExists(suggestionDto.getKey());
+        Suggestion s = checkIfSuggestionExists(suggestionDto.get_id());
         checkIfUserIsValid (suggestionDto,s);
 
         if (s.get_questionStr().isEmpty()) {
@@ -223,12 +239,51 @@ public class SuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SuggestionDto> listAllSuggestions(UserDto userdto) {
 
-        checkIfUserHasRoleStudent(checkIfUserExists(userdto.getUsername()));
+        List<SuggestionDto> array = new ArrayList<>();
+        List<Suggestion> tmp = new ArrayList<>();
+        User u = checkIfUserExists(userdto.getUsername());
 
-        List<SuggestionDto> array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+        if (checkIfUserHasRoleTeacher(u)) {
 
-        if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
-        return array;
+            for (CourseExecution Course : u.getCourseExecutions()) {
+
+                array.addAll(suggestionRepository.listAllSuggestionsbyCourseId(Course.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList()));
+
+            }
+
+            if (array.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+
+            return array;
+        }
+
+
+        if (checkIfUserHasRoleStudent(u)) {
+
+           // array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
+            tmp = suggestionRepository.findAll().stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+            if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+            return tmp.stream().map(SuggestionDto::new).collect(Collectors.toList());
+
+        }
+
+        throw new TutorException(ACCESS_DENIED);
+
+    }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Suggestion.Status SeeSuggestionStatus(SuggestionDto suggestionDto) {
+
+        checkIfUserHasRoleStudent(checkIfUserExists(suggestionDto.get_student().getUsername()));
+        Suggestion s = checkIfSuggestionExists(suggestionDto.get_id());
+        checkIfUserIsValid (suggestionDto,s);
+
+        return s.getStatus();
     }
 }

@@ -14,7 +14,7 @@ public class TopicConjunctionDto implements Serializable {
     private List<TopicDto> topics = new ArrayList<>();
     private List<SuggestionDto> suggestions = new ArrayList<>();
 
-    public TopicConjunctionDto(){}
+    public TopicConjunctionDto() {}
 
     public TopicConjunctionDto(TopicConjunction topicConjunction) {
         this.id = topicConjunction.getId();
@@ -31,10 +31,6 @@ public class TopicConjunctionDto implements Serializable {
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public List<TopicDto> getTopics() {

@@ -70,8 +70,7 @@ class UpdateAssessmentTest extends Specification {
 
     def "update an assessment title, remove its topicConjunction and adding a new one"() {
         given: "an assessment dto"
-        def assessmentDto = new AssessmentDto()
-        assessmentDto.setId(assessment.getId())
+        def assessmentDto = new AssessmentDto(assessment)
         assessmentDto.setTitle(ASSESSMENT_TITLE_2)
         assessmentDto.setStatus(Assessment.Status.DISABLED.name())
         assessmentDto.setSequence(assessment.getSequence())
@@ -117,8 +116,7 @@ class UpdateAssessmentTest extends Specification {
 
     def "update an assessment adding a topic, a conjunction with topic and an empty conjunction"() {
         given: "an assessment dto"
-        def assessmentDto = new AssessmentDto()
-        assessmentDto.setId(assessment.getId())
+        def assessmentDto = new AssessmentDto(assessment)
         assessmentDto.setTitle(ASSESSMENT_TITLE_1)
         assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
         assessmentDto.setSequence(assessment.getSequence())
@@ -162,5 +160,4 @@ class UpdateAssessmentTest extends Specification {
             return new AssessmentService()
         }
     }
-
 }
