@@ -1,25 +1,24 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
-import io.swagger.models.auth.In;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.Set;
 
 public class UserDto implements Serializable {
     private Integer id;
     private String username;
     private String name;
     private User.Role role;
+    private String creationDate;
 
     public UserDto(User user) {
-        //this.id = user.getId();
+        this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
+        this.creationDate = DateHandler.toISOString(user.getCreationDate());
 
     }
 
@@ -58,6 +57,13 @@ public class UserDto implements Serializable {
         this.role = role;
     }
 
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
 
     @Override
     public String toString() {
@@ -66,6 +72,7 @@ public class UserDto implements Serializable {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", role=" + role +
+                ", creationDate=" + creationDate +
                 '}';
     }
 

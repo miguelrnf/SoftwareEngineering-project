@@ -2,6 +2,8 @@
 node_modules/
 dist/
 coverage/
+cypress/
+tests/e2e/videos/
 
 # local env files
 .env
