@@ -39,6 +39,7 @@ class PostCommentTest extends Specification {
     public static final int VALID_ID = 1
     public static final String VALID_NAME_1 = "Ben Dover"
     public static final String VALID_USERNAME_1 = "BenDover69"
+    public static final String VALID_TITLE = "Title"
     public static final String TOO_MANY_CHARS =
             '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -189,6 +190,7 @@ class PostCommentTest extends Specification {
         def question = new Question()
         question.setKey(VALID_KEY_1)
         question.setContent(VALID_QUESTION)
+        question.setTitle(VALID_TITLE)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
