@@ -11,7 +11,7 @@ export class Tournament {
   conclusionDate!: string;
   numberOfQuestions!: number;
   status!: string;
-  assessmentDto!: Assessment;
+  assessmentDto: Assessment = new Assessment();
   owner!: Student;
   enrolledStudents: Student[] = [];
 
@@ -32,7 +32,6 @@ export class Tournament {
 
       if (jsonObj.assessmentDto)
         this.assessmentDto = new Assessment(jsonObj.assessmentDto);
-      else this.assessmentDto = new Assessment();
 
       if (jsonObj.owner) this.owner = new Student(jsonObj.owner);
 

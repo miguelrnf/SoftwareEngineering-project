@@ -13,14 +13,14 @@
         <p>Assessment</p>
         <v-btn-toggle
           v-if="availableAssessments.length > 0"
-          v-model="tournament.assessmentDto"
+          v-model="tournament.assessmentDto.id"
           mandatory
           class="button-group"
         >
           <v-btn
             v-for="assessment in availableAssessments"
             text
-            :value="assessment"
+            :value="assessment.id"
             :key="assessment.id"
             data-cy="AssessmentTitle"
             >{{ assessment.title }}</v-btn
@@ -96,8 +96,6 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 export default class CreateTournamentView extends Vue {
   tournament: Tournament = new Tournament();
   availableAssessments: Assessment[] = [];
-  assessmentDto: Assessment = new Assessment();
-
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -110,7 +108,6 @@ export default class CreateTournamentView extends Vue {
 
   async createTournament() {
     try {
-      this.tournament.assessmentDto = this.assessmentDto;
       await RemoteServices.createNewTournament(this.tournament);
       await this.$router.push({ name: 'own-Tournaments' });
     } catch (error) {
