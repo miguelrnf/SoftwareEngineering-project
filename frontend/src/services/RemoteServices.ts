@@ -113,7 +113,9 @@ export default class RemoteServices {
 
   static async getSuggestions(): Promise<Suggestion[]> {
     return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/listall`)
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/listall`
+      )
       .then(response => {
         return response.data.map((suggestion: any) => {
           return new Suggestion(suggestion);
@@ -173,18 +175,17 @@ export default class RemoteServices {
 
   static createSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
-        .post(
-            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/`,
-            sugg
-        )
-        .then(response => {
-          return new Suggestion(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/`,
+        sugg
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
-
 
   static async updateQuestion(question: Question): Promise<Question> {
     return httpClient
@@ -199,7 +200,10 @@ export default class RemoteServices {
 
   static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
-      .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/edit`, sugg)
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/edit`,
+        sugg
+      )
       .then(response => {
         return new Suggestion(response.data);
       })
@@ -210,13 +214,16 @@ export default class RemoteServices {
 
   static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
-        .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`, sugg)
-        .then(response => {
-          return new Suggestion(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`,
+        sugg
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async deleteQuestion(questionId: number) {
@@ -393,11 +400,13 @@ export default class RemoteServices {
       });
   }
 
-  static async createNewTournament(params: object): Promise<Tournament> {
+  static async createNewTournament(
+    tournament: Tournament
+  ): Promise<Tournament> {
     return httpClient
       .post(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`,
-        params
+        tournament
       )
       .then(response => {
         return new Tournament(response.data);

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
@@ -79,9 +80,9 @@ public class Tournament {
 
         setTitle(tournamentDto.getTitle());
         setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
-        this.creationDate = tournamentDto.getCreationDateDate();
-        setAvailableDate(tournamentDto.getAvailableDateDate());
-        setConclusionDate(tournamentDto.getConclusionDateDate());
+        setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
+        setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
         this.owner = user;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         this.assessment = assessment;
@@ -177,7 +178,7 @@ public class Tournament {
         if (availableDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
-        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || conclusionDate.isBefore(LocalDateTime.now()))) {
+        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || availableDate.isBefore(LocalDateTime.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }
@@ -225,7 +226,7 @@ public class Tournament {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this.quiz, questions.get(index), index));
 
-        this.quiz.setType(Quiz.QuizType.TOURNAMENT);
+        this.quiz.setType("TOURNAMENT");
         this.quiz.setAvailableDate(this.availableDate);
         this.quiz.setConclusionDate(this.conclusionDate);
         this.quiz.setCreationDate(LocalDateTime.now());

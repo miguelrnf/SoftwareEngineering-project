@@ -13,12 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
 
 @RestController
 public class TournamentController {
@@ -39,23 +36,8 @@ public class TournamentController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        formatDates(tournamentDto);
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
-    }
-
-    private void formatDates(TournamentDto tournament) {
-        if (tournament.getAvailableDate().equals("") || tournament.getConclusionDate().equals(""))
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Dates");
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        if (tournament.getAvailableDate() != null && !tournament.getAvailableDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")){
-            tournament.setAvailableDate(LocalDateTime.parse(tournament.getAvailableDate().replaceAll(".$", ""), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
-        }
-
-        if (tournament.getConclusionDate() !=null && !tournament.getConclusionDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})"))
-            tournament.setConclusionDate(LocalDateTime.parse(tournament.getConclusionDate().replaceAll(".$", ""), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
     }
 
     @PutMapping("/tournament/{tournamentId}/opened/enroll")

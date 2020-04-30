@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -29,8 +30,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,8 +74,6 @@ public class TournamentService {
         if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
         if(tournamentDto.getOwner() == null || tournamentDto.getOwner().getUsername() == null)
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Owner");
 
@@ -95,9 +92,12 @@ public class TournamentService {
 
         assignTournamentToExecution(tournament, courseExecution);
 
-        setValidCreationDate(tournament, tournamentDto.getCreationDate(), formatter);
-        setValidAvailableDate(tournament, tournamentDto.getAvailableDate(), formatter);
-        setValidConclusionDate(tournament, tournamentDto.getConclusionDate(), formatter);
+        if (DateHandler.isValidDateFormat(tournamentDto.getAvailableDate()))
+            tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        if (DateHandler.isValidDateFormat(tournamentDto.getConclusionDate()))
+            tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
+        if (DateHandler.isValidDateFormat(tournamentDto.getCreationDate()))
+            tournament.setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
 
         entityManager.persist(tournament);
 
@@ -211,27 +211,6 @@ public class TournamentService {
     private void assignTournamentToExecution(Tournament t, CourseExecution courseExecution){
         courseExecution.addTournament(t);
         t.setCourseExecution(courseExecution);
-    }
-
-    private void setValidCreationDate(Tournament tournament, String creationDate, DateTimeFormatter formatter){
-        if (creationDate == null)
-            tournament.setCreationDate(LocalDateTime.now());
-        else
-            tournament.setCreationDate(LocalDateTime.parse(creationDate, formatter));
-    }
-
-    private void setValidConclusionDate(Tournament tournament, String date, DateTimeFormatter formatter){
-        if(date == null || date.equals("") || LocalDateTime.parse(date, formatter).isBefore(LocalDateTime.now()))
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion Date");
-
-        tournament.setConclusionDate(LocalDateTime.parse(date, formatter));
-    }
-
-    private void setValidAvailableDate(Tournament tournament, String date, DateTimeFormatter formatter){
-        if(date == null || date.equals("") || !LocalDateTime.parse(date, formatter).isAfter(LocalDateTime.now()))
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available Date");
-
-        tournament.setAvailableDate(LocalDateTime.parse(date, formatter));
     }
 
     private User findUsername(String username){
