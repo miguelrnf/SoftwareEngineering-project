@@ -5,11 +5,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
@@ -30,13 +30,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
-
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION_CANCEL
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND
 
 @DataJpaTest
 class CancelTournamentServiceSpockPreformanceTest extends Specification {
@@ -46,8 +39,8 @@ class CancelTournamentServiceSpockPreformanceTest extends Specification {
     static final USERNAME_1 = 'username1'
     static final TITLE = 'first tournament'
     static final NUMQUESTIONS = 3
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
     static final NAME = 'name'
 
     @Autowired
@@ -81,9 +74,6 @@ class CancelTournamentServiceSpockPreformanceTest extends Specification {
     def courseExecution
 
     @Shared
-    def formatter
-
-    @Shared
     def STUDENT
 
     @Shared
@@ -107,18 +97,15 @@ class CancelTournamentServiceSpockPreformanceTest extends Specification {
 
     def setupSpec() {
 
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        and: "a tournamentDto"
+        given: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto.setAvailableDate(DATENOW)
+        tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
 
         and: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
     }
@@ -130,16 +117,15 @@ class CancelTournamentServiceSpockPreformanceTest extends Specification {
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
+        assdto.setTitle(TITLE)
         assdto.setId(1)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)

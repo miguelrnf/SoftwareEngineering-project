@@ -5,11 +5,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
@@ -35,12 +35,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
-
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_LIST_EMPTY
 
 @DataJpaTest
 class GetOpenedTournamentSpockTest extends Specification{
@@ -52,10 +46,9 @@ class GetOpenedTournamentSpockTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now()
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().minusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
     static int tempId = 1
-    static int userId = 1
 
     @Autowired
     TournamentService tournamentService
@@ -126,8 +119,6 @@ class GetOpenedTournamentSpockTest extends Specification{
     @Shared
     def courseExecution
 
-    @Shared
-    def formatter
 
     @Shared
     def questionOne
@@ -137,11 +128,8 @@ class GetOpenedTournamentSpockTest extends Specification{
 
     def setupSpec() {
 
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
         given: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(userId++)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
@@ -151,16 +139,16 @@ class GetOpenedTournamentSpockTest extends Specification{
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
         tournamentDto1.setNumberOfQuestions(1)
-        tournamentDto1.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto1.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto1.setAvailableDate(DATENOW)
+        tournamentDto1.setConclusionDate(DATETOMORROW)
 
         tournamentDto2 = new TournamentDto()
         tournamentDto2.setId(2)
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
         tournamentDto2.setNumberOfQuestions(1)
-        tournamentDto2.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto2.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto2.setAvailableDate(DATENOW)
+        tournamentDto2.setConclusionDate(DATETOMORROW)
     }
 
     def setup() {
@@ -178,17 +166,16 @@ class GetOpenedTournamentSpockTest extends Specification{
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setId(1)
+        assdto.setTitle(TITLE1)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
@@ -198,6 +185,7 @@ class GetOpenedTournamentSpockTest extends Specification{
         and:"questions"
         questionOne = new Question()
         questionOne.setKey(1)
+        questionOne.setTitle(TITLE2)
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         course.addQuestion(questionOne)
@@ -205,6 +193,7 @@ class GetOpenedTournamentSpockTest extends Specification{
         topic.addQuestion(questionOne)
 
         questionTwo = new Question()
+        questionTwo.setTitle(TITLE1)
         questionTwo.setKey(2)
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
@@ -258,12 +247,12 @@ class GetOpenedTournamentSpockTest extends Specification{
         result.contains(new TournamentDto(tournament1))
         result.contains(new TournamentDto(tournament2))
         result.size() == 2
-        tournament1.getQuiz().getAvailableDate().format(formatter) == tournamentDto1.getAvailableDate()
-        tournament1.getQuiz().getConclusionDate().format(formatter) == tournamentDto1.getConclusionDate()
+        DateHandler.toISOString(tournament1.getQuiz().getAvailableDate()) == tournamentDto1.getAvailableDate()
+        DateHandler.toISOString(tournament1.getQuiz().getConclusionDate()) == tournamentDto1.getConclusionDate()
         tournament1.getQuiz().getTitle() == tournamentDto1.getTitle()
         tournament1.getQuiz().getType() == Quiz.QuizType.TOURNAMENT
-        tournament2.getQuiz().getAvailableDate().format(formatter) == tournamentDto2.getAvailableDate()
-        tournament2.getQuiz().getConclusionDate().format(formatter) == tournamentDto2.getConclusionDate()
+        DateHandler.toISOString(tournament2.getQuiz().getAvailableDate()) == tournamentDto2.getAvailableDate()
+        DateHandler.toISOString(tournament2.getQuiz().getConclusionDate()) == tournamentDto2.getConclusionDate()
         tournament2.getQuiz().getTitle() == tournamentDto2.getTitle()
         tournament2.getQuiz().getType() == Quiz.QuizType.TOURNAMENT
     }

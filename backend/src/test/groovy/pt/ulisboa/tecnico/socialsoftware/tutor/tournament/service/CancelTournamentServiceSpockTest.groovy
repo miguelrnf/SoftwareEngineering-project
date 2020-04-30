@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -32,15 +33,9 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION_CANCEL
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
+
 
 @DataJpaTest
 class CancelTournamentServiceSpockTest extends Specification {
@@ -53,8 +48,8 @@ class CancelTournamentServiceSpockTest extends Specification {
     static final USERNAME_4 = 'username4'
     static final TITLE = 'first tournament'
     static final NUMQUESTIONS = 3
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
     static final NAME = 'name'
     static int tempId = 1
 
@@ -87,18 +82,6 @@ class CancelTournamentServiceSpockTest extends Specification {
 
     @Shared
     def courseExecution
-
-    @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
-    def formatter
 
     @Shared
     def TEACHER
@@ -136,46 +119,36 @@ class CancelTournamentServiceSpockTest extends Specification {
 
     def setupSpec() {
 
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
         given: "a tournamentDto"
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now().plusDays(1)
-        conclusionDate = LocalDateTime.now().plusDays(2)
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto.setAvailableDate(DATENOW)
+        tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
 
         and: "a user with the role teacher"
         TEACHER = new User()
-        TEACHER.setId(3)
         TEACHER.setRole(User.Role.TEACHER)
         TEACHER.setUsername(USERNAME_2)
 
         and: "a user with the role admin"
         ADMIN = new User()
-        ADMIN.setId(2)
         ADMIN.setRole(User.Role.ADMIN)
         ADMIN.setUsername(USERNAME_3)
 
         and: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
         and: "a user with the role student"
         STUDENT2 = new User()
-        STUDENT2.setId(2)
         STUDENT2.setRole(User.Role.STUDENT)
         STUDENT2.setUsername(USERNAME_4)
 
         and: "a user with the null username"
         NLL_USERNAME = new User()
-        NLL_USERNAME.setId(1)
         NLL_USERNAME.setRole(User.Role.STUDENT)
         NLL_USERNAME.setUsername(null)
     }
@@ -187,16 +160,15 @@ class CancelTournamentServiceSpockTest extends Specification {
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
+        assdto.setTitle(TITLE)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)

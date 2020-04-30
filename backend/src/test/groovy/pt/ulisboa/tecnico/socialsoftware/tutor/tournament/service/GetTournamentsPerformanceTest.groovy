@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -32,9 +33,6 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 @DataJpaTest
 class GetTournamentsPerformanceTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
@@ -44,9 +42,9 @@ class GetTournamentsPerformanceTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
-
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    
     @Autowired
     TournamentService tournamentService
 
@@ -107,16 +105,10 @@ class GetTournamentsPerformanceTest extends Specification{
     @Shared
     def courseExecution
 
-    @Shared
-    def formatter
-
     def setupSpec() {
-
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         given: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
@@ -127,8 +119,8 @@ class GetTournamentsPerformanceTest extends Specification{
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
         tournamentDto1.setNumberOfQuestions(3)
-        tournamentDto1.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto1.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto1.setAvailableDate(DATENOW)
+        tournamentDto1.setConclusionDate(DATETOMORROW)
 
 
         tournamentDto2 = new TournamentDto()
@@ -137,8 +129,8 @@ class GetTournamentsPerformanceTest extends Specification{
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
         tournamentDto2.setNumberOfQuestions(4)
-        tournamentDto2.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto2.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto2.setAvailableDate(DATENOW)
+        tournamentDto2.setConclusionDate(DATETOMORROW)
 
 
     }
@@ -154,17 +146,16 @@ class GetTournamentsPerformanceTest extends Specification{
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setId(1)
+        assdto.setTitle(TITLE2)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
@@ -195,7 +186,7 @@ class GetTournamentsPerformanceTest extends Specification{
         tournamentService.createTournament(courseExecution.getId(), tournamentDto2)
 
         when:
-        1.upto(500000, {tournamentService.getTournaments()})
+        1.upto(1, {tournamentService.getTournaments()})
 
         then:
         true

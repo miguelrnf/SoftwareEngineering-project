@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -33,9 +34,6 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
@@ -54,8 +52,8 @@ class EnrollStudentsSpockTest extends Specification{
     static final Integer NUMQUESTIONS = 3
     static final String TITLE = "Title"
     static final String NAME = "NOME"
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
     static int tempId = 1
 
     @Autowired
@@ -142,55 +140,31 @@ class EnrollStudentsSpockTest extends Specification{
     @Shared
     def topicConjunction
 
-    @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
-    def formatter
-
-
     def setupSpec(){
 
         given: "a user with the role teacher"
 
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now().plusDays(1)
-        conclusionDate = LocalDateTime.now().plusDays(2)
-
         TEACHER = new User()
-        TEACHER.setId(4)
         TEACHER.setRole(User.Role.TEACHER)
         TEACHER.setUsername(USERNAME_4)
 
         and: "a user with the role admin"
         ADMIN = new User()
-        ADMIN.setId(5)
         ADMIN.setRole(User.Role.ADMIN)
         ADMIN.setUsername(USERNAME_5)
 
         and: "a user with the role student"
         STUDENT_OWNER = new User()
-        STUDENT_OWNER.setId(1)
         STUDENT_OWNER.setRole(User.Role.STUDENT)
         STUDENT_OWNER.setUsername(USERNAME_1)
 
         and: "a user with the role student"
         STUDENT_SAME_CE = new User()
-        STUDENT_SAME_CE.setId(2)
         STUDENT_SAME_CE.setRole(User.Role.STUDENT)
         STUDENT_SAME_CE.setUsername(USERNAME_2)
 
         and: "a user with the role student"
         STUDENT_OTHER_CE = new User()
-        STUDENT_OTHER_CE.setId(3)
         STUDENT_OTHER_CE.setRole(User.Role.STUDENT)
         STUDENT_OTHER_CE.setUsername(USERNAME_3)
 
@@ -200,8 +174,8 @@ class EnrollStudentsSpockTest extends Specification{
         TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
-        TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
-        TOURNAMENTDTO.setConclusionDate(DATETOMORROW.format(formatter))
+        TOURNAMENTDTO.setAvailableDate(DATENOW)
+        TOURNAMENTDTO.setConclusionDate(DATETOMORROW)
         TOURNAMENTDTO.setNumberOfQuestions(NUMQUESTIONS)
     }
 
@@ -222,17 +196,16 @@ class EnrollStudentsSpockTest extends Specification{
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setId(1)
+        assdto.setTitle(TITLE)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
@@ -242,7 +215,6 @@ class EnrollStudentsSpockTest extends Specification{
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution_1, tcl, assdto)
-
 
         courseExecution_1.addUser(userS)
         userS.addCourse(courseExecution_1)

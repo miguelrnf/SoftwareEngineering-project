@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -32,9 +33,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.UNABLE_TO_UNROLL
 
@@ -50,8 +48,8 @@ class SignOutServiceSpockTest extends Specification{
     static final Integer INV_TOURNAMENT_ID = -1
     static final Integer NUMQUESTIONS = 3
     static final String NAME = "NOME"
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
     static int tempId = 1
 
     @Autowired
@@ -117,37 +115,15 @@ class SignOutServiceSpockTest extends Specification{
     @Shared
     def topicConjunction
 
-    @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
-    def formatter
-
     def setupSpec(){
 
         given: "a user with the role student"
-
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now().plusDays(1)
-        conclusionDate = LocalDateTime.now().plusDays(2)
-
-
         STUDENT_OWNER = new User()
-        STUDENT_OWNER.setId(1)
         STUDENT_OWNER.setRole(User.Role.STUDENT)
         STUDENT_OWNER.setUsername(USERNAME_1)
 
         and: "a user with the role student"
         STUDENT_SAME_CE = new User()
-        STUDENT_SAME_CE.setId(2)
         STUDENT_SAME_CE.setRole(User.Role.STUDENT)
         STUDENT_SAME_CE.setUsername(USERNAME_2)
 
@@ -157,8 +133,8 @@ class SignOutServiceSpockTest extends Specification{
         TOURNAMENTDTO.setStatus(Tournament.TournamentStatus.CREATED.name())
         TOURNAMENTDTO.setOwner(new UserDto(STUDENT_OWNER))
         TOURNAMENTDTO.setTitle(TITLE)
-        TOURNAMENTDTO.setAvailableDate(DATENOW.format(formatter))
-        TOURNAMENTDTO.setConclusionDate(DATETOMORROW.format(formatter))
+        TOURNAMENTDTO.setAvailableDate(DATENOW)
+        TOURNAMENTDTO.setConclusionDate(DATETOMORROW)
         TOURNAMENTDTO.setNumberOfQuestions(NUMQUESTIONS)
 
     }
@@ -176,17 +152,16 @@ class SignOutServiceSpockTest extends Specification{
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setId(1)
+        assdto.setTitle(TITLE)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)

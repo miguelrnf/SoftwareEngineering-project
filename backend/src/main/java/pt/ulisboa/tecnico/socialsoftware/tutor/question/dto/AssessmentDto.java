@@ -28,6 +28,10 @@ public class AssessmentDto implements Serializable {
         this.topicConjunctions = assessment.getTopicConjunctions().stream().map(TopicConjunctionDto::new).collect(Collectors.toList());
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    
     public Integer getId() {
         return id;
     }
