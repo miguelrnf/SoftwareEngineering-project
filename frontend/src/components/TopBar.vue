@@ -55,8 +55,7 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark
-            data-cy="management">
+            <v-btn v-on="on" text dark data-cy="management">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -150,7 +149,7 @@
                 <v-icon>fas fa-list-ul</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Available</v-list-item-title>
+                <v-list-item-title>Created</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/student/enrolledTournaments">
@@ -330,8 +329,8 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item><v-list-item to="/management/suggestions">
+            </v-list-item-content> </v-list-item
+          ><v-list-item to="/management/suggestions">
             <v-list-item-action>
               <v-icon>question_answer</v-icon>
             </v-list-item-action>
