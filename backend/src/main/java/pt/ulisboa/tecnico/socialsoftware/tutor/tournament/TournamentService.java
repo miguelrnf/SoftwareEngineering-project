@@ -6,6 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
@@ -18,8 +20,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
@@ -30,9 +36,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -59,6 +68,12 @@ public class TournamentService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
+
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -148,7 +163,7 @@ public class TournamentService {
         User owner = userRepository.findByUsername(username);
         List<TournamentDto> temp = tournamentRepository.findAll().stream()
                 .filter(tournament -> tournament.getOwner().equals(owner) && tournament
-                        .getCourseExecution().getId().equals(courseExecutionId))
+                        .getCourseExecution().getId().equals(courseExecutionId) && checkStatus(tournament) != null)
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
         if(temp.isEmpty())
@@ -163,16 +178,59 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getEnrolledTournaments(String username, int executionId) {
         User student = userRepository.findByUsername(username);
-        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+        List<Tournament> temp = tournamentRepository.findAll().stream()
                 .filter(tournament -> tournament.getEnrolledStudents().contains(student) && tournament
                         .getCourseExecution().getId().equals(executionId))
-                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+                .sorted(Comparator.comparing(Tournament::getTitle))
                 .collect(Collectors.toList());
 
         if(temp.isEmpty())
             throw new TutorException(TOURNAMENT_LIST_EMPTY);
 
-        return temp;
+        return setQuizAnswers(temp, student, executionId);
+    }
+
+    private List<TournamentDto> setQuizAnswers(List<Tournament> tournaments, User user, int executionId) {
+        List<TournamentDto> tournamentDtos = new ArrayList<>();
+
+        Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType() == Quiz.QuizType.TOURNAMENT)
+                .map(QuizAnswer::getQuiz)
+                .map(Quiz::getId)
+                .collect(Collectors.toSet());
+
+        tournaments.forEach(tournament ->  {
+                    checkStatus(tournament);
+                    TournamentDto tournamentDto = new TournamentDto(tournament);
+                    if (checkStatus(tournament) == Tournament.TournamentStatus.OPEN && !studentQuizIds.contains(tournament.getQuiz().getId())){
+                            QuizAnswer quizAnswer = new QuizAnswer(user, tournament.getQuiz());
+                            quizAnswerRepository.save(quizAnswer);
+                            tournamentDto.setQuiz(new StatementQuizDto(quizAnswer));
+                    }
+
+                    if(tournament.getQuiz() != null){
+                        QuizAnswer answer = user.getQuizAnswers().stream()
+                        .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
+                        .collect(Collectors.toList()).get(0);
+
+                        tournamentDto.setCompleted(answer.isCompleted());
+
+                        if (tournamentDto.isCompleted()){
+                            List<SolvedQuizDto> temp = user.getQuizAnswers().stream()
+                                    .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
+                                    .map(SolvedQuizDto::new).collect(Collectors.toList());
+
+                            if (temp.size() != 1)
+                                throw new TutorException(MULTIPLE_QUIZ_ANSWERS);
+
+                            tournamentDto.setSolved(temp.get(0));
+                        }
+                    }
+
+                    tournamentDtos.add(tournamentDto);
+                });
+        return tournamentDtos;
     }
 
     private Assessment checkAssessment(AssessmentDto assessmentDto, CourseExecution courseExecution){
@@ -305,9 +363,9 @@ public class TournamentService {
     public Tournament.TournamentStatus checkStatus(Tournament tournament){
         if(tournament.getStatus() == Tournament.TournamentStatus.CANCELED)
             return Tournament.TournamentStatus.CANCELED;
-        if(LocalDateTime.now().isBefore(tournament.getAvailableDate()))
+        if(DateHandler.now().isBefore(tournament.getAvailableDate()))
             tournament.setStatus(Tournament.TournamentStatus.CREATED);
-        else if(LocalDateTime.now().isBefore(tournament.getConclusionDate())){
+        else if(DateHandler.now().isBefore(tournament.getConclusionDate())){
             tournament.setStatus(Tournament.TournamentStatus.OPEN);
             if(tournament.getQuiz() == null)
                 generateTournamentQuiz(tournament.getId());
@@ -351,16 +409,20 @@ public class TournamentService {
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, Tournament tournament) {
-        Assessment assessment = assessmentRepository.findById(Integer.valueOf(tournament.getAssessment().getId()))
+        Assessment assessment = assessmentRepository.findById(tournament.getAssessment().getId())
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND,tournament.getAssessment().getId()));
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }
 
+
+
     public void generateTournamentQuiz(int tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-        if(tournament.getEnrolledStudents().size() <= 1) {
+        //TODO change 0 to 1
+        //TODO imitar aquela view
+        if(tournament.getEnrolledStudents().size() <= 0) {
             tournament.setStatus(Tournament.TournamentStatus.CANCELED);
             return;
         }
@@ -379,14 +441,31 @@ public class TournamentService {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
 
+        availableQuestions = tournament.getOwner().filterQuestionsByStudentModel(tournament.getNumberOfQuestions(), availableQuestions);
         quiz.setCourseExecution(courseExecution);
         courseExecution.addQuiz(quiz);
 
         quizRepository.save(quiz);
 
-        tournament.generateQuiz(availableQuestions, quiz);
+        this.generateQuiz(availableQuestions, quiz, tournament);
 
         new QuizDto(quiz, true);
+    }
+
+    private void generateQuiz(List<Question> questions, Quiz quiz, Tournament tournament) {
+        tournament.setQuiz(quiz);
+        IntStream.range(0,questions.size())
+                .forEach(index -> {
+                    QuizQuestion temp = new QuizQuestion(tournament.getQuiz(), questions.get(index), index);
+                    quizQuestionRepository.save(temp);
+
+                });
+
+        tournament.getQuiz().setType("TOURNAMENT");
+        tournament.getQuiz().setAvailableDate(tournament.getAvailableDate());
+        tournament.getQuiz().setConclusionDate(tournament.getConclusionDate());
+        tournament.getQuiz().setCreationDate(DateHandler.now());
+        tournament.getQuiz().setTitle(tournament.getTitle());
     }
 
 }

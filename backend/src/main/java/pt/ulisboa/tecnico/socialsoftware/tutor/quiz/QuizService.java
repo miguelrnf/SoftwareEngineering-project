@@ -99,7 +99,7 @@ public class QuizService {
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
 
         return quizRepository.findQuizzes(executionId).stream()
-                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED) && !quiz.getType().equals(Quiz.QuizType.TOURNAMENT))
                 .sorted(comparator)
                 .map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());
