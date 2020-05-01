@@ -305,9 +305,9 @@ public class TournamentService {
     public Tournament.TournamentStatus checkStatus(Tournament tournament){
         if(tournament.getStatus() == Tournament.TournamentStatus.CANCELED)
             return Tournament.TournamentStatus.CANCELED;
-        if(LocalDateTime.now().isBefore(tournament.getAvailableDate()))
+        if(DateHandler.now().isBefore(tournament.getAvailableDate()))
             tournament.setStatus(Tournament.TournamentStatus.CREATED);
-        else if(LocalDateTime.now().isBefore(tournament.getConclusionDate())){
+        else if(DateHandler.now().isBefore(tournament.getConclusionDate())){
             tournament.setStatus(Tournament.TournamentStatus.OPEN);
             if(tournament.getQuiz() == null)
                 generateTournamentQuiz(tournament.getId());
@@ -360,7 +360,7 @@ public class TournamentService {
     public void generateTournamentQuiz(int tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-        if(tournament.getEnrolledStudents().size() <= 1) {
+        if(tournament.getEnrolledStudents().size() <= 0) {
             tournament.setStatus(Tournament.TournamentStatus.CANCELED);
             return;
         }
@@ -378,6 +378,8 @@ public class TournamentService {
         if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
+
+        availableQuestions = tournament.getOwner().filterQuestionsByStudentModel(tournament.getNumberOfQuestions(), availableQuestions);
 
         quiz.setCourseExecution(courseExecution);
         courseExecution.addQuiz(quiz);

@@ -11,7 +11,7 @@ describe('Student walkthrough', () => {
   it('login and creates a Tournament', () => {
 
     cy.createTournament('Demo tournament', '30')
-    cy.assertOwnAny('Demo tournament 1')
+    cy.assertOwn('Demo tournament')
     cy.deleteTournament('Demo tournament')
   })
 

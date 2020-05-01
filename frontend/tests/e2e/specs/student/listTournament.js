@@ -38,8 +38,8 @@ describe('Student walkthrough', () => {
 
     cy.listOwnTournaments()
 
-    cy.assertOwnAny('Demo tournament 1')
-    cy.assertOwnAny('Demo tournament 2')
+    cy.assertOwn('Demo tournament 1')
+    cy.assertOwn('Demo tournament 2')
 
     cy.deleteTournament('Demo tournament 1')
     cy.deleteTournament('Demo tournament 2')
@@ -56,8 +56,8 @@ describe('Student walkthrough', () => {
     cy.justDemoAdminLogin()
     cy.listAllTournaments()
 
-    cy.assertOwnAny('Demo tournament 1')
-    cy.assertOwnAny('Demo tournament 2')
+    cy.assertAny('Demo tournament 1')
+    cy.assertAny('Demo tournament 2')
 
     cy.deleteTournament('Demo tournament 1')
     cy.deleteTournament('Demo tournament 2')
