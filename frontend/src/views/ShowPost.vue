@@ -1,9 +1,7 @@
 <template>
   <v-card class="mx-auto" max-height="80%">
     <v-app-bar dense color="grey lighten-2">
-      <v-toolbar-title>
-        {{ convertMarkDown(post.question.question.title) }}</v-toolbar-title
-      >
+      <v-toolbar-title> {{ post.question.question.title }}</v-toolbar-title>
       <v-spacer />
       <post-status-buttons :post="post"></post-status-buttons>
       <v-tooltip bottom v-if="isOwner(post)">
@@ -47,7 +45,7 @@
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
     </v-card-text>
-    <v-card-text v-if="post.answer != null && post.answer.teacherAnswer !== ''">
+    <v-card-text v-if="post.answer != null && post.answer.teacherAnswer !== '' && (!post.answerPrivacy || isTeacher() || isOwner(post))">
       <p class="subtitle-1 font-weight-light">
         <span v-html="convertMarkDown('Answer:')" />
       </p>
@@ -57,6 +55,32 @@
       <div class="text-right">
         by
         <span v-html="convertMarkDown(post.answer.user.username)" />
+        <v-chip
+          class="ma-2"
+          small
+          label
+          v-if="
+            getColor3(post.answerPrivacy) === 'black' &&
+              (isOwnerAnswer(post) || post.answer == null)
+          "
+          :color="getColor3(post.answerPrivacy)"
+          dark
+          @click="changeAnswerPrivacy(post)"
+          >{{ 'Private' }}</v-chip
+        >
+        <v-chip
+          class="ma-2"
+          small
+          label
+          v-if="
+            getColor3(post.answerPrivacy) === 'orange' &&
+              (isOwnerAnswer(post) || post.answer == null)
+          "
+          :color="getColor3(post.answerPrivacy)"
+          dark
+          @click="changeAnswerPrivacy(post)"
+          >{{ 'Public' }}</v-chip
+        >
       </div>
     </v-card-text>
     <edit-post-dialog
@@ -84,12 +108,15 @@ import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 import { PostAnswer } from '@/models/management/PostAnswer';
+import PrivacyButton from '@/views/PrivacyButton.vue';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
     'edit-post-dialog': EditPostDialog,
     'edit-answer-dialog': EditAnswerDialog,
-    'post-status-buttons': PostStatusButtons
+    'post-status-buttons': PostStatusButtons,
+    'privacy-button': PrivacyButton
   }
 })
 export default class ShowPost extends Vue {
@@ -128,8 +155,24 @@ export default class ShowPost extends Vue {
   onSavePostEvent() {
     this.$emit('save-post', this.post);
   }
+
+  getColor3(privacy: boolean) {
+    if (privacy) return 'black';
+    else return 'orange';
+  }
+
+  isOwnerAnswer(post: Post): boolean {
+    if (post.answer != null)
+      return this.$store.getters.getUser.username === post.answer.user.username;
+    else return false;
+  }
+
+  changeAnswerPrivacy(post: Post) {
+    if (post.answerPrivacy != null && this.isOwnerAnswer(post))
+      post.answerPrivacy = !post.answerPrivacy;
+    RemoteServices.changeAnswerPrivacy(post.id);
+  }
 }
 </script>
 
-<style>
-</style>
+<style></style>

@@ -94,6 +94,32 @@
       dark
       >{{ 'Open' }}</v-chip
     >
+    <v-chip
+      class="ma-2"
+      small
+      label
+      v-if="
+        getColor3(post.postPrivacy) === 'black' &&
+          (isOwner(post) || isTeacher())
+      "
+      :color="getColor3(post.postPrivacy)"
+      dark
+      @click="changePostPrivacy(post)"
+      >{{ 'Private' }}</v-chip
+    >
+    <v-chip
+      class="ma-2"
+      small
+      label
+      v-if="
+        getColor3(post.postPrivacy) === 'orange' &&
+          (isOwner(post) || isTeacher())
+      "
+      :color="getColor3(post.postPrivacy)"
+      dark
+      @click="changePostPrivacy(post)"
+      >{{ 'Public' }}</v-chip
+    >
   </div>
 </template>
 
@@ -101,7 +127,6 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import RemoteServices from '../services/RemoteServices';
-import { PostAnswer } from '@/models/management/PostAnswer';
 
 @Component
 export default class PostStatusButtons extends Vue {
@@ -121,6 +146,11 @@ export default class PostStatusButtons extends Vue {
     else return 'grey';
   }
 
+  getColor3(privacy: boolean) {
+    if (privacy) return 'black';
+    else return 'orange';
+  }
+
   changeDiscussStatus(post: Post) {
     if (this.isOwner(post)) post.discussStatus = !post.discussStatus;
     RemoteServices.changeDiscussStatus(post.id);
@@ -129,6 +159,11 @@ export default class PostStatusButtons extends Vue {
   changePostStatus(post: Post) {
     if (this.isTeacher()) post.postStatus = !post.postStatus;
     RemoteServices.changePostStatus(post.id);
+  }
+
+  changePostPrivacy(post: Post) {
+    if (this.isOwner(post)) post.postPrivacy = !post.postPrivacy;
+    RemoteServices.changePostPrivacy(post.id);
   }
 
   isTeacher(): boolean {

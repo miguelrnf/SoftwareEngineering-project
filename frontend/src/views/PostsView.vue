@@ -12,6 +12,8 @@
       @update:items-per-page="getPage"
       :discuss-status.sync="discussStatus"
       :post-status.sync="postStatus"
+      :post-privacy.sync="postPrivacy"
+      :answer-privacy.sync="answerPrivacy"
     >
       <template v-slot:top>
         <v-card-title>
@@ -28,14 +30,15 @@
 
       <template v-slot:item.title="{ item }">
         <p
-          v-html="convertMarkDownNoFigure(item.question.question.title, null)"
+          v-html="convertMarkDown(item.question.question.title, null)"
           @click="showPostOpenDialog(item)"
-      /></template>
+        />
+      </template>
 
       <template v-slot:item.question="{ item }">
         <p
           v-html="
-            convertMarkDownNoFigure(
+            convertMarkDown(
               getSmallQuestion(item.question.studentQuestion),
               null
             )
@@ -44,7 +47,7 @@
       /></template>
 
       <template v-slot:item.user="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.question.user.username, null)"
+        <p v-html="convertMarkDown(item.question.user.username, null)"
       /></template>
 
       <template v-slot:item.action="{ item }">
@@ -113,6 +116,8 @@
       <template v-slot:item.status="{ item }">
         <post-status-buttons
           :post="item"
+          :question="item.question"
+          :answer="item.answer"
           data-cy="StatusButtons"
         ></post-status-buttons>
       </template>
@@ -144,7 +149,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
@@ -177,6 +182,8 @@ export default class PostsView extends Vue {
   page: number = 1;
   discussStatus: boolean = false;
   postStatus: boolean = true;
+  postPrivacy: boolean = false;
+  answerPrivacy: boolean = false;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -204,7 +211,10 @@ export default class PostsView extends Vue {
       let res = await RemoteServices.viewPosts(this.perPage, this.page);
       if (res.lists != undefined) {
         this.posts = res.lists.reverse();
-        this.filteredPosts = res.lists;
+        this.posts = this.posts.filter(
+          post => this.isOwner(post) || !post.postPrivacy || this.isTeacher()
+        );
+        this.filteredPosts = this.posts;
       }
       if (res.totalPosts != undefined) {
         this.totalPosts = res.totalPosts;
@@ -249,8 +259,8 @@ export default class PostsView extends Vue {
     }
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   showPostOpenDialog(post: Post) {

@@ -123,4 +123,18 @@ public class PostController {
     public ListPostsDto getPage(@PathVariable int executionId, @PathVariable int perPage, @PathVariable int page) {
         return postService.postPagination(perPage, page);
     }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/edit/privacy")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostDto changePostPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.changePostPrivacy(postId, user);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/answer/edit/privacy")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostDto changeAnswerPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.changeAnswerPrivacy(postId, user);
+    }
 }
