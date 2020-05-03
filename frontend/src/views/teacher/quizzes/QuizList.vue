@@ -24,14 +24,10 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-slot:item.action="{ to }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="showQuizDialog(item.id)"
+            <v-icon large class="mr-2" v-on="on" @click="showQuizDialog(to)"
               >visibility</v-icon
             >
           </template>
