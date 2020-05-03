@@ -9,6 +9,8 @@
         <div class="col">Questions</div>
         <div class="col">Status</div>
         <div class="col">Participants</div>
+        <div class="col">Solved</div>
+        <div class="col last-col"></div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
         <div class="col" data-cy="title">
@@ -32,6 +34,30 @@
         <div class="col">
           {{ t.enrolledStudents.length }}
         </div>
+        <div v-if="t.status === 'OPEN'" class="col">
+          {{ t.completed }}
+        </div>
+        <div v-else class="col">
+          {{ t.completed }}
+        </div>
+        <div class="col">
+          <v-btn
+            v-if="isSolvable(t)"
+            class="btn"
+            color="primary"
+            @click="solveQuiz(t.quiz)"
+          >
+            Solve
+          </v-btn>
+          <v-btn
+            v-if="t.completed"
+            class="btn"
+            color="primary"
+            @click="showResults(t.solved)"
+          >
+            Results
+          </v-btn>
+        </div>
       </li>
     </ul>
   </div>
@@ -41,6 +67,9 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/management/Tournament';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementManager from '@/models/statement/StatementManager';
+import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
 @Component
 export default class EnrolledTournamentsView extends Vue {
@@ -54,6 +83,23 @@ export default class EnrolledTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async solveQuiz(quiz: StatementQuiz) {
+    let statementManager: StatementManager = StatementManager.getInstance;
+    statementManager.statementQuiz = quiz;
+    await this.$router.push({ name: 'solve-quiz' });
+  }
+
+  async showResults(quiz: SolvedQuiz) {
+    let statementManager: StatementManager = StatementManager.getInstance;
+    statementManager.correctAnswers = quiz.correctAnswers;
+    statementManager.statementQuiz = quiz.statementQuiz;
+    await this.$router.push({ name: 'quiz-results' });
+  }
+
+  isSolvable(t: Tournament): boolean {
+    return t.status == 'OPEN' && !t.completed;
   }
 }
 </script>

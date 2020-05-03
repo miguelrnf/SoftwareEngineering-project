@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -80,7 +81,7 @@ public class Tournament {
 
         setTitle(tournamentDto.getTitle());
         setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
-        setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
+        setCreationDate(DateHandler.now());
         setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
         setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
         this.owner = user;
@@ -219,18 +220,6 @@ public class Tournament {
 
         courseExecution.getTournaments().remove(this);
         courseExecution = null;
-    }
-
-    public void generateQuiz(List<Question> questions, Quiz quiz) {
-        this.setQuiz(quiz);
-        IntStream.range(0,questions.size())
-                .forEach(index -> new QuizQuestion(this.quiz, questions.get(index), index));
-
-        this.quiz.setType("TOURNAMENT");
-        this.quiz.setAvailableDate(this.availableDate);
-        this.quiz.setConclusionDate(this.conclusionDate);
-        this.quiz.setCreationDate(LocalDateTime.now());
-        this.quiz.setTitle(this.title);
     }
 
 
