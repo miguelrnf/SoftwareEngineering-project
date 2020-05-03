@@ -421,7 +421,6 @@ public class TournamentService {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
         //TODO change 0 to 1
-        //TODO imitar aquela view
         if(tournament.getEnrolledStudents().size() <= 0) {
             tournament.setStatus(Tournament.TournamentStatus.CANCELED);
             return;
