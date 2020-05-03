@@ -233,8 +233,9 @@ public class TournamentService {
                         .collect(Collectors.toList()).get(0);
 
                         tournamentDto.setCompleted(answer.isCompleted());
+                        tournamentDto.setQuiz(new StatementQuizDto(answer));
 
-                        if (tournamentDto.isCompleted()){
+                        if (tournamentDto.isCompleted() && checkStatus(tournament) != Tournament.TournamentStatus.OPEN){
                             List<SolvedQuizDto> temp = user.getQuizAnswers().stream()
                                     .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
                                     .map(SolvedQuizDto::new).collect(Collectors.toList());

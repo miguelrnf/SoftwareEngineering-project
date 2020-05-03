@@ -11,6 +11,7 @@ public class UserDto implements Serializable {
     private String username;
     private String name;
     private User.Role role;
+    private Integer score;
     private String creationDate;
 
     public UserDto(User user) {
@@ -19,6 +20,7 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        this.score = user.getScore();
 
     }
 
@@ -59,6 +61,14 @@ public class UserDto implements Serializable {
 
     public String getCreationDate() {
         return creationDate;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public void setCreationDate(String creationDate) {

@@ -50,7 +50,7 @@
             Solve
           </v-btn>
           <v-btn
-            v-if="prepareToResults(t)"
+            v-else-if="prepareToResults(t)"
             class="btn"
             color="primary"
             @click="showResults(t.solved)"
@@ -100,8 +100,7 @@ export default class EnrolledTournamentsView extends Vue {
 
   prepareToResults(t: Tournament): boolean {
     return (
-      t.completed &&
-      (t.quiz?.timeToResults == 0 || t.quiz?.timeToResults == null)
+      t.completed && t.quiz?.timeToResults != null && t.quiz?.timeToResults <= 0
     );
   }
 

@@ -146,6 +146,19 @@
             </v-btn>
           </template>
           <v-list dense>
+            <v-list-item>
+              <v-list-item-action>
+                <v-icon>fas fa-coins</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title
+                  >{{
+                    $store.getters.getUser.score
+                  }}
+                  Achandos</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/student/createTournaments">
               <v-list-item-action>
                 <v-icon>create</v-icon>
