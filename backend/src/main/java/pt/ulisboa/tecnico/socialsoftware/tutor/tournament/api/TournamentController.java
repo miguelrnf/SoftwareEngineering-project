@@ -35,7 +35,6 @@ public class TournamentController {
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
     }

@@ -90,7 +90,9 @@
                 <v-icon>ballot</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Tournaments</v-list-item-title>
+                <v-list-item-title data-cy="tournaments">
+                  Tournaments</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/assessments">

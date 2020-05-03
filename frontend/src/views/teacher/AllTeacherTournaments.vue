@@ -8,7 +8,11 @@
         <div class="col">Participants</div>
         <div class="col">Owner</div>
         <div class="col last-col">
-          <v-btn class="primary--text" @click="createTournament()">
+          <v-btn
+            class="primary--text"
+            @click="createTournament()"
+            data-cy="create"
+          >
             Create
           </v-btn>
         </div>
