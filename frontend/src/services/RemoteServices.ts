@@ -224,6 +224,7 @@ export default class RemoteServices {
   }
 
   static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
+
     return httpClient
         .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`, sugg)
         .then(response => {
@@ -232,6 +233,9 @@ export default class RemoteServices {
         .catch(async error => {
           throw Error(await this.errorMessage(error));
         });
+    console.log(sugg)
+
+
   }
 
   static async deleteQuestion(questionId: number) {

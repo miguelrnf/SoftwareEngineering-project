@@ -123,7 +123,7 @@
                         >fas fa-book-medical</v-icon
                         >
                     </template>
-                    <span>Reject Suggestion</span>
+                    <span>Change to Question</span>
                 </v-tooltip>
                 <!--  <v-tooltip bottom>
                    <template v-slot:activator="{ on }">
@@ -140,18 +140,18 @@
                  </v-tooltip>-->
             </template>
         </v-data-table>
-        <approve-suggestion-dialog
+        <reject-suggestion-dialog
                 v-if="currentSuggestion"
-                v-model="approveSuggDialog"
+                v-model="rejectSuggDialogue"
                 :suggestion="currentSuggestion"
-                :topics="topics"
-                :dialog="approveSuggDialog"
+                :dialog="rejectSuggDialogue"
                 v-on:save-suggestion="onSaveSuggestion"
         />
         <show-suggestion-dialog
                 v-if="currentSuggestion"
                 :dialog="questionDialog"
                 :suggestion="currentSuggestion"
+                v-on:reject-question="RejectSuggestion"
                 v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
         />
         <add-question-dialog
@@ -176,14 +176,14 @@
     import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
     import ShowSuggestion from '@/views/suggestions/ShowSuggestion.vue';
     import ShowSuggestionDialog from '@/views/suggestions/ShowSuggestionDialog.vue';
-    import ApproveSuggDialogue from '@/views/teacher/Suggestions/ApproveSuggDialogue.vue';
+    import RejectSuggDialogue from '@/views/teacher/Suggestions/RejectSuggDialogue.vue';
     import ShowSuggDialog from '@/views/teacher/Suggestions/ShowSuggDialog.vue';
     import AddQuestionDialog from '@/views/teacher/Suggestions/AddQuestionDialog.vue';
 
     @Component({
         components: {
             'show-suggestion-dialog': ShowSuggDialog,
-            'approve-suggestion-dialog': ApproveSuggDialogue,
+            'reject-suggestion-dialog': RejectSuggDialogue,
             'edit-question-topics': EditQuestionTopics,
             'add-question-dialog': AddQuestionDialog
         }
@@ -193,6 +193,7 @@
         topics: Topic[] = [];
         currentSuggestion: Suggestion | null = null;
         approveSuggDialog: boolean = false ;
+        rejectSuggDialogue: boolean = false ;
         questionDialog: boolean = false;
         addQuestionDialog: boolean = false;
         search: string = '';
@@ -317,10 +318,8 @@
 
 
         async RejectSuggestion(sugg: Suggestion) {
-            sugg.status = 'REJECTED'
-            sugg._justification = 'No justification was given'
-            const result = await RemoteServices.approveSuggestion(sugg);
-            this.$emit('approve-question', result);
+            this.currentSuggestion = sugg;
+            this.rejectSuggDialogue = true;
         }
 
         async AddQuestion(sugg: Suggestion) {
@@ -332,7 +331,7 @@
         async onSaveSuggestion(sugg: Suggestion) {
             //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
             this.suggestions.unshift(sugg);
-            this.approveSuggDialog = false;
+            this.rejectSuggDialogue = false;
             this.addQuestionDialog = false;
             this.currentSuggestion = null;
         }
