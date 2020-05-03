@@ -109,7 +109,9 @@ export default class CreateTournamentView extends Vue {
   async createTournament() {
     try {
       await RemoteServices.createNewTournament(this.tournament);
-      await this.$router.push({ name: 'own-Tournaments' });
+      if (this.$store.getters.getUser.role === 'TEACHER')
+        await this.$router.push({ name: 'all-tournaments' });
+      else await this.$router.push({ name: 'own-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

@@ -28,14 +28,13 @@ public class TournamentController {
     }
 
     @PostMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
     }
@@ -70,6 +69,12 @@ public class TournamentController {
         return this.tournamentservice.findById(tournamentId, executionId);
     }
 
+    @GetMapping("/executions/{executionId}/teacher/tournaments")
+    @PreAuthorize("hasRole('TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TournamentDto> getExecutionTournament(@PathVariable Integer executionId) {
+        return this.tournamentservice.listAllTournaments(executionId);
+    }
+
     @GetMapping("/executions/{executionId}/tournaments/own/{username}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getOwnTournament(@PathVariable String username, @PathVariable Integer executionId) {
@@ -94,7 +99,7 @@ public class TournamentController {
     }
 
     @PutMapping("/tournament/{tournamentId}/cancel")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
     public TournamentDto cancelTournament (Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

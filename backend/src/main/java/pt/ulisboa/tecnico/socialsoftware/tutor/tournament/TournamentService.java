@@ -97,13 +97,21 @@ public class TournamentService {
 
         User user = findUsername(tournamentDto.getOwner().getUsername());
 
-
-        if(user.getRole() != User.Role.STUDENT)
+        if(user.getRole() == User.Role.ADMIN){
             throw new TutorException(TOURNAMENT_PERMISSION);
+        }
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
+
+        availableQuestions = filterByAssessment(availableQuestions, tournament);
+
+        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
+        }
 
         assignTournamentToExecution(tournament, courseExecution);
 
@@ -115,8 +123,6 @@ public class TournamentService {
             tournament.setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
 
         entityManager.persist(tournament);
-
-
 
         return new TournamentDto(tournament);
     }
@@ -136,6 +142,18 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_LIST_EMPTY);
 
         return temp;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listAllTournaments(int courseExecutionId) {
+
+        return tournamentRepository.findAll().stream()
+                .filter(tournament -> tournament.getCourseExecution().getId().equals(courseExecutionId))
+                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+                .collect(Collectors.toList());
     }
 
     @Retryable(
@@ -436,10 +454,6 @@ public class TournamentService {
 
         availableQuestions = filterByAssessment(availableQuestions, tournament);
 
-        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
-            throw new TutorException(NOT_ENOUGH_QUESTIONS);
-        }
-
         availableQuestions = tournament.getOwner().filterQuestionsByStudentModel(tournament.getNumberOfQuestions(), availableQuestions);
         quiz.setCourseExecution(courseExecution);
         courseExecution.addQuiz(quiz);
@@ -463,6 +477,7 @@ public class TournamentService {
         tournament.getQuiz().setType("TOURNAMENT");
         tournament.getQuiz().setAvailableDate(tournament.getAvailableDate());
         tournament.getQuiz().setConclusionDate(tournament.getConclusionDate());
+        tournament.getQuiz().setResultsDate(tournament.getConclusionDate());
         tournament.getQuiz().setCreationDate(DateHandler.now());
         tournament.getQuiz().setTitle(tournament.getTitle());
     }

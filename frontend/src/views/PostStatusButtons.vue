@@ -98,10 +98,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import RemoteServices from '../services/RemoteServices';
-import { PostAnswer } from '@/models/management/PostAnswer';
 
 @Component
 export default class PostStatusButtons extends Vue {

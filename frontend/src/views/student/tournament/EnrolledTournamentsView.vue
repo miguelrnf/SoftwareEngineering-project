@@ -50,7 +50,7 @@
             Solve
           </v-btn>
           <v-btn
-            v-if="t.completed"
+            v-if="prepareToResults(t)"
             class="btn"
             color="primary"
             @click="showResults(t.solved)"
@@ -96,6 +96,13 @@ export default class EnrolledTournamentsView extends Vue {
     statementManager.correctAnswers = quiz.correctAnswers;
     statementManager.statementQuiz = quiz.statementQuiz;
     await this.$router.push({ name: 'quiz-results' });
+  }
+
+  prepareToResults(t: Tournament): boolean {
+    return (
+      t.completed &&
+      (t.quiz?.timeToResults == 0 || t.quiz?.timeToResults == null)
+    );
   }
 
   isSolvable(t: Tournament): boolean {
