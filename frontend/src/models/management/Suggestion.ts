@@ -1,4 +1,3 @@
-
 import Topic from '@/models/management/Topic';
 import User from '@/models/user/User';
 
@@ -12,8 +11,6 @@ export default class Suggestion {
   _justification: string = '';
   _student!: User | null;
   _questionStr: string = '';
-
-
 
   //options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   _topicsList: Topic[] = [];
@@ -33,7 +30,9 @@ export default class Suggestion {
         (option: Option) => new Option(option)
       );*/
 
-      this._topicsList = jsonObj._topicsList.map((topic: Topic) => new Topic(topic));
+      this._topicsList = jsonObj._topicsList.map(
+        (topic: Topic) => new Topic(topic)
+      );
     }
   }
 }

@@ -76,14 +76,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
-import { PostAnswer } from '@/models/management/PostAnswer';
 
 @Component({
   components: {
@@ -131,5 +130,4 @@ export default class ShowPost extends Vue {
 }
 </script>
 
-<style>
-</style>
+<style></style>

@@ -70,6 +70,12 @@ public class TournamentController {
         return this.tournamentservice.findById(tournamentId, executionId);
     }
 
+    @GetMapping("/executions/{executionId}/teacher/tournaments")
+    @PreAuthorize("hasRole('TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TournamentDto> getExecutionTournament(@PathVariable Integer executionId) {
+        return this.tournamentservice.listAllTournaments(executionId);
+    }
+
     @GetMapping("/executions/{executionId}/tournaments/own/{username}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getOwnTournament(@PathVariable String username, @PathVariable Integer executionId) {

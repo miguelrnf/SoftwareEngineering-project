@@ -85,6 +85,14 @@
                 <v-list-item-title>Quizzes</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/tournaments">
+              <v-list-item-action>
+                <v-icon>ballot</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/assessments">
               <v-list-item-action>
                 <v-icon>book</v-icon>
@@ -353,6 +361,12 @@
             <v-list-item-content>
               <v-list-item-title>Quizzes</v-list-item-title>
             </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/tournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>All Tournaments</v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/assessments">
             <v-list-item-action>

@@ -153,7 +153,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';

@@ -17,9 +17,7 @@
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
-              <v-card-title>{{
-                post.question.question.title
-              }}</v-card-title>
+              <v-card-title>{{ post.question.question.title }}</v-card-title>
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea

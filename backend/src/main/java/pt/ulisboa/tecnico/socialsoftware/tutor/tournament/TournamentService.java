@@ -105,6 +105,14 @@ public class TournamentService {
 
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
 
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
+
+        availableQuestions = filterByAssessment(availableQuestions, tournament);
+
+        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
+        }
+
         assignTournamentToExecution(tournament, courseExecution);
 
         if (DateHandler.isValidDateFormat(tournamentDto.getAvailableDate()))
@@ -128,6 +136,21 @@ public class TournamentService {
         List<TournamentDto> temp = tournamentRepository.findAll().stream()
                 .filter(tournament -> this.checkStatus(tournament).equals(Tournament.TournamentStatus.CREATED) && tournament
                         .getCourseExecution().getId().equals(courseExecutionId))
+                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+                .collect(Collectors.toList());
+        if(temp.isEmpty())
+            throw new TutorException(TOURNAMENT_LIST_EMPTY);
+
+        return temp;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listAllTournaments(int courseExecutionId) {
+        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+                .filter(tournament -> tournament.getCourseExecution().getId().equals(courseExecutionId))
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
         if(temp.isEmpty())
@@ -434,10 +457,6 @@ public class TournamentService {
 
         availableQuestions = filterByAssessment(availableQuestions, tournament);
 
-        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
-            throw new TutorException(NOT_ENOUGH_QUESTIONS);
-        }
-
         availableQuestions = tournament.getOwner().filterQuestionsByStudentModel(tournament.getNumberOfQuestions(), availableQuestions);
         quiz.setCourseExecution(courseExecution);
         courseExecution.addQuiz(quiz);
@@ -461,6 +480,7 @@ public class TournamentService {
         tournament.getQuiz().setType("TOURNAMENT");
         tournament.getQuiz().setAvailableDate(tournament.getAvailableDate());
         tournament.getQuiz().setConclusionDate(tournament.getConclusionDate());
+        tournament.getQuiz().setResultsDate(tournament.getConclusionDate());
         tournament.getQuiz().setCreationDate(DateHandler.now());
         tournament.getQuiz().setTitle(tournament.getTitle());
     }
