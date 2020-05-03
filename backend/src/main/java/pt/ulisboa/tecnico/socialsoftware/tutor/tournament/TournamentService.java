@@ -97,9 +97,9 @@ public class TournamentService {
 
         User user = findUsername(tournamentDto.getOwner().getUsername());
 
-
-        if(user.getRole() != User.Role.STUDENT)
+        if(user.getRole() == User.Role.ADMIN){
             throw new TutorException(TOURNAMENT_PERMISSION);
+        }
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
@@ -115,8 +115,6 @@ public class TournamentService {
             tournament.setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
 
         entityManager.persist(tournament);
-
-
 
         return new TournamentDto(tournament);
     }

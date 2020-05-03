@@ -209,7 +209,7 @@ class CancelTournamentServiceSpockTest extends Specification {
         assessmentRepository.save(ass)
     }
 
-    def "owner cancel tournament"() {
+    def "owner Student cancel tournament"() {
         given:
         assdto.setId(tempId++)
         tournamentDto.setOwner(new UserDto(STUDENT))
@@ -224,6 +224,25 @@ class CancelTournamentServiceSpockTest extends Specification {
         canceledTournament.id == tournament.getId()
         tournament.owner.getName() == canceledTournament.owner.getName()
         tournament.owner.getRole() == User.Role.STUDENT
+        tournament.title == TITLE
+        canceledTournament.status == "CANCELED"
+    }
+
+    def "owner Teacher cancel tournament"() {
+        given:
+        assdto.setId(tempId++)
+        tournamentDto.setOwner(new UserDto(TEACHER))
+        tournamentDto.setTitle(TITLE)
+        tournamentDto.setAssessmentDto(assdto)
+        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+
+        when:
+        def canceledTournament = tournamentService.cancelTournament(tournament.getId(), USERNAME_2)
+
+        then:"the return data are correct"
+        canceledTournament.id == tournament.getId()
+        tournament.owner.getName() == canceledTournament.owner.getName()
+        tournament.owner.getRole() == User.Role.TEACHER
         tournament.title == TITLE
         canceledTournament.status == "CANCELED"
     }

@@ -28,7 +28,7 @@ public class TournamentController {
     }
 
     @PostMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -94,7 +94,7 @@ public class TournamentController {
     }
 
     @PutMapping("/tournament/{tournamentId}/cancel")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
     public TournamentDto cancelTournament (Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

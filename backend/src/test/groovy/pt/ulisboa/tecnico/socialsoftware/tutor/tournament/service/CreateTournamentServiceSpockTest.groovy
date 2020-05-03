@@ -47,8 +47,9 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final TITLE = 'first tournament'
     static final NUMQUESTIONS = 3
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
-    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static final NAME = 'name'
+    static id = 1
 
     @Autowired
     UserRepository userRepository
@@ -158,7 +159,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setTitle(TITLE)
-        assdto.setId(1)
+        assdto.setId(id)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
@@ -193,6 +194,7 @@ class CreateTournamentServiceSpockTest extends Specification {
        given:
        tournamentDto.setOwner(new UserDto(STUDENT))
        tournamentDto.setTitle(TITLE)
+       assdto.setId(id++)
        tournamentDto.setAssessmentDto(assdto)
 
        when:
@@ -204,6 +206,24 @@ class CreateTournamentServiceSpockTest extends Specification {
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE
        result.status == "CREATED"
+    }
+
+    def "teacher creates a tournament"() {
+        given:
+        tournamentDto.setOwner(new UserDto(TEACHER))
+        tournamentDto.setTitle(TITLE)
+        assdto.setId(id++)
+        tournamentDto.setAssessmentDto(assdto)
+
+        when:
+        def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+
+        then:"the return data are correct"
+        result.id != null
+        result.owner.getName() == 'name'
+        result.owner.getRole() == User.Role.TEACHER
+        result.title == TITLE
+        result.status == "CREATED"
     }
 
     def "null user creates a tournament"() {
@@ -225,6 +245,8 @@ class CreateTournamentServiceSpockTest extends Specification {
         given:
         tournamentDto.setOwner(new UserDto(user as User))
         tournamentDto.setTitle(title)
+        assdto.setId(id++)
+        tournamentDto.setAssessmentDto(assdto)
 
 
         when:
@@ -236,7 +258,6 @@ class CreateTournamentServiceSpockTest extends Specification {
 
         where:
              user     | title || errorMessage
-            TEACHER   | TITLE || TOURNAMENT_PERMISSION
              ADMIN    | TITLE || TOURNAMENT_PERMISSION
          NLL_USERNAME | TITLE || TOURNAMENT_NOT_CONSISTENT
             STUDENT   | null  || TOURNAMENT_NOT_CONSISTENT
