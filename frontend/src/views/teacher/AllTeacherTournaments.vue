@@ -3,6 +3,7 @@
     <h2>All Tournaments</h2>
     <ul>
       <li class="list-header">
+        <div class="colResult"></div>
         <div class="col">Title</div>
         <div class="col">Status</div>
         <div class="col">Participants</div>
@@ -18,6 +19,15 @@
         </div>
       </li>
       <li class="list-row" v-for="to in tournaments" :key="to.id">
+        <div class="colResult" data-cy="results">
+          <v-icon
+            large
+            class="mr-2"
+            @click="showQuizAnswers(to)"
+            v-if="showResults(to)"
+            >fas fa-poll</v-icon
+          >
+        </div>
         <div class="col" data-cy="title">
           {{ to.title }}
           <p v-show="false" data-cy="id">
@@ -109,6 +119,13 @@
         </v-card>
       </v-dialog>
     </ul>
+    <show-quiz-answers-dialog
+      v-if="quizAnswers"
+      v-model="quizAnswersDialog"
+      :quiz-answers="quizAnswers"
+      :correct-sequence="correctSequence"
+      :timeToSubmission="timeToSubmission"
+    />
   </div>
 </template>
 
@@ -116,13 +133,24 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/management/Tournament';
+import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { QuizAnswer } from '@/models/management/QuizAnswer';
+import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 
-@Component
+@Component({
+  components: {
+    'show-quiz-answers-dialog': ShowQuizAnswersDialog
+  }
+})
 export default class AllTeacherTournaments extends Vue {
   tournaments: Tournament[] = [];
   dialog: boolean = false;
   currentTournament: Tournament = new Tournament();
   iscreated: boolean = false;
+  quizAnswers: QuizAnswer[] = [];
+  correctSequence: number[] = [];
+  quizAnswersDialog: boolean = false;
+  timeToSubmission: number = 0;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -136,6 +164,21 @@ export default class AllTeacherTournaments extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async showQuizAnswers(t: Tournament) {
+    try {
+      let quizAnswers: QuizAnswers = await RemoteServices.getQuizAnswers(
+        t.quiz.id
+      );
+
+      this.quizAnswers = quizAnswers.quizAnswers;
+      this.correctSequence = quizAnswers.correctSequence;
+      this.timeToSubmission = quizAnswers.timeToSubmission;
+      this.quizAnswersDialog = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 
   async createTournament() {
@@ -161,6 +204,12 @@ export default class AllTeacherTournaments extends Vue {
       to.status !== 'OPEN' &&
       to.owner.username === this.$store.getters.getUser.username
     );
+  }
+
+  showResults(t: Tournament) {
+    console.log(t);
+    console.log(t.quiz.id);
+    return t.status === 'CLOSED' && t.quiz.id;
   }
 
   async cancelTournament(t: Tournament) {
@@ -238,6 +287,12 @@ export default class AllTeacherTournaments extends Vue {
       text-align: center;
       max-width: 25%;
       word-wrap: break-word;
+    }
+
+    .colResult {
+      flex-basis: 5% !important;
+      margin: auto; /* Important */
+      text-align: center;
     }
 
     .list-row {
