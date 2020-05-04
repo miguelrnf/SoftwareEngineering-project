@@ -24,6 +24,7 @@ import TournamentsView from '@/views/admin/TournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournament/CreateTournamentsView.vue';
 import PostsView from '@/views/PostsView.vue';
 import PostPostView from '@/views/student/PostPostView.vue';
+import DashboardHomeView from '@/views/DashboardHomeView.vue';
 
 import TeacherSuggView from './views/teacher/Suggestions/SuggestionView.vue';
 import ShowSuggDialog from './views/teacher/Suggestions/ShowSuggDialog.vue';
@@ -38,6 +39,7 @@ import SuggestionsView from '@/views/suggestions/SuggestionsView.vue';
 
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
 import PostGeneralView from '@/views/PostGeneralView.vue';
+import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 
 Vue.use(Router);
 
@@ -275,6 +277,22 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
             requiredAuth: 'None'
+          }
+        }
+      ]
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'dashboard-home',
+          component: DashboardHomeView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'Student'
           }
         }
       ]

@@ -2,7 +2,7 @@
   <v-card class="mx-auto" max-height="80%">
     <v-app-bar dense color="grey lighten-2">
       <v-toolbar-title>
-        {{ convertMarkDown(post.question.question.title) }}</v-toolbar-title
+        {{ post.question.question.title }}</v-toolbar-title
       >
       <v-spacer />
       <post-status-buttons :post="post"></post-status-buttons>
@@ -47,7 +47,7 @@
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
     </v-card-text>
-    <v-card-text v-if="post.answer != null && post.answer.teacherAnswer !== ''">
+    <v-card-text v-if="post.answer != null && post.answer.teacherAnswer !== '' && (!post.answerPrivacy || isTeacher() || isOwner(post))">
       <p class="subtitle-1 font-weight-light">
         <span v-html="convertMarkDown('Answer:')" />
       </p>
@@ -84,6 +84,7 @@ import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 import { PostAnswer } from '@/models/management/PostAnswer';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -131,5 +132,4 @@ export default class ShowPost extends Vue {
 }
 </script>
 
-<style>
-</style>
+<style></style>

@@ -13,6 +13,7 @@ export class PostAnswer {
       this.teacherAnswer = jsonObj.teacherAnswer;
       this.user = jsonObj.user;
       this.post = jsonObj.post;
+      this.privacy = jsonObj.privacy;
     }
   }
 }

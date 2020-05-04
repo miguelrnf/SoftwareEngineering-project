@@ -853,6 +853,41 @@ export default class RemoteServices {
       });
   }
 
+  static async getPostsByUser(username: string): Promise<ListPost> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/user/${username}`
+      )
+      .then(response => {
+        return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changePostPrivacy(id: number): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/privacy`)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeAnswerPrivacy(id: number): Promise<Post> {
+    return httpClient
+      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/answer/edit/privacy`)
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';

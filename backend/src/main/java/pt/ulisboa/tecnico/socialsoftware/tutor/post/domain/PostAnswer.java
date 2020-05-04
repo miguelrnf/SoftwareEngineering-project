@@ -46,6 +46,7 @@ public class PostAnswer {
         this.teacherAnswer = teacherAnswer;
         this.isEdited = false;
         this.isRedirected = false;
+
     }
 
     public Integer getId() {
@@ -79,6 +80,7 @@ public class PostAnswer {
     public void setTeacherAnswer(String teacherAnswer) {
         this.teacherAnswer = teacherAnswer;
     }
+
 
     private void checkPostAnswerConsistency(String pa, int length) {
         if(pa == null)
@@ -119,4 +121,5 @@ public class PostAnswer {
         isRedirected = redirected;
     }
 }
+
 
