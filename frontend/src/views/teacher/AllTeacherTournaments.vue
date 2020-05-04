@@ -168,7 +168,6 @@ export default class AllTeacherTournaments extends Vue {
 
   async showQuizAnswers(t: Tournament) {
     try {
-      console.log(t.quiz);
       let quizAnswers: QuizAnswers = await RemoteServices.getQuizAnswers(
         t.quiz.id
       );
@@ -208,7 +207,9 @@ export default class AllTeacherTournaments extends Vue {
   }
 
   showResults(t: Tournament) {
-    return t.status === 'CLOSED' && t.quiz;
+    console.log(t);
+    console.log(t.quiz.id);
+    return t.status === 'CLOSED' && t.quiz.id;
   }
 
   async cancelTournament(t: Tournament) {
