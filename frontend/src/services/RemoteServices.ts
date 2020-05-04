@@ -224,17 +224,16 @@ export default class RemoteServices {
   }
 
   static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
-
+    console.log (sugg);
     return httpClient
         .put(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`, sugg)
         .then(response => {
+          console.log(new Suggestion(response.data));
           return new Suggestion(response.data);
         })
         .catch(async error => {
           throw Error(await this.errorMessage(error));
         });
-    console.log(sugg)
-
 
   }
 

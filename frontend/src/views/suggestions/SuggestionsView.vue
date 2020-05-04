@@ -257,6 +257,7 @@ export default class SuggestionsView extends Vue {
   }
 
   showSuggestionDialog(sugg: Suggestion) {
+    console.log(sugg);
     this.currentSuggestion = sugg;
     this.questionDialog = true;
   }

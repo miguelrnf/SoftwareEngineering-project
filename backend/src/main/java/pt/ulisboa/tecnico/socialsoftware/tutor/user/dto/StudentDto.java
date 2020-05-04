@@ -21,6 +21,8 @@ public class StudentDto implements Serializable {
     private int percentageOfCorrectStudentAnswers = 0;
     private String creationDate;
     private String lastAccess;
+    private int numberofsuggs = 0;
+    private int numberofapprovedsuggs = 0;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
@@ -184,5 +186,21 @@ public class StudentDto implements Serializable {
                 ", creationDate='" + creationDate + '\'' +
                 ", lastAccess='" + lastAccess + '\'' +
                 '}';
+    }
+
+    public int getNumberofapprovedsuggs() {
+        return numberofapprovedsuggs;
+    }
+
+    public void setNumberofapprovedsuggs(int numberofapprovedsuggs) {
+        this.numberofapprovedsuggs = numberofapprovedsuggs;
+    }
+
+    public int getNumberofsuggs() {
+        return numberofsuggs;
+    }
+
+    public void setNumberofsuggs(int numberofsuggs) {
+        this.numberofsuggs = numberofsuggs;
     }
 }

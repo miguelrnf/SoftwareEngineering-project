@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.ListByUsernameDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -125,13 +126,20 @@ public class SuggestionService {
 
         suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()));
 
-        if (suggestionDto.getStatus() == "REJECTED") {
+        if (suggestionDto.getStatus().equals("REJECTED")) {
 
             suggestion.set_justification(suggestionDto.get_justification());
+            suggestion.get_student().incrementNumberofsuggestions();
+
 
         }
 
+        else {
 
+            suggestion.get_student().incrementNumberofsuggestions();
+            suggestion.get_student().incrementNumberofapprovedsuggestions();
+
+        }
 
 
         return new SuggestionDto(suggestion);
@@ -272,6 +280,34 @@ public class SuggestionService {
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
             return tmp.stream().map(SuggestionDto::new).collect(Collectors.toList());
+
+        }
+
+        throw new TutorException(ACCESS_DENIED);
+
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ListByUsernameDto listAllSuggestionsbyUsername(String username) {
+
+        List<SuggestionDto> array = new ArrayList<>();
+        List<Suggestion> tmp = new ArrayList<>();
+        User u = checkIfUserExists(username);
+        ListByUsernameDto List = new ListByUsernameDto();
+
+        if (checkIfUserHasRoleStudent(u)) {
+
+            tmp = suggestionRepository.findAll().stream().filter(suggestion -> username.equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+            if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+            List.setListByUsernameDto (tmp);
+            List.setNumberofapprovedsuugs (u.getnumberofapprovedsuggs());
+            List.setNumberofsuugs(u.getnumberofsuggs());
+
+            return List;
 
         }
 

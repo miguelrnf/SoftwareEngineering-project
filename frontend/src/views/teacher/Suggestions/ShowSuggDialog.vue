@@ -41,12 +41,12 @@
         >close</v-btn>
 
         <h1 v-if="suggestion.status=='TOAPPROVE'">
-          <v-btn dark color="green darken-1" @click="ApproveSuggestion()"
+          <v-btn dark color="green darken-1" @click="ApproveSuggestion"
                  data-cy="approveSuggestionButton"
 
           >Approve</v-btn>
 
-          <v-btn dark color="red darken-1" @click="RejectSuggestion()"
+          <v-btn dark color="red darken-1" @click="RejectSuggestion"
                  data-cy="rejectSuggestionButton"
           >Reject</v-btn>
 
@@ -74,22 +74,13 @@
     async ApproveSuggestion() {
       this.suggestion.status = 'APPROVED'
       const result = await RemoteServices.approveSuggestion(this.suggestion);
-      this.$emit('approve-question', result);
+      this.$emit('close-show-suggestion-dialog', result);
     }
 
 
 
     async RejectSuggestion() {
-
-      this.suggestion.status = 'REJECTED'
-
-      if (
-              this.suggestion._justification == '') {
-        this.suggestion._justification = 'No justification was given';
-      }
-
-      const result = await RemoteServices.approveSuggestion(this.suggestion);
-      this.$emit('reject-question', result);
+      this.$emit('reject-suggestion');
     }
 
     closeQuestionDialog() {
