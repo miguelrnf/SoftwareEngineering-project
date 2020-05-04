@@ -102,6 +102,7 @@
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
+      data-cy="PrivacyStatusButton"
       >{{ 'Private' }}</v-chip
     >
     <v-chip
@@ -112,6 +113,7 @@
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
+      data-cy="PrivacyStatusButton"
       >{{ 'Public' }}</v-chip
     >
   </div>

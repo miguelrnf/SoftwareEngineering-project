@@ -6,10 +6,12 @@ describe('List Posts', () => {
     });
 
     afterEach(() => {
-        cy.contains('Logout').parent().click();
+        cy.contains('Logout').parent().click({force: true});
     });
 
     after(() => {
+        cy.demoStudentLoginPosts();
+        cy.gotoPosts();
         cy.deletePost('[TEST§1] I dont understand');
     });
 
