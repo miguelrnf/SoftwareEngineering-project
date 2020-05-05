@@ -124,7 +124,7 @@ let router = new Router({
         {
           path: 'students',
           name: 'students-management',
-          component: TeacherSuggView,
+          component: StudentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Teacher',
             requiredAuth: 'Teacher'
@@ -290,6 +290,7 @@ let router = new Router({
           path: 'home',
           name: 'dashboard-home',
           component: DashboardHomeView,
+          props: { isOwnDashboard: true, isReal: true },
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
             requiredAuth: 'Student'
