@@ -582,8 +582,8 @@ export default class TopBar extends Vue {
   }
 
   async logout() {
-    await this.$router.push({ name: 'home' }).catch(() => {});
     await this.$store.dispatch('logout');
+    await this.$router.push({ name: 'home' }).catch(() => {});
   }
 }
 </script>
