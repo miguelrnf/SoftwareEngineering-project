@@ -13,6 +13,8 @@ describe('Post Buttons', () => {
     });
 
     after(() => {
+        cy.demoStudentLoginPosts();
+        cy.gotoPosts();
         cy.deletePost('[TEST§1] I dont understand');
     });
 
@@ -26,5 +28,11 @@ describe('Post Buttons', () => {
         cy.demoTeacherLoginPosts();
         cy.gotoPosts();
         cy.pressStatusButton('[TEST§1] I dont understand', 'PostStatusButton');
+    });
+
+    it('list posts as student and press change post privacy button', () => {
+        cy.demoStudentLoginPosts();
+        cy.gotoPosts();
+        cy.pressStatusButton('[TEST§1] I dont understand', 'PrivacyStatusButton');
     });
 });

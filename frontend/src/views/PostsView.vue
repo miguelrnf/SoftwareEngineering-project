@@ -208,7 +208,7 @@ export default class PostsView extends Vue {
     try {
       let res = await RemoteServices.viewPosts(this.perPage, this.page);
       if (res.lists != undefined) {
-        this.posts = res.lists.reverse();
+        this.posts = res.lists;
         this.posts = this.posts.filter(
           post => this.isOwner(post) || !post.postPrivacy || this.isTeacher()
         );
