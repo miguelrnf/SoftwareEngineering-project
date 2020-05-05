@@ -49,6 +49,7 @@ public class TournamentDto implements Serializable {
         if (tournament.getConclusionDate() != null)
             this.conclusionDate = DateHandler.toISOString(tournament.getConclusionDate());
 
+        this.quiz = new StatementQuizDto();
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
         this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
@@ -168,6 +169,7 @@ public class TournamentDto implements Serializable {
                 ", owner=" + owner +
                 ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
+                ", statementQuiz=" + quiz +
                 '}';
     }
 

@@ -153,12 +153,12 @@ public class TournamentService {
 
         tournamentRepository.findAll().stream().filter(tournament -> tournament.getCourseExecution().getId().equals(courseExecutionId))
                 .forEach(tournament -> {
+                    checkStatus(tournament);
                     TournamentDto tournamentDto = new TournamentDto(tournament);
                     if (tournament.getQuiz() != null)
                         tournamentDto.getQuiz().setId(tournament.getQuiz().getId());
                     result.add(tournamentDto);
                 });
-
 
         return result.stream().sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
@@ -241,9 +241,8 @@ public class TournamentService {
                         .collect(Collectors.toList()).get(0);
 
                         tournamentDto.setCompleted(answer.isCompleted());
-                        tournamentDto.setQuiz(new StatementQuizDto(answer));
 
-                        if (tournamentDto.isCompleted() && checkStatus(tournament) != Tournament.TournamentStatus.OPEN){
+                        if (tournamentDto.isCompleted()){
                             List<SolvedQuizDto> temp = user.getQuizAnswers().stream()
                                     .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
                                     .map(SolvedQuizDto::new).collect(Collectors.toList());
