@@ -132,7 +132,7 @@
 INSERT INTO POSTS (ID, KEY) VALUES (${pid}, ${pkey});
 
 INSERT INTO POST_QUESTIONS (ID, POST_ID, QUESTION_ID, USER_ID, STUDENTS_QUESTION)
-VALUES (12921, 69, ${qid}, ${sid}, &apos;QUESTION&apos;);
+VALUES (12921, 69, ${qid}, 676, &apos;QUESTION&apos;);
 
 INSERT INTO POST_ANSWERS (ID, TEACHER_ANSWER, POST_ID, USER_ID)
 VALUES (11111, &apos;ANSWER&apos;, ${pid}, ${tid});</stringProp>
@@ -232,54 +232,12 @@ VALUES (11111, &apos;ANSWER&apos;, ${pid}, ${tid});</stringProp>
                 <stringProp name="Header.name">Authorization</stringProp>
                 <stringProp name="Header.value">${token}</stringProp>
               </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Content-Type</stringProp>
-                <stringProp name="Header.value">application/json</stringProp>
-              </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
-	&quot;key&quot;: &quot;${pkey}&quot;,&#xd;
-	&quot;question&quot;: {&#xd;
-		&quot;question&quot;:{&#xd;
-			&quot;id&quot;: &quot;${qid}&quot;,&#xd;
-			&quot;key&quot;: &quot;${key}&quot;,&#xd;
-			&quot;content&quot;: &quot;${content}&quot;,&#xd;
-			&quot;status&quot;: &quot;${status}&quot;			&#xd;
-		},&#xd;
-		&quot;user&quot;:{&#xd;
-			&quot;id&quot;: &quot;${sid}&quot;,&#xd;
-			&quot;name&quot;: &quot;${sname}&quot;,&#xd;
-			&quot;role&quot;: &quot;${srole}&quot;,&#xd;
-			&quot;username&quot;: &quot;${susername}&quot;			&#xd;
-		},&#xd;
-		&#xd;
-		&quot;sudentQuestion&quot;: &quot;A Question&quot;&#xd;
-		&#xd;
-	},&#xd;
-	&quot;answer&quot;:{&#xd;
-		&quot;user&quot;: {&#xd;
-			&quot;id&quot;: &quot;${tid}&quot;,&#xd;
-			&quot;name&quot;: &quot;${tname}&quot;,&#xd;
-			&quot;role&quot;: &quot;${trole}&quot;,&#xd;
-			&quot;username&quot;: &quot;${tusername}&quot;	&#xd;
-			&#xd;
-		},&#xd;
-		&quot;teacherAnswer&quot;: &quot;Answer&quot;		&#xd;
-	}&#xd;
-	&#xd;
-}&#xd;
-</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
             </elementProp>
             <stringProp name="HTTPSampler.domain">${server}</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>

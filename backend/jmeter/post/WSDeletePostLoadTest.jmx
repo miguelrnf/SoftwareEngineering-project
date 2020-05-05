@@ -273,10 +273,10 @@
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
 	&quot;user&quot;: &#xd;
-		{ &quot;id&quot;: &quot;${id}&quot;,&#xd;
-		  &quot;name&quot;: &quot;${name}&quot;,&#xd;
-		  &quot;username&quot;: &quot;${username}&quot;,&#xd;
-		  &quot;role&quot;: &quot;${role}&quot;&#xd;
+		{ &quot;id&quot;: &quot;676&quot;,&#xd;
+		  &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
+		  &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
+		  &quot;role&quot;: &quot;STUDENT&quot;&#xd;
 		},&#xd;
 		&#xd;
 	&quot;question&quot;: &#xd;
@@ -445,10 +445,6 @@
                 <stringProp name="Header.name">Authorization</stringProp>
                 <stringProp name="Header.value">${token}</stringProp>
               </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Content-Type</stringProp>
-                <stringProp name="Header.value">application/json</stringProp>
-              </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
@@ -463,19 +459,7 @@
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&#xd;
-	&quot;key&quot;: &quot;${post_id}&quot;,&#xd;
-	&quot;question&quot;: &#xd;
-			{&#xd;
-			&quot;user&quot;: &#xd;
-				{ &quot;id&quot;: &quot;${id}&quot;,&#xd;
-			       &quot;name&quot;: &quot;${name}&quot;,&#xd;
-			       &quot;username&quot;: &quot;${username}&quot;,&#xd;
-				  &quot;role&quot;: &quot;${role}&quot;&#xd;
-				}&#xd;
-			}&#xd;
-}&#xd;
-&#xd;
+                    <stringProp name="Argument.value">&#xd;
 ${__threadNum}&#xd;
 ${__intSum(50,${post_id},post_id)}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -610,7 +594,7 @@ ${__intSum(50,${post_id},post_id)}</stringProp>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">TearDown</stringProp>
           <stringProp name="queryType">Update Statement</stringProp>
-          <stringProp name="query">DELETE FROM POST_QUESTIONS WHERE USER_ID = ${id};
+          <stringProp name="query">DELETE FROM POST_QUESTIONS WHERE USER_ID = 676;
 ${__FileToString(${dir}/data/deletePopulate.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
