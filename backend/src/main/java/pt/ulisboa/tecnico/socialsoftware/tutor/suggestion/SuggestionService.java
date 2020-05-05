@@ -276,7 +276,7 @@ public class SuggestionService {
 
         if (checkIfUserHasRoleStudent(u)) {
 
-            tmp = suggestionRepository.findAll().stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+            tmp = suggestionRepository.listAllSuggestions(u.getId()).stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
             return tmp.stream().map(SuggestionDto::new).collect(Collectors.toList());
@@ -300,7 +300,7 @@ public class SuggestionService {
 
         if (checkIfUserHasRoleStudent(u)) {
 
-            tmp = suggestionRepository.findAll().stream().filter(suggestion -> username.equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+            tmp = suggestionRepository.listAllSuggestions(u.getId()).stream().filter(suggestion -> username.equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
             List.setListByUsernameDto (tmp);

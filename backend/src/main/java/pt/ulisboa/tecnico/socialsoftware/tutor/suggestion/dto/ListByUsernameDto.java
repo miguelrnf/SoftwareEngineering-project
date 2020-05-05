@@ -19,7 +19,7 @@ public class ListByUsernameDto implements Serializable {
 
     public List getListByUsernameDto () {return this._suggslist;}
 
-    public void setListByUsernameDto(List suggs) {this._suggslist = suggs}
+    public void setListByUsernameDto(List suggs) {this._suggslist = suggs;}
 
 
     public Integer getNumberofapprovedsuugs() {
