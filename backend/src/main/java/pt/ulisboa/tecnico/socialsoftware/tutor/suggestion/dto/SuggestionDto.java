@@ -27,9 +27,6 @@ public class SuggestionDto implements Serializable{
     private UserDto _student;
     private CourseExecution _courseexecution;
     private List<OptionDto> options = new ArrayList<>();
-
-
-
     private String title;
 
 
@@ -51,6 +48,8 @@ public class SuggestionDto implements Serializable{
             this.creationDate = suggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
         this.options = suggestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+
+        this.title= suggestion.getTitle();
 
     }
 
