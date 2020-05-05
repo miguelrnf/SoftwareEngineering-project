@@ -9,6 +9,7 @@
         <div class="col">Questions</div>
         <div class="col">Status</div>
         <div class="col">Participants</div>
+        <div class="col last-col"></div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
         <div class="col" data-cy="title">
@@ -32,6 +33,17 @@
         <div class="col">
           {{ t.enrolledStudents.length }}
         </div>
+        <div class="col" v-if="t.status !== 'CANCELED' && t.status !== 'OPEN'">
+          <v-btn
+            class="btn"
+            color="primary"
+            @click="cancelTournament(t)"
+            data-cy="cancel"
+          >
+            Cancel
+          </v-btn>
+        </div>
+        <div class="col last-col" v-else></div>
       </li>
     </ul>
   </div>
@@ -54,6 +66,23 @@ export default class OwnTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async setTournamentStatus(newT: Tournament, t: Tournament) {
+    t.status = newT.status;
+  }
+
+  async cancelTournament(t: Tournament) {
+    let newT;
+    if (confirm('Are you sure you want to cancel this tournament?')) {
+      try {
+        newT = await RemoteServices.cancelTournament(t.id);
+        await this.setTournamentStatus(newT, t);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      await this.$store.dispatch('clearLoading');
+    }
   }
 }
 </script>
@@ -97,9 +126,10 @@ export default class OwnTournamentsView extends Vue {
     }
 
     .col {
-      flex-basis: 25% !important;
       margin: auto; /* Important */
       text-align: center;
+      max-width: 15%;
+      word-wrap: break-word;
     }
 
     .list-row {

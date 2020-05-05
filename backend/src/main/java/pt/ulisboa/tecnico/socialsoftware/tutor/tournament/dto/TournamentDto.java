@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import org.springframework.data.annotation.Transient;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -24,9 +24,9 @@ public class TournamentDto implements Serializable {
     private UserDto owner;
     private String status = "CREATED";
     private List<UserDto> enrolledStudents = new ArrayList<>();
-
-    @Transient
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private StatementQuizDto quiz;
+    private SolvedQuizDto solved;
+    private boolean isCompleted = false;
 
     public TournamentDto(){
     }
@@ -43,16 +43,17 @@ public class TournamentDto implements Serializable {
         this.owner = new UserDto(tournament.getOwner());
 
         if (tournament.getCreationDate() != null)
-            this.creationDate = tournament.getCreationDate().format(formatter);
+            this.creationDate = DateHandler.toISOString(tournament.getCreationDate());
         if (tournament.getAvailableDate() != null)
-            this.availableDate = tournament.getAvailableDate().format(formatter);
+            this.availableDate = DateHandler.toISOString(tournament.getAvailableDate());
         if (tournament.getConclusionDate() != null)
-            this.conclusionDate = tournament.getConclusionDate().format(formatter);
+            this.conclusionDate = DateHandler.toISOString(tournament.getConclusionDate());
 
+        this.quiz = new StatementQuizDto();
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
         this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
-
+        this.quiz = new StatementQuizDto();
     }
 
     public Integer getId() {
@@ -111,26 +112,28 @@ public class TournamentDto implements Serializable {
         this.conclusionDate = conclusionDate;
     }
 
-    public void setEnrolledStudents(List<UserDto> enrolledStudents) {
-        this.enrolledStudents = enrolledStudents;
+    public StatementQuizDto getQuiz() {
+        return quiz;
     }
 
-    public LocalDateTime getCreationDateDate() {
-        if (getCreationDate() == null || getCreationDate().isEmpty())
-            return null;
-        return LocalDateTime.parse(getCreationDate(), formatter);
+    public void setQuiz(StatementQuizDto quiz) {
+        this.quiz = quiz;
     }
 
-    public LocalDateTime getAvailableDateDate() {
-        if (getAvailableDate() == null || getAvailableDate().isEmpty())
-            return null;
-        return LocalDateTime.parse(getAvailableDate(), formatter);
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 
-    public LocalDateTime getConclusionDateDate() {
-        if (getConclusionDate() == null || getConclusionDate().isEmpty())
-            return null;
-        return LocalDateTime.parse(getConclusionDate(), formatter);
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public SolvedQuizDto getSolved() {
+        return solved;
+    }
+
+    public void setSolved(SolvedQuizDto solved) {
+        this.solved = solved;
     }
 
     public Integer getNumberOfQuestions() {
@@ -166,7 +169,7 @@ public class TournamentDto implements Serializable {
                 ", owner=" + owner +
                 ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
-                ", formatter=" + formatter +
+                ", statementQuiz=" + quiz +
                 '}';
     }
 

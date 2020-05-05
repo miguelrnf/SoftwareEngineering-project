@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -18,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
@@ -27,9 +32,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
@@ -44,9 +46,10 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
     static final NUMQUESTIONS = 3
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static final NAME = 'name'
+    static id = 1
 
     @Autowired
     UserRepository userRepository
@@ -77,18 +80,6 @@ class CreateTournamentServiceSpockTest extends Specification {
 
     @Shared
     def courseExecution
-
-    @Shared
-    def creationDate
-
-    @Shared
-    def availableDate
-
-    @Shared
-    def conclusionDate
-
-    @Shared
-    def formatter
 
     @Shared
     def TEACHER
@@ -123,41 +114,31 @@ class CreateTournamentServiceSpockTest extends Specification {
 
     def setupSpec() {
 
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        given: "a quiz"
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now().plusDays(1)
-        conclusionDate = LocalDateTime.now().plusDays(2)
-
-        and: "a tournamentDto"
+        given: "a tournamentDto"
         tournamentDto = new TournamentDto()
         tournamentDto.setId(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
-        tournamentDto.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto.setAvailableDate(DATENOW)
+        tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
 
         and: "a user with the role teacher"
         TEACHER = new User()
-        TEACHER.setId(3)
         TEACHER.setRole(User.Role.TEACHER)
         TEACHER.setUsername(USERNAME_2)
 
         and: "a user with the role admin"
         ADMIN = new User()
-        ADMIN.setId(2)
         ADMIN.setRole(User.Role.ADMIN)
         ADMIN.setUsername(USERNAME_3)
 
         and: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(1)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
         and: "a user with the null username"
         NLL_USERNAME = new User()
-        NLL_USERNAME.setId(1)
         NLL_USERNAME.setRole(User.Role.STUDENT)
         NLL_USERNAME.setUsername(null)
     }
@@ -169,17 +150,16 @@ class CreateTournamentServiceSpockTest extends Specification {
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
-        assdto.setId(1)
+        assdto.setTitle(TITLE)
+        assdto.setId(id)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
@@ -214,6 +194,7 @@ class CreateTournamentServiceSpockTest extends Specification {
        given:
        tournamentDto.setOwner(new UserDto(STUDENT))
        tournamentDto.setTitle(TITLE)
+       assdto.setId(id++)
        tournamentDto.setAssessmentDto(assdto)
 
        when:
@@ -225,6 +206,24 @@ class CreateTournamentServiceSpockTest extends Specification {
        result.owner.getRole() == User.Role.STUDENT
        result.title == TITLE
        result.status == "CREATED"
+    }
+
+    def "teacher creates a tournament"() {
+        given:
+        tournamentDto.setOwner(new UserDto(TEACHER))
+        tournamentDto.setTitle(TITLE)
+        assdto.setId(id++)
+        tournamentDto.setAssessmentDto(assdto)
+
+        when:
+        def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+
+        then:"the return data are correct"
+        result.id != null
+        result.owner.getName() == 'name'
+        result.owner.getRole() == User.Role.TEACHER
+        result.title == TITLE
+        result.status == "CREATED"
     }
 
     def "null user creates a tournament"() {
@@ -246,6 +245,8 @@ class CreateTournamentServiceSpockTest extends Specification {
         given:
         tournamentDto.setOwner(new UserDto(user as User))
         tournamentDto.setTitle(title)
+        assdto.setId(id++)
+        tournamentDto.setAssessmentDto(assdto)
 
 
         when:
@@ -257,7 +258,6 @@ class CreateTournamentServiceSpockTest extends Specification {
 
         where:
              user     | title || errorMessage
-            TEACHER   | TITLE || TOURNAMENT_PERMISSION
              ADMIN    | TITLE || TOURNAMENT_PERMISSION
          NLL_USERNAME | TITLE || TOURNAMENT_NOT_CONSISTENT
             STUDENT   | null  || TOURNAMENT_NOT_CONSISTENT
@@ -270,6 +270,26 @@ class CreateTournamentServiceSpockTest extends Specification {
         @Bean
         TournamentService tournamentService() {
             return new TournamentService()
+        }
+
+        @Bean
+        QuizService quizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService answerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        AnswersXmlImport answersXmlImport() {
+            return new AnswersXmlImport()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }

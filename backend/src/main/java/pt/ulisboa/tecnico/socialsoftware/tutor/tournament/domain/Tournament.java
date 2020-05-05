@@ -1,19 +1,25 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_UNABLE_REMOVE;
 
 @Entity
 @Table(name = "tournaments",
@@ -53,6 +59,10 @@ public class Tournament {
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
+    @OneToOne
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
@@ -71,9 +81,9 @@ public class Tournament {
 
         setTitle(tournamentDto.getTitle());
         setStatus(Tournament.TournamentStatus.valueOf(tournamentDto.getStatus()));
-        this.creationDate = tournamentDto.getCreationDateDate();
-        setAvailableDate(tournamentDto.getAvailableDateDate());
-        setConclusionDate(tournamentDto.getConclusionDateDate());
+        setCreationDate(DateHandler.now());
+        setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
         this.owner = user;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         this.assessment = assessment;
@@ -97,6 +107,14 @@ public class Tournament {
 
     public Set<User> getEnrolledStudents() {
         return enrolledStudents;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
     }
 
     public void setId(Integer id) {
@@ -161,7 +179,7 @@ public class Tournament {
         if (availableDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
-        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || conclusionDate.isBefore(LocalDateTime.now()))) {
+        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || availableDate.isBefore(DateHandler.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }
@@ -170,7 +188,7 @@ public class Tournament {
         if (conclusionDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date");
         }
-        if ((conclusionDate.isBefore(availableDate) || conclusionDate.isBefore(LocalDateTime.now()))) {
+        if ((conclusionDate.isBefore(availableDate) || conclusionDate.isBefore(DateHandler.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date");
         }
     }
@@ -191,20 +209,7 @@ public class Tournament {
         this.assessment = assessment;
     }
 
-    public TournamentStatus checkStatus(){
-        if(status == TournamentStatus.CANCELED)
-            return TournamentStatus.CANCELED;
-        if(LocalDateTime.now().isBefore(availableDate))
-            this.setStatus(TournamentStatus.CREATED);
-        else if(LocalDateTime.now().isBefore(conclusionDate))
-            this.setStatus(TournamentStatus.OPEN);
-        else
-            this.setStatus(TournamentStatus.CLOSED);
-        return status;
-    }
-
     public void remove() {
-        checkCanRemove();
 
         for(User s : this.enrolledStudents){
             s.getTournaments().remove(this);
@@ -215,16 +220,6 @@ public class Tournament {
 
         courseExecution.getTournaments().remove(this);
         courseExecution = null;
-    }
-
-    public void checkCanRemove() {
-        if( checkStatus() == TournamentStatus.OPEN)
-            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament is open");
-
-        if( checkStatus() == TournamentStatus.CREATED && !enrolledStudents.isEmpty())
-            throw new TutorException(TOURNAMENT_UNABLE_REMOVE, "Tournament has enrolled students");
-
-
     }
 
 

@@ -15,9 +15,11 @@ public class AuthUserDto implements Serializable {
     private String name;
     private String username;
     private User.Role role;
+    private Integer score;
     private Map<String, List<CourseDto>> courses;
 
     public AuthUserDto(User user) {
+        this.score = user.getScore();
         this.name = user.getName();
         this.username = user.getUsername();
         this.role = user.getRole();
@@ -45,6 +47,14 @@ public class AuthUserDto implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public User.Role getRole() {

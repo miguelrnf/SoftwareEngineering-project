@@ -55,8 +55,7 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark
-            data-cy="management">
+            <v-btn v-on="on" text dark data-cy="management">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -84,6 +83,16 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Quizzes</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/tournaments">
+              <v-list-item-action>
+                <v-icon>ballot</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title data-cy="tournaments">
+                  Tournaments</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/assessments">
@@ -137,6 +146,19 @@
             </v-btn>
           </template>
           <v-list dense>
+            <v-list-item>
+              <v-list-item-action>
+                <v-icon>fas fa-coins</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title
+                  >{{
+                    $store.getters.getUser.score
+                  }}
+                  Achandos</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/student/createTournaments">
               <v-list-item-action>
                 <v-icon>create</v-icon>
@@ -150,7 +172,7 @@
                 <v-icon>fas fa-list-ul</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Available</v-list-item-title>
+                <v-list-item-title>Created</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/student/enrolledTournaments">
@@ -325,7 +347,9 @@
           v-if="isTeacher && currentCourse"
         >
           <template v-slot:activator>
-            <v-list-item-title data-cy="Management"> Management</v-list-item-title>
+            <v-list-item-title data-cy="Management">
+              Management</v-list-item-title
+            >
           </template>
           <v-list-item to="/management/questions">
             <v-list-item-action>
@@ -333,8 +357,8 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item><v-list-item to="/management/suggestions">
+            </v-list-item-content> </v-list-item
+          ><v-list-item to="/management/suggestions">
             <v-list-item-action>
               <v-icon>question_answer</v-icon>
             </v-list-item-action>
@@ -357,6 +381,12 @@
             <v-list-item-content>
               <v-list-item-title>Quizzes</v-list-item-title>
             </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/tournaments">
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>All Tournaments</v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/assessments">
             <v-list-item-action>

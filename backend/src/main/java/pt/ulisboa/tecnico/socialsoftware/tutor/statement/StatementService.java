@@ -164,7 +164,7 @@ public class StatementService {
         // create QuizAnswer for quizzes
         quizRepository.findQuizzes(executionId).stream()
                 .filter(quiz -> !quiz.isQrCodeOnly())
-                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED) && !quiz.getType().equals(Quiz.QuizType.TOURNAMENT))
                 .filter(quiz -> quiz.getAvailableDate() == null || quiz.getAvailableDate().isBefore(now))
                 .filter(quiz -> !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
@@ -176,6 +176,7 @@ public class StatementService {
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> !quizAnswer.isCompleted())
+                .filter(quizAnswer -> !quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
                 .filter(quizAnswer -> !quizAnswer.getQuiz().isOneWay() || quizAnswer.getCreationDate() == null)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || DateHandler.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
@@ -224,6 +225,7 @@ public class StatementService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void completeOpenQuizAnswers() {
+
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(DateHandler.now());
 
         quizAnswersToClose.forEach(quizAnswer -> {

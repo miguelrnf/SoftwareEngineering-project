@@ -10,7 +10,6 @@ import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
-import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
@@ -27,7 +26,6 @@ import PostPostView from '@/views/student/PostPostView.vue';
 import DashboardHomeView from '@/views/DashboardHomeView.vue';
 
 import TeacherSuggView from './views/teacher/Suggestions/SuggestionView.vue';
-import ShowSuggDialog from './views/teacher/Suggestions/ShowSuggDialog.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
@@ -40,6 +38,7 @@ import SuggestionsView from '@/views/suggestions/SuggestionsView.vue';
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
 import PostGeneralView from '@/views/PostGeneralView.vue';
 import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
+import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 
 Vue.use(Router);
 
@@ -104,11 +103,29 @@ let router = new Router({
           }
         },
         {
+          path: 'tournaments',
+          name: 'all-tournaments',
+          component: AllTeacherTournaments,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Tournaments',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
           path: 'quizzes',
           name: 'quizzes-management',
           component: QuizzesView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Quizzes',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'createTournaments',
+          name: 'create-teacher-tournament',
+          component: CreateTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Create Tournaments',
             requiredAuth: 'Teacher'
           }
         },

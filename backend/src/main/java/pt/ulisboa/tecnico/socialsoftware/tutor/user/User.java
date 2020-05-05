@@ -40,6 +40,8 @@ public class User implements UserDetails, DomainEntity {
     private String name;
     private String enrolledCoursesAcronyms;
 
+    private Integer score;
+
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes;
     private Integer numberOfInClassQuizzes;
@@ -80,6 +82,7 @@ public class User implements UserDetails, DomainEntity {
         setUsername(username);
         this.key = key;
         this.role = role;
+        this.score = 0;
         this.creationDate = DateHandler.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfInClassQuizzes = 0;
@@ -144,6 +147,23 @@ public class User implements UserDetails, DomainEntity {
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
+    }
+
+    public Integer getScore() {
+        if(score == null)
+            this.score = 0;
+        return score;
+    }
+
+    public void changeScore(boolean wasRight) {
+        System.out.println("getting points");
+        if (wasRight)
+            this.score += 2;
+        else
+            this.score--;
+
+        if (this.score < 0)
+            this.score = 0;
     }
 
     public Role getRole() {

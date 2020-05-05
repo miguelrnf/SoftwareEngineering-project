@@ -89,11 +89,20 @@ public class AnswerService {
             quizAnswer.setCompleted(true);
         }
 
+        //Calculating and adding points to user
+        System.out.println("Entering point system add");
+        quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
+            if (questionAnswer.getOption() != null)
+                user.changeScore(questionAnswer.getOption().getCorrect());
+        });
+
         // In class quiz when student submits before resultsDate
         if (quizAnswer.getQuiz().getResultsDate() != null &&
-            quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
+                (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) ||
+                        quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT)) &&
             DateHandler.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
 
+            System.out.println("Not Finished");
             return new ArrayList<>();
         }
 
