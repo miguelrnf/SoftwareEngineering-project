@@ -1,9 +1,22 @@
 <template>
   <div align="center">
-    <v-card width="95%">
-      <v-card-subtitle class="text-center">
-        Dashboard ??
-      </v-card-subtitle>
+    <v-card width="95%" v-if="isReal">
+      <v-row>
+        <v-card-subtitle class="text-center">
+          Dashboard ??
+        </v-card-subtitle>
+        <v-spacer />
+        <v-autocomplete
+          v-if="isOwnDashboard"
+          v-model="searchedStudent"
+          :items="students"
+          item-text="name"
+          append-icon="search"
+          label="Search for dashboards"
+          class="mx-6 mt-3"
+          @keydown.enter.native="searchForDashboard(searchedStudent)"
+        />
+      </v-row>
       <v-card>
         <v-card-subtitle class="text-left">User details ?</v-card-subtitle>
         <v-card-text class="text-left">Some details here ?</v-card-text>
@@ -15,9 +28,17 @@
               <v-toolbar-title>{{ getColumnAppBar(n) }}</v-toolbar-title>
             </v-app-bar>
             <v-card style="max-height: 550px" class="overflow-y-auto" flat>
-              <div v-if="n === 1">
+              <div v-if="n === 1 && isOwnDashboard">
                 <post-preview
                   v-for="p in posts"
+                  :key="p.id"
+                  :post="p"
+                  @click.native="showPostOpenDialog(p)"
+                ></post-preview>
+              </div>
+              <div v-if="n === 1 && !isOwnDashboard">
+                <post-preview
+                  v-for="p in searchedPosts"
                   :key="p.id"
                   :post="p"
                   @click.native="showPostOpenDialog(p)"
@@ -40,6 +61,13 @@
         </v-col>
       </v-row>
     </v-card>
+    <student-dashboard
+      v-if="dashboardDialog"
+      :dialog="dashboardDialog"
+      :student="selectedStudent"
+      :is-own-dashboard="false"
+      v-on:close-dashboard-dialog="onCloseDialog"
+    ></student-dashboard>
     <show-post-dialog
       v-if="currentPost"
       :dialog="postDialog"
@@ -61,25 +89,37 @@
             v-on:save-post="onSavetournament"
             v-on:close-show-post-dialog="onCloseDialog"
     />-->
+    <v-card v-if="!isReal">
+      <v-card-text>The specified user does not exist :(</v-card-text>
+    </v-card>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import PostPreview from '@/views/PostPreview.vue';
 import Post from '@/models/management/Post';
 import PostViewDialog from '@/views/PostViewDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
+import { Student } from '@/models/management/Student';
+import StudentDashboardView from '@/views/StudentDashboardView.vue';
 
 @Component({
   components: {
     'post-preview': PostPreview,
-    'show-post-dialog': PostViewDialog
+    'show-post-dialog': PostViewDialog,
+    'student-dashboard': StudentDashboardView
   }
 })
 export default class DashboardHomeView extends Vue {
+  @Prop({ type: Boolean, required: true })
+  readonly isOwnDashboard!: boolean;
+  @Prop({ type: Boolean, required: true })
+  readonly isReal!: boolean;
+  @Prop({ type: Array, required: false })
+  readonly searchedPosts!: Post[];
   posts: Post[] = [];
   suggestions: Suggestion[] = [];
   tournaments: Tournament[] = [];
@@ -89,8 +129,15 @@ export default class DashboardHomeView extends Vue {
   postDialog: boolean = false;
   suggestionDialog: boolean = false;
   tournamentDialog: boolean = false;
+  students: Student[] = [];
+  selectedStudent: Student | null = null;
+  searchedStudent: string = '';
+  dashboardDialog: boolean = false;
 
   async created() {
+    this.students = await RemoteServices.getCourseStudents(
+      this.$store.getters.getCurrentCourse
+    );
     let ps = await RemoteServices.getPostsByUser(
       this.$store.getters.getUser.username
     );
@@ -124,8 +171,19 @@ export default class DashboardHomeView extends Vue {
   }
 
   onCloseDialog() {
+    this.dashboardDialog = false;
+    this.selectedStudent = null;
+    this.searchedStudent = '';
     this.postDialog = false;
     // Falta fechar os dialogs das suggestions e/ou tournaments
+  }
+
+  searchForDashboard(s: string) {
+    // TODO - Need to verify dashboard privacy
+    let student = this.students.find(student => student.name == s);
+    if (student) this.selectedStudent = student;
+    else this.selectedStudent = null;
+    this.dashboardDialog = true;
   }
 }
 </script>
