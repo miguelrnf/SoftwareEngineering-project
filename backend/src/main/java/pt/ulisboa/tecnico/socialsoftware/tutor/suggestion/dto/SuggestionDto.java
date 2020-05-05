@@ -27,7 +27,7 @@ public class SuggestionDto implements Serializable{
     private UserDto _student;
     private CourseExecution _courseexecution;
     private List<OptionDto> options = new ArrayList<>();
-
+    private Boolean _isprivate = false;
 
 
     private String title;
@@ -46,6 +46,7 @@ public class SuggestionDto implements Serializable{
         this._student=new UserDto(suggestion.get_student());
         this._questionStr=suggestion.get_questionStr();
         this._status=suggestion.getStatus().name();
+        this._isprivate = suggestion.get_isprivate();
 
         if (suggestion.getCreationDate() != null)
             this.creationDate = suggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -179,5 +180,13 @@ public class SuggestionDto implements Serializable{
                 ", _status='" + _status + '\'' +
                 ", _student=" + _student +
                 '}';
+    }
+
+    public Boolean get_isprivate() {
+        return _isprivate;
+    }
+
+    public void set_isprivate(Boolean _isprivate) {
+        this._isprivate = _isprivate;
     }
 }

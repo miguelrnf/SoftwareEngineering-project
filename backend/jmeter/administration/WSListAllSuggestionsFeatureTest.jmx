@@ -370,6 +370,7 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">DELETE FROM topics_suggestions ;
+
 DELETE FROM suggestions WHERE key&gt;=1 ;
 
 
