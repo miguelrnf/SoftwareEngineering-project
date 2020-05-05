@@ -16,7 +16,6 @@ export class PostQuestion {
       this.studentQuestion = jsonObj.studentQuestion;
       this.user = jsonObj.user;
       this.post = jsonObj.post;
-      this.privacy = jsonObj.privacy;
     }
   }
 }
