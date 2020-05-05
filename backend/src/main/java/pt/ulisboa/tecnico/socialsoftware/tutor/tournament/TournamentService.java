@@ -149,10 +149,18 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listAllTournaments(int courseExecutionId) {
+        List<TournamentDto> result = new ArrayList<>();
 
-        return tournamentRepository.findAll().stream()
-                .filter(tournament -> tournament.getCourseExecution().getId().equals(courseExecutionId))
-                .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
+        tournamentRepository.findAll().stream().filter(tournament -> tournament.getCourseExecution().getId().equals(courseExecutionId))
+                .forEach(tournament -> {
+                    TournamentDto tournamentDto = new TournamentDto(tournament);
+                    if (tournament.getQuiz() != null)
+                        tournamentDto.getQuiz().setId(tournament.getQuiz().getId());
+                    result.add(tournamentDto);
+                });
+
+
+        return result.stream().sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
     }
 
