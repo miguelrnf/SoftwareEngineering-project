@@ -11,7 +11,7 @@ describe('Student walkthrough', () => {
   it('login and creates a Tournament', () => {
     cy.getTeacherTournament();
     cy.createTournament('Demo tournament', '30');
-    cy.assertTeacher('Demo tournament');
+    cy.assertAny('Demo tournament');
     cy.deleteTournament('Demo tournament');
   });
 });

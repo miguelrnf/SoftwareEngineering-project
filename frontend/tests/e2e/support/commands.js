@@ -128,14 +128,6 @@ Cypress.Commands.add('getTeacherTournament', () => {
   cy.get('[data-cy="create"]').click();
 });
 
-Cypress.Commands.add('assertTeacher', title => {
-  cy.contains(title)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 5);
-});
-
 Cypress.Commands.add('createTournament', (tile, numbQuestions) => {
   let year =
     '#availableDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
