@@ -299,19 +299,65 @@ export default class SuggestionsView extends Vue {
   }
 
   async ApproveSuggestion(sugg: Suggestion) {
-    sugg.status = 'APPROVED';
-    const result = await RemoteServices.approveSuggestion(sugg);
 
-    this.$emit('approve-question', result);
+    if (sugg && (sugg.status == 'REJECTED')
+    ) {
+      await this.$store.dispatch(
+              'error',
+              'You can not approve a rejected suggestion before the students edits it'
+      );
+
+    }
+
+     else if (sugg && (sugg.status == 'APPROVED')
+      ) {
+      await this.$store.dispatch(
+              'error',
+              'You can not approve a suggestion twice'
+      );
+
+    }
+
+     else {
+
+      sugg.status = 'APPROVED';
+      const result = await RemoteServices.approveSuggestion(sugg);
+
+      this.$emit('approve-question', result);
+
+    }
 
   }
 
   async RejectSuggestion(sugg: Suggestion) {
+
     if (sugg != null) {
       this.currentSuggestion = sugg;
     }
 
-    this.rejectSuggDialogue = true;
+    if (sugg && (sugg.status == 'REJECTED')
+    ) {
+      await this.$store.dispatch(
+              'error',
+              'You can not reject a question twice'
+      );
+
+    }
+
+    else if (sugg && (sugg.status == 'APPROVED')
+    ) {
+      await this.$store.dispatch(
+              'error',
+              'You can not reject an approved suggestion'
+      );
+
+    }
+
+    else {
+
+      this.rejectSuggDialogue = true;
+
+    }
   }
 
   onCloseShowRejectDialog() {

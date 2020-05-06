@@ -240,10 +240,17 @@ public class SuggestionService {
 
         }
 
-        if (s.get_questionStr().length() > 1024) {
+        else if (s.get_questionStr().length() > 1024) {
 
             throw new TutorException(SUGGESTION_TOO_LONG);
 
+        }
+
+        else if (s.get_questionStr().equals(suggestionDto.get_questionStr())) {
+
+            s.set_isprivate(suggestionDto.get_isprivate());
+
+            return new SuggestionDto(s);
         }
 
         s.set_questionStr(suggestionDto.get_questionStr());
