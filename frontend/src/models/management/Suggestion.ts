@@ -1,10 +1,11 @@
 
 import Topic from '@/models/management/Topic';
 import User from '@/models/user/User';
+import Option from '@/models/management/Option';
 
 export default class Suggestion {
   _id: number | null = null;
-  //title: string = '';
+  title: string = '';
   status: string = 'TOAPPROVE';
   creationDate!: string | null;
   sequence: number | null = null;
@@ -15,13 +16,13 @@ export default class Suggestion {
 
 
 
-  //options: Option[] = [new Option(), new Option(), new Option(), new Option()];
+  options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   _topicsList: Topic[] = [];
 
   constructor(jsonObj?: Suggestion) {
     if (jsonObj) {
       this._id = jsonObj._id;
-      //this.title = jsonObj.title;
+      this.title = jsonObj.title;
       this.status = jsonObj.status;
       this.creationDate = jsonObj.creationDate;
       this.changed = jsonObj.changed;
@@ -29,9 +30,9 @@ export default class Suggestion {
       this._student = jsonObj._student;
       this._questionStr = jsonObj._questionStr;
 
-      /*this.options = jsonObj.options.map(
+      this.options = jsonObj.options.map(
         (option: Option) => new Option(option)
-      );*/
+      );
 
       this._topicsList = jsonObj._topicsList.map((topic: Topic) => new Topic(topic));
     }

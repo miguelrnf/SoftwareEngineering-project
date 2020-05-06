@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -9,9 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -23,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         })
 public class Suggestion {
     public enum Status {
-        TOAPPROVE, APPROVED, REJECTED
+        TOAPPROVE, APPROVED, REJECTED, QUESTION
     }
 
     @Id
@@ -58,6 +57,11 @@ public class Suggestion {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User student;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
+    private List<Option> options = new ArrayList<>();
+
+    private String title;
 
     public Suggestion() {
     }
@@ -175,6 +179,22 @@ public class Suggestion {
 
     public void set_student(User student) {
         this.student = student;
+    }
+
+    public List<Option> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<Option> options) {
+        this.options = options;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override

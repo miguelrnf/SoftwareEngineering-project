@@ -10,7 +10,7 @@
       <v-card-title>
         <span class="headline">
           {{
-            editSuggestion && editSuggestion.id === null
+            editSuggestion && editSuggestion._id === null
               ? 'New Suggestion'
               : 'Edit Suggestion'
           }}
