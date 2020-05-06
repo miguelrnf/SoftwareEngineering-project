@@ -107,8 +107,6 @@ import Post from '@/models/management/Post';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
-import { PostAnswer } from '@/models/management/PostAnswer';
-import PrivacyButton from '@/views/PrivacyButton.vue';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component({
@@ -116,7 +114,6 @@ import RemoteServices from '@/services/RemoteServices';
     'edit-post-dialog': EditPostDialog,
     'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons,
-    'privacy-button': PrivacyButton
   }
 })
 export default class ShowPost extends Vue {

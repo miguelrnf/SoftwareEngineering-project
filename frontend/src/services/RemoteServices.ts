@@ -875,6 +875,19 @@ export default class RemoteServices {
       });
   }
 
+  static async postsByQuiz(quizid: number): Promise<ListPost> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/quiz/${quizid}`
+      )
+      .then(response => {
+        return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';

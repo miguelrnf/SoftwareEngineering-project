@@ -38,6 +38,15 @@
         ><i class="fas fa-chevron-right"
       /></span>
     </div>
+    <v-row justify="end">
+      <v-chip
+        class="mr-12 mb-n10 mt-2"
+        color="blue"
+        text-color="white"
+        @click="openPostsDialog"
+        >Check posts for this quiz</v-chip
+      >
+    </v-row>
     <result-component
       v-model="questionOrder"
       :answer="statementManager.statementQuiz.answers[questionOrder]"
@@ -47,6 +56,13 @@
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
     />
+    <posts-by-quiz
+      v-if="postsDialog"
+      :dialog="postsDialog"
+      :posts="quizPosts"
+      v-on:close-posts-by-quiz-dialog="onCloseDialog"
+    >
+    </posts-by-quiz>
   </div>
 </template>
 
@@ -54,15 +70,21 @@
 import { Component, Vue } from 'vue-property-decorator';
 import StatementManager from '@/models/statement/StatementManager';
 import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
+import Post from '@/models/management/Post';
+import RemoteServices from '@/services/RemoteServices';
+import PostsByQuiz from '@/views/PostsByQuizDialog.vue';
 
 @Component({
   components: {
-    'result-component': ResultComponent
+    'result-component': ResultComponent,
+    'posts-by-quiz': PostsByQuiz
   }
 })
 export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   questionOrder: number = 0;
+  quizPosts: Post[] = [];
+  postsDialog: boolean = false;
 
   async created() {
     if (this.statementManager.isEmpty()) {
@@ -74,6 +96,12 @@ export default class ResultsView extends Vue {
       }, 2000);
 
       await this.$store.dispatch('clearLoading');
+    }
+    if (this.statementManager.statementQuiz != null) {
+      let res = await RemoteServices.postsByQuiz(
+        this.statementManager.statementQuiz.id
+      );
+      this.quizPosts = res.lists;
     }
   }
 
@@ -96,6 +124,25 @@ export default class ResultsView extends Vue {
     if (n >= 0 && n < +this.statementManager.statementQuiz!.questions.length) {
       this.questionOrder = n;
     }
+  }
+
+  filterPostsByQuestion(): Post[] {
+    if (this.statementManager.statementQuiz != null) {
+      let qid = this.statementManager.statementQuiz.questions[
+        this.questionOrder
+      ].quizQuestionId;
+      return this.quizPosts.filter(post => post.question.question.id == qid);
+    }
+
+    return [];
+  }
+
+  openPostsDialog(): void {
+    this.postsDialog = true;
+  }
+
+  onCloseDialog(): void {
+    this.postsDialog = false;
   }
 }
 </script>

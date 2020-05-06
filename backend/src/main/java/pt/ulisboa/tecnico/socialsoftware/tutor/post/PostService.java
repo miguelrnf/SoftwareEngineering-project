@@ -13,10 +13,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostComment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostCommentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -25,9 +28,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -43,7 +49,13 @@ public class PostService {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private PostQuestionRepository postQuestionRepository;
+
+    @Autowired
     private PostCommentRepository commentRepository;
+
+    @Autowired
+    private QuizService quizService;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -244,6 +256,22 @@ public class PostService {
         dto.setPage(page);
         dto.setPerPage(perPage);
         dto.setTotalPosts(postRepository.getTotalPosts());
+        return dto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ListPostsDto postsByQuiz(int quizid) {
+        QuizDto quiz = quizService.findById(quizid);
+        List<PostDto> posts = quiz.getQuestions().stream()
+                .flatMap(x -> postQuestionRepository.findByQuestion(x.getId()).filter(y -> !y.isEmpty()).orElse(new ArrayList<>()).stream())
+                .map(y -> new PostDto(y.getPost())).collect(Collectors.toList());
+
+        ListPostsDto dto = new ListPostsDto();
+        dto.setLists(posts);
+        dto.setTotalPosts(posts.size());
         return dto;
     }
 

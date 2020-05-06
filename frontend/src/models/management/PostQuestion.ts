@@ -4,8 +4,8 @@ import User from '@/models/user/User';
 
 export class PostQuestion {
   id!: number;
-  question: Question | null = null;
-  studentQuestion: string = '';
+  question!: Question;
+  studentQuestion!: string;
   user!: User;
   post!: Post;
 
@@ -16,7 +16,6 @@ export class PostQuestion {
       this.studentQuestion = jsonObj.studentQuestion;
       this.user = jsonObj.user;
       this.post = jsonObj.post;
-      this.privacy = jsonObj.privacy;
     }
   }
 }
