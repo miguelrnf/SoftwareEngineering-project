@@ -96,9 +96,9 @@ public class User implements UserDetails, DomainEntity {
         this.numberofsuggestionsapproved = 0;
     }
 
-    public void incrementNumberofsuggestions () {this.numberofsuggestions += 1;}
+    public void incrementNumberofsuggestions () {this.numberofsuggestions++;}
 
-    public void incrementNumberofapprovedsuggestions () {this.numberofsuggestionsapproved += 1;}
+    public void incrementNumberofapprovedsuggestions () {this.numberofsuggestionsapproved++;}
 
     public Integer getnumberofsuggs () {return this.numberofsuggestions;}
 

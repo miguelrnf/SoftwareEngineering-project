@@ -45,6 +45,10 @@ public enum ErrorMessage {
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     SUGGESTION_NOT_FOUND("Suggestion %s not found"),
 
+    SUGGESTION_ALREADY_APP("The Suggestion was Already Approved"),
+    SUGGESTION_ALREADY_REJ("The Suggestion was Already Rejected"),
+
+
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
