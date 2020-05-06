@@ -35,7 +35,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -425,8 +424,8 @@ public class TournamentService {
        if(tournament.getOwner() != user)
            throw new TutorException(TOURNAMENT_PERMISSION_CANCEL);
 
-       if(this.checkStatus(tournament) == Tournament.TournamentStatus.OPEN)
-           throw new TutorException(TOURNAMENT_INVALID_STATUS, "open");
+       if(this.checkStatus(tournament) != Tournament.TournamentStatus.CREATED)
+           throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
        tournament.setStatus(Tournament.TournamentStatus.CANCELED);
         this.checkStatus(tournament);

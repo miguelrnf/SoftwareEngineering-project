@@ -14,12 +14,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -47,7 +49,7 @@ class GetCreatedTournamentSpockTest extends Specification{
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
-    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static int tempId = 1
     static int tournId = 1
 
@@ -77,6 +79,9 @@ class GetCreatedTournamentSpockTest extends Specification{
 
     @Autowired
     QuizRepository quizRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def assdto
@@ -113,6 +118,12 @@ class GetCreatedTournamentSpockTest extends Specification{
 
     @Shared
     def courseExecution
+
+    @Shared
+    def questionOne
+
+    @Shared
+    def questionTwo
 
     def setupSpec() {
 
@@ -165,14 +176,32 @@ class GetCreatedTournamentSpockTest extends Specification{
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
         topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution, tcl, assdto)
 
+        and:
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        questionOne.addTopic(topic)
 
-        then:"add to repository"
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        questionTwo.addTopic(topic)
+        then: "add to repository"
+        questionRepository.save(questionOne)
+        questionRepository.save(questionTwo)
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(user)

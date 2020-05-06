@@ -13,12 +13,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -39,11 +41,11 @@ class EnrollStudentsSpockPreformanceTest extends Specification{
     public static final String ACADEMIC_TERM = "1 SEM"
     static final String USERNAME_1 = "username1"
     static final String USERNAME_2 = "username2"
-    static final Integer NUMQUESTIONS = 3
+    static final Integer NUMQUESTIONS = 2
     static final String TITLE = "Title"
     static final String NAME = "NOME"
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
-    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
 
     @Autowired
     UserRepository userRepository
@@ -68,6 +70,9 @@ class EnrollStudentsSpockPreformanceTest extends Specification{
 
     @Autowired
     TopicConjunctionRepository topicConjunctionRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def course
@@ -107,6 +112,12 @@ class EnrollStudentsSpockPreformanceTest extends Specification{
 
     @Shared
     def topicConjunction
+
+    @Shared
+    def questionOne
+
+    @Shared
+    def questionTwo
 
     def setupSpec(){
 
@@ -156,12 +167,32 @@ class EnrollStudentsSpockPreformanceTest extends Specification{
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
         topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution_1, tcl, assdto)
 
+        and:
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        questionOne.addTopic(topic)
+
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        questionTwo.addTopic(topic)
+
+        questionRepository.save(questionOne)
+        questionRepository.save(questionTwo)
         courseExecution_1.addUser(userS)
         userS.addCourse(courseExecution_1)
         courseExecution_1.addUser(user_same)

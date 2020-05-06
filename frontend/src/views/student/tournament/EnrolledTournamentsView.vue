@@ -8,7 +8,7 @@
         <div class="col">Ends</div>
         <div class="col">Questions</div>
         <div class="col">Status</div>
-        <div class="col">Participants</div>
+        <div class="col">Assessment</div>
         <div class="col">Solved</div>
         <div class="col last-col"></div>
       </li>
@@ -32,7 +32,7 @@
           {{ t.status }}
         </div>
         <div class="col">
-          {{ t.enrolledStudents.length }}
+          {{ t.assessmentDto.title }}
         </div>
         <div v-if="t.status === 'OPEN'" class="col">
           {{ t.completed }}

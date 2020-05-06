@@ -14,12 +14,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -44,9 +46,9 @@ class AddTournamentServiceSpockTest extends Specification{
     static final USERNAME_1 = 'username1'
     static final TITLE = 'first tournament'
     static final NAME = 'name'
-    static final NUMQUESTIONS = 3
+    static final NUMQUESTIONS = 2
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
-    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
 
     @Autowired
     UserRepository userRepository
@@ -68,6 +70,9 @@ class AddTournamentServiceSpockTest extends Specification{
 
     @Autowired
     TopicConjunctionRepository topicConjunctionRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def tournamentDto
@@ -98,6 +103,12 @@ class AddTournamentServiceSpockTest extends Specification{
 
     @Shared
     def topicConjunction
+
+    @Shared
+    def questionOne
+
+    @Shared
+    def questionTwo
 
     def setupSpec() {
         given: "a tournamentDto"
@@ -132,21 +143,41 @@ class AddTournamentServiceSpockTest extends Specification{
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setTitle(TITLE)
-        assdto.setId(1);
+        assdto.setId(1)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
         topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution, tcl, assdto)
 
+        and:
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        questionOne.addTopic(topic)
+
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        questionTwo.addTopic(topic)
+
         and: "a user with the role student"
         def userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
 
         then:"add to repository"
+        questionRepository.save(questionTwo)
+        questionRepository.save(questionOne)
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)

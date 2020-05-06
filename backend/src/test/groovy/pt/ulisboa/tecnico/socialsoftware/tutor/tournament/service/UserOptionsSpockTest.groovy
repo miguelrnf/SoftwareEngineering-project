@@ -15,12 +15,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -46,10 +48,10 @@ class UserOptionsSpockTest extends Specification{
     static final USERNAME_1 = 'username1'
     static final NAME = 'name'
     static final TITLE = 'title'
-    static final NUMQUESTIONS = 3
-    static final DATEBEFORE = DateHandler.toISOString(DateHandler.now().minusDays(2));
-    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1));
-    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    static final NUMQUESTIONS = 2
+    static final DATEBEFORE = DateHandler.toISOString(DateHandler.now().minusDays(2))
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static int tempId = 1
 
     @Autowired
@@ -78,6 +80,9 @@ class UserOptionsSpockTest extends Specification{
 
     @Autowired
     AssessmentRepository assessmentRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def ASSDTO
@@ -124,6 +129,13 @@ class UserOptionsSpockTest extends Specification{
     @Shared
     def STUDENT
 
+    @Shared
+    def questionOne
+
+    @Shared
+    def questionTwo
+
+
 
     def setupSpec(){
 
@@ -137,7 +149,7 @@ class UserOptionsSpockTest extends Specification{
         tournamentDto.setId(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setOwner(new UserDto(STUDENT))
-        tournamentDto.setNumberOfQuestions(3)
+        tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
         tournamentDto.setAvailableDate(DATENOW)
         tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setTitle("Title")
@@ -198,8 +210,28 @@ class UserOptionsSpockTest extends Specification{
         userS.setUsername(USERNAME_1)
         topic = new Topic(course, topicDto)
         topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
 
-        then:"add to repository"
+        and:
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        questionOne.addTopic(topic)
+
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        questionTwo.addTopic(topic)
+
+        then: "add to repository"
+        questionRepository.save(questionOne)
+        questionRepository.save(questionTwo)
         userRepository.save(userS)
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)

@@ -33,7 +33,7 @@
         <div class="col">
           {{ t.enrolledStudents.length }}
         </div>
-        <div class="col" v-if="t.status !== 'CANCELED' && t.status !== 'OPEN'">
+        <div class="col" v-if="t.status === 'CREATED'">
           <v-btn
             class="btn"
             color="primary"

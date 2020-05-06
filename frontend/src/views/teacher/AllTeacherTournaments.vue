@@ -201,8 +201,7 @@ export default class AllTeacherTournaments extends Vue {
   showCancel(to: Tournament) {
     if (this.$store.getters.getUser != null)
       return (
-        to.status !== 'CANCELED' &&
-        to.status !== 'OPEN' &&
+        to.status === 'CREATED' &&
         to.owner.username === this.$store.getters.getUser.username
       );
   }

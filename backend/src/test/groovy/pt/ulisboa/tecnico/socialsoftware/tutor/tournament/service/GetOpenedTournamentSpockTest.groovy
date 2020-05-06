@@ -47,7 +47,7 @@ class GetOpenedTournamentSpockTest extends Specification{
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
     static final DATENOW = DateHandler.toISOString(DateHandler.now().minusDays(1))
-    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2));
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static int tempId = 1
 
     @Autowired
@@ -138,7 +138,7 @@ class GetOpenedTournamentSpockTest extends Specification{
         tournamentDto1.setId(1)
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
-        tournamentDto1.setNumberOfQuestions(1)
+        tournamentDto1.setNumberOfQuestions(2)
         tournamentDto1.setAvailableDate(DATENOW)
         tournamentDto1.setConclusionDate(DATETOMORROW)
 
@@ -146,7 +146,7 @@ class GetOpenedTournamentSpockTest extends Specification{
         tournamentDto2.setId(2)
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
-        tournamentDto2.setNumberOfQuestions(1)
+        tournamentDto2.setNumberOfQuestions(2)
         tournamentDto2.setAvailableDate(DATENOW)
         tournamentDto2.setConclusionDate(DATETOMORROW)
     }
@@ -182,32 +182,29 @@ class GetOpenedTournamentSpockTest extends Specification{
         topicConjunction = new TopicConjunction()
         topicConjunction.addTopic(topic)
 
-        and:"questions"
-        questionOne = new Question()
-        questionOne.setKey(1)
-        questionOne.setTitle(TITLE2)
-        questionOne.setStatus(Question.Status.AVAILABLE)
-        questionOne.setCourse(course)
-        course.addQuestion(questionOne)
-        questionOne.addTopic(topic)
-        topic.addQuestion(questionOne)
-
-        questionTwo = new Question()
-        questionTwo.setTitle(TITLE1)
-        questionTwo.setKey(2)
-        questionTwo.setStatus(Question.Status.AVAILABLE)
-        questionTwo.setCourse(course)
-        course.addQuestion(questionTwo)
-        questionTwo.addTopic(topic)
-        topic.addQuestion(questionTwo)
-
         and:
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution, tcl, assdto)
 
+        and:
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        questionOne.addTopic(topic)
 
-        then:"add to repository"
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        questionTwo.addTopic(topic)
+
+        then: "add to repository"
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(user)
