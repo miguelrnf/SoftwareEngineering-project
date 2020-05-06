@@ -104,6 +104,7 @@ public class SuggestionService {
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
+        suggestion.set_isprivate(suggestionDto.get_isprivate());
 
         topics.forEach(topic -> topic.addSuggestion(suggestion));
 
@@ -117,20 +118,25 @@ public class SuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SuggestionDto approveSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
+
         String username = userDto.getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
-        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
-
         Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
+
+
+        if (suggestion.getStatus().equals(Suggestion.Status.REJECTED)) throw new TutorException(SUGGESTION_ALREADY_REJ);
+        if (suggestion.getStatus().equals(Suggestion.Status.APPROVED)) throw new TutorException(SUGGESTION_ALREADY_APP);
+
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
 
         suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()));
 
         if (suggestionDto.getStatus().equals("REJECTED")) {
 
+
             suggestion.set_justification(suggestionDto.get_justification());
             suggestion.get_student().incrementNumberofsuggestions();
-
 
         }
 
@@ -140,7 +146,6 @@ public class SuggestionService {
             suggestion.get_student().incrementNumberofapprovedsuggestions();
 
         }
-
 
         return new SuggestionDto(suggestion);
     }
@@ -228,6 +233,7 @@ public class SuggestionService {
         Suggestion s = checkIfSuggestionExists(suggestionDto.get_id());
         checkIfUserIsValid (suggestionDto,s);
 
+
         if (s.get_questionStr().isEmpty()) {
 
             throw new TutorException(SUGGESTION_EMPTY);
@@ -241,6 +247,7 @@ public class SuggestionService {
         }
 
         s.set_questionStr(suggestionDto.get_questionStr());
+        s.set_isprivate(suggestionDto.get_isprivate());
         s.setStatus(Suggestion.Status.TOAPPROVE);
         s.set_changed(true);
 

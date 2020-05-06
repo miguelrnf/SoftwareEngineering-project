@@ -145,8 +145,8 @@
       v-if="currentSuggestion"
       :dialog="questionDialog"
       :suggestion="currentSuggestion"
-      v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
       v-on:reject-suggestion="RejectSuggestion"
+      v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
     />
     <add-question-dialog
       v-if="currentSuggestion"
@@ -276,7 +276,6 @@ export default class SuggestionsView extends Vue {
   }
 
   showSuggestionDialog(sugg: Suggestion) {
-    console.log(sugg._student)
     this.currentSuggestion = sugg;
     this.questionDialog = true;
   }
@@ -302,7 +301,9 @@ export default class SuggestionsView extends Vue {
   async ApproveSuggestion(sugg: Suggestion) {
     sugg.status = 'APPROVED';
     const result = await RemoteServices.approveSuggestion(sugg);
+
     this.$emit('approve-question', result);
+
   }
 
   async RejectSuggestion(sugg: Suggestion) {

@@ -48,8 +48,6 @@ export default class RejectSuggestionDialog extends Vue {
       this.suggestion._justification = 'No justification was given';
     }
     const result = await RemoteServices.approveSuggestion(this.suggestion);
-    console.log (this.suggestion);
-
     this.$emit('save-suggestion', result);
   }
   closeQuestionDialog() {
