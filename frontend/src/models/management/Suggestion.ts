@@ -13,6 +13,7 @@ export default class Suggestion {
   _justification: string = '';
   _student!: User | null;
   _questionStr: string = '';
+  _isprivate: boolean = false;
 
 
 
@@ -29,6 +30,7 @@ export default class Suggestion {
       this._justification = jsonObj._justification;
       this._student = jsonObj._student;
       this._questionStr = jsonObj._questionStr;
+      this._isprivate = jsonObj._isprivate;
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)

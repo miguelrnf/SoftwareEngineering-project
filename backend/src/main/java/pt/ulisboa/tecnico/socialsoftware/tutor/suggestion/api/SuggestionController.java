@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.ListByUsernameDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -51,6 +52,13 @@ public class SuggestionController {
         User user = (User)((Authentication)principal).getPrincipal();
 
         return this.suggestionService.listAllSuggestions(new UserDto(user));
+    }
+
+    @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listallbyusername/{username}")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    public ListByUsernameDto listAllSuggestionsbyUsername(String username) {
+
+        return this.suggestionService.listAllSuggestionsbyUsername(username);
     }
 
     @PostMapping(value = "/courses/{courseId}/suggestions/newquestion")
