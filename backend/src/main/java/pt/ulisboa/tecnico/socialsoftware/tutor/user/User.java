@@ -49,6 +49,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
+    public Integer numberofsuggestions;
+    public Integer numberofsuggestionsapproved;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -90,7 +92,18 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+        this.numberofsuggestions = 0;
+        this.numberofsuggestionsapproved = 0;
     }
+
+    public void incrementNumberofsuggestions () {this.numberofsuggestions += 1;}
+
+    public void incrementNumberofapprovedsuggestions () {this.numberofsuggestionsapproved += 1;}
+
+    public Integer getnumberofsuggs () {return this.numberofsuggestions;}
+
+    public Integer getnumberofapprovedsuggs () {return this.numberofsuggestionsapproved;}
+
 
     @Override
     public void accept(Visitor visitor) {

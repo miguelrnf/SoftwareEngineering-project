@@ -74,6 +74,16 @@
       </template>
 
 
+      <template v-slot:item._isprivate="{ item }">
+        <v-chip
+                :color="getPrivacyColor(item._isprivate)" small>
+
+          <span>{{ getPrivacyTag(item._isprivate) }}</span>
+        </v-chip>
+      </template>
+
+
+
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -176,6 +186,9 @@ export default class SuggestionsView extends Vue {
       align: 'center',
       sortable: false
     },
+
+    { text: 'Privacy', value: '_isprivate', align: 'center' },
+
     { text: 'Status', value: 'status', align: 'center' },
 
     {
@@ -256,6 +269,15 @@ export default class SuggestionsView extends Vue {
     else return 'green';
   }
 
+  getPrivacyColor(isprivate: boolean) {
+    if (isprivate) return 'red';
+    else return 'green';
+  }
+  getPrivacyTag(isprivate: boolean) {
+    if (isprivate) return 'PRIVATE';
+    else return 'PUBLIC';
+  }
+
   showSuggestionDialog(sugg: Suggestion) {
     this.currentSuggestion = sugg;
     this.questionDialog = true;
@@ -272,17 +294,6 @@ export default class SuggestionsView extends Vue {
   }
 
   editSuggestion(sugg: Suggestion) {
-    if (
-            sugg &&
-            (sugg.status!='REJECTED')
-    ) {
-      this.$store.dispatch(
-              'error',
-              'You can only edit a rejected suggestion'
-      );
-      return;
-    }
-
     this.currentSuggestion = sugg;
     this.editSuggestionDialog = true;
   }

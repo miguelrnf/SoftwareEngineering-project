@@ -27,7 +27,7 @@ import spock.lang.Unroll
 import java.time.LocalDateTime
 
 @DataJpaTest
-class SuggestionDashboardPerfomanceTest extends Specification{
+class SuggestionDashboardPerformanceTest extends Specification{
 
     @Autowired
     SuggestionService suggestionService

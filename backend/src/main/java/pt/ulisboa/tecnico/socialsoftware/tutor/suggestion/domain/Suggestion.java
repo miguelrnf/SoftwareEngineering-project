@@ -21,6 +21,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "sugg_indx_0", columnList = "key")
         })
 public class Suggestion {
+    public Boolean get_isprivate() {
+        return _isprivate;
+    }
+
+    public void set_isprivate(Boolean _isprivate) {
+        this._isprivate = _isprivate;
+    }
+
     public enum Status {
         TOAPPROVE, APPROVED, REJECTED, QUESTION
     }
@@ -43,6 +51,9 @@ public class Suggestion {
 
     @Column(name = "justification")
     private String _justification;
+
+    @Column(name = "isprivate")
+    private Boolean _isprivate;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -73,6 +84,7 @@ public class Suggestion {
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
+        this._isprivate = false;
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
