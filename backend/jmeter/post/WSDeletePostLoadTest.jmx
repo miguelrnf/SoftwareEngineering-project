@@ -273,10 +273,10 @@
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
 	&quot;user&quot;: &#xd;
-		{ &quot;id&quot;: &quot;${id}&quot;,&#xd;
-		  &quot;name&quot;: &quot;${name}&quot;,&#xd;
-		  &quot;username&quot;: &quot;${username}&quot;,&#xd;
-		  &quot;role&quot;: &quot;${role}&quot;&#xd;
+		{ &quot;id&quot;: &quot;676&quot;,&#xd;
+		  &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
+		  &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
+		  &quot;role&quot;: &quot;STUDENT&quot;&#xd;
 		},&#xd;
 		&#xd;
 	&quot;question&quot;: &#xd;

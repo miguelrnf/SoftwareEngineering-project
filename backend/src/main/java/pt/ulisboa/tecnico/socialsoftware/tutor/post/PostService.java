@@ -379,9 +379,6 @@ public class PostService {
     }
 
     private Question checkIfQuestionExists(PostQuestionDto question) {
-        System.out.println("**********************************************");
-        System.out.println(question);
-        System.out.println("**********************************************");
         if(question.getQuestion().getKey() != null) {
             return questionRepository.findByKey(question.getQuestion().getKey())
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getQuestion().getKey()));
