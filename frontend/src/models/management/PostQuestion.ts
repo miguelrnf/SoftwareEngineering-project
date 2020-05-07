@@ -4,7 +4,7 @@ import User from '@/models/user/User';
 
 export class PostQuestion {
   id!: number;
-  question!: Question;
+  question: Question | null = null;
   studentQuestion!: string;
   user!: User;
   post!: Post;

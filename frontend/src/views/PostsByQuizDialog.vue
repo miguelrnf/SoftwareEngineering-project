@@ -5,7 +5,7 @@
     @input="$emit('close-posts-by-quiz-dialog', false)"
     @keydown.esc="$emit('close-posts-by-quiz-dialog', false)"
   >
-    <v-card class="mt-7">
+    <v-card class="mt-7" v-if="posts.length !== 0">
       <div>
         <post-preview
           v-for="p in posts"
@@ -15,6 +15,9 @@
         >
         </post-preview>
       </div>
+    </v-card>
+    <v-card v-if="posts.length === 0">
+      <v-card-text class="mt-5">There are no posts for the questions in this quiz :(</v-card-text>
     </v-card>
     <show-post-dialog
       v-if="currentPost"

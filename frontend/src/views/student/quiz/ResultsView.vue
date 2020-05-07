@@ -44,6 +44,7 @@
         color="blue"
         text-color="white"
         @click="openPostsDialog"
+        data-cy="checkPostsByQuizButton"
         >Check posts for this quiz</v-chip
       >
     </v-row>
