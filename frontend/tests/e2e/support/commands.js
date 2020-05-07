@@ -252,6 +252,7 @@ Cypress.Commands.add('assertAvailableEnrolled', title => {
     .should('have.length', 5);
 });
 
+
 //##############################TOURNAMENTS FEATURE END##########################################
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -367,4 +368,16 @@ Cypress.Commands.add('pressStatusButton', (studentQuestion, button) => {
     .find('[data-cy=StatusButtons]')
     .find('[data-cy="'.concat(button).concat('"]'))
     .click({ force: true });
+});
+
+Cypress.Commands.add('createQuiz', () => {
+    cy.contains('Create').click()
+      .get('[data-cy="createQuizButton"]').click()
+      .get('[data-cy="endQuizButton"]').click()
+      .get('[data-cy="imSureButton"]').click();
+});
+
+Cypress.Commands.add('checkPostsByQuiz', () => {
+    cy.get('[data-cy="checkPostsByQuizButton"]').click()
+
 });

@@ -33,7 +33,6 @@
         >
       </v-card-actions>
     </v-card>
-    <!--TODO - MAKE THIS DIALOG A TEXT FIELD-->
     <answer-post
       v-if="acceptAnswer"
       :post="post"

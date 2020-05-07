@@ -23,11 +23,11 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item._questionStr="{ item }">
-        <p
-          v-html="convertMarkDownNoFigure(item._questionStr, null)"
-          @click="showSuggestionDialog(item)"
-      /></template>
+            <template v-slot:item._questionStr="{ item }">
+                <p
+                        v-html="convertMarkDown(item._questionStr, null)"
+                        @click="showSuggestionDialog(item)"
+                /></template>
 
       <!--<template v-slot:item.topics="{ item }">
               <edit-question-topics
@@ -139,7 +139,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
@@ -216,8 +216,8 @@ export default class SuggestionsView extends Vue {
     );
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
