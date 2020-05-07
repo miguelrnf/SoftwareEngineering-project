@@ -38,7 +38,7 @@ public enum ErrorMessage {
     COURSE_NOT_FOUND("Course not found with name %s"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
-    USERNAME_NOT_FOUND("Username %d not found"),
+    USERNAME_NOT_FOUND("Username %s not found"),
     USERID_NOT_FOUND("User not found"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),

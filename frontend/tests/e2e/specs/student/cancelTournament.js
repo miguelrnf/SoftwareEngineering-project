@@ -9,7 +9,7 @@ describe('Student walkthrough', () => {
   });
 
   it('login, creates and cancel a Tournament', () => {
-    cy.createTournament('Demo tournament', '30');
+    cy.createTournament('Demo tournament', '30', true);
     cy.cancel('Demo tournament');
     cy.deleteTournament('Demo tournament');
   });

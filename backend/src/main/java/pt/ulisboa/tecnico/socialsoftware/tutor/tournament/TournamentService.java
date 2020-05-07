@@ -134,15 +134,11 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listTournaments(int courseExecutionId) {
-        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+        return tournamentRepository.findAll().stream()
                 .filter(tournament -> this.checkStatus(tournament).equals(Tournament.TournamentStatus.CREATED) && tournament
                         .getCourseExecution().getId().equals(courseExecutionId))
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
-        if(temp.isEmpty())
-            throw new TutorException(TOURNAMENT_LIST_EMPTY);
-
-        return temp;
     }
 
     @Retryable(
@@ -170,16 +166,11 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listOpenedTournaments(int courseExecutionId) {
-        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+        return tournamentRepository.findAll().stream()
                 .filter(tournament -> this.checkStatus(tournament).equals(Tournament.TournamentStatus.OPEN) && tournament
                         .getCourseExecution().getId().equals(courseExecutionId))
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
-
-        if(temp.isEmpty())
-            throw new TutorException(TOURNAMENT_LIST_EMPTY);
-
-        return temp;
     }
 
     @Retryable(
@@ -188,15 +179,11 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getOwnTournaments(String username, int courseExecutionId) {
         User owner = userRepository.findByUsername(username);
-        List<TournamentDto> temp = tournamentRepository.findAll().stream()
+        return tournamentRepository.findAll().stream()
                 .filter(tournament -> tournament.getOwner().equals(owner) && tournament
                         .getCourseExecution().getId().equals(courseExecutionId) && checkStatus(tournament) != null)
                 .map(TournamentDto::new).sorted(Comparator.comparing(TournamentDto::getTitle))
                 .collect(Collectors.toList());
-        if(temp.isEmpty())
-            throw new TutorException(TOURNAMENT_LIST_EMPTY);
-
-        return temp;
     }
 
     @Retryable(
