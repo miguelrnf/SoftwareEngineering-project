@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Web Service Test changeDiscussStatus" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Web Service Test viewPost" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -44,30 +44,18 @@
             <stringProp name="Argument.value">69</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="new_question" elementType="Argument">
-            <stringProp name="Argument.name">new_question</stringProp>
-            <stringProp name="Argument.value">BIG QUESTION</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
           <elementProp name="pkey" elementType="Argument">
             <stringProp name="Argument.name">pkey</stringProp>
             <stringProp name="Argument.value">420</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="quizid" elementType="Argument">
+            <stringProp name="Argument.name">quizid</stringProp>
+            <stringProp name="Argument.value">19283</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
-      <hashTree/>
-      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data for student" enabled="true">
-        <stringProp name="delimiter">,</stringProp>
-        <stringProp name="fileEncoding"></stringProp>
-        <stringProp name="filename">data/testStudent.csv</stringProp>
-        <boolProp name="ignoreFirstLine">false</boolProp>
-        <boolProp name="quotedData">false</boolProp>
-        <boolProp name="recycle">true</boolProp>
-        <stringProp name="shareMode">shareMode.all</stringProp>
-        <boolProp name="stopThread">true</boolProp>
-        <stringProp name="variableNames">sid,sname,srole,susername</stringProp>
-      </CSVDataSet>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data for teacher" enabled="true">
         <stringProp name="delimiter">,</stringProp>
@@ -79,6 +67,18 @@
         <stringProp name="shareMode">shareMode.all</stringProp>
         <boolProp name="stopThread">true</boolProp>
         <stringProp name="variableNames">tid,tname,trole,tusername</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data for student" enabled="true">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding"></stringProp>
+        <stringProp name="filename">data/testStudent.csv</stringProp>
+        <boolProp name="ignoreFirstLine">false</boolProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+        <boolProp name="stopThread">true</boolProp>
+        <stringProp name="variableNames">sid,sname,srole,susername</stringProp>
       </CSVDataSet>
       <hashTree/>
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data for a valid question" enabled="true">
@@ -131,11 +131,13 @@
           <stringProp name="query">${__FileToString(${dir}/data/postPopulate.sql,,)}
 INSERT INTO POSTS (ID, KEY) VALUES (${pid}, ${pkey});
 
-INSERT INTO POST_QUESTIONS (ID, POST_ID, QUESTION_ID, USER_ID, STUDENTS_QUESTION)
-VALUES (12921, ${pid}, ${qid}, 676, &apos;QUESTION&apos;);
+INSERT INTO POST_QUESTIONS (ID, POST_ID, QUESTION_ID, USER_ID, STUDENTS_QUESTION) 
+VALUES (6969, ${pid}, ${qid}, ${sid}, &apos;QUESTION&apos;);
 
-INSERT INTO POST_ANSWERS (ID, TEACHER_ANSWER, POST_ID, USER_ID)
-VALUES (11111, &apos;ANSWER&apos;, ${pid}, 677);</stringProp>
+INSERT INTO POST_ANSWERS (ID, POST_ID, USER_ID, TEACHER_ANSWER) 
+VALUES (6969, ${pid}, ${tid}, &apos;ANSWER&apos;);
+
+</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -198,7 +200,7 @@ VALUES (11111, &apos;ANSWER&apos;, ${pid}, 677);</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Teacher" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as Student" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -206,7 +208,7 @@ VALUES (11111, &apos;ANSWER&apos;, ${pid}, 677);</stringProp>
           <stringProp name="HTTPSampler.port">${port}</stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/auth/demo/teacher</stringProp>
+          <stringProp name="HTTPSampler.path">/auth/demo/student</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -236,15 +238,24 @@ VALUES (11111, &apos;ANSWER&apos;, ${pid}, 677);</stringProp>
           </HeaderManager>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments"/>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&#xd;
+&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
             </elementProp>
             <stringProp name="HTTPSampler.domain">${server}</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/${pid}/answer/edit/privacy</stringProp>
-            <stringProp name="HTTPSampler.method">PUT</stringProp>
+            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/quiz/${quizid}</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -254,9 +265,9 @@ VALUES (11111, &apos;ANSWER&apos;, ${pid}, 677);</stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Quesiton id" enabled="true">
-            <stringProp name="JSON_PATH">$.question.id</stringProp>
-            <stringProp name="EXPECTED_VALUE">${qid}</stringProp>
+          <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion" enabled="true">
+            <stringProp name="JSON_PATH">$.totalPosts</stringProp>
+            <stringProp name="EXPECTED_VALUE">1</stringProp>
             <boolProp name="JSONVALIDATION">false</boolProp>
             <boolProp name="EXPECT_NULL">false</boolProp>
             <boolProp name="INVERT">false</boolProp>
@@ -375,8 +386,8 @@ VALUES (11111, &apos;ANSWER&apos;, ${pid}, 677);</stringProp>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">TearDown</stringProp>
           <stringProp name="queryType">Update Statement</stringProp>
-          <stringProp name="query">DELETE FROM POST_QUESTIONS P WHERE P.ID = 12921;
-DELETE FROM POST_ANSWERS P WHERE P.ID = 11111;
+          <stringProp name="query">DELETE FROM POST_QUESTIONS P WHERE P.USER_ID = ${sid};
+DELETE FROM POST_ANSWERS P WHERE P.USER_ID = ${tid};
 DELETE FROM POSTS P WHERE P.KEY IN (SELECT MAX(KEY) FROM POSTS);
 ${__FileToString(${dir}/data/deletePopulate.sql,,)}</stringProp>
           <stringProp name="queryArguments"></stringProp>

@@ -98,22 +98,26 @@
       class="ma-2"
       small
       label
-      v-if="getColor3(post.postPrivacy) === 'black' && isOwner(post)"
+      v-if="
+        getColor3(post.postPrivacy) === 'black' &&
+          (isOwner(post) || isTeacher())
+      "
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
-      data-cy="PrivacyStatusButton"
       >{{ 'Private' }}</v-chip
     >
     <v-chip
       class="ma-2"
       small
       label
-      v-if="getColor3(post.postPrivacy) === 'orange' && isOwner(post)"
+      v-if="
+        getColor3(post.postPrivacy) === 'orange' &&
+          (isOwner(post) || isTeacher())
+      "
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
-      data-cy="PrivacyStatusButton"
       >{{ 'Public' }}</v-chip
     >
   </div>

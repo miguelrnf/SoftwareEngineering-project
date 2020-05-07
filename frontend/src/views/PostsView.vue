@@ -30,7 +30,7 @@
 
       <template v-slot:item.title="{ item }">
         <p
-          v-html="convertMarkDownNoFigure(item.question.question.title, null)"
+          v-html="convertMarkDown(item.question.question.title, null)"
           @click="showPostOpenDialog(item)"
         />
       </template>
@@ -38,7 +38,7 @@
       <template v-slot:item.question="{ item }">
         <p
           v-html="
-            convertMarkDownNoFigure(
+            convertMarkDown(
               getSmallQuestion(item.question.studentQuestion),
               null
             )
@@ -47,7 +47,7 @@
       /></template>
 
       <template v-slot:item.user="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.question.user.username, null)"
+        <p v-html="convertMarkDown(item.question.user.username, null)"
       /></template>
 
       <template v-slot:item.action="{ item }">
@@ -257,7 +257,7 @@ export default class PostsView extends Vue {
     }
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
+  convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 

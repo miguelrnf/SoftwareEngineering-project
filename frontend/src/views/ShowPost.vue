@@ -87,6 +87,7 @@ import Post from '@/models/management/Post';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -130,6 +131,23 @@ export default class ShowPost extends Vue {
 
   onSavePostEvent() {
     this.$emit('save-post', this.post);
+  }
+
+  getColor3(privacy: boolean) {
+    if (privacy) return 'black';
+    else return 'orange';
+  }
+
+  isOwnerAnswer(post: Post): boolean {
+    if (post.answer != null)
+      return this.$store.getters.getUser.username === post.answer.user.username;
+    else return false;
+  }
+
+  changeAnswerPrivacy(post: Post) {
+    if (post.answerPrivacy != null && this.isOwnerAnswer(post))
+      post.answerPrivacy = !post.answerPrivacy;
+    RemoteServices.changeAnswerPrivacy(post.id);
   }
 }
 </script>

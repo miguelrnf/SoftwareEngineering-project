@@ -252,6 +252,7 @@ Cypress.Commands.add('assertAvailableEnrolled', title => {
     .should('have.length', 5);
 });
 
+
 //##############################TOURNAMENTS FEATURE END##########################################
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -262,17 +263,23 @@ Cypress.Commands.add('assertAvailableEnrolled', title => {
 
 Cypress.Commands.add('demoStudentLoginPosts', () => {
   cy.visit('/');
-  cy.get('[data-cy="studentButton"]').click();
+  cy.get('[data-cy="demoStudentLoginButton"]').click();
   cy.get('[data-cy="Student"]').click();
 });
 
 Cypress.Commands.add('demoStudenDashboard', () => {
   cy.get('[data-cy="Dashboard"]').click();
+}
+
+Cypress.Commands.add('demoStudentLoginDashboard', () => {
+  cy.visit('/');
+  cy.get('[data-cy="demoStudentLoginButton"]').click();
+  cy.get('[data-cy="Dashboard"]').click();
 });
 
 Cypress.Commands.add('demoTeacherLoginPosts', () => {
   cy.visit('/');
-  cy.get('[data-cy="teacherButton"]').click();
+  cy.get('[data-cy="demoTeacherLoginButton"]').click();
   cy.contains('Management').click();
 });
 
@@ -304,6 +311,7 @@ Cypress.Commands.add('deletePost', studentQuestion => {
     .should('have.length', 1)
     .parent()
     .should('have.length', 1)
+    .parent()
     .find('[data-cy="deleteButton"]')
     .click({ force: true });
 });
@@ -314,6 +322,7 @@ Cypress.Commands.add('answerPost', (studentQuestion, teacherAnswer) => {
     .should('have.length', 1)
     .parent()
     .should('have.length', 1)
+    .parent()
     .find('[data-cy="showButton"]')
     .click({ force: true })
     .get('[data-cy="answerPostButton"]')
@@ -328,6 +337,7 @@ Cypress.Commands.add('viewPost', studentQuestion => {
     .should('have.length', 1)
     .parent()
     .should('have.length', 1)
+    .parent()
     .find('[data-cy="showButton"]')
     .click({ force: true });
 });
@@ -346,6 +356,7 @@ Cypress.Commands.add('editPost', (studentQuestion, newQuestion) => {
     .should('have.length', 1)
     .parent()
     .should('have.length', 1)
+    .parent()
     .find('[data-cy="editButton"]')
     .click({ force: true })
     .get('[data-cy="dialogEditPost"]')
@@ -372,7 +383,20 @@ Cypress.Commands.add('pressStatusButton', (studentQuestion, button) => {
     .should('have.length', 1)
     .parent()
     .should('have.length', 1)
+    .parent()
     .find('[data-cy=StatusButtons]')
     .find('[data-cy="'.concat(button).concat('"]'))
     .click({ force: true });
+});
+
+Cypress.Commands.add('createQuiz', () => {
+    cy.contains('Create').click()
+      .get('[data-cy="createQuizButton"]').click()
+      .get('[data-cy="endQuizButton"]').click()
+      .get('[data-cy="imSureButton"]').click();
+});
+
+Cypress.Commands.add('checkPostsByQuiz', () => {
+    cy.get('[data-cy="checkPostsByQuizButton"]').click()
+
 });
