@@ -20,12 +20,16 @@ public class UserDto implements Serializable {
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
-        this.isDashboardPrivate = user.getDashboardPrivate();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
         if (user.getScore() == null )
             this.score = 0;
         else
             this.score = user.getScore();
+
+        if(user.getDashboardPrivate() == null)
+            this.isDashboardPrivate = false;
+        else
+            this.isDashboardPrivate = user.getDashboardPrivate();
 
 
     }
@@ -105,7 +109,7 @@ public class UserDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDto userDto = (UserDto) o;
-        return id == userDto.id &&
+        return id.equals(userDto.id) &&
                 Objects.equals(username, userDto.username) &&
                 Objects.equals(name, userDto.name) &&
                 role == userDto.role;

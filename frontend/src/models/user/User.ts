@@ -11,6 +11,7 @@ export default class User {
   courses: CourseMap = {};
   coursesNumber: number = 0;
   score!: number;
+  dashboardPrivate: boolean = false;
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -18,6 +19,7 @@ export default class User {
       this.username = jsonObj.username;
       this.role = jsonObj.role;
       this.score = jsonObj.score;
+      this.dashboardPrivate = jsonObj.dashboardPrivate;
 
       if (jsonObj.courses) {
         for (let [name, courses] of Object.entries(jsonObj.courses)) {

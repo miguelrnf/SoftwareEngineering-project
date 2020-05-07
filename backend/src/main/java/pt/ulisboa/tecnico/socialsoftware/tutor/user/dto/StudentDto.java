@@ -22,6 +22,7 @@ public class StudentDto implements Serializable {
     private String creationDate;
     private String lastAccess;
     private Integer score;
+    private boolean isDashboardPrivate;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
@@ -49,6 +50,11 @@ public class StudentDto implements Serializable {
         if (this.numberOfAnswers != 0)
             this.percentageOfCorrectAnswers = (user.getNumberOfCorrectTeacherAnswers() + user.getNumberOfCorrectInClassAnswers() + user.getNumberOfCorrectStudentAnswers())  * 100 / this.numberOfAnswers;
 
+        if(user.getDashboardPrivate() == null)
+            this.isDashboardPrivate = false;
+        else
+            this.isDashboardPrivate = user.getDashboardPrivate();
+
     }
 
     public String getUsername() {
@@ -73,6 +79,14 @@ public class StudentDto implements Serializable {
 
     public void setNumberOfTeacherQuizzes(Integer numberOfTeacherQuizzes) {
         this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
+    }
+
+    public boolean isDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
     }
 
     public Integer getNumberOfStudentQuizzes() {
