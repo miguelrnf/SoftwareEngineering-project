@@ -1,6 +1,9 @@
 <template>
   <div align="center">
-    <v-card width="95%" v-if="isReal">
+    <v-card
+      width="95%"
+      v-if="isReal && (!this.beStudent.dashboardPrivate || this.isOwnDashboard)"
+    >
       <v-row>
         <v-card-subtitle class="mx-xl-2 display-2 font-weight-black">
           Dashboard
@@ -18,10 +21,24 @@
         />
       </v-row>
       <v-card>
-        <v-card-subtitle class="text-left">
-          Username: {{ beStudent.username }} <v-spacer /> Currency:
-          {{ beStudent.score }} Achandos
-        </v-card-subtitle>
+        <v-row>
+          <v-col class="pa-2">
+            <v-card-subtitle class="text-left">
+              Username: {{ beStudent.username }} <v-spacer /> Currency:
+              {{ beStudent.score }} Achandos
+            </v-card-subtitle>
+          </v-col>
+          <v-col class="pa-0" :align-self="'center'" cols="2">
+            <v-switch
+              class="my-0"
+              v-if="isOwnDashboard"
+              v-model="beStudent.dashboardPrivate"
+              :label="`${textLabel}`"
+              color="red"
+              @change="changePrivacy()"
+            />
+          </v-col>
+        </v-row>
       </v-card>
       <v-row scrollable no-gutters class="mx-0">
         <v-col v-for="n in 3" :key="n" cols="12" sm="4">
@@ -99,6 +116,9 @@
     <v-card v-if="!isReal">
       <v-card-text>The specified user does not exist :(</v-card-text>
     </v-card>
+    <v-card v-else-if="this.beStudent.dashboardPrivate && !this.isOwnDashboard">
+      <v-card-text>The specified user has a private dashboard :(</v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -145,24 +165,35 @@ export default class DashboardHomeView extends Vue {
   searchedStudent: string = '';
   dashboardDialog: boolean = false;
   beStudent: User | undefined = undefined;
+  textLabel: string = '';
 
   async created() {
     if (this.student == null) this.beStudent = this.$store.getters.getUser;
     else this.beStudent = this.student;
 
+    if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
+    else this.textLabel = 'Public';
+
     this.students = await RemoteServices.getCourseStudents(
       this.$store.getters.getCurrentCourse
     );
     if (this.beStudent?.username != null) {
-      let ps = await RemoteServices.getPostsByUser(this.beStudent.username);
-      if (ps.lists != undefined) {
-        this.posts = ps.lists;
+      if (!this.beStudent.dashboardPrivate || this.isOwnDashboard) {
+        let ps = await RemoteServices.getPostsByUser(this.beStudent.username);
+        if (ps.lists != undefined) {
+          this.posts = ps.lists;
+        }
+        this.tournaments = await RemoteServices.getTournamentsByUser(
+          this.beStudent.username
+        );
       }
-      this.tournaments = await RemoteServices.getTournamentsByUser(
-        this.beStudent.username
-      );
     }
     // Falta getSuggestionsByUser
+  }
+  async changePrivacy() {
+    if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
+    else this.textLabel = 'Public';
+    await RemoteServices.changeDashboardPrivacy();
   }
 
   getColumnAppBar(n: number): string {
