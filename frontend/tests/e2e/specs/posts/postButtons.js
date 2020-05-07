@@ -13,6 +13,8 @@ describe('Post Buttons', () => {
     });
 
     after(() => {
+        cy.demoStudentLoginPosts();
+        cy.gotoPosts();
         cy.deletePost('[TEST§1] I dont understand');
     });
 

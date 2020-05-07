@@ -11,6 +11,8 @@ describe('View Post', () => {
     });
 
     after(() => {
+        cy.demoStudentLoginPosts();
+        cy.gotoPosts();
         cy.deletePost('[TEST§1] I dont understand');
     });
 

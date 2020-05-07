@@ -981,28 +981,6 @@ export default class RemoteServices {
       });
   }
 
-  static async changePostPrivacy(id: number): Promise<Post> {
-    return httpClient
-      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/privacy`)
-      .then(response => {
-        return new Post(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async changeAnswerPrivacy(id: number): Promise<Post> {
-    return httpClient
-      .put(`executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/answer/edit/privacy`)
-      .then(response => {
-        return new Post(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async postsByQuiz(quizid: number): Promise<ListPost> {
     return httpClient
       .get(

@@ -277,33 +277,6 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changePostPrivacy(int id, User u) {
-        Post post = checkIfPostExists(null, id);
-        User user = checkIfUserExistsByUsername(u.getUsername());
-        checkIfUserOwnsPost(user, post);
-
-        post.changePostPrivacy();
-        return new PostDto(post);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto changeAnswerPrivacy(int id, User u) {
-        Post post = checkIfPostExists(null, id);
-        User user = checkIfUserExistsByUsername(u.getUsername());
-        checkIfUserHasRoleTeacher(user);
-        checkIfAnswered(post);
-
-        post.changeAnswerPrivacy();
-        return new PostDto(post);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ListPostsDto postsByQuiz(int quizid) {
         QuizDto quiz = quizService.findById(quizid);
         List<PostDto> posts = quiz.getQuestions().stream()
@@ -322,7 +295,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changePostPrivacy(int id, User u) {
         Post post = checkIfPostExists(null, id);
-        User user = checkIfUserExists(u.getUsername());
+        User user = checkIfUserExistsByUsername(u.getUsername());
         checkIfUserOwnsPost(user, post);
 
         post.changePostPrivacy();
@@ -335,7 +308,7 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changeAnswerPrivacy(int id, User u) {
         Post post = checkIfPostExists(null, id);
-        User user = checkIfUserExists(u.getUsername());
+        User user = checkIfUserExistsByUsername(u.getUsername());
         checkIfUserHasRoleTeacher(user);
         checkIfAnswered(post);
 

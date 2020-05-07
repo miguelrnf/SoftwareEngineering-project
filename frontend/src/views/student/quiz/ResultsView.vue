@@ -127,17 +127,6 @@ export default class ResultsView extends Vue {
     }
   }
 
-  filterPostsByQuestion(): Post[] {
-    if (this.statementManager.statementQuiz != null) {
-      let qid = this.statementManager.statementQuiz.questions[
-        this.questionOrder
-      ].quizQuestionId;
-      return this.quizPosts.filter(post => post.question.question.id == qid);
-    }
-
-    return [];
-  }
-
   openPostsDialog(): void {
     this.postsDialog = true;
   }
