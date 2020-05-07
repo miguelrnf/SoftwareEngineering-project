@@ -25,7 +25,6 @@ describe('Student walkthrough', () => {
   it('login and signOut in tournament 1', () => {
     cy.listAvailableTournaments();
     cy.signInSignOut('Demo tournament 1');
-    cy.closeErrorMessage();
 
     cy.listAvailableTournaments();
     cy.deleteTournament('Demo tournament 1');

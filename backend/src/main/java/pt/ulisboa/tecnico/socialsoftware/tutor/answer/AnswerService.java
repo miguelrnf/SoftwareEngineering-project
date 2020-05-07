@@ -96,7 +96,7 @@ public class AnswerService {
         }
 
         //Calculating and adding points to user
-        if (quizAnswer.getQuiz().getTournament().getOwner().getRole() == User.Role.TEACHER && !quizAnswer.isCompleted()){
+        if (quizAnswer.getQuiz().getTournament() != null && (quizAnswer.getQuiz().getTournament().getOwner().getRole() == User.Role.TEACHER && !quizAnswer.isCompleted())){
             quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
                 if (questionAnswer.getOption() != null)
                     points.set(calculatePoints(questionAnswer.getOption().getCorrect(), points.get()));

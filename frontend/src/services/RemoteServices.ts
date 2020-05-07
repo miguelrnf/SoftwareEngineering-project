@@ -890,6 +890,17 @@ export default class RemoteServices {
       });
   }
 
+  static async changeDashboardPrivacy(): Promise<User> {
+    return httpClient
+      .put('/users/dashboard/privacy')
+      .then(response => {
+        return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async deletePost(id: number): Promise<Post> {
     return httpClient
       .delete(

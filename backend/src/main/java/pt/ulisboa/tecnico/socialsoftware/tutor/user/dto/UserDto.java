@@ -13,6 +13,7 @@ public class UserDto implements Serializable {
     private User.Role role;
     private Integer score;
     private String creationDate;
+    private Boolean isDashboardPrivate;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -24,6 +25,12 @@ public class UserDto implements Serializable {
             this.score = 0;
         else
             this.score = user.getScore();
+
+        if(user.getDashboardPrivate() == null)
+            this.isDashboardPrivate = false;
+        else
+            this.isDashboardPrivate = user.getDashboardPrivate();
+
 
     }
 
@@ -78,6 +85,14 @@ public class UserDto implements Serializable {
         this.creationDate = creationDate;
     }
 
+    public Boolean getDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(Boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
+    }
+
     @Override
     public String toString() {
         return "UserDto{" +
@@ -94,7 +109,7 @@ public class UserDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDto userDto = (UserDto) o;
-        return id == userDto.id &&
+        return id.equals(userDto.id) &&
                 Objects.equals(username, userDto.username) &&
                 Objects.equals(name, userDto.name) &&
                 role == userDto.role;

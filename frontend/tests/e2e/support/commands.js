@@ -114,15 +114,17 @@ Cypress.Commands.add('getTeacherTournament', () => {
   cy.get('[data-cy="create"]').click();
 });
 
-Cypress.Commands.add('createTournament', (tile, numbQuestions) => {
+Cypress.Commands.add('createTournament', (tile, numbQuestions, isStudent) => {
   let year =
     '#availableDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
   let year2023 = '.flex-wrap > :nth-child(11)';
   let yearConc =
     '#conclusionDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
 
-  cy.contains('Tournament').click();
-  cy.contains('Create').click();
+  if (isStudent) {
+    cy.contains('Tournament').click();
+    cy.get('[data-cy="create"]').click();
+  }
   cy.get('[data-cy="title"]').type(tile);
   cy.get('[data-cy="AssessmentTitle"]')
     .contains('Third mini-test')
@@ -193,7 +195,7 @@ Cypress.Commands.add('createBlankTournament', () => {
 
 Cypress.Commands.add('listAvailableTournaments', () => {
   cy.contains('Tournament').click();
-  cy.contains('Available').click();
+  cy.contains('Created').click();
 });
 
 Cypress.Commands.add('listEnrolledTournaments', () => {
@@ -208,7 +210,7 @@ Cypress.Commands.add('listOwnTournaments', () => {
 
 Cypress.Commands.add('listAllTournaments', () => {
   cy.contains('Administration').click();
-  cy.contains('All Tournaments').click();
+  cy.contains('Tournaments').click();
 });
 
 Cypress.Commands.add('signInSignOut', title => {

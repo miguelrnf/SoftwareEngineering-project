@@ -233,24 +233,18 @@ class GetCreatedTournamentSpockTest extends Specification{
         result.size() == 2
     }
 
-    @Unroll
-    def "tournament with status=#status || errorMessage=#errorMessage "() {
+    def "don't show cancel tournament"() {
         given:
         assdto.setId(tempId++)
-        tournamentDto2.setStatus(status)
+        tournamentDto2.setStatus("CANCELED")
         tournamentDto2.setAssessmentDto(assdto)
         tournamentService.createTournament(courseExecution.id, tournamentDto2)
 
         when:
-        tournamentService.listTournaments(courseExecution.getId())
+        def result = tournamentService.listTournaments(courseExecution.getId())
 
         then:
-        def error = thrown(TutorException)
-        error.errorMessage == errorMessage
-
-        where:
-        status     ||       errorMessage
-        "CANCELED" || TOURNAMENT_LIST_EMPTY
+        result.isEmpty()
     }
 
 
