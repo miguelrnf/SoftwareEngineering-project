@@ -7,7 +7,7 @@
     <v-card>
       <dashboard-home
         class="mt-10"
-        :searchedPosts="posts"
+        :student="student"
         :is-own-dashboard="false"
         :isReal="isReal"
       >
@@ -18,9 +18,9 @@
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-import { Student } from '@/models/management/Student';
-import RemoteServices from '@/services/RemoteServices';
 import Post from '@/models/management/Post';
+import { Tournament } from '@/models/management/Tournament';
+import User from '@/models/user/User';
 
 @Component({
   components: {
@@ -31,25 +31,15 @@ export default class StudentDashboardView extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Boolean, required: true })
   readonly isOwnDashboard!: boolean;
-  @Prop({ type: Student, required: false })
-  readonly student!: Student;
+  @Prop({ type: User, required: false })
+  readonly student!: User;
   isReal: boolean = true;
   posts: Post[] = [];
+  tournaments: Tournament[] = [];
 
   async created() {
-    if (this.student != null) {
-      if (this.student.username != null) {
-        let ps = await RemoteServices.getPostsByUser(
-          this.$store.getters.getUser.username
-        );
-        if (ps.lists != undefined) {
-          this.posts = ps.lists;
-        }
-      }
-    } else {
-      this.isReal = false;
-    }
-    // Falta getSuggestionsByUser e getTournamentByUser
+    if (this.student == null) this.isReal = false;
+    // Falta getSuggestionsByUser
   }
 }
 </script>

@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.ListPostsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -13,12 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT;
 
 @RestController
 public class TournamentController {
@@ -31,31 +29,15 @@ public class TournamentController {
     }
 
     @PostMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-
-        formatDates(tournamentDto);
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
-    }
-
-    private void formatDates(TournamentDto tournament) {
-        if (tournament.getAvailableDate().equals("") || tournament.getConclusionDate().equals(""))
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Dates");
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        if (tournament.getAvailableDate() != null && !tournament.getAvailableDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")){
-            tournament.setAvailableDate(LocalDateTime.parse(tournament.getAvailableDate().replaceAll(".$", ""), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
-        }
-
-        if (tournament.getConclusionDate() !=null && !tournament.getConclusionDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})"))
-            tournament.setConclusionDate(LocalDateTime.parse(tournament.getConclusionDate().replaceAll(".$", ""), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
     }
 
     @PutMapping("/tournament/{tournamentId}/opened/enroll")
@@ -82,10 +64,22 @@ public class TournamentController {
         return tournamentservice.getTournaments();
     }
 
-    @GetMapping("/executions/{executionId}/tournaments/{tournamentId}")
+    @GetMapping("/executions/{executionId}/tournaments/{tournamentId}/{username}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public TournamentDto getTournament(@PathVariable Integer tournamentId, @PathVariable Integer executionId) {
-        return this.tournamentservice.findById(tournamentId, executionId);
+    public TournamentDto getTournament(@PathVariable Integer tournamentId, @PathVariable Integer executionId, @PathVariable String username) {
+        return this.tournamentservice.findById(tournamentId, executionId, username);
+    }
+
+    @GetMapping("/executions/{executionId}/teacher/tournaments")
+    @PreAuthorize("hasRole('TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TournamentDto> getExecutionTournament(@PathVariable Integer executionId) {
+        return this.tournamentservice.listAllTournaments(executionId);
+    }
+
+    @GetMapping("executions/{executionId}/tournaments/user/{user}")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TournamentDto> tournamentByUser(@PathVariable int executionId, @PathVariable String user) {
+        return tournamentservice.getEnrolledTournaments(user, executionId);
     }
 
     @GetMapping("/executions/{executionId}/tournaments/own/{username}")
@@ -109,6 +103,17 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getEnrolledTournaments(@PathVariable String username, @PathVariable Integer executionId) {
         return this.tournamentservice.getEnrolledTournaments(username, executionId);
+    }
+
+    @PutMapping("/tournament/{tournamentId}/cancel")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    public TournamentDto cancelTournament (Principal principal, @PathVariable Integer tournamentId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        return this.tournamentservice.cancelTournament(tournamentId, user.getUsername());
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/delete") //ONLY FOR CLEAN DATABASE AFTER EACH TEST

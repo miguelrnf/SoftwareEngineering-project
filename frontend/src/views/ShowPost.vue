@@ -1,9 +1,7 @@
 <template>
   <v-card class="mx-auto" max-height="80%">
     <v-app-bar dense color="grey lighten-2">
-      <v-toolbar-title>
-        {{ post.question.question.title }}</v-toolbar-title
-      >
+      <v-toolbar-title> {{ post.question.question.title }}</v-toolbar-title>
       <v-spacer />
       <post-status-buttons :post="post"></post-status-buttons>
       <v-tooltip bottom v-if="isOwner(post)">
@@ -47,7 +45,13 @@
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
     </v-card-text>
-    <v-card-text v-if="post.answer != null && post.answer.teacherAnswer !== '' && (!post.answerPrivacy || isTeacher() || isOwner(post))">
+    <v-card-text
+      v-if="
+        post.answer != null &&
+          post.answer.teacherAnswer !== '' &&
+          (!post.answerPrivacy || isTeacher() || isOwner(post))
+      "
+    >
       <p class="subtitle-1 font-weight-light">
         <span v-html="convertMarkDown('Answer:')" />
       </p>
@@ -76,15 +80,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
-import { PostAnswer } from '@/models/management/PostAnswer';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {

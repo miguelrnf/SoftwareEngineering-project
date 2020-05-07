@@ -23,11 +23,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Post from '@/models/management/Post';
-import { PostAnswer } from '@/models/management/PostAnswer';
 
 @Component
 export default class AnswerPostDialog extends Vue {

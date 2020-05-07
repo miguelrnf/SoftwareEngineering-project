@@ -107,7 +107,6 @@
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 import Suggestion from '@/models/management/Suggestion';
 import Topic from '@/models/management/Topic';

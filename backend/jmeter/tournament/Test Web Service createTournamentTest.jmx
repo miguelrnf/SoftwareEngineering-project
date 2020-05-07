@@ -107,8 +107,8 @@
                   <stringProp name="Argument.value">{&#xd;
 	&#xd;
 	&quot;numberOfQuestions&quot;:3,&#xd;
-	&quot;availableDate&quot;:&quot;2020-07-23 20:31&quot;,&#xd;
-	&quot;conclusionDate&quot;:&quot;2020-07-23 20:31&quot;,&#xd;
+	&quot;availableDate&quot;:&quot;2021-07-23T20:31Z&quot;,&#xd;
+	&quot;conclusionDate&quot;:&quot;2021-07-23t20:31Z&quot;,&#xd;
 	&quot;assessmentDto&quot;:&#xd;
 		{&#xd;
 			&quot;id&quot;:6							&#xd;
@@ -143,7 +143,7 @@
           <hashTree>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert availableDate" enabled="true">
               <stringProp name="JSON_PATH">$.availableDate</stringProp>
-              <stringProp name="EXPECTED_VALUE">2020-07-23 20:31</stringProp>
+              <stringProp name="EXPECTED_VALUE">2021-07-23T20:31:00Z</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -152,7 +152,7 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert conclusionDate" enabled="true">
               <stringProp name="JSON_PATH">$.conclusionDate</stringProp>
-              <stringProp name="EXPECTED_VALUE">2020-07-23 20:31</stringProp>
+              <stringProp name="EXPECTED_VALUE">2021-07-23T20:31:00Z</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -305,13 +305,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">ach123</stringProp>
+          <stringProp name="password">CaldoVerde</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">achando</stringProp>
+          <stringProp name="username">leugim</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">

@@ -15,13 +15,24 @@ public class AuthUserDto implements Serializable {
     private String name;
     private String username;
     private User.Role role;
+    private Integer score;
     private Map<String, List<CourseDto>> courses;
+    private boolean isDashboardPrivate = false;
 
     public AuthUserDto(User user) {
         this.name = user.getName();
         this.username = user.getUsername();
         this.role = user.getRole();
         this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
+        if(user.getDashboardPrivate() == null)
+            this.isDashboardPrivate = false;
+        else
+            this.isDashboardPrivate = user.getDashboardPrivate();
+
+        if (user.getScore() == null )
+            this.score = 0;
+        else
+            this.score = user.getScore();
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -47,6 +58,22 @@ public class AuthUserDto implements Serializable {
         this.username = username;
     }
 
+    public boolean isDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
     public User.Role getRole() {
         return role;
     }
@@ -65,7 +92,7 @@ public class AuthUserDto implements Serializable {
 
     private Map<String, List<CourseDto>> getActiveAndInactiveCourses(User user, List<CourseDto> courses) {
         List<CourseDto> courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
-        courses.stream()
+        courses
                 .forEach(courseDto -> {
                     if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()) && c.getAcademicTerm().equals(courseDto.getAcademicTerm()))) {
                         if (courseDto.getStatus() == null) {
