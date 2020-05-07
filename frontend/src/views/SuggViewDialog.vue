@@ -42,24 +42,6 @@
           data-cy="closeSuggestionButton"
           >close</v-btn
         >
-
-        <h1 v-if="suggestion.status == 'TOAPPROVE'">
-          <v-btn
-            dark
-            color="green darken-1"
-            @click="ApproveSuggestion"
-            data-cy="approveSuggestionButton"
-            >Approve</v-btn
-          >
-
-          <v-btn
-            dark
-            color="red darken-1"
-            @click="RejectSuggestion"
-            data-cy="rejectSuggestionButton"
-            >Reject</v-btn
-          >
-        </h1>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -71,7 +53,7 @@ import Suggestion from '@/models/management/Suggestion';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component
-export default class ShowSuggDialog extends Vue {
+export default class SuggViewDialog extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 

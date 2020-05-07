@@ -65,6 +65,9 @@ public enum ErrorMessage {
     ANSWERS_IMPORT_ERROR("Error importing answers: %s"),
     QUIZZES_IMPORT_ERROR("Error importing quizzes: %s"),
 
+    QUESTION_MISSING_DATA("Question Missind Data"),
+    QUESTION_MULTIPLE_CORRECT_OPTIONS ("Can't have multiple correct options"),
+
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),

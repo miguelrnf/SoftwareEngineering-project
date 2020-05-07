@@ -78,7 +78,12 @@
         <v-chip
                 :color="getPrivacyColor(item._isprivate)" small>
 
-          <span>{{ getPrivacyTag(item._isprivate) }}</span>
+
+          <span
+                  class="white--text "
+
+
+          >{{getPrivacyTag(item._isprivate) }}</span>
         </v-chip>
       </template>
 
@@ -270,8 +275,8 @@ export default class SuggestionsView extends Vue {
   }
 
   getPrivacyColor(isprivate: boolean) {
-    if (isprivate) return 'red';
-    else return 'green';
+    if (isprivate) return 'black';
+    else return 'orange';
   }
   getPrivacyTag(isprivate: boolean) {
     if (isprivate) return 'PRIVATE';

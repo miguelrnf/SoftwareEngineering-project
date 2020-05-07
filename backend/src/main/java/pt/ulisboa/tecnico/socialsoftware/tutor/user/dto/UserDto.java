@@ -12,6 +12,10 @@ public class UserDto implements Serializable {
     private String name;
     private User.Role role;
     private String creationDate;
+    private Integer numberofsuggestions;
+    private Integer numberofsuggestionsapproved;
+
+
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -19,6 +23,8 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        this.numberofsuggestions = user.getnumberofsuggs();
+        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
 
     }
 
@@ -90,5 +96,21 @@ public class UserDto implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, name, role);
+    }
+
+    public Integer getNumberofsuggestionsapproved() {
+        return numberofsuggestionsapproved;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
+    }
+
+    public Integer getNumberofsuggestions() {
+        return numberofsuggestions;
+    }
+
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
     }
 }

@@ -151,7 +151,7 @@ public class SuggestionDto implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SuggestionDto that = (SuggestionDto) o;
-        return _id == that._id &&
+        return _id.equals(that._id) &&
                 Objects.equals(key, that.key) &&
                 Objects.equals(_questionStr, that._questionStr) &&
                 Objects.equals(_topicsList, that._topicsList) &&

@@ -49,8 +49,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
-    public Integer numberofsuggestions;
-    public Integer numberofsuggestionsapproved;
+    private Integer numberofsuggestions;
+    private Integer numberofsuggestionsapproved;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;

@@ -7,9 +7,10 @@ import java.util.List;
 
 public class ListByUsernameDto implements Serializable {
 
-    private List<Suggestion> _suggslist;
+    public List<SuggestionDto> _suggslist;
     private Integer numberofsuggs = 0;
     private Integer numberofapprovedsuugs = 0;
+
 
     public ListByUsernameDto(){
     }
@@ -17,9 +18,9 @@ public class ListByUsernameDto implements Serializable {
     public void setNumberofsuugs(Integer getnumberofsuggs) {
     }
 
-    public List getListByUsernameDto () {return this._suggslist;}
+    public List<SuggestionDto> getListByUsernameDto () {return this._suggslist;}
 
-    public void setListByUsernameDto(List suggs) {this._suggslist = suggs;}
+    public void setListByUsernameDto(List<SuggestionDto> suggs) {this._suggslist = suggs;}
 
 
     public Integer getNumberofapprovedsuugs() {

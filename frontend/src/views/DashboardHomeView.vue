@@ -44,11 +44,22 @@
                   @click.native="showPostOpenDialog(p)"
                 ></post-preview>
               </div>
-              <div v-if="n === 2">
-                <v-card v-for="t in 10" :key="t" hover>
-                  <v-card-title tile flat>{{ t }}</v-card-title>
-                  <!--<suggestion-preview></suggestion-preview>-->
-                </v-card>
+
+              <div v-if="n === 2 && isOwnDashboard">
+                <suggestion-preview
+                  v-for="s in suggestions"
+                  :key="s.id"
+                  :suggestion="s"
+                  @click.native="showSuggOpenDialog(s)"
+                ></suggestion-preview>
+              </div>
+              <div v-if="n === 2 && !isOwnDashboard">
+                <suggestion-preview
+                  v-for="s in searchedSuggs"
+                  :key="s.id"
+                  :post="s"
+                  @click.native="showSuggOpenDialog(s)"
+                ></suggestion-preview>
               </div>
               <div v-if="n === 3">
                 <v-card v-for="t in 10" :key="t" hover>
@@ -75,13 +86,12 @@
       v-on:save-post="onSavePost"
       v-on:close-show-post-dialog="onCloseDialog"
     />
-    <!--<show-suggestion-dialog
-            v-if="currentSuggestion"
-            :dialog="suggestionDialog"
-            :post="currentSuggestion"
-            v-on:save-post="onSaveSuggestion"
-            v-on:close-show-post-dialog="onCloseDialog"
-    />-->
+    <show-suggestion-dialog
+      v-if="currentSuggestion"
+      :dialog="suggestionDialog"
+      :suggestion="currentSuggestion"
+      v-on:close-show-suggestion-dialog="onCloseDialog"
+    />
     <!--<show-tournament-dialog
             v-if="currentTournament"
             :dialog="tournamentDialog"
@@ -105,12 +115,17 @@ import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
 import { Student } from '@/models/management/Student';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
+import SuggViewDialog from '@/views/SuggViewDialog.vue';
+import Store from '@/store';
+import SuggsPreview from '@/views/SuggsPreview.vue';
 
 @Component({
   components: {
     'post-preview': PostPreview,
     'show-post-dialog': PostViewDialog,
-    'student-dashboard': StudentDashboardView
+    'student-dashboard': StudentDashboardView,
+    'show-suggestion-dialog': SuggViewDialog,
+    'suggestion-preview': SuggsPreview
   }
 })
 export default class DashboardHomeView extends Vue {
@@ -120,6 +135,8 @@ export default class DashboardHomeView extends Vue {
   readonly isReal!: boolean;
   @Prop({ type: Array, required: false })
   readonly searchedPosts!: Post[];
+  @Prop({ type: Array, required: false })
+  readonly searchedSuggs!: Suggestion[];
   posts: Post[] = [];
   suggestions: Suggestion[] = [];
   tournaments: Tournament[] = [];
@@ -144,6 +161,17 @@ export default class DashboardHomeView extends Vue {
     if (ps.lists != undefined) {
       this.posts = ps.lists;
     }
+
+    let ss = await RemoteServices.getSuggestionsbyUsername(
+      this.$store.getters.getUser.username
+    );
+
+    if (ss._suggslist != undefined) {
+      this.suggestions = ss._suggslist;
+    }
+
+    console.log(this.suggestions);
+
     // Falta getSuggestionsByUser e getTournamentByUser
   }
 
@@ -164,6 +192,11 @@ export default class DashboardHomeView extends Vue {
     this.postDialog = true;
   }
 
+  showSuggOpenDialog(sugg: Suggestion) {
+    this.currentSuggestion = sugg;
+    this.suggestionDialog = true;
+  }
+
   async onSavePost(post: Post) {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.posts.unshift(post);
@@ -175,6 +208,7 @@ export default class DashboardHomeView extends Vue {
     this.selectedStudent = null;
     this.searchedStudent = '';
     this.postDialog = false;
+    this.suggestionDialog = false;
     // Falta fechar os dialogs das suggestions e/ou tournaments
   }
 

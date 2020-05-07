@@ -15,6 +15,8 @@ public class AuthUserDto implements Serializable {
     private String name;
     private String username;
     private User.Role role;
+    private Integer numberofsuggestions;
+    private Integer numberofsuggestionsapproved;
     private Map<String, List<CourseDto>> courses;
 
     public AuthUserDto(User user) {
@@ -22,6 +24,8 @@ public class AuthUserDto implements Serializable {
         this.username = user.getUsername();
         this.role = user.getRole();
         this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
+        this.numberofsuggestions = user.getnumberofsuggs();
+        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -29,6 +33,8 @@ public class AuthUserDto implements Serializable {
         this.username = user.getUsername();
         this.role = user.getRole();
         this.courses = getActiveAndInactiveCourses(user, currentCourses);
+        this.numberofsuggestions = user.getnumberofsuggs();
+        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
     }
 
     public String getName() {
@@ -78,5 +84,21 @@ public class AuthUserDto implements Serializable {
         return courseExecutions.stream().sorted(Comparator.comparing(CourseDto::getName).thenComparing(CourseDto::getAcademicTerm).reversed())
                 .collect(Collectors.groupingBy(CourseDto::getName,
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
+    }
+
+    public Integer getNumberofsuggestions() {
+        return numberofsuggestions;
+    }
+
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
+    }
+
+    public Integer getNumberofsuggestionsapproved() {
+        return numberofsuggestionsapproved;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
     }
 }

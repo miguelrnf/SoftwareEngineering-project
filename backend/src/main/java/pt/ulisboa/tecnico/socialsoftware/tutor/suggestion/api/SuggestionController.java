@@ -26,27 +26,27 @@ public class SuggestionController {
     private SuggestionService suggestionService;
 
     @PostMapping(value = "/courses/{courseExecutionId}/suggestions")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public SuggestionDto createSuggestion(@PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         return this.suggestionService.createSuggestion(courseExecutionId, suggDto);
     }
 
     @PutMapping(value = "/courses/{courseExecutionId}/suggestions/approve")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public SuggestionDto approveSuggestion(Principal principal, @PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
         return this.suggestionService.approveSuggestion(courseExecutionId, suggDto, new UserDto(user));
     }
 
     @PutMapping(value = "/courses/{courseExecutionId}/suggestions/edit")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public SuggestionDto editSuggestion(Principal principal,@PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
         return this.suggestionService.editSuggestion(suggDto);
     }
 
     @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listall")
-    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId) {
 
         User user = (User)((Authentication)principal).getPrincipal();
@@ -55,8 +55,8 @@ public class SuggestionController {
     }
 
     @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listallbyusername/{username}")
-    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')) or hasRole('ROLE_ADMIN')")
-    public ListByUsernameDto listAllSuggestionsbyUsername(String username) {
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) )")
+    public ListByUsernameDto listAllSuggestionsbyUsername(@PathVariable String courseExecutionId, @PathVariable String username) {
 
         return this.suggestionService.listAllSuggestionsbyUsername(username);
     }

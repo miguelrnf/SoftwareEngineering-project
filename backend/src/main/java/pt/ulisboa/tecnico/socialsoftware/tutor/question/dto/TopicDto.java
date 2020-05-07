@@ -20,6 +20,8 @@ public class TopicDto implements Serializable {
         this.numberOfQuestions = topic.getQuestions().size();
     }
 
+    public void setId(Integer Id) {this.id = Id;}
+
     public Integer getId() {
         return id;
     }

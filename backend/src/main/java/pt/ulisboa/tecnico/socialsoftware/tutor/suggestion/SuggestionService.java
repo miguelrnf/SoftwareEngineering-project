@@ -269,7 +269,7 @@ public class SuggestionService {
     public List<SuggestionDto> listAllSuggestions(UserDto userdto) {
 
         List<SuggestionDto> array = new ArrayList<>();
-        List<Suggestion> tmp = new ArrayList<>();
+        List<Suggestion> tmp;
         User u = checkIfUserExists(userdto.getUsername());
 
         if (checkIfUserHasRoleTeacher(u)) {
@@ -307,17 +307,27 @@ public class SuggestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ListByUsernameDto listAllSuggestionsbyUsername(String username) {
 
-        List<SuggestionDto> array = new ArrayList<>();
         List<Suggestion> tmp = new ArrayList<>();
+        List<SuggestionDto> tmpDto = new ArrayList<>();
+
         User u = checkIfUserExists(username);
         ListByUsernameDto List = new ListByUsernameDto();
 
         if (checkIfUserHasRoleStudent(u)) {
 
             tmp = suggestionRepository.listAllSuggestions(u.getId()).stream().filter(suggestion -> username.equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+
+
+            for (Suggestion suggestion : tmp) {
+
+                tmpDto.add(new SuggestionDto(suggestion));
+
+            }
+
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
-            List.setListByUsernameDto (tmp);
+
+            List.setListByUsernameDto (tmpDto);
             List.setNumberofapprovedsuugs (u.getnumberofapprovedsuggs());
             List.setNumberofsuugs(u.getnumberofsuggs());
 
@@ -328,7 +338,6 @@ public class SuggestionService {
         throw new TutorException(ACCESS_DENIED);
 
     }
-
 
     @Retryable(
             value = { SQLException.class },
@@ -394,5 +403,6 @@ public class SuggestionService {
 
         return questionDto;
     }
+
 
 }

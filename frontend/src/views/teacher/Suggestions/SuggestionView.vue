@@ -28,11 +28,11 @@
           v-html="convertMarkDownNoFigure(item._questionStr, null)"
           @click="showSuggestionDialog(item)"
       /></template>
-            <template v-slot:item._questionStr="{ item }">
-                <p
-                        v-html="convertMarkDown(item._questionStr, null)"
-                        @click="showSuggestionDialog(item)"
-                /></template>
+      <template v-slot:item._questionStr="{ item }">
+        <p
+          v-html="convertMarkDown(item._questionStr, null)"
+          @click="showSuggestionDialog(item)"
+      /></template>
 
       <!--<template v-slot:item.topics="{ item }">
               <edit-question-topics
@@ -251,6 +251,10 @@ export default class SuggestionsView extends Vue {
     );
   }
 
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
+  }
+
   onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
     let sugg = this.suggestions.find(
       (sugg: Suggestion) => sugg._id == suggestionId
@@ -259,20 +263,6 @@ export default class SuggestionsView extends Vue {
       sugg._topicsList = topics;
     }
   }
-        convertMarkDown(text: string, image: Image | null = null): string {
-            return convertMarkDown(text, image);
-        }
-
-
-
-        onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
-            let sugg = this.suggestions.find(
-                (sugg: Suggestion) => sugg._id == suggestionId
-            );
-            if (sugg) {
-                sugg._topicsList = topics;
-            }
-        }
 
   /*async setStatus(questionId: number, status: string) {
           try {
@@ -318,64 +308,41 @@ export default class SuggestionsView extends Vue {
   }
 
   async ApproveSuggestion(sugg: Suggestion) {
-
-    if (sugg && (sugg.status == 'REJECTED')
-    ) {
+    if (sugg && sugg.status == 'REJECTED') {
       await this.$store.dispatch(
-              'error',
-              'You can not approve a rejected suggestion before the students edits it'
+        'error',
+        'You can not approve a rejected suggestion before the students edits it'
       );
-
-    }
-
-     else if (sugg && (sugg.status == 'APPROVED')
-      ) {
+    } else if (sugg && sugg.status == 'APPROVED') {
       await this.$store.dispatch(
-              'error',
-              'You can not approve a suggestion twice'
+        'error',
+        'You can not approve a suggestion twice'
       );
-
-    }
-
-     else {
-
+    } else {
       sugg.status = 'APPROVED';
       const result = await RemoteServices.approveSuggestion(sugg);
 
       this.$emit('approve-question', result);
-
     }
-
   }
 
   async RejectSuggestion(sugg: Suggestion) {
-
     if (sugg != null) {
       this.currentSuggestion = sugg;
     }
 
-    if (sugg && (sugg.status == 'REJECTED')
-    ) {
+    if (sugg && sugg.status == 'REJECTED') {
       await this.$store.dispatch(
-              'error',
-              'You can not reject a question twice'
+        'error',
+        'You can not reject a question twice'
       );
-
-    }
-
-    else if (sugg && (sugg.status == 'APPROVED')
-    ) {
+    } else if (sugg && sugg.status == 'APPROVED') {
       await this.$store.dispatch(
-              'error',
-              'You can not reject an approved suggestion'
+        'error',
+        'You can not reject an approved suggestion'
       );
-
-    }
-
-    else {
-
+    } else {
       this.rejectSuggDialogue = true;
-
     }
   }
 
@@ -383,7 +350,7 @@ export default class SuggestionsView extends Vue {
     this.rejectSuggDialogue = false;
   }
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
+    return this.convertMarkDownNoFigure(text, image);
   }
   async AddQuestion(sugg: Suggestion) {
     this.currentSuggestion = sugg;
