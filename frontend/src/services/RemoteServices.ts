@@ -676,6 +676,17 @@ export default class RemoteServices {
       });
   }
 
+  static async updateScore(): Promise<User> {
+    return httpClient
+      .get('/users/update')
+      .then(response => {
+        return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async saveAssessment(assessment: Assessment) {
     if (assessment.id) {
       return httpClient

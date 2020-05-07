@@ -57,6 +57,13 @@ public class UserController {
         return userService.changeDashboardPrivacy(user.getId());
     }
 
+    @GetMapping("/users/update")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public UserDto updateLoggedUser(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.updateLoggedUser(user.getId());
+    }
+
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity deleteUser(@PathVariable Integer userId) {

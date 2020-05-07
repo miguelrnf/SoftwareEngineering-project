@@ -146,4 +146,14 @@ public class UserService {
         user.changeDashboardPrivacy();
         return new UserDto(user);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public UserDto updateLoggedUser(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        return new UserDto(user);
+    }
 }
