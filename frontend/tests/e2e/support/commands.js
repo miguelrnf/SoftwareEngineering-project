@@ -266,10 +266,18 @@ Cypress.Commands.add('demoStudentLoginPosts', () => {
   cy.get('[data-cy="Student"]').click();
 });
 
+Cypress.Commands.add('demoStudenDashboard', () => {
+  cy.get('[data-cy="Dashboard"]').click();
+});
+
 Cypress.Commands.add('demoTeacherLoginPosts', () => {
   cy.visit('/');
   cy.get('[data-cy="teacherButton"]').click();
   cy.contains('Management').click();
+});
+
+Cypress.Commands.add('closeDialog', () => {
+  cy.get('[data-cy="closeButton"]').click();
 });
 
 Cypress.Commands.add('gotoPosts', () => {
