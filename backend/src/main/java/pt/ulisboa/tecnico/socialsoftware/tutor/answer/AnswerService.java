@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -72,11 +73,21 @@ public class AnswerService {
         return new QuizAnswerDto(quizAnswer);
     }
 
+    private int calculatePoints(boolean correct, int points){
+        if(correct)
+            points +=2;
+        else
+            points --;
+
+        return points;
+    }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
+        AtomicInteger points = new AtomicInteger();
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -84,17 +95,18 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
+        //Calculating and adding points to user
+        if (quizAnswer.getQuiz().getTournament().getOwner().getRole() == User.Role.TEACHER && !quizAnswer.isCompleted()){
+            quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
+                if (questionAnswer.getOption() != null)
+                    points.set(calculatePoints(questionAnswer.getOption().getCorrect(), points.get()));
+            });
+            user.changeScore(points.get());
+        }
+
         if (!quizAnswer.isCompleted()) {
             quizAnswer.setAnswerDate(DateHandler.now());
             quizAnswer.setCompleted(true);
-        }
-
-        //Calculating and adding points to user
-        if (quizAnswer.getQuiz().getTournament().getOwner().getRole() == User.Role.TEACHER){
-            quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
-                if (questionAnswer.getOption() != null)
-                    user.changeScore(questionAnswer.getOption().getCorrect());
-            });
         }
 
         // In class quiz when student submits before resultsDate

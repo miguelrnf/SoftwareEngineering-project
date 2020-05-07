@@ -44,10 +44,10 @@
             </v-list-item>
             <v-list-item to="/admin/tournaments">
               <v-list-item-action>
-                <v-icon>assignment</v-icon>
+                <v-icon>fas fa-trophy</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>All Tournaments</v-list-item-title>
+                <v-list-item-title>Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -87,7 +87,7 @@
             </v-list-item>
             <v-list-item to="/management/tournaments">
               <v-list-item-action>
-                <v-icon>ballot</v-icon>
+                <v-icon>fas fa-trophy</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title data-cy="tournaments">
@@ -340,9 +340,9 @@
           </v-list-item>
           <v-list-item to="/admin/tournaments">
             <v-list-item-action>
-              <v-icon>assignment</v-icon>
+              <v-icon>fas fa-trophy</v-icon>
             </v-list-item-action>
-            <v-list-item-content>All Tournaments</v-list-item-content>
+            <v-list-item-content>Tournaments</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
@@ -390,9 +390,11 @@
           </v-list-item>
           <v-list-item to="/management/tournaments">
             <v-list-item-action>
-              <v-icon>assignment</v-icon>
+              <v-icon>fas fa-trophy</v-icon>
             </v-list-item-action>
-            <v-list-item-content>All Tournaments</v-list-item-content>
+            <v-list-item-content>
+              <v-list-item-title>Tournaments</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/assessments">
             <v-list-item-action>
@@ -422,7 +424,9 @@
             <v-list-item-action>
               <v-icon>fas fa-book</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Posts List</v-list-item-content>
+            <v-list-item-content>
+              <v-list-item-title>Posts List</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list-group>
 

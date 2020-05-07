@@ -212,7 +212,7 @@ public class TournamentService {
                 .collect(Collectors.toList());
 
         if(temp.isEmpty())
-            throw new TutorException(TOURNAMENT_LIST_EMPTY);
+            return new ArrayList<>();
 
         return setQuizAnswers(temp, student, executionId);
     }
@@ -445,19 +445,6 @@ public class TournamentService {
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> tournamentsByUser(String user, Integer executionId) {
-        User u = userRepository.findByUsername(user);
-        if (u == null) throw new TutorException(USERNAME_NOT_FOUND, user);
-
-        return this.getEnrolledTournaments(user, executionId);
-    }
-
-
 
     public void generateTournamentQuiz(int tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));

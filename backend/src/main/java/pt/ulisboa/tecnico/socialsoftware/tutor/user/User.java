@@ -155,11 +155,8 @@ public class User implements UserDetails, DomainEntity {
         return score;
     }
 
-    public void changeScore(boolean wasRight) {
-        if (wasRight)
-            this.score += 2;
-        else
-            this.score--;
+    public void changeScore(int points) {
+            this.score += points;
 
         if (this.score < 0)
             this.score = 0;
