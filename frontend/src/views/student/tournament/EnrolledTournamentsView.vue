@@ -34,11 +34,11 @@
         <div class="col">
           {{ t.assessmentDto.title }}
         </div>
-        <div v-if="t.status === 'OPEN'" class="col">
-          {{ t.completed }}
-        </div>
-        <div v-else class="col">
-          {{ t.completed }}
+        <div class="col">
+          <v-icon v-if="t.completed === true" color="green">
+            fas fa-check
+          </v-icon>
+          <v-icon v-else color="red">fas fa-times </v-icon>
         </div>
         <div class="col">
           <v-btn
@@ -53,7 +53,7 @@
             v-else-if="prepareToResults(t)"
             class="btn"
             color="primary"
-            @click="showResults(t.solved)"
+            @click="showResults(t)"
           >
             Results
           </v-btn>
@@ -69,7 +69,6 @@ import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/management/Tournament';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementManager from '@/models/statement/StatementManager';
-import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
 @Component
 export default class EnrolledTournamentsView extends Vue {
@@ -91,10 +90,14 @@ export default class EnrolledTournamentsView extends Vue {
     await this.$router.push({ name: 'solve-quiz' });
   }
 
-  async showResults(quiz: SolvedQuiz) {
+  async showResults(tournament: Tournament) {
+    let t = await RemoteServices.getTournament(
+      tournament.id,
+      this.$store.getters.getUser.username
+    );
     let statementManager: StatementManager = StatementManager.getInstance;
-    statementManager.correctAnswers = quiz.correctAnswers;
-    statementManager.statementQuiz = quiz.statementQuiz;
+    statementManager.correctAnswers = t.solved.correctAnswers;
+    statementManager.statementQuiz = t.solved.statementQuiz;
     await this.$router.push({ name: 'quiz-results' });
   }
 
@@ -152,6 +155,8 @@ export default class EnrolledTournamentsView extends Vue {
       flex-basis: 25% !important;
       margin: auto; /* Important */
       text-align: center;
+      word-wrap: break-word;
+      max-width: 15%;
     }
 
     .list-row {

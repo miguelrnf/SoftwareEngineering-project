@@ -8,7 +8,6 @@ import StudentStats from '@/models/statement/StudentStats';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import Topic from '@/models/management/Topic';
-import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
@@ -20,6 +19,7 @@ import ListPost from '@/models/management/ListPost';
 import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
+import User from '@/models/user/User';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -382,6 +382,37 @@ export default class RemoteServices {
       });
   }
 
+  static async getTournament(
+    id: number,
+    username: string
+  ): Promise<Tournament> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/${id}/${username}`
+      )
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getTournamentsByUser(username: string): Promise<Tournament[]> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/user/${username}`
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async enrollTournament(tournamentId: Number): Promise<Tournament> {
     return httpClient
       .put(`/tournament/${tournamentId}/opened/enroll`)
@@ -607,7 +638,7 @@ export default class RemoteServices {
       .get(`/executions/${course.courseExecutionId}/students`)
       .then(response => {
         return response.data.map((student: any) => {
-          return new Student(student);
+          return new User(student);
         });
       })
       .catch(async error => {
@@ -891,6 +922,45 @@ export default class RemoteServices {
       .put(
         `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${postC.post.id}/comment`,
         postC
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getPostsByUser(username: string): Promise<ListPost> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/user/${username}`
+      )
+      .then(response => {
+        return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changePostPrivacy(id: number): Promise<Post> {
+    return httpClient
+      .put(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/edit/privacy`
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeAnswerPrivacy(id: number): Promise<Post> {
+    return httpClient
+      .put(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/answer/edit/privacy`
       )
       .then(response => {
         return new Post(response.data);

@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.ListPostsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -63,16 +64,22 @@ public class TournamentController {
         return tournamentservice.getTournaments();
     }
 
-    @GetMapping("/executions/{executionId}/tournaments/{tournamentId}")
+    @GetMapping("/executions/{executionId}/tournaments/{tournamentId}/{username}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public TournamentDto getTournament(@PathVariable Integer tournamentId, @PathVariable Integer executionId) {
-        return this.tournamentservice.findById(tournamentId, executionId);
+    public TournamentDto getTournament(@PathVariable Integer tournamentId, @PathVariable Integer executionId, @PathVariable String username) {
+        return this.tournamentservice.findById(tournamentId, executionId, username);
     }
 
     @GetMapping("/executions/{executionId}/teacher/tournaments")
     @PreAuthorize("hasRole('TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<TournamentDto> getExecutionTournament(@PathVariable Integer executionId) {
         return this.tournamentservice.listAllTournaments(executionId);
+    }
+
+    @GetMapping("executions/{executionId}/tournaments/user/{user}")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TournamentDto> tournamentByUser(@PathVariable int executionId, @PathVariable String user) {
+        return tournamentservice.getEnrolledTournaments(user, executionId);
     }
 
     @GetMapping("/executions/{executionId}/tournaments/own/{username}")

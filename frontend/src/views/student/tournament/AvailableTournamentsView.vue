@@ -244,6 +244,7 @@ export default class AvailableTournamentsView extends Vue {
       margin: auto; /* Important */
       text-align: center;
       word-wrap: break-word;
+      max-width: 15%;
     }
 
     .list-row {

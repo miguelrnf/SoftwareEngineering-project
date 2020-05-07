@@ -207,8 +207,6 @@ export default class AllTeacherTournaments extends Vue {
   }
 
   showResults(t: Tournament) {
-    console.log(t);
-    console.log(t.quiz.id);
     return t.status === 'CLOSED' && t.quiz.id;
   }
 

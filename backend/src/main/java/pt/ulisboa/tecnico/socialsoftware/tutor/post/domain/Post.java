@@ -35,6 +35,12 @@ public class Post {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Column(name = "post_is_private", columnDefinition = "boolean default false")
+    private Boolean postPrivacy;
+
+    @Column(name = "answer_is_private", columnDefinition = "boolean default false")
+    private Boolean answerPrivacy;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private Set<PostComment> comments = new HashSet<>();
 
@@ -47,12 +53,16 @@ public class Post {
         this.question = question;
         this.postStatus = true;
         this.discussStatus = false;
+        this.postPrivacy = false;
+        this.answerPrivacy = false;
     }
 
     public Post(PostQuestion question) {
         this.question = question;
         this.postStatus = true;
         this.discussStatus = false;
+        this.postPrivacy = false;
+        this.answerPrivacy = false;
     }
 
     public Integer getId() {
@@ -127,6 +137,22 @@ public class Post {
         this.comments.add(pc);
     }
 
+    public Boolean getPostPrivacy() {
+        return postPrivacy;
+    }
+
+    public void setPostPrivacy(Boolean postPrivacy) {
+        this.postPrivacy = postPrivacy;
+    }
+
+    public Boolean getAnswerPrivacy() {
+        return answerPrivacy;
+    }
+
+    public void setAnswerPrivacy(Boolean answerPrivacy) {
+        this.answerPrivacy = answerPrivacy;
+    }
+
     public void remove() {
         this.question.remove();
         if(this.comments != null)
@@ -136,6 +162,14 @@ public class Post {
 
     public void changeDiscussStatus() {
         this.discussStatus = !this.discussStatus;
+    }
+
+    public void changePostPrivacy() {
+        this.postPrivacy = !this.postPrivacy;
+    }
+
+    public void changeAnswerPrivacy() {
+        this.answerPrivacy = !this.answerPrivacy;
     }
 
     @Override

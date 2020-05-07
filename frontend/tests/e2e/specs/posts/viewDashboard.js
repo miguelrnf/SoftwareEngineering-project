@@ -18,15 +18,12 @@ describe('View Post', () => {
     cy.deletePost('[TEST§1] I dont understand');
   });
 
-  it('view post as student', () => {
-    cy.demoStudentLoginPosts();
-    cy.gotoPosts();
-    cy.viewPost('[TEST§1] I dont understand').type('{esc}', { force: true });
+  it('view dashboard', () => {
+    cy.demoStudentLoginDashboard();
   });
 
-  it('view post as teacher', () => {
-    cy.demoTeacherLoginPosts();
-    cy.gotoPosts();
-    cy.viewPost('[TEST§1] I dont understand').type('{esc}', { force: true });
+  it('view dashboard and open a post', () => {
+    cy.demoStudentLoginDashboard();
+    cy.contains('[TEST§1] I dont understand').click();
   });
 });

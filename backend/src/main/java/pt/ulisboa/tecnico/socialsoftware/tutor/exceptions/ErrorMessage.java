@@ -38,7 +38,8 @@ public enum ErrorMessage {
     COURSE_NOT_FOUND("Course not found with name %s"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
-    USERNAME_NOT_FOUND("Username %s not found"),
+    USERNAME_NOT_FOUND("Username %d not found"),
+    USERID_NOT_FOUND("User not found"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
@@ -76,7 +77,6 @@ public enum ErrorMessage {
     TOURNAMENT_UNABLE_REMOVE("Unable to remove, reason: %s"),
     TOURNAMENT_PERMISSION_CANCEL("Only owner can cancel the tournament"),
     TOURNAMENT_INVALID_STATUS("Tournament is %s"),
-
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),

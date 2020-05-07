@@ -21,6 +21,7 @@ public class StudentDto implements Serializable {
     private int percentageOfCorrectStudentAnswers = 0;
     private String creationDate;
     private String lastAccess;
+    private Integer score;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
@@ -34,6 +35,10 @@ public class StudentDto implements Serializable {
         this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
         this.lastAccess = DateHandler.toISOString(user.getLastAccess());
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        if (user.getScore() == null )
+            this.score = 0;
+        else
+            this.score = user.getScore();
 
         if (this.numberOfTeacherAnswers != 0)
             this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
@@ -76,6 +81,14 @@ public class StudentDto implements Serializable {
 
     public void setNumberOfStudentQuizzes(Integer numberOfStudentQuizzes) {
         this.numberOfStudentQuizzes = numberOfStudentQuizzes;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public Integer getNumberOfAnswers() {

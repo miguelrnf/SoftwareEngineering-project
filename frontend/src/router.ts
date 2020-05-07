@@ -7,10 +7,11 @@ import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
+import StudentsView from '@/views/student/StudentView.vue';
+import StudentView from '@/views/student/StudentView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
-import StudentView from '@/views/student/StudentView.vue';
 import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';
@@ -23,6 +24,7 @@ import TournamentsView from '@/views/admin/TournamentsView.vue';
 import CreateTournamentsView from '@/views/student/tournament/CreateTournamentsView.vue';
 import PostsView from '@/views/PostsView.vue';
 import PostPostView from '@/views/student/PostPostView.vue';
+import DashboardHomeView from '@/views/DashboardHomeView.vue';
 
 import TeacherSuggView from './views/teacher/Suggestions/SuggestionView.vue';
 
@@ -36,6 +38,7 @@ import SuggestionsView from '@/views/suggestions/SuggestionsView.vue';
 
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
 import PostGeneralView from '@/views/PostGeneralView.vue';
+import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 
 Vue.use(Router);
@@ -139,7 +142,7 @@ let router = new Router({
         {
           path: 'students',
           name: 'students-management',
-          component: TeacherSuggView,
+          component: StudentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Teacher',
             requiredAuth: 'Teacher'
@@ -292,6 +295,23 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
             requiredAuth: 'None'
+          }
+        }
+      ]
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'dashboard-home',
+          component: DashboardHomeView,
+          props: { isOwnDashboard: true, isReal: true },
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'Student'
           }
         }
       ]

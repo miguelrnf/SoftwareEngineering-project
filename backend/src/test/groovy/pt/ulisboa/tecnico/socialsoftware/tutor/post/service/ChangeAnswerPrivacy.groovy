@@ -22,7 +22,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @DataJpaTest
-class ChangeDiscussStatus extends Specification{
+class ChangeAnswerPrivacy extends Specification{
     public static final String VALID_QUESTION = 'This is a valid question'
     public static final String VALID_STUDENT_QUESTION = 'I am asking a valid question'
     public static final String VALID_ANSWER = 'I am a valid answer'
@@ -133,6 +133,7 @@ class ChangeDiscussStatus extends Specification{
         VALID_P.setQuestion(VALID_PQ)
         VALID_P.setAnswer(VALID_PA)
         VALID_PQ.setPost(VALID_P)
+        VALID_P.setPostPrivacy(false)
 
         and: "a valid user that does not own the post"
         INVALID_U_NOT_OWNER = new User()
@@ -179,6 +180,7 @@ class ChangeDiscussStatus extends Specification{
         def postNo = new Post(VALID_KEY, postQuestion2)
         postQuestion2.setPost(postNo)
         user1.addPostQuestion(postQuestion2)
+        postNo.setPostPrivacy(false)
 
         and: "a valid post with an answer"
         def postAnswered = new Post(VALID_KEY_2, postQuestion1)
@@ -187,6 +189,7 @@ class ChangeDiscussStatus extends Specification{
         user1.addPostQuestion(postQuestion1)
         answer.setTeacherAnswer(VALID_ANSWER)
         postAnswered.setAnswer(answer)
+        postAnswered.setPostPrivacy(false)
 
         then: "add to repository"
         userRepository.save(user1)
@@ -200,28 +203,28 @@ class ChangeDiscussStatus extends Specification{
 
 
     @Unroll
-    def "valid discuss status"() {
+    def "valid change answer privacy"() {
         when:
         def dto = new PostDto(post)
         dto.getQuestion().setUser(new UserDto(user))
-        def result = postService.changeDiscussStatus(expected.getKey(), user)
+        def result = postService.changeAnswerPrivacy(expected.getKey(), user)
 
         then:
-        result.getDiscussStatus() != expected.getDiscussStatus()
+        result.getAnswerPrivacy() != expected.getAnswerPrivacy()
 
         where:
-        user                 | post                    ||       expected
-        VALID_U as User      | VALID_P as Post         ||       VALID_P as Post
+        user                         | post                    ||       expected
+        VALID_U_TEACHER as User      | VALID_P as Post         ||       VALID_P as Post
 
 
     }
 
     @Unroll
-    def "invalid discuss status"() {
+    def "invalid change answer privacy"() {
         when:
         def dto = new PostDto(post)
         dto.getQuestion().setUser(new UserDto(user))
-        postService.changeDiscussStatus(VALID_KEY, user)
+        postService.changeAnswerPrivacy(VALID_KEY, user)
 
         then:
         def result = thrown(TutorException)
@@ -229,8 +232,7 @@ class ChangeDiscussStatus extends Specification{
 
         where:
         user                            | post                       || expected
-        VALID_U as User                 | VALID_P_NO_ANSWER as Post  || ErrorMessage.NO_ANSWER.label
-        INVALID_U_NOT_OWNER as User     | VALID_P as Post            || ErrorMessage.NOT_YOUR_POST.label
+        INVALID_U_NOT_OWNER as User     | VALID_P as Post            || ErrorMessage.USER_HAS_WRONG_ROLE.label
 
 
 

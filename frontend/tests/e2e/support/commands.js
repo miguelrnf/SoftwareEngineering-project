@@ -24,6 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 /// <reference types="Cypress" />
+
 Cypress.Commands.add('demoAdminLogin', () => {
   cy.visit('/');
   cy.get('[data-cy="adminButton"]').click();
@@ -68,21 +69,6 @@ Cypress.Commands.add(
       .click();
     cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
     cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
-    cy.get('[data-cy="saveButton"]').click();
-  }
-);
-Cypress.Commands.add(
-  'createFromCourseExecution',
-  (name, acronym, academicTerm) => {
-    cy.contains(name)
-      .parent()
-      .should('have.length', 1)
-      .children()
-      .should('have.length', 7)
-      .find('[data-cy="createFromCourse"]')
-      .click();
-    cy.get('[data-cy="Acronym"]').type(acronym);
-    cy.get('[data-cy="AcademicTerm"]').type(academicTerm);
     cy.get('[data-cy="saveButton"]').click();
   }
 );

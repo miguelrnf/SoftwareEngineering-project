@@ -40,6 +40,7 @@ class RedirectDuplicatePostTest extends Specification{
     public static final String VALID_NAME_2 = "Mike Litoris"
     public static final String VALID_USERNAME_1 = "BenDover69"
     public static final String VALID_USERNAME_2 = "MikeLitoris420"
+    public static final String VALID_TITLE = "Title"
 
     @Autowired
     PostService postService
@@ -198,6 +199,7 @@ class RedirectDuplicatePostTest extends Specification{
         def question = new Question()
         question.setKey(VALID_KEY)
         question.setContent(VALID_QUESTION)
+        question.setTitle(VALID_TITLE)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)

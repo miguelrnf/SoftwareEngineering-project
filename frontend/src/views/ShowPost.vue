@@ -1,9 +1,7 @@
 <template>
   <v-card class="mx-auto" max-height="80%">
     <v-app-bar dense color="grey lighten-2">
-      <v-toolbar-title>
-        {{ convertMarkDown(post.question.question.title) }}</v-toolbar-title
-      >
+      <v-toolbar-title> {{ post.question.question.title }}</v-toolbar-title>
       <v-spacer />
       <post-status-buttons :post="post"></post-status-buttons>
       <v-tooltip bottom v-if="isOwner(post)">
@@ -47,7 +45,13 @@
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
     </v-card-text>
-    <v-card-text v-if="post.answer != null && post.answer.teacherAnswer !== ''">
+    <v-card-text
+      v-if="
+        post.answer != null &&
+          post.answer.teacherAnswer !== '' &&
+          (!post.answerPrivacy || isTeacher() || isOwner(post))
+      "
+    >
       <p class="subtitle-1 font-weight-light">
         <span v-html="convertMarkDown('Answer:')" />
       </p>

@@ -20,7 +20,10 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
-        this.score = user.getScore();
+        if (user.getScore() == null )
+            this.score = 0;
+        else
+            this.score = user.getScore();
 
     }
 

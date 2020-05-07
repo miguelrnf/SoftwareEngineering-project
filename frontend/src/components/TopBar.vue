@@ -267,6 +267,17 @@
         </v-btn>
 
         <v-btn
+          to="/dashboard/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="Dashboard"
+        >
+          Dashboard
+          <v-icon>fas fa-star</v-icon>
+        </v-btn>
+
+        <v-btn
           v-if="isLoggedIn && moreThanOneCourse"
           to="/courses"
           active-class="no-active"
@@ -523,6 +534,12 @@
             <v-list-item-content>Own</v-list-item-content>
           </v-list-item>
         </v-list-group>
+
+        <v-list-item to="/dashboard/home" v-if="isStudent && currentCourse">
+          <v-icon>
+            fas fa-star
+          </v-icon>
+        </v-list-item>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
           <v-list-item-action>

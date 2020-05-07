@@ -51,4 +51,5 @@ public class PostAnswerDto implements Serializable {
     public void setPost(PostDto post) {
         this.post = post;
     }
+
 }
