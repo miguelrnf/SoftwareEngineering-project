@@ -82,6 +82,7 @@
           dark
           color="primary"
           @click="$emit('close-show-tournament-dialog')"
+          data-cy="closeButton"
           >close</v-btn
         >
       </v-card-actions>

@@ -263,6 +263,8 @@ export default class QuizView extends Vue {
       this.confirmed = true;
       await this.statementManager.concludeQuiz();
 
+      await this.$store.dispatch('updateScore');
+
       if (
         !this.statementQuiz?.timeToResults &&
         this.statementManager.correctAnswers.length !== 0
