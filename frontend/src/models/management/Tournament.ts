@@ -3,6 +3,7 @@ import { Student } from '@/models/management/Student';
 import { ISOtoString } from '@/services/ConvertDateService';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
+import User from '@/models/user/User';
 
 export class Tournament {
   id!: number;
@@ -14,7 +15,7 @@ export class Tournament {
   numberOfQuestions!: number;
   status!: string;
   assessmentDto: Assessment = new Assessment();
-  owner!: Student;
+  owner!: User;
   enrolledStudents: Student[] = [];
   quiz!: StatementQuiz;
   completed!: boolean;
@@ -39,7 +40,7 @@ export class Tournament {
       if (jsonObj.assessmentDto)
         this.assessmentDto = new Assessment(jsonObj.assessmentDto);
 
-      if (jsonObj.owner) this.owner = new Student(jsonObj.owner);
+      if (jsonObj.owner) this.owner = new User(jsonObj.owner);
 
       if (jsonObj.enrolledStudents) {
         this.enrolledStudents = jsonObj.enrolledStudents.map(

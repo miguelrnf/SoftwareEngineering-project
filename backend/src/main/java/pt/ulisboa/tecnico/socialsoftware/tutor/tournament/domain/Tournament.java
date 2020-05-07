@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 
+import org.hibernate.criterion.Distinct;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -59,8 +60,7 @@ public class Tournament {
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
-    @OneToOne
-    @JoinColumn(name = "quiz_id")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "tournament", orphanRemoval = true)
     private Quiz quiz;
 
     @ManyToOne

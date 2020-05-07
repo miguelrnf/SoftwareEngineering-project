@@ -120,16 +120,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import RemoteServices from '../services/RemoteServices';
-import { PostAnswer } from '@/models/management/PostAnswer';
-import { PostQuestion } from '@/models/management/PostQuestion';
 
 @Component
 export default class PostStatusButtons extends Vue {
   @Prop({ type: Post, required: true }) readonly post!: Post;
-
 
   getColor(dStatus: boolean) {
     if (dStatus) return 'green';

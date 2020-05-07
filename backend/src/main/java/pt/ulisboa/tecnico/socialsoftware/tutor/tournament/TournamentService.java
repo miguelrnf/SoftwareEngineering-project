@@ -13,6 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.ListPostsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
@@ -119,8 +122,7 @@ public class TournamentService {
             tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
         if (DateHandler.isValidDateFormat(tournamentDto.getConclusionDate()))
             tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
-        if (DateHandler.isValidDateFormat(tournamentDto.getCreationDate()))
-            tournament.setCreationDate(DateHandler.toLocalDateTime(tournamentDto.getCreationDate()));
+        tournament.setCreationDate(DateHandler.now());
 
         entityManager.persist(tournament);
 
@@ -219,7 +221,7 @@ public class TournamentService {
     private List<TournamentDto> setQuizAnswers(List<Tournament> tournaments, User user, int executionId) {
         List<TournamentDto> tournamentDtos = new ArrayList<>();
 
-        Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
+        Set<Integer> studentQuizIds = user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getType() == Quiz.QuizType.TOURNAMENT)
                 .map(QuizAnswer::getQuiz)
@@ -240,9 +242,12 @@ public class TournamentService {
                         .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
                         .collect(Collectors.toList()).get(0);
 
+                        if ((checkStatus(tournament) == Tournament.TournamentStatus.OPEN || checkStatus(tournament) == Tournament.TournamentStatus.CLOSED) && tournamentDto.getQuiz().getId() == null)
+                            tournamentDto.setQuiz(new StatementQuizDto(answer));
+
                         tournamentDto.setCompleted(answer.isCompleted());
 
-                        if (tournamentDto.isCompleted()){
+                        if (tournamentDto.isCompleted() && checkStatus(tournament) == Tournament.TournamentStatus.CLOSED){
                             List<SolvedQuizDto> temp = user.getQuizAnswers().stream()
                                     .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
                                     .map(SolvedQuizDto::new).collect(Collectors.toList());
@@ -370,14 +375,15 @@ public class TournamentService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto findById(int tournamentId, int executionId) {
-        List<TournamentDto> tournament = tournamentRepository.findById(tournamentId).stream().filter(t -> t.getCourseExecution().getId()
-                .equals(executionId)).map(TournamentDto::new).collect(Collectors.toList());
+    public TournamentDto findById(int tournamentId, int executionId, String username) {
+        User user = findUsername(username);
+        List<Tournament> tournaments = tournamentRepository.findById(tournamentId).stream().filter(t -> t.getCourseExecution().getId()
+                .equals(executionId)).collect(Collectors.toList());
 
-        if(tournament.isEmpty())
+        if(tournaments.isEmpty())
             throw new TutorException(TOURNAMENT_NOT_FOUND, tournamentId);
 
-        return tournament.get(0);
+        return setQuizAnswers(tournaments, user, executionId).get(0);
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -441,6 +447,17 @@ public class TournamentService {
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> tournamentsByUser(String user, Integer executionId) {
+        User u = userRepository.findByUsername(user);
+        if (u == null) throw new TutorException(USERNAME_NOT_FOUND, user);
+
+        return this.getEnrolledTournaments(user, executionId);
+    }
+
 
 
     public void generateTournamentQuiz(int tournamentId) {
@@ -488,6 +505,7 @@ public class TournamentService {
         tournament.getQuiz().setResultsDate(tournament.getConclusionDate());
         tournament.getQuiz().setCreationDate(DateHandler.now());
         tournament.getQuiz().setTitle(tournament.getTitle());
+        tournament.getQuiz().setTournament(tournament);
     }
 
 }

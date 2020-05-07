@@ -156,7 +156,6 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void changeScore(boolean wasRight) {
-        System.out.println("getting points");
         if (wasRight)
             this.score += 2;
         else

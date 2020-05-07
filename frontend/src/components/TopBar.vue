@@ -266,7 +266,13 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
-        <v-btn to="/dashboard/home" v-if="isStudent && currentCourse" text dark  data-cy="Dashboard">
+        <v-btn
+          to="/dashboard/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="Dashboard"
+        >
           Dashboard
           <v-icon>fas fa-star</v-icon>
         </v-btn>
