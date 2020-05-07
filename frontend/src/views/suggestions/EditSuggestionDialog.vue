@@ -21,9 +21,9 @@
         <v-card-text class="text-left" v-if="editSuggestion">
           <v-container grid-list-md fluid>
             <v-layout column wrap>
-              <!--<v-flex xs24 sm12 md8>
+              <v-flex xs24 sm12 md8>
               <v-text-field v-model="editSuggestion.title" label="Title" />
-            </v-flex>-->
+            </v-flex>
               <v-flex xs24 sm12 md12>
                 <v-textarea
                   outline
@@ -34,7 +34,7 @@
                   data-cy="content"
                 ></v-textarea>
               </v-flex>
-              <!--<v-flex
+              <v-flex
               xs24
               sm12
               md12
@@ -42,15 +42,15 @@
               :key="index"
             >
               <v-switch
-                v-model="editQuestion.options[index - 1].correct"
-                class="ma-4"
-                label="Correct"
+                      v-model="editSuggestion.options[index - 1].correct"
+                      class="ma-4"
+                      label="Correct"
               />
               <v-textarea
-                outline
-                rows="10"
-                v-model="editQuestion.options[index - 1].content"
-                label="Content"
+                      outline
+                      rows="10"
+                      v-model="editSuggestion.options[index - 1].content"
+                      :label="`Option ${index}`"
               ></v-textarea>
             </v-flex>-->
             </v-layout>

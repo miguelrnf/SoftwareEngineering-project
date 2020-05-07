@@ -106,11 +106,28 @@ public class SuggestionService {
         suggestion.set_topicsList(topics);
         suggestion.set_isprivate(suggestionDto.get_isprivate());
 
+        //new
+        checkTitleAndOptions(suggestionDto);
+        suggestion.addOptions(suggestionDto);
+        suggestion.setTitle(suggestionDto.getTitle());
+
         topics.forEach(topic -> topic.addSuggestion(suggestion));
 
         entityManager.persist(suggestion);
 
         return new SuggestionDto(suggestion);
+    }
+
+    private void checkTitleAndOptions(SuggestionDto suggestionDto) {
+        if (suggestionDto.getTitle().trim().length() == 0 ||
+                suggestionDto.get_questionStr().trim().length() == 0 ||
+                suggestionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
+            throw new TutorException(QUESTION_MISSING_DATA);
+        }
+
+        if (suggestionDto.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
+            throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
+        }
     }
 
     @Retryable(
@@ -258,6 +275,13 @@ public class SuggestionService {
         s.setStatus(Suggestion.Status.TOAPPROVE);
         s.set_changed(true);
 
+        //new
+        s.addOptions(suggestionDto);
+        s.setTitle(suggestionDto.getTitle());
+
+
+        // TODO: 05/05/2020  falta alterar topicos
+
         return new SuggestionDto(s);
 
     }
@@ -362,6 +386,9 @@ public class SuggestionService {
         User user = checkIfUserExists(username);
         if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
 
+        //new
+        editSuggestion(suggestionDto);
+
         Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
 
         QuestionDto questionDto = suggestionToQuestion(suggestionDto);
@@ -375,7 +402,7 @@ public class SuggestionService {
         suggestion.setStatus(Suggestion.Status.QUESTION);
 
         question.updateTopics(suggestion.get_topicsList());
-//falta adicionar novas infos
+//falta adicionar novas infos - acho que fixed
         questionRepository.save(question);
 
         return new QuestionDto(question);
@@ -384,15 +411,7 @@ public class SuggestionService {
     private QuestionDto suggestionToQuestion(SuggestionDto sugg){
         if (!sugg.getStatus().equals("APPROVED")) throw new TutorException(SUGGESTION_NOT_APPROVED);
 
-        if (sugg.getTitle().trim().length() == 0 ||
-                sugg.get_questionStr().trim().length() == 0 ||
-                sugg.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
-            throw new TutorException(QUESTION_MISSING_DATA);
-        }
-
-        if (sugg.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
-            throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
-        }
+        checkTitleAndOptions(sugg);
 
         QuestionDto questionDto = new QuestionDto();
 
