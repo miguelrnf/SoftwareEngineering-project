@@ -74,6 +74,9 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
+    @Column(name = "is_dashboard_private", columnDefinition = "boolean default false")
+    private Boolean isDashboardPrivate;
+
     public User() {
     }
 
@@ -93,6 +96,7 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+        this.isDashboardPrivate = false;
     }
 
     @Override
@@ -212,6 +216,18 @@ public class User implements UserDetails, DomainEntity {
 
     public void setPostQuestions(Set<PostQuestion> postQuestions) {
         this.postQuestions = postQuestions;
+    }
+
+    public Boolean getDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(Boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
+    }
+
+    public void changeDashboardPrivacy() {
+        this.isDashboardPrivate = !this.isDashboardPrivate;
     }
 
     public Integer getNumberOfTeacherQuizzes() {

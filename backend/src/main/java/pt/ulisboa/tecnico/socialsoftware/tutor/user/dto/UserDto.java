@@ -13,17 +13,20 @@ public class UserDto implements Serializable {
     private User.Role role;
     private Integer score;
     private String creationDate;
+    private Boolean isDashboardPrivate;
 
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
+        this.isDashboardPrivate = user.getDashboardPrivate();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
         if (user.getScore() == null )
             this.score = 0;
         else
             this.score = user.getScore();
+
 
     }
 
@@ -76,6 +79,14 @@ public class UserDto implements Serializable {
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Boolean getDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(Boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
     }
 
     @Override
