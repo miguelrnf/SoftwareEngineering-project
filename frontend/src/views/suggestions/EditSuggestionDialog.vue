@@ -10,30 +10,31 @@
       <v-card-title>
         <span class="headline">
           {{
-            editSuggestion && editSuggestion.id === null
+            editSuggestion && editSuggestion._id === null
               ? 'New Suggestion'
               : 'Edit Suggestion'
           }}
         </span>
       </v-card-title>
 
-      <v-card-text class="text-left" v-if="editSuggestion">
-        <v-container grid-list-md fluid>
-          <v-layout column wrap>
-            <!--<v-flex xs24 sm12 md8>
+      <h1 v-if="suggestion.status === 'REJECTED' || suggestion.status === 'TOAPPROVE'">
+        <v-card-text class="text-left" v-if="editSuggestion">
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex xs24 sm12 md8>
               <v-text-field v-model="editSuggestion.title" label="Title" />
-            </v-flex>-->
-            <v-flex xs24 sm12 md12>
-              <v-textarea
-                outline
-                rows="10"
-                v-model="editSuggestion._questionStr"
-                label="Content"
-                outlined
-                data-cy="content"
-              ></v-textarea>
             </v-flex>
-            <!--<v-flex
+              <v-flex xs24 sm12 md12>
+                <v-textarea
+                  outline
+                  rows="10"
+                  v-model="editSuggestion._questionStr"
+                  label="Content"
+                  outlined
+                  data-cy="content"
+                ></v-textarea>
+              </v-flex>
+              <v-flex
               xs24
               sm12
               md12
@@ -41,51 +42,95 @@
               :key="index"
             >
               <v-switch
-                v-model="editQuestion.options[index - 1].correct"
-                class="ma-4"
-                label="Correct"
+                      v-model="editSuggestion.options[index - 1].correct"
+                      class="ma-4"
+                      label="Correct"
               />
               <v-textarea
-                outline
-                rows="10"
-                v-model="editQuestion.options[index - 1].content"
-                label="Content"
+                      outline
+                      rows="10"
+                      v-model="editSuggestion.options[index - 1].content"
+                      :label="`Option ${index}`"
               ></v-textarea>
             </v-flex>-->
-          </v-layout>
-        </v-container>
-      </v-card-text>
-      <v-card-text>
-        <v-autocomplete
-          v-model="questionTopics"
-          :items="topics"
-          multiple
-          return-object
-          item-text="name"
-          item-value="name"
-          label="Topics"
-          outlined
-          @change="saveTopics"
-          data-cy="topics"
-        >
-          <template v-slot:selection="data">
-            <v-chip
-              v-bind="data.attrs"
-              :input-value="data.selected"
-              close
-              @click="data.select"
-              @click:close="removeTopic(data.item)"
-            >
-              {{ data.item.name }}
-            </v-chip>
-          </template>
-          <template v-slot:item="data">
-            <v-list-item-content>
-              <v-list-item-title v-html="data.item.name" />
-            </v-list-item-content>
-          </template>
-        </v-autocomplete>
-      </v-card-text>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-text>
+          <v-autocomplete
+            v-model="questionTopics"
+            :items="topics"
+            multiple
+            return-object
+            item-text="name"
+            item-value="name"
+            label="Topics"
+            outlined
+            @change="saveTopics"
+            data-cy="topics"
+          >
+            <template v-slot:selection="data">
+              <v-chip
+                v-bind="data.attrs"
+                :input-value="data.selected"
+                close
+                @click="data.select"
+                @click:close="removeTopic(data.item)"
+              >
+                {{ data.item.name }}
+              </v-chip>
+            </template>
+            <template v-slot:item="data">
+              <v-list-item-content>
+                <v-list-item-title v-html="data.item.name" />
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
+        </v-card-text>
+      </h1>
+
+      <h1
+        v-if="
+          suggestion.status === 'APPROVED'        "
+      >
+        <v-subheader>Creation Date:</v-subheader>
+        <v-card-text class="text-left">
+          <span>{{ suggestion.creationDate }}</span>
+        </v-card-text>
+
+        <v-subheader>Student Username:</v-subheader>
+        <v-card-text class="text-left">
+          <span>{{ student.username }}</span>
+        </v-card-text>
+
+        <v-subheader>Question:</v-subheader>
+        <v-card-text class="text-left">
+          <span>{{ suggestion._questionStr }}</span>
+        </v-card-text>
+
+        <v-subheader>Topics:</v-subheader>
+        <ul>
+          <li v-for="option in suggestion._topicsList" :key="option.id">
+            <span class="text-left">{{ option.name }}</span>
+          </li>
+        </ul>
+        <br />
+      </h1>
+
+      <v-subheader>Make Your Suggestion Private:</v-subheader>
+      <v-card-actions>
+        <toggle-button
+          v-model="editSuggestion._isprivate"
+          :value="false"
+          :color="{ checked: 'red', unchecked: 'green' }"
+          :width="75"
+          :height="33"
+          :name="'Make This Suggestion Private:'"
+          :font-size="10"
+          :labels="{ checked: 'Private', unchecked: 'Public' }"
+        />
+      </v-card-actions>
+
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -110,6 +155,10 @@ import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Suggestion from '@/models/management/Suggestion';
 import Topic from '@/models/management/Topic';
+import ToggleButton from 'vue-js-toggle-button';
+import { Student } from '@/models/management/Student';
+import User from '@/models/user/User';
+Vue.use(ToggleButton);
 
 @Component
 export default class EditSuggestionDialog extends Vue {
@@ -118,34 +167,16 @@ export default class EditSuggestionDialog extends Vue {
   @Prop({ type: Array, required: true }) readonly topics!: Topic[];
 
   editSuggestion!: Suggestion;
+  student: User | null = null;
 
   questionTopics: Topic[] = JSON.parse(
     JSON.stringify(this.suggestion._topicsList)
   );
 
-  created() {
-    /*if (
-            this.suggestion &&
-            (this.suggestion.status!='REJECTED')
-    ) {
-      this.$store.dispatch(
-              'error',
-              'You can only edit a rejected suggestion'
-      );
-      return;
-    }*/
-
+  async created() {
     this.editSuggestion = new Suggestion(this.suggestion);
+    this.student = await this.$store.getters.getUser;
   }
-
-  // TODO use EasyMDE with these configs
-  // markdownConfigs: object = {
-  //   status: false,
-  //   spellChecker: false,
-  //   insertTexts: {
-  //     image: ['![image][image]', '']
-  //   }
-  // };
 
   async saveSuggestion() {
     if (this.editSuggestion && !this.editSuggestion._questionStr) {
@@ -167,6 +198,7 @@ export default class EditSuggestionDialog extends Vue {
         this.editSuggestion._questionStr = this.editSuggestion._questionStr;
         this.editSuggestion._student = this.$store.getters.getUser;
         this.editSuggestion._topicsList = this.questionTopics;
+        this.editSuggestion._isprivate = this.editSuggestion._isprivate;
         const result = await RemoteServices.createSuggestion(
           this.editSuggestion
         );

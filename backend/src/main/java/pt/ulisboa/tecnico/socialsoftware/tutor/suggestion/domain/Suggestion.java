@@ -2,16 +2,16 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -22,8 +22,16 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "sugg_indx_0", columnList = "key")
         })
 public class Suggestion {
+    public Boolean get_isprivate() {
+        return _isprivate;
+    }
+
+    public void set_isprivate(Boolean _isprivate) {
+        this._isprivate = _isprivate;
+    }
+
     public enum Status {
-        TOAPPROVE, APPROVED, REJECTED
+        TOAPPROVE, APPROVED, REJECTED, QUESTION
     }
 
     @Id
@@ -45,6 +53,9 @@ public class Suggestion {
     @Column(name = "justification")
     private String _justification;
 
+    @Column(name = "isprivate")
+    private Boolean _isprivate;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -59,6 +70,11 @@ public class Suggestion {
     @JoinColumn(name = "user_id")
     private User student;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
+    private List<Option> options = new ArrayList<>();
+
+    private String title;
+
     public Suggestion() {
     }
 
@@ -69,6 +85,7 @@ public class Suggestion {
         this._questionStr= suggestionDto.get_questionStr();
         this._changed = false;
         this._justification = "";
+        this._isprivate = false;
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -176,6 +193,34 @@ public class Suggestion {
     public void set_student(User student) {
         this.student = student;
     }
+
+    public List<Option> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<Option> options) {
+        this.options = options;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void addOptions(SuggestionDto suggestionDto){
+        int index = 0;
+        for (
+                OptionDto optionDto : suggestionDto.getOptions()) {
+            optionDto.setSequence(index++);
+            Option option = new Option(optionDto);
+            this.options.add(option);
+            option.setSuggestion(this);
+        }
+    }
+
 
     @Override
     public boolean equals(Object o) {

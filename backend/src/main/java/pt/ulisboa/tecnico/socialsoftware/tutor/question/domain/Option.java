@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -32,6 +33,11 @@ public class Option implements DomainEntity {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
+
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "suggestion_id")
+    private Suggestion suggestion;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
     private final Set<QuestionAnswer> questionAnswers = new HashSet<>();
@@ -100,6 +106,13 @@ public class Option implements DomainEntity {
         questionAnswers.add(questionAnswer);
     }
 
+    public Suggestion getSuggestion() {
+        return suggestion;
+    }
+
+    public void setSuggestion(Suggestion suggestion) {
+        this.suggestion = suggestion;
+    }
     @Override
     public String toString() {
         return "Option{" +

@@ -12,6 +12,9 @@ export default class User {
   coursesNumber: number = 0;
   score!: number;
   dashboardPrivate: boolean = false;
+  numberofsuggestions!: number;
+  numberofsuggestionsapproved!: number;
+
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -20,6 +23,8 @@ export default class User {
       this.role = jsonObj.role;
       this.score = jsonObj.score;
       this.dashboardPrivate = jsonObj.dashboardPrivate;
+      this.numberofsuggestions = jsonObj.numberofsuggestions;
+      this.numberofsuggestionsapproved = jsonObj.numberofsuggestionsapproved;
 
       if (jsonObj.courses) {
         for (let [name, courses] of Object.entries(jsonObj.courses)) {

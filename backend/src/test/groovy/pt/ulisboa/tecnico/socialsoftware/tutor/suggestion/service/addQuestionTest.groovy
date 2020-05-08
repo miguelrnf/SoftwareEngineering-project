@@ -8,11 +8,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion
@@ -23,15 +26,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 @DataJpaTest
-class SuggestionDashboard extends Specification {
+class addQuestionTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -42,11 +40,9 @@ class SuggestionDashboard extends Specification {
     public static final int INVALID_KEY = -1
     public static final int VALID_ID = 1
     public static final int INVALID_ID = -1
-    public static final String VALID_NAME = "Ruben Freitas"
-    public static final String VALID_USERNAME = "RubenFreitas99"
-    public static final String VALID_USERNAME_TEACHER = "RuiPeter"
-    public static final String VALID_NAME2 = "Goncalo Freitas"
-    public static final String VALID_USERNAME2 = "GoncaloQueridoFreitas"
+    public static final String VALID_NAME = "Ben Dover"
+    public static final String VALID_USERNAME = "BenDover69"
+    public static final String VALID_USERNAME_TEACHER = "something"
     public static final String VALID_NAME_TOPIC = "Spock"
     public static final String EMPTY_SUGGESTION = ""
     public static final String TOO_MANY_CHARS =
@@ -88,6 +84,9 @@ class SuggestionDashboard extends Specification {
     UserRepository userRepository
 
     @Autowired
+    QuestionRepository questionRepository
+
+    @Autowired
     TopicRepository topicRepository
 
     @Shared
@@ -100,10 +99,13 @@ class SuggestionDashboard extends Specification {
     def INVALID_U_UNAME
 
     @Shared
-    def VALID_U_ROLE
+    def INVALID_U_ROLE
 
     @Shared
-    def VALID_U_ROLEdto
+    def VALID_TOPIC
+
+    @Shared
+    def VALID_TOPIC_DTO
 
     @Shared
     def VALID_TOPIC_LIST
@@ -111,33 +113,8 @@ class SuggestionDashboard extends Specification {
     @Shared
     def INVALID_TOPIC_LIST
 
-    @Shared
-    def VALID_SUGGESTION
-
-    @Shared
-    def FORMATTER
-
-    @Shared
-    def VALID_COURSE
-
-    @Shared
-    def INVALID_SUGGESTION_F
-
-    @Shared
-    def INVALID_SUGGESTION_IU
-
-    @Shared
-    def VALID_SUGGESTION_LIST
-
-    @Shared
-    def VALID_Udto
-
-    @Shared
-    def VALID_U1
-
     def course
     def courseExecution
-    def courseexec
 
     def setupSpec() {
         given: "a user with an invalid uid"
@@ -146,25 +123,11 @@ class SuggestionDashboard extends Specification {
         INVALID_U_UID.setRole(User.Role.STUDENT)
         INVALID_U_UID.setUsername(VALID_USERNAME)
 
-        and: ""
-        FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        and: "valid course"
-        VALID_COURSE = new HashSet<CourseExecution>()
-        VALID_COURSE.add (new CourseExecution(new Course(COURSE_NAME, "TECNICO" as Course.Type), ACRONYM, ACADEMIC_TERM, "TECNICO" as Course.Type))
-
         and: "a user with the role teacher"
-        VALID_U_ROLE = new User()
-        VALID_U_ROLE.setId(VALID_ID)
-        VALID_U_ROLE.setRole(User.Role.TEACHER)
-        VALID_U_ROLE.setUsername(VALID_USERNAME_TEACHER)
-        VALID_U_ROLE.setCourseExecutions(VALID_COURSE)
-
-        and: "a user with the role teacherdto"
-        VALID_U_ROLEdto = new UserDto(VALID_U_ROLE)
-        VALID_U_ROLEdto.setId(VALID_ID)
-        VALID_U_ROLEdto.setRole(User.Role.TEACHER)
-        VALID_U_ROLEdto.setUsername(VALID_USERNAME_TEACHER)
+        INVALID_U_ROLE = new User()
+        INVALID_U_ROLE.setId(VALID_ID)
+        INVALID_U_ROLE.setRole(User.Role.TEACHER)
+        INVALID_U_ROLE.setUsername(VALID_USERNAME_TEACHER)
 
         and: "a user with an invalid username"
         INVALID_U_UNAME = new User()
@@ -177,136 +140,181 @@ class SuggestionDashboard extends Specification {
         VALID_U.setId(VALID_ID)
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME)
-        VALID_U.setName(VALID_NAME)
-
-        and: "valid user DTO"
-        VALID_Udto = new UserDto(VALID_U)
-        VALID_Udto.setId(VALID_ID)
-        VALID_Udto.setRole(User.Role.STUDENT)
-        VALID_Udto.setUsername(VALID_USERNAME)
-        VALID_Udto.setName(VALID_NAME)
-
-        and: "invalid user"
-        INVALID_SUGGESTION_IU = new User()
-        INVALID_SUGGESTION_IU.setId(VALID_ID)
-        INVALID_SUGGESTION_IU.setRole(User.Role.STUDENT)
-        INVALID_SUGGESTION_IU.setUsername(VALID_USERNAME2)
-        INVALID_SUGGESTION_IU.setName(VALID_NAME2)
-
-        and: "valid suggesiton"
-        VALID_SUGGESTION = new SuggestionDto()
-        VALID_SUGGESTION.set_id(VALID_ID)
-        VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
-        VALID_SUGGESTION.setKey(VALID_KEY)
-        VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
-        VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
-        VALID_SUGGESTION.set_changed(null)
-        VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
-        VALID_SUGGESTION.set_student(VALID_Udto)
-
-        and: "a valid user - STUDENT "
-        VALID_U1 = new User()
-        VALID_U1.setId(5)
-        VALID_U1.setRole(User.Role.STUDENT)
-        VALID_U1.setUsername(VALID_USERNAME2)
-        VALID_U1.setName(VALID_NAME2)
-
-
-        and: "arraylist of suggestions"
-        VALID_SUGGESTION_LIST = new ArrayList<SuggestionDto>()
-        VALID_SUGGESTION_LIST.add(VALID_SUGGESTION)
-
     }
 
-    def setup() {
-
+    def setup(){
         given:
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
+
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
-        courseexec = new HashSet<CourseExecution>()
-        courseexec.add(courseExecution)
-
 
         and: "a user with the role teacher"
         def userT = new User(VALID_NAME, VALID_USERNAME_TEACHER, 2, User.Role.TEACHER)
-        userT.setCourseExecutions(courseexec)
 
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
 
+        and: "a valid topicDto"
+        VALID_TOPIC_DTO = new TopicDto()
+        VALID_TOPIC_DTO.setId(VALID_ID)
+        VALID_TOPIC_DTO.setName(VALID_NAME_TOPIC)
 
-        and: "a user with the role student that didn't create that suggestion"
-        def userS2 = new User(VALID_NAME2, VALID_USERNAME2, 3, User.Role.STUDENT)
+        and: "a valid topic"
+        VALID_TOPIC = new Topic(course, VALID_TOPIC_DTO)
 
-        and:
-        def topic = new Topic();
-        topic.setName(VALID_NAME_TOPIC)
-        topic.setCourse(course)
 
-        and: "valid suggestion"
-        def suggestion = new Suggestion()
-        suggestion.set_student(userS)
-        suggestion.set_questionStr(SUGGESTION_CONTENT)
-        suggestion.setKey(VALID_KEY)
-        suggestion.setCreationDate(LocalDateTime.now())
-        suggestion.setCourse(courseExecution)
+        and: "a valid list of topics"
+        VALID_TOPIC_LIST = new HashSet<Topic>();
+        VALID_TOPIC_LIST.add(VALID_TOPIC)
+
+        and: "a invalid list of topics"
+        INVALID_TOPIC_LIST = new HashSet<Topic>();
+
 
         then: "add to repository"
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
-        userRepository.save(userS2)
         userRepository.save(userT)
-        topicRepository.save(topic)
-        suggestionRepository.save(suggestion)
+        topicRepository.save(VALID_TOPIC)
 
     }
 
     @Unroll
-    def "valid suggestion status as a student"() {
-
+    def "create a suggestion with invalid fields"(){
         when:
-        def result = suggestionService.listAllSuggestions(u)
+        def sug = new SuggestionDto()
+        sug.set_questionStr(s as String)
 
+        List<TopicDto> topicsDto = new ArrayList<>()
 
-        then:
-        result.size().equals(VALID_SUGGESTION_LIST.size())
-
-        for(int i = 0; i < result.size(); i++) {
-
-            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
-
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
         }
 
+        sug.set_topicsList(topicsDto)
 
-        where:
-        s                  | l                | u
-        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_Udto
-    }
+        sug.set_student(new UserDto(u as User))
 
-
-
-
-    @Unroll
-    def "empty suggestions list"() {
-
-        when:
-        def list = suggestionService.listAllSuggestions(new UserDto(u as User))
+        suggestionService.createSuggestion(courseExecution.getId(), sug)
 
         then:
         def result = thrown(TutorException)
         result.message == expected
 
         where:
-        s                  | l                | u                     | expected
-        SUGGESTION_CONTENT | VALID_TOPIC_LIST | VALID_U1              | ErrorMessage.EMPTY_SUGGESTIONS_LIST.label
+        s                  |u       ||expected
+        TOO_MANY_CHARS     |VALID_U || ErrorMessage.SUGGESTION_TOO_LONG.label
+        EMPTY_SUGGESTION   |VALID_U ||ErrorMessage.SUGGESTION_EMPTY.label
 
 
     }
 
+    @Unroll
+    def "valid question"(){
+ /*
+
+        then:
+        def result = suggestionService.createSuggestion(courseExecution.getId(), sug)
+        result.get_questionStr() == sug.get_questionStr()
+        result.get_topicsList().size() == sug.get_topicsList().size()
+        result.get_student().getUsername() == sug.get_student().getUsername()
+
+
+        where:
+        s                  |l               |u
+        SUGGESTION_CONTENT |VALID_TOPIC_LIST|VALID_U
+*/
+
+
+        def sug = new SuggestionDto()
+        sug.set_questionStr(SUGGESTION_CONTENT)
+        sug.set_student(new UserDto(VALID_U as User))
+
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+        sug.set_topicsList(topicsDto)
+
+
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
+
+        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
+
+        sug.setStatus(Suggestion.Status.APPROVED.name());
+
+
+        when: 'are created two questions'
+        suggestionService.addQuestion(course.getId(), sug, new UserDto(INVALID_U_ROLE))
+        sug.setKey(null)
+        suggestionService.addQuestion(course.getId(), sug, new UserDto(INVALID_U_ROLE))
+
+        then: "the two questions are created with the correct numbers"
+        questionRepository.count() == 2L
+        def resultOne = questionRepository.findAll().get(0)
+        def resultTwo = questionRepository.findAll().get(1)
+        resultOne.getKey() + resultTwo.getKey() == 3
+    }
+   /* @Unroll
+    def "invalid users"(){
+        when:
+        def sug = new SuggestionDto()
+        sug.set_questionStr(s as String)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in l){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(u as User))
+        suggestionService.createSuggestion(courseExecution.getId(), sug)
+
+        then:
+        def result = thrown(TutorException)
+        result.message == expected
+
+        where:
+        s                    |       l                   |       u                 |      expected
+        SUGGESTION_CONTENT   |   VALID_TOPIC_LIST        |   INVALID_U_UNAME       |   ErrorMessage.USERNAME_NOT_FOUND.label
+        SUGGESTION_CONTENT   |   VALID_TOPIC_LIST        |   INVALID_U_ROLE        |   ErrorMessage.USER_HAS_WRONG_ROLE.label
+    }*/
+
+    /*@Unroll
+    def "create two suggestions"(){
+        when: "are created two questions"
+        def sug = new SuggestionDto()
+        sug.set_questionStr(SUGGESTION_CONTENT)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(VALID_U))
+        suggestionService.createSuggestion(courseExecution.getId(),sug)
+        sug.setKey(null)
+        suggestionService.createSuggestion(courseExecution.getId(),sug)
+
+        then: "to sugestions are created with the correct numbers"
+        suggestionRepository.count() == 2L
+    }*/
+
     @TestConfiguration
-    static class SuggestionDashBoardServiceImplTestContextConfiguration {
+    static class SuggestionServiceImplTestContextConfiguration {
 
         @Bean
         SuggestionService suggestionService() {

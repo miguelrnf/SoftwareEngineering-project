@@ -46,6 +46,10 @@ public enum ErrorMessage {
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     SUGGESTION_NOT_FOUND("Suggestion %s not found"),
 
+    SUGGESTION_ALREADY_APP("The Suggestion was Already Approved"),
+    SUGGESTION_ALREADY_REJ("The Suggestion was Already Rejected"),
+
+
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
@@ -61,6 +65,9 @@ public enum ErrorMessage {
     TOPICS_IMPORT_ERROR("Error importing topics: %s"),
     ANSWERS_IMPORT_ERROR("Error importing answers: %s"),
     QUIZZES_IMPORT_ERROR("Error importing quizzes: %s"),
+
+    QUESTION_MISSING_DATA("Question Missind Data"),
+    QUESTION_MULTIPLE_CORRECT_OPTIONS ("Can't have multiple correct options"),
 
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
@@ -93,7 +100,7 @@ public enum ErrorMessage {
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
     EMPTY_SUGGESTIONS_LIST ("You don't have any suggestion"),
-
+    SUGGESTION_NOT_APPROVED("Suggestion is not approved"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),

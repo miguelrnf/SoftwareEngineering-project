@@ -65,12 +65,16 @@
                   @click.native="showPostOpenDialog(p)"
                 ></post-preview>
               </div>
+
               <div v-if="n === 2">
-                <v-card v-for="t in 10" :key="t" hover>
-                  <v-card-title tile flat>{{ t }}</v-card-title>
-                  <!--<suggestion-preview></suggestion-preview>-->
-                </v-card>
+                <suggestion-preview
+                  v-for="s in suggestions"
+                  :key="s.id"
+                  :suggestion="s"
+                  @click.native="showSuggOpenDialog(s)"
+                ></suggestion-preview>
               </div>
+
               <div v-if="n === 3">
                 <tournament-preview
                   v-for="t in tournaments"
@@ -99,13 +103,12 @@
       v-on:save-post="onSavePost"
       v-on:close-show-post-dialog="onCloseDialog"
     />
-    <!--<show-suggestion-dialog
+    <show-suggestion-dialog
             v-if="currentSuggestion"
             :dialog="suggestionDialog"
-            :post="currentSuggestion"
-            v-on:save-post="onSaveSuggestion"
-            v-on:close-show-post-dialog="onCloseDialog"
-    />-->
+            :suggestion="currentSuggestion"
+            v-on:close-show-suggestion-dialog="onCloseDialog"
+    />
     <show-tournament-dialog
       v-if="currentTournament"
       :dialog="tournamentDialog"
@@ -131,9 +134,13 @@ import Post from '@/models/management/Post';
 import PostViewDialog from '@/views/PostViewDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
+import { Student } from '@/models/management/Student';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import User from '@/models/user/User';
+import SuggViewDialog from '@/views/SuggViewDialog.vue';
+import Store from '@/store';
+import SuggsPreview from '@/views/SuggsPreview.vue';
 
 @Component({
   components: {
@@ -141,7 +148,9 @@ import User from '@/models/user/User';
     'tournament-preview': TournamentPreview,
     'show-post-dialog': PostViewDialog,
     'show-tournament-dialog': TournamentViewDialog,
-    'student-dashboard': StudentDashboardView
+    'student-dashboard': StudentDashboardView,
+    'show-suggestion-dialog': SuggViewDialog,
+    'suggestion-preview': SuggsPreview
   }
 })
 export default class DashboardHomeView extends Vue {
@@ -151,6 +160,8 @@ export default class DashboardHomeView extends Vue {
   readonly isReal!: boolean;
   @Prop({ type: User, required: false })
   readonly student!: User;
+  @Prop({ type: Array, required: false })
+  readonly searchedSuggs!: Suggestion[];
   posts: Post[] = [];
   suggestions: Suggestion[] = [];
   tournaments: Tournament[] = [];
@@ -184,11 +195,21 @@ export default class DashboardHomeView extends Vue {
           this.posts = ps.lists;
         }
         this.tournaments = await RemoteServices.getTournamentsByUser(
-          this.beStudent.username
+                this.beStudent.username
         );
+
+
+        let ss = await RemoteServices.getSuggestionsbyUsername(
+                this.beStudent.username
+        );
+
+        if (ss._suggslist != undefined) {
+          this.suggestions = ss._suggslist;
+        }
       }
     }
-    // Falta getSuggestionsByUser
+
+    // Falta getSuggestionsByUser e getTournamentByUser
   }
   async changePrivacy() {
     if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
@@ -221,6 +242,11 @@ export default class DashboardHomeView extends Vue {
     );
   }
 
+  showSuggOpenDialog(sugg: Suggestion) {
+    this.currentSuggestion = sugg;
+    this.suggestionDialog = true;
+  }
+
   async onSavePost(post: Post) {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.posts.unshift(post);
@@ -233,7 +259,7 @@ export default class DashboardHomeView extends Vue {
     this.searchedStudent = '';
     this.postDialog = false;
     this.tournamentDialog = false;
-    // Falta fechar os dialogs das suggestions
+    this.suggestionDialog = false;
   }
 
   searchForDashboard(s: string) {

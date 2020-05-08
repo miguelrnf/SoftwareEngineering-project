@@ -1,19 +1,29 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion;
 
+import org.hibernate.graph.SubGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.ListByUsernameDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -24,10 +34,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -48,6 +55,9 @@ public class SuggestionService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -83,7 +93,8 @@ public class SuggestionService {
         String username = suggestionDto.get_student().getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
-        checkIfUserHasRoleStudent(user);
+
+        if(user.getRole().compareTo(User.Role.STUDENT) != 0) {throw new TutorException(USER_HAS_WRONG_ROLE);}
 
         Set<Topic> topics = checkIfTopicExists(course.getCourse().getId(), suggestionDto);
 
@@ -94,8 +105,18 @@ public class SuggestionService {
         }
 
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
+
+        updateUserSuggestions(suggestion);
+        suggestion.get_student().incrementNumberofsuggestions();
+
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
+        suggestion.set_isprivate(suggestionDto.get_isprivate());
+
+        //new
+        checkTitleAndOptions(suggestionDto);
+        suggestion.addOptions(suggestionDto);
+        suggestion.setTitle(suggestionDto.getTitle());
 
         topics.forEach(topic -> topic.addSuggestion(suggestion));
 
@@ -104,28 +125,54 @@ public class SuggestionService {
         return new SuggestionDto(suggestion);
     }
 
+    private void checkTitleAndOptions(SuggestionDto suggestionDto) {
+        if (suggestionDto.getTitle().trim().length() == 0 ||
+                suggestionDto.get_questionStr().trim().length() == 0 ||
+                suggestionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
+            throw new TutorException(QUESTION_MISSING_DATA);
+        }
+
+        if (suggestionDto.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
+            throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
+        }
+    }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SuggestionDto approveSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
+
         String username = userDto.getUsername();
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
-        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
-
         Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
+
+
+        if (suggestion.getStatus().equals(Suggestion.Status.REJECTED)) throw new TutorException(SUGGESTION_ALREADY_REJ);
+        if (suggestion.getStatus().equals(Suggestion.Status.APPROVED)) throw new TutorException(SUGGESTION_ALREADY_APP);
+
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
 
         suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()));
 
-        if (suggestionDto.getStatus() == "REJECTED") {
+        if (suggestionDto.getStatus().equals("REJECTED")) {
+
 
             suggestion.set_justification(suggestionDto.get_justification());
 
         }
 
+        else {
+            if(suggestion.get_student().getnumberofapprovedsuggs() == null){
 
+            }
+            else{
+                updateUserSuggestions(suggestion);
+                suggestion.get_student().incrementNumberofapprovedsuggestions();
+            }
 
+        }
 
         return new SuggestionDto(suggestion);
     }
@@ -213,21 +260,37 @@ public class SuggestionService {
         Suggestion s = checkIfSuggestionExists(suggestionDto.get_id());
         checkIfUserIsValid (suggestionDto,s);
 
+
         if (s.get_questionStr().isEmpty()) {
 
             throw new TutorException(SUGGESTION_EMPTY);
 
         }
 
-        if (s.get_questionStr().length() > 1024) {
+        else if (s.get_questionStr().length() > 1024) {
 
             throw new TutorException(SUGGESTION_TOO_LONG);
 
         }
 
+        else if (s.get_questionStr().equals(suggestionDto.get_questionStr())) {
+
+            s.set_isprivate(suggestionDto.get_isprivate());
+
+            return new SuggestionDto(s);
+        }
+
         s.set_questionStr(suggestionDto.get_questionStr());
+        s.set_isprivate(suggestionDto.get_isprivate());
         s.setStatus(Suggestion.Status.TOAPPROVE);
         s.set_changed(true);
+
+        //new
+        s.addOptions(suggestionDto);
+        s.setTitle(suggestionDto.getTitle());
+
+
+        // TODO: 05/05/2020  falta alterar topicos
 
         return new SuggestionDto(s);
 
@@ -240,7 +303,7 @@ public class SuggestionService {
     public List<SuggestionDto> listAllSuggestions(UserDto userdto) {
 
         List<SuggestionDto> array = new ArrayList<>();
-        List<Suggestion> tmp = new ArrayList<>();
+        List<Suggestion> tmp;
         User u = checkIfUserExists(userdto.getUsername());
 
         if (checkIfUserHasRoleTeacher(u)) {
@@ -261,8 +324,7 @@ public class SuggestionService {
 
         if (checkIfUserHasRoleStudent(u)) {
 
-           // array = suggestionRepository.listAllSuggestions(userdto.getId()).stream().map(SuggestionDto::new).collect(Collectors.toList());
-            tmp = suggestionRepository.findAll().stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+            tmp = suggestionRepository.listAllSuggestions(u.getId()).stream().filter(suggestion -> userdto.getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
             if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
 
             return tmp.stream().map(SuggestionDto::new).collect(Collectors.toList());
@@ -273,6 +335,43 @@ public class SuggestionService {
 
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ListByUsernameDto listAllSuggestionsbyUsername(String username) {
+
+        List<Suggestion> tmp = new ArrayList<>();
+        List<SuggestionDto> tmpDto = new ArrayList<>();
+
+        User u = checkIfUserExists(username);
+        ListByUsernameDto List = new ListByUsernameDto();
+
+        if (checkIfUserHasRoleStudent(u)) {
+
+            tmp = suggestionRepository.listAllSuggestions(u.getId()).stream().filter(suggestion -> username.equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+
+
+            for (Suggestion suggestion : tmp) {
+
+                tmpDto.add(new SuggestionDto(suggestion));
+
+            }
+
+            if (tmp.size() == 0) throw new TutorException(EMPTY_SUGGESTIONS_LIST);
+
+
+            List.setListByUsernameDto (tmpDto);
+            List.setNumberofapprovedsuugs (u.getnumberofapprovedsuggs());
+            List.setNumberofsuugs(u.getnumberofsuggs());
+
+            return List;
+
+        }
+
+        throw new TutorException(ACCESS_DENIED);
+
+    }
 
     @Retryable(
             value = { SQLException.class },
@@ -286,4 +385,85 @@ public class SuggestionService {
 
         return s.getStatus();
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionDto addQuestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
+        String username = userDto.getUsername();
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        User user = checkIfUserExists(username);
+        if(user.getRole() != User.Role.TEACHER)  throw new TutorException(USER_HAS_WRONG_ROLE);
+
+        //new
+        editSuggestion(suggestionDto);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.get_id());
+
+        QuestionDto questionDto = suggestionToQuestion(suggestionDto);
+
+        if (questionDto.getCreationDate() == null) {
+            questionDto.setCreationDate(DateHandler.toISOString(LocalDateTime.now()));
+
+        }
+
+        Question question = new Question();
+        question.setTitle(questionDto.getTitle());
+        question.setKey(questionDto.getKey());
+        question.setContent(questionDto.getContent());
+        question.setStatus(Question.Status.valueOf(questionDto.getStatus()));
+        question.setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
+        question.setCourse(course);
+        question.addOptions(questionDto.getOptions(),suggestion.getOptions());
+
+
+        suggestion.setStatus(Suggestion.Status.QUESTION);
+
+        question.updateTopics(suggestion.get_topicsList());
+//falta adicionar novas infos - acho que fixed
+        questionRepository.save(question);
+
+        return new QuestionDto(question);
+    }
+
+    private QuestionDto suggestionToQuestion(SuggestionDto sugg){
+        if (!sugg.getStatus().equals("APPROVED")) throw new TutorException(SUGGESTION_NOT_APPROVED);
+
+        checkTitleAndOptions(sugg);
+
+        QuestionDto questionDto = new QuestionDto();
+
+        questionDto.setContent(sugg.get_questionStr());
+        questionDto.setTitle(sugg.getTitle());
+        questionDto.setOptions(sugg.getOptions());
+        questionDto.setStatus(Question.Status.AVAILABLE.name());
+
+        return questionDto;
+    }
+
+
+    public void updateUserSuggestions(Suggestion s){
+        if (s.get_student().getnumberofsuggs()==null || s.get_student().getnumberofapprovedsuggs()==null){
+
+            List<Suggestion> tmp = new ArrayList<>();
+
+            tmp = suggestionRepository.listAllSuggestions(s.get_student().getId()).stream().filter(suggestion -> s.get_student().getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+
+            if (tmp==null) {
+                s.get_student().setNumberofsuggestions(0);
+                s.get_student().setNumberofsuggestionsapproved(0);
+            }
+            else
+                s.get_student().setNumberofsuggestions(tmp.size());
+                tmp.stream().filter(suggestion -> suggestion.getStatus().equals("APPROVED")).collect(Collectors.toList());
+
+                if (tmp==null) {
+                    s.get_student().setNumberofsuggestionsapproved(0);
+                }
+                else
+                    s.get_student().setNumberofsuggestionsapproved(tmp.size());
+        }
+    }
+
 }

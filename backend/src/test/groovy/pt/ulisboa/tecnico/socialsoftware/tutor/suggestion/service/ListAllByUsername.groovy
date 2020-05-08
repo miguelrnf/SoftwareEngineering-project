@@ -31,7 +31,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @DataJpaTest
-class SuggestionDashboard extends Specification {
+class ListAllByUsername extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -197,6 +197,8 @@ class SuggestionDashboard extends Specification {
         VALID_SUGGESTION = new SuggestionDto()
         VALID_SUGGESTION.set_id(VALID_ID)
         VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
+        VALID_SUGGESTION.set_isprivate(null);
+        VALID_SUGGESTION.setStatus('TOAPPROVE');
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
@@ -267,22 +269,24 @@ class SuggestionDashboard extends Specification {
     def "valid suggestion status as a student"() {
 
         when:
-        def result = suggestionService.listAllSuggestions(u)
+        def result = suggestionService.listAllSuggestionsbyUsername(u)
+
 
 
         then:
-        result.size().equals(VALID_SUGGESTION_LIST.size())
+        (result._suggslist.size()) == (VALID_SUGGESTION_LIST.size())
 
-        for(int i = 0; i < result.size(); i++) {
+        for(int i = 0; i < result._suggslist.size(); i++) {
 
-            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
+            assert result._suggslist.get(i).get_questionStr() == VALID_SUGGESTION_LIST.get(i).get_questionStr()
+
 
         }
 
 
         where:
         s                  | l                | u
-        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_Udto
+        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_USERNAME
     }
 
 

@@ -23,18 +23,23 @@
         </v-card-title>
       </template>
 
-            <template v-slot:item._questionStr="{ item }">
-                <p
-                        v-html="convertMarkDown(item._questionStr, null)"
-                        @click="showSuggestionDialog(item)"
-                /></template>
+      <template v-slot:item._questionStr="{ item }">
+        <p
+          v-html="convertMarkDownNoFigure(item._questionStr, null)"
+          @click="showSuggestionDialog(item)"
+      /></template>
+      <template v-slot:item._questionStr="{ item }">
+        <p
+          v-html="convertMarkDown(item._questionStr, null)"
+          @click="showSuggestionDialog(item)"
+      /></template>
 
       <!--<template v-slot:item.topics="{ item }">
               <edit-question-topics
                 :question="item"
                 :topics="topics"
                 v-on:question-changed-topics="onQuestionChangedTopics"
-              />
+               />
 
             </template>-->
 
@@ -104,6 +109,20 @@
           </template>
           <span>Reject Suggestion</span>
         </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="AddQuestion(item)"
+              data-cy="addQuestionButton"
+              >fas fa-book-medical</v-icon
+            >
+          </template>
+          <span>Change to Question</span>
+        </v-tooltip>
         <!--  <v-tooltip bottom>
                    <template v-slot:activator="{ on }">
                      <v-icon
@@ -119,19 +138,27 @@
                  </v-tooltip>-->
       </template>
     </v-data-table>
-    <approve-suggestion-dialog
+    <reject-suggestion-dialog
       v-if="currentSuggestion"
-      v-model="approveSuggDialog"
+      v-model="rejectSuggDialogue"
       :suggestion="currentSuggestion"
-      :topics="topics"
-      :dialog="approveSuggDialog"
+      :dialog="rejectSuggDialogue"
       v-on:save-suggestion="onSaveSuggestion"
+      v-on:close-rejection="onCloseShowRejectDialog"
     />
     <show-suggestion-dialog
       v-if="currentSuggestion"
       :dialog="questionDialog"
       :suggestion="currentSuggestion"
+      v-on:reject-suggestion="RejectSuggestion"
       v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
+    />
+    <add-question-dialog
+      v-if="currentSuggestion"
+      v-model="addQuestionDialog"
+      :suggestion="currentSuggestion"
+      :dialog="addQuestionDialog"
+      v-on:save-suggestion="onSaveSuggestion"
     />
   </v-card>
 </template>
@@ -142,16 +169,22 @@ import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
+import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 import Suggestion from '@/models/management/Suggestion';
-import ApproveSuggDialogue from '@/views/teacher/Suggestions/ApproveSuggDialogue.vue';
+import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
+import ShowSuggestion from '@/views/suggestions/ShowSuggestion.vue';
+import ShowSuggestionDialog from '@/views/suggestions/ShowSuggestionDialog.vue';
+import RejectSuggDialogue from '@/views/teacher/Suggestions/RejectSuggDialogue.vue';
 import ShowSuggDialog from '@/views/teacher/Suggestions/ShowSuggDialog.vue';
+import AddQuestionDialog from '@/views/teacher/Suggestions/AddQuestionDialog.vue';
 
 @Component({
   components: {
     'show-suggestion-dialog': ShowSuggDialog,
-    'approve-suggestion-dialog': ApproveSuggDialogue,
-    'edit-question-topics': EditQuestionTopics
+    'reject-suggestion-dialog': RejectSuggDialogue,
+    'edit-question-topics': EditQuestionTopics,
+    'add-question-dialog': AddQuestionDialog
   }
 })
 export default class SuggestionsView extends Vue {
@@ -159,9 +192,11 @@ export default class SuggestionsView extends Vue {
   topics: Topic[] = [];
   currentSuggestion: Suggestion | null = null;
   approveSuggDialog: boolean = false;
+  rejectSuggDialogue: boolean = false;
   questionDialog: boolean = false;
+  addQuestionDialog: boolean = false;
   search: string = '';
-  statusList = ['TOAPPROVE', 'APPROVED', 'REJECTED'];
+  statusList = ['TOAPPROVE', 'APPROVED', 'REJECTED', 'QUESTION'];
 
   headers: object = [
     { text: 'Suggestion', value: '_questionStr', align: 'left' },
@@ -273,22 +308,60 @@ export default class SuggestionsView extends Vue {
   }
 
   async ApproveSuggestion(sugg: Suggestion) {
-    sugg.status = 'APPROVED';
-    const result = await RemoteServices.approveSuggestion(sugg);
-    this.$emit('approve-question', result);
+    if (sugg && sugg.status == 'REJECTED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not approve a rejected suggestion before the students edits it'
+      );
+    } else if (sugg && sugg.status == 'APPROVED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not approve a suggestion twice'
+      );
+    } else {
+      sugg.status = 'APPROVED';
+      const result = await RemoteServices.approveSuggestion(sugg);
+
+      this.$emit('approve-question', result);
+    }
   }
 
   async RejectSuggestion(sugg: Suggestion) {
-    sugg.status = 'REJECTED';
-    sugg._justification = 'No justification was given';
-    const result = await RemoteServices.approveSuggestion(sugg);
-    this.$emit('approve-question', result);
+    if (sugg != null) {
+      this.currentSuggestion = sugg;
+    }
+
+    if (sugg && sugg.status == 'REJECTED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not reject a question twice'
+      );
+    } else if (sugg && sugg.status == 'APPROVED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not reject an approved suggestion'
+      );
+    } else {
+      this.rejectSuggDialogue = true;
+    }
+  }
+
+  onCloseShowRejectDialog() {
+    this.rejectSuggDialogue = false;
+  }
+  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
+    return this.convertMarkDownNoFigure(text, image);
+  }
+  async AddQuestion(sugg: Suggestion) {
+    this.currentSuggestion = sugg;
+    this.addQuestionDialog = true;
   }
 
   async onSaveSuggestion(sugg: Suggestion) {
     //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
     this.suggestions.unshift(sugg);
-    this.approveSuggDialog = false;
+    this.rejectSuggDialogue = false;
+    this.addQuestionDialog = false;
     this.currentSuggestion = null;
   }
 
@@ -306,8 +379,6 @@ export default class SuggestionsView extends Vue {
       await this.$store.dispatch('error', error);
     }
   }
-
-  //TODO ???n sei se e preciso
 
   /*async deleteSuggestion(toDeletequestion: Suggestion) {
           if (

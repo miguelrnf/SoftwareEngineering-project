@@ -18,16 +18,13 @@
             label="Search"
             class="mx-2"
             data-cy="search"
+
           />
 
           <v-spacer />
-          <v-btn
-            color="primary"
-            dark
-            @click="newSuggestion"
-            data-cy="createButton"
-            >New Suggestion</v-btn
-          >
+          <v-btn color="primary" dark @click="newSuggestion" data-cy="createButton">New Suggestion</v-btn>
+
+
         </v-card-title>
       </template>
 
@@ -48,11 +45,14 @@
 
       <template v-slot:item._topicsList="{ item }">
         <v-row justify="space-around">
-          <v-chip-group center-active column active-class="primary--text">
-            <v-chip v-for="tag in item._topicsList" :key="tag.name">
-              {{ tag.name }}
-            </v-chip>
-          </v-chip-group>
+            <v-chip-group
+                    center-active
+                    column
+                    active-class="primary--text"
+            >                <v-chip v-for="tag in item._topicsList" :key="tag.name">
+                  {{ tag.name }}
+                </v-chip>
+            </v-chip-group>
         </v-row>
       </template>
 
@@ -66,10 +66,28 @@
       </template>-->
 
       <template v-slot:item.status="{ item }">
-        <v-chip v-if="item.status" :color="getStatusColor(item.status)" small>
+        <v-chip
+                v-if="item.status"
+                :color="getStatusColor(item.status)" small>
           <span>{{ item.status }}</span>
         </v-chip>
       </template>
+
+
+      <template v-slot:item._isprivate="{ item }">
+        <v-chip
+                :color="getPrivacyColor(item._isprivate)" small>
+
+
+          <span
+                  class="white--text "
+
+
+          >{{getPrivacyTag(item._isprivate) }}</span>
+        </v-chip>
+      </template>
+
+
 
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -142,9 +160,11 @@ import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
+import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 import Suggestion from '@/models/management/Suggestion';
 import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
+import ShowSuggestion from '@/views/suggestions/ShowSuggestion.vue';
 import ShowSuggestionDialog from '@/views/suggestions/ShowSuggestionDialog.vue';
 
 @Component({
@@ -171,6 +191,9 @@ export default class SuggestionsView extends Vue {
       align: 'center',
       sortable: false
     },
+
+    { text: 'Privacy', value: '_isprivate', align: 'center' },
+
     { text: 'Status', value: 'status', align: 'center' },
 
     {
@@ -199,6 +222,7 @@ export default class SuggestionsView extends Vue {
     try {
       this.topics = await RemoteServices.getTopics();
       this.suggestions = await RemoteServices.getSuggestions();
+
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -219,6 +243,7 @@ export default class SuggestionsView extends Vue {
     return convertMarkDown(text, image);
   }
 
+
   onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
     let sugg = this.suggestions.find(
       (sugg: Suggestion) => sugg._id == suggestionId
@@ -227,6 +252,7 @@ export default class SuggestionsView extends Vue {
       sugg._topicsList = topics;
     }
   }
+
 
   /*async setStatus(questionId: number, status: string) {
     try {
@@ -248,6 +274,15 @@ export default class SuggestionsView extends Vue {
     else return 'green';
   }
 
+  getPrivacyColor(isprivate: boolean) {
+    if (isprivate) return 'black';
+    else return 'orange';
+  }
+  getPrivacyTag(isprivate: boolean) {
+    if (isprivate) return 'PRIVATE';
+    else return 'PUBLIC';
+  }
+
   showSuggestionDialog(sugg: Suggestion) {
     this.currentSuggestion = sugg;
     this.questionDialog = true;
@@ -257,20 +292,18 @@ export default class SuggestionsView extends Vue {
     this.questionDialog = false;
   }
 
+
   newSuggestion() {
     this.currentSuggestion = new Suggestion();
     this.editSuggestionDialog = true;
   }
 
   editSuggestion(sugg: Suggestion) {
-    if (sugg && sugg.status != 'REJECTED') {
-      this.$store.dispatch('error', 'You can only edit a rejected suggestion');
-      return;
-    }
-
     this.currentSuggestion = sugg;
     this.editSuggestionDialog = true;
   }
+
+
 
   duplicateSuggestion(sugg: Suggestion) {
     this.currentSuggestion = new Suggestion(sugg);
@@ -278,11 +311,13 @@ export default class SuggestionsView extends Vue {
     this.editSuggestionDialog = true;
   }
 
+
   async onSaveSuggestion(sugg: Suggestion) {
     //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
     this.suggestions.unshift(sugg);
     this.editSuggestionDialog = false;
     this.currentSuggestion = null;
+
   }
 
   async exportCourseQuestions() {
@@ -302,6 +337,8 @@ export default class SuggestionsView extends Vue {
 
   //TODO ???n sei se e preciso
 
+
+
   /*async deleteSuggestion(toDeletequestion: Suggestion) {
     if (
       toDeletequestion.id &&
@@ -317,6 +354,7 @@ export default class SuggestionsView extends Vue {
       }
     }
   }*/
+
 }
 </script>
 

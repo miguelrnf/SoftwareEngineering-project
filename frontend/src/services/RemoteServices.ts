@@ -20,6 +20,7 @@ import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
+import ListByUsernameDto from '@/models/management/ListByUsernameDto';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -126,6 +127,21 @@ export default class RemoteServices {
       });
   }
 
+  static async getSuggestionsbyUsername(
+    username: string
+  ): Promise<ListByUsernameDto> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/listallbyusername/${username}`
+      )
+      .then(response => {
+        return new ListByUsernameDto(response.data)
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
       .get(
@@ -187,6 +203,20 @@ export default class RemoteServices {
       });
   }
 
+  static addQuestion(sugg: Suggestion): Promise<Question> {
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/suggestions/newquestion`,
+        sugg
+      )
+      .then(response => {
+        return new Question(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async updateQuestion(question: Question): Promise<Question> {
     return httpClient
       .put(`/questions/${question.id}`, question)
@@ -219,6 +249,7 @@ export default class RemoteServices {
         sugg
       )
       .then(response => {
+        console.log(new Suggestion(response.data));
         return new Suggestion(response.data);
       })
       .catch(async error => {

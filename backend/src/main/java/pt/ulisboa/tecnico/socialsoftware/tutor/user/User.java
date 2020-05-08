@@ -51,6 +51,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
+    private Integer numberofsuggestions;
+    private Integer numberofsuggestionsapproved;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -97,6 +99,24 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
         this.isDashboardPrivate = false;
+        this.numberofsuggestions = 0;
+        this.numberofsuggestionsapproved = 0;
+    }
+
+    public void incrementNumberofsuggestions () {this.numberofsuggestions++;}
+
+    public void incrementNumberofapprovedsuggestions () {this.numberofsuggestionsapproved++;}
+
+    public Integer getnumberofsuggs () {return this.numberofsuggestions;}
+
+    public Integer getnumberofapprovedsuggs () {return this.numberofsuggestionsapproved;}
+
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
     }
 
     @Override
