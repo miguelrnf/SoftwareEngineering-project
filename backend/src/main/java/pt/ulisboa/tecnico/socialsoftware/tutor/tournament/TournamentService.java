@@ -13,9 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.ListPostsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
@@ -436,8 +433,7 @@ public class TournamentService {
     public void generateTournamentQuiz(int tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
 
-        //TODO change 0 to 1
-        if(tournament.getEnrolledStudents().size() <= 0) {
+        if(tournament.getEnrolledStudents().size() <= 1) {
             tournament.setStatus(Tournament.TournamentStatus.CANCELED);
             return;
         }
