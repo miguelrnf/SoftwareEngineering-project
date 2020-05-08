@@ -114,9 +114,6 @@ public class SuggestionService {
         suggestion.set_isprivate(suggestionDto.get_isprivate());
 
         //new
-        System.out.println(suggestionDto);
-        System.out.println("___________________________________________________________");
-
         checkTitleAndOptions(suggestionDto);
         suggestion.addOptions(suggestionDto);
         suggestion.setTitle(suggestionDto.getTitle());
@@ -411,8 +408,6 @@ public class SuggestionService {
 
         }
 
-        System.out.println(questionDto.getOptions());
-        System.out.println("________________________________________________________________________________");
         Question question = new Question();
         question.setTitle(questionDto.getTitle());
         question.setKey(questionDto.getKey());
