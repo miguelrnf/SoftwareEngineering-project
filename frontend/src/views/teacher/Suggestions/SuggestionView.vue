@@ -169,12 +169,8 @@ import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
-import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 import Suggestion from '@/models/management/Suggestion';
-import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
-import ShowSuggestion from '@/views/suggestions/ShowSuggestion.vue';
-import ShowSuggestionDialog from '@/views/suggestions/ShowSuggestionDialog.vue';
 import RejectSuggDialogue from '@/views/teacher/Suggestions/RejectSuggDialogue.vue';
 import ShowSuggDialog from '@/views/teacher/Suggestions/ShowSuggDialog.vue';
 import AddQuestionDialog from '@/views/teacher/Suggestions/AddQuestionDialog.vue';
@@ -230,11 +226,9 @@ export default class SuggestionsView extends Vue {
   }
 
   async created() {
-
     this.topics = await RemoteServices.getTopics();
     this.suggestions = await RemoteServices.getSuggestions();
     this.suggestions.reverse();
-
   }
 
   customFilter(value: string, search: string, suggestion: Suggestion) {

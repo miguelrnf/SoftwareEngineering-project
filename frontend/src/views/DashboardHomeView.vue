@@ -205,8 +205,6 @@ export default class DashboardHomeView extends Vue {
         }
       }
     }
-
-    // Falta getSuggestionsByUser e getTournamentByUser
   }
   async changePrivacy() {
     if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
@@ -260,7 +258,6 @@ export default class DashboardHomeView extends Vue {
   }
 
   searchForDashboard(s: string) {
-    // TODO - Need to verify dashboard privacy
     let student = this.students.find(student => student.name == s);
     if (student) this.selectedStudent = student;
     else this.selectedStudent = null;

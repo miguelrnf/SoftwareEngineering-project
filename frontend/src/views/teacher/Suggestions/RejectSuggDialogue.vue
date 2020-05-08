@@ -23,7 +23,11 @@
           >Cancel</v-btn
         >
 
-        <v-btn dark color="red darken-1" @click="RejectSuggestion" data-cy="rejectButton"
+        <v-btn
+          dark
+          color="red darken-1"
+          @click="RejectSuggestion"
+          data-cy="rejectButton"
           >Reject</v-btn
         >
       </v-card-actions>
@@ -32,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Suggestion from '@/models/management/Suggestion';
 import RemoteServices from '@/services/RemoteServices';
 

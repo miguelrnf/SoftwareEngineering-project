@@ -15,7 +15,6 @@ export default class User {
   numberofsuggestions!: number;
   numberofsuggestionsapproved!: number;
 
-
   constructor(jsonObj?: User) {
     if (jsonObj) {
       this.name = jsonObj.name;

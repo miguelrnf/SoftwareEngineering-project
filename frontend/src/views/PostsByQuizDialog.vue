@@ -17,7 +17,9 @@
       </div>
     </v-card>
     <v-card v-if="posts.length === 0">
-      <v-card-text class="mt-5">There are no posts for the questions in this quiz :(</v-card-text>
+      <v-card-text class="mt-5"
+        >There are no posts for the questions in this quiz :(</v-card-text
+      >
     </v-card>
     <show-post-dialog
       v-if="currentPost"
@@ -29,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import PostPreview from '@/views/PostPreview.vue';
 import PostViewDialog from '@/views/PostViewDialog.vue';

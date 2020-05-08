@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
-
 import java.io.Serializable;
 import java.util.List;
 

@@ -25,18 +25,15 @@
         <div class="mt-n4 text-left">
           <v-card-subtitle>Suggestion:</v-card-subtitle>
 
-          <v-card-text class="mt-n3">{{
-            suggestion._questionStr
-            }}</v-card-text>
+          <v-card-text class="mt-n3">{{ suggestion._questionStr }}</v-card-text>
         </div>
       </v-card-text>
-
     </v-row>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Suggestion from '@/models/management/Suggestion';
@@ -45,13 +42,11 @@ import Suggestion from '@/models/management/Suggestion';
 export default class SuggsPreview extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
 
-
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
   getColor1(IsPrivate: boolean) {
-
     let vazo = 'black';
     if (IsPrivate) return vazo;
     else return 'orange';

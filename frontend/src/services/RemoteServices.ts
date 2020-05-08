@@ -135,7 +135,7 @@ export default class RemoteServices {
         `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/listallbyusername/${username}`
       )
       .then(response => {
-        return new ListByUsernameDto(response.data)
+        return new ListByUsernameDto(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

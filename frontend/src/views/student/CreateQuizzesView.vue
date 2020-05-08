@@ -31,7 +31,12 @@
         </v-btn-toggle>
       </div>
       <div data-cy="quizButtons">
-        <v-btn @click="createQuiz" depressed color="primary" data-cy="createQuizButton">
+        <v-btn
+          @click="createQuiz"
+          depressed
+          color="primary"
+          data-cy="createQuizButton"
+        >
           Create quiz
         </v-btn>
       </div>

@@ -4,7 +4,7 @@
       <v-app-bar dense color="grey lighten-2">
         <v-row>
           <v-card-title class="mt-n2 ml-3">{{
-            'Suggestion'  + suggestion._id
+            'Suggestion' + suggestion._id
           }}</v-card-title>
 
           <v-spacer />
@@ -81,7 +81,6 @@
       <h1 v-if="suggestion.status === 'REJECTED'">
         <v-app-bar dense color="grey lighten-2">
           <v-card-title class="mt-n2 ml-3">{{ 'Justification' }}</v-card-title>
-
         </v-app-bar>
 
         <v-card-text class="text-left">
@@ -92,7 +91,11 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionDialog" data-cy="closeButton"
+        <v-btn
+          dark
+          color="blue darken-1"
+          @click="closeQuestionDialog"
+          data-cy="closeButton"
           >close</v-btn
         >
       </v-card-actions>
@@ -101,7 +104,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Suggestion from '@/models/management/Suggestion';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
@@ -111,18 +114,14 @@ export default class ShowSuggestionDialog extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
-  getChipColor (iscorrect: boolean) {
-
-    if(iscorrect) return 'green';
+  getChipColor(iscorrect: boolean) {
+    if (iscorrect) return 'green';
     return 'red';
-
   }
 
   getTextColor(iscorrect: boolean) {
-
-    if(iscorrect) return 'green';
+    if (iscorrect) return 'green';
     return 'red';
-
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
@@ -151,9 +150,7 @@ export default class ShowSuggestionDialog extends Vue {
   }
 
   created() {
-
-    console.log(this.suggestion)
-
+    console.log(this.suggestion);
   }
 }
 </script>

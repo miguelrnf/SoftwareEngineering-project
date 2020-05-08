@@ -26,7 +26,11 @@
           <v-container grid-list-md fluid>
             <v-layout column wrap>
               <v-flex xs24 sm12 md8>
-                <v-text-field v-model="editSuggestion.title" label="Title" data-cy="titleTextArea"/>
+                <v-text-field
+                  v-model="editSuggestion.title"
+                  label="Title"
+                  data-cy="titleTextArea"
+                />
               </v-flex>
               <v-flex xs24 sm12 md12>
                 <v-textarea
@@ -57,8 +61,8 @@
                   v-model="editSuggestion.options[index - 1].content"
                   :label="`Option ${index}`"
                   data-cy="optionTextArea"
-                ></v-textarea> </v-flex
-              >
+                ></v-textarea>
+              </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
@@ -220,10 +224,10 @@ import RemoteServices from '@/services/RemoteServices';
 import Suggestion from '@/models/management/Suggestion';
 import Topic from '@/models/management/Topic';
 import ToggleButton from 'vue-js-toggle-button';
-import { Student } from '@/models/management/Student';
 import User from '@/models/user/User';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
+
 Vue.use(ToggleButton);
 
 @Component

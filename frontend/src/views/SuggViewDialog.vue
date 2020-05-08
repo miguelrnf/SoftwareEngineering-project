@@ -4,29 +4,29 @@
       <v-app-bar dense color="grey lighten-2">
         <v-row>
           <v-card-title class="mt-n2 ml-3">{{
-            'Suggestion'  + suggestion._id
-            }}</v-card-title>
+            'Suggestion' + suggestion._id
+          }}</v-card-title>
 
           <v-spacer />
           <div class="mr-6 mt-3">
             <v-chip
-                    class="ma-1"
-                    x-small
-                    label
-                    :color="getColor1(suggestion._isprivate)"
-                    text-color="white"
-                    dark
-            ><span class="white--text ">{{
+              class="ma-1"
+              x-small
+              label
+              :color="getColor1(suggestion._isprivate)"
+              text-color="white"
+              dark
+              ><span class="white--text ">{{
                 getPrivacyTag(suggestion._isprivate)
               }}</span></v-chip
             >
             <v-chip
-                    class="ma-1"
-                    x-small
-                    label
-                    :color="getColor2(suggestion.status)"
-                    dark
-            ><span class="white--text ">{{ suggestion.status }}</span></v-chip
+              class="ma-1"
+              x-small
+              label
+              :color="getColor2(suggestion.status)"
+              dark
+              ><span class="white--text ">{{ suggestion.status }}</span></v-chip
             >
           </div>
         </v-row>
@@ -42,34 +42,34 @@
         <v-row>
           <span v-html="convertMarkDown('Options: ')" />
           <v-chip
-                  v-for="option in suggestion.options"
-                  :key="option.id"
-                  class="ma-1"
-                  x-small
-                  :color="getChipColor(option.correct)"
-                  outlined
-                  :text-color="getTextColor(option.correct)"
-                  dark
-          >{{ option.content }}
+            v-for="option in suggestion.options"
+            :key="option.id"
+            class="ma-1"
+            x-small
+            :color="getChipColor(option.correct)"
+            outlined
+            :text-color="getTextColor(option.correct)"
+            dark
+            >{{ option.content }}
           </v-chip>
         </v-row>
         <v-row>
           <span v-html="convertMarkDown('Topics: ')" />
           <v-chip
-                  v-for="option in suggestion._topicsList"
-                  :key="option.id"
-                  class="ma-1"
-                  x-small
-                  color="grey"
-                  text-color="white"
-                  dark
-          ><span class="white--text">{{ option.name }}</span>
+            v-for="option in suggestion._topicsList"
+            :key="option.id"
+            class="ma-1"
+            x-small
+            color="grey"
+            text-color="white"
+            dark
+            ><span class="white--text">{{ option.name }}</span>
           </v-chip>
         </v-row>
         <div class="text-right">
           by
           <span
-                  v-html="
+            v-html="
               convertMarkDown(
                 suggestion._student.username + ' on ' + suggestion.creationDate
               )
@@ -81,7 +81,6 @@
       <h1 v-if="suggestion.status === 'REJECTED'">
         <v-app-bar dense color="grey lighten-2">
           <v-card-title class="mt-n2 ml-3">{{ 'Justification' }}</v-card-title>
-
         </v-app-bar>
 
         <v-card-text class="text-left">
@@ -93,7 +92,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
-        >close</v-btn
+          >close</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -101,7 +100,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Suggestion from '@/models/management/Suggestion';
 import RemoteServices from '@/services/RemoteServices';
 import Image from '@/models/management/Image';
@@ -126,18 +125,14 @@ export default class SuggViewDialog extends Vue {
     this.$emit('close-show-suggestion-dialog');
   }
 
-  getChipColor (iscorrect: boolean) {
-
-    if(iscorrect) return 'green';
+  getChipColor(iscorrect: boolean) {
+    if (iscorrect) return 'green';
     return 'red';
-
   }
 
   getTextColor(iscorrect: boolean) {
-
-    if(iscorrect) return 'green';
+    if (iscorrect) return 'green';
     return 'red';
-
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

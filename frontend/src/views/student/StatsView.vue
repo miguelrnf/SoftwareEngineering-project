@@ -59,9 +59,7 @@
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="improvedCorrectAnswers">
-          <animated-number :number="user.numberofsuggestions"
-          ></animated-number
-          >
+          <animated-number :number="user.numberofsuggestions"></animated-number>
         </div>
         <div class="project-name">
           <p>Number of Suggestions</p>
@@ -69,9 +67,9 @@
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="improvedCorrectAnswers">
-          <animated-number :number="user.numberofsuggestionsapproved"
-          ></animated-number
-          >
+          <animated-number
+            :number="user.numberofsuggestionsapproved"
+          ></animated-number>
         </div>
         <div class="project-name">
           <p>Number of Approved Suggestions</p>
@@ -79,8 +77,12 @@
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="improvedCorrectAnswers">
-          <animated-number :number="user.numberofsuggestionsapproved / user.numberofsuggestions * 100"
-          >%</animated-number
+          <animated-number
+            :number="
+              (user.numberofsuggestionsapproved / user.numberofsuggestions) *
+                100
+            "
+            >%</animated-number
           >
         </div>
         <div class="project-name">
@@ -115,7 +117,7 @@ export default class StatsView extends Vue {
     }
     await this.$store.dispatch('clearLoading');
 
-    console.log (this.user);
+    console.log(this.user);
   }
 }
 </script>
