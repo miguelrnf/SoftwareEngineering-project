@@ -2,7 +2,7 @@
   <v-card max-height="350" min-height="100" outlined hover>
     <v-row>
       <v-card-title class="mt-n2 ml-3">{{
-        'Sugestão: ' + suggestion._id
+        'Suggestion ' + suggestion.title
       }}</v-card-title>
       <v-spacer />
       <div class="mr-6 mt-3">
@@ -21,11 +21,17 @@
           dark
         ></v-chip>
       </div>
+      <v-card-text>
+        <div class="mt-n4 text-left">
+          <v-card-subtitle>Suggestion:</v-card-subtitle>
+
+          <v-card-text class="mt-n3">{{
+            suggestion._questionStr
+            }}</v-card-text>
+        </div>
+      </v-card-text>
+
     </v-row>
-    <div class="mt-n4 text-left">
-      <v-card-subtitle>Suggestion Content:</v-card-subtitle>
-      <v-card-text class="mt-n3">{{ suggestion._questionStr }}</v-card-text>
-    </div>
   </v-card>
 </template>
 
@@ -39,11 +45,6 @@ import Suggestion from '@/models/management/Suggestion';
 export default class SuggsPreview extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
 
-  created() {
-    console.log(
-      'ESSSSSSSSSSSSSSSSKKKKKKKKKKKKKKKKKKKEEEEEEEEEEEEEEEEEEETTTTTTTTTTTTTIIIIIIIIIIIIIIIIIIIIIITTTTTTTTTTT'
-    );
-  }
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);

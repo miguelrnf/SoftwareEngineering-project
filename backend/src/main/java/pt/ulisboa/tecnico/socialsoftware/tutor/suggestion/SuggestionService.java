@@ -160,6 +160,7 @@ public class SuggestionService {
 
 
             suggestion.set_justification(suggestionDto.get_justification());
+            suggestion.get_student().incrementNumberofsuggestions();
 
         }
 
