@@ -2,7 +2,7 @@
   <v-card max-height="350" min-height="100" outlined hover>
     <v-row>
       <v-card-title class="mt-n2 ml-3">{{
-        'Sugestão: ' + suggestion._id
+        'Suggestion ' + suggestion._id
       }}</v-card-title>
       <v-spacer />
       <div class="mr-6 mt-3">
@@ -21,6 +21,19 @@
           dark
         ></v-chip>
       </div>
+      <v-card-text>
+      <p class="headline font-weight-black">
+        <span v-html="convertMarkDown(suggestion.title)" />
+      </p>
+      <div class="headline text-left">
+        <span v-html="convertMarkDown(suggestion._questionStr)" />
+      </div>
+      <div class="text-right">
+        by
+        <span v-html="convertMarkDown(suggestion._student.username + ' on ' + suggestion.creationDate)" />
+      </div>
+      </v-card-text>
+
     </v-row>
     <div class="mt-n4 text-left">
       <v-card-subtitle>Suggestion Content:</v-card-subtitle>
@@ -39,11 +52,6 @@ import Suggestion from '@/models/management/Suggestion';
 export default class SuggsPreview extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
 
-  created() {
-    console.log(
-      'ESSSSSSSSSSSSSSSSKKKKKKKKKKKKKKKKKKKEEEEEEEEEEEEEEEEEEETTTTTTTTTTTTTIIIIIIIIIIIIIIIIIIIIIITTTTTTTTTTT'
-    );
-  }
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);

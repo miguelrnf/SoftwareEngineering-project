@@ -31,6 +31,18 @@
           <span class="text-left">{{ option.name }}</span>
         </li>
       </ul>
+
+      <v-subheader>Options:</v-subheader>
+      <ul>
+        <li v-for="option in suggestion.options" :key="option.id">
+          <h1 v-if="option.correct === false">
+            <span class="text-left">{{option.content}}</span>
+          </h1>
+          <h1 v-if="option.correct === true">
+            <span class="text-left">{{option.content + (" (Correct)")}}</span>
+          </h1>
+        </li>
+      </ul>
       <br />
 
       <v-card-actions>

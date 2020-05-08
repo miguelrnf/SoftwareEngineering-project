@@ -217,15 +217,10 @@ export default class SuggestionsView extends Vue {
   }
 
   async created() {
-    await this.$store.dispatch('loading');
-    try {
+
       this.topics = await RemoteServices.getTopics();
       this.suggestions = await RemoteServices.getSuggestions();
 
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
   }
 
   customFilter(value: string, search: string, suggestion: Suggestion) {
