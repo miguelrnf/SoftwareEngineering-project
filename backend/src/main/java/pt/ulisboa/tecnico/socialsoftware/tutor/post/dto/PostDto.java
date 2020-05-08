@@ -14,6 +14,8 @@ public class PostDto implements Serializable {
     private List<PostCommentDto> comments;
     private Boolean postStatus;
     private Boolean discussStatus;
+    private Boolean postPrivacy;
+    private Boolean answerPrivacy;
 
     public PostDto() {
     }
@@ -27,6 +29,8 @@ public class PostDto implements Serializable {
                 .map(x -> new PostCommentDto(x, true)).collect(Collectors.toList()) : null;
         this.postStatus = p.getPostStatus();
         this.discussStatus = p.getDiscussStatus();
+        this.postPrivacy = p.getPostPrivacy();
+        this.answerPrivacy = p.getAnswerPrivacy();
     }
 
     //Honestly? Im just too lazy to change the tests
@@ -95,6 +99,22 @@ public class PostDto implements Serializable {
 
     public void setComments(List<PostCommentDto> comments) {
         this.comments = comments;
+    }
+
+    public Boolean getPostPrivacy() {
+        return postPrivacy;
+    }
+
+    public void setPostPrivacy(Boolean postPrivacy) {
+        this.postPrivacy = postPrivacy;
+    }
+
+    public Boolean getAnswerPrivacy() {
+        return answerPrivacy;
+    }
+
+    public void setAnswerPrivacy(Boolean answerPrivacy) {
+        this.answerPrivacy = answerPrivacy;
     }
 
     @Override

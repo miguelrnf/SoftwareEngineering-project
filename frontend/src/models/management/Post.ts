@@ -10,6 +10,8 @@ export default class Post {
   comments!: PostComment[];
   postStatus!: boolean;
   discussStatus!: boolean;
+  postPrivacy!: boolean;
+  answerPrivacy!: boolean;
 
   constructor(jsonObj?: Post) {
     if (jsonObj) {
@@ -19,6 +21,8 @@ export default class Post {
       this.answer = jsonObj.answer;
       this.postStatus = jsonObj.postStatus;
       this.discussStatus = jsonObj.discussStatus;
+      this.postPrivacy = jsonObj.postPrivacy;
+      this.answerPrivacy = jsonObj.answerPrivacy;
 
       if (jsonObj.comments != null)
         this.comments = jsonObj.comments.map(

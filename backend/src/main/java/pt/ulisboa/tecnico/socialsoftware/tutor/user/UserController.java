@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
+import java.security.Principal;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
@@ -44,6 +48,20 @@ public class UserController {
 //        return userRepository.findById(userId)
 //                .map(usr -> userRepository.save(usr)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 //    }
+
+    @PutMapping("/users/dashboard/privacy")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public UserDto changeDashboardPrivacy(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.changeDashboardPrivacy(user.getId());
+    }
+
+    @GetMapping("/users/update")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public UserDto updateLoggedUser(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.updateLoggedUser(user.getId());
+    }
 
 
     @DeleteMapping("/users/{userId}")

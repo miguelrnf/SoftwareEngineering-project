@@ -24,14 +24,10 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-slot:item.action="{ to }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="showQuizDialog(item.id)"
+            <v-icon large class="mr-2" v-on="on" @click="showQuizDialog(to)"
               >visibility</v-icon
             >
           </template>
@@ -153,7 +149,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';

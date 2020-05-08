@@ -8,11 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion
@@ -23,8 +21,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 
 import java.time.LocalDateTime
@@ -195,7 +191,7 @@ class SuggestionDashboard extends Specification {
 
         and: "valid suggesiton"
         VALID_SUGGESTION = new SuggestionDto()
-        VALID_SUGGESTION.set_id(2)
+        VALID_SUGGESTION.set_id(VALID_ID)
         VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
@@ -273,8 +269,11 @@ class SuggestionDashboard extends Specification {
         then:
         result.size().equals(VALID_SUGGESTION_LIST.size())
 
-        for(int i = 0; i < result.size(); i++)
+        for(int i = 0; i < result.size(); i++) {
+
             assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
+
+        }
 
 
         where:
@@ -282,24 +281,6 @@ class SuggestionDashboard extends Specification {
         SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_Udto
     }
 
-    @Unroll
-    def "valid suggestion status as a teacher"() {
-
-        when:
-        def result = suggestionService.listAllSuggestions(u)
-
-
-        then:
-        result.size().equals(VALID_SUGGESTION_LIST.size())
-
-        for(int i = 0; i < result.size(); i++)
-            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
-
-
-        where:
-        s                  | l                | u
-        SUGGESTION_CONTENT | VALID_SUGGESTION | VALID_U_ROLEdto
-    }
 
 
 
@@ -316,7 +297,6 @@ class SuggestionDashboard extends Specification {
         where:
         s                  | l                | u                     | expected
         SUGGESTION_CONTENT | VALID_TOPIC_LIST | VALID_U1              | ErrorMessage.EMPTY_SUGGESTIONS_LIST.label
-        SUGGESTION_CONTENT | VALID_TOPIC_LIST | VALID_U_ROLEdto       | ErrorMessage.EMPTY_SUGGESTIONS_LIST.label
 
 
     }

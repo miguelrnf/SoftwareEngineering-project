@@ -63,6 +63,10 @@ public class Topic implements DomainEntity {
 
     public void addSuggestion(Suggestion s){ this.suggestions.add(s);}
 
+    public void setId(Integer Id) {
+        this.id = Id;
+    }
+
     public Integer getId() {
         return id;
     }

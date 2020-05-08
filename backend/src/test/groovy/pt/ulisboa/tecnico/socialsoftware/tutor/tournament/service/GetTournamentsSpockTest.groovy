@@ -4,19 +4,26 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
@@ -28,9 +35,6 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
 @DataJpaTest
 class GetTournamentsSpockTest extends Specification{
     public static final String COURSE_NAME = "Software Architecture"
@@ -40,11 +44,10 @@ class GetTournamentsSpockTest extends Specification{
     static final TITLE1 = 'first tournament'
     static final TITLE2 = 'second tournament'
     static final String NAME = 'Name'
-    static final DATENOW = LocalDateTime.now().plusDays(1)
-    static final DATETOMORROW = LocalDateTime.now().plusDays(2)
+    static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static int tempId = 1
     static int tournId = 1
-    static int userId = 1
 
     @Autowired
     TournamentService tournamentService
@@ -69,6 +72,9 @@ class GetTournamentsSpockTest extends Specification{
 
     @Autowired
     AssessmentRepository assessmentRepository
+
+    @Autowired
+    QuestionRepository questionRepository
 
     @Shared
     def tournamentDto1
@@ -107,15 +113,15 @@ class GetTournamentsSpockTest extends Specification{
     def courseExecution
 
     @Shared
-    def formatter
+    def questionOne
+
+    @Shared
+    def questionTwo
 
     def setupSpec() {
 
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
         given: "a user with the role student"
         STUDENT = new User()
-        STUDENT.setId(userId++)
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
 
@@ -125,18 +131,18 @@ class GetTournamentsSpockTest extends Specification{
         tournamentDto1.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto1.setOwner(new UserDto(STUDENT))
         tournamentDto1.setTitle(TITLE1)
-        tournamentDto1.setNumberOfQuestions(3)
-        tournamentDto1.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto1.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto1.setNumberOfQuestions(2)
+        tournamentDto1.setAvailableDate(DATENOW)
+        tournamentDto1.setConclusionDate(DATETOMORROW)
 
 
         tournamentDto2 = new TournamentDto()
         tournamentDto2.setId(2)
         tournamentDto2.setOwner(new UserDto(STUDENT))
         tournamentDto2.setTitle(TITLE2)
-        tournamentDto2.setNumberOfQuestions(3)
-        tournamentDto2.setAvailableDate(DATENOW.format(formatter))
-        tournamentDto2.setConclusionDate(DATETOMORROW.format(formatter))
+        tournamentDto2.setNumberOfQuestions(2)
+        tournamentDto2.setAvailableDate(DATENOW)
+        tournamentDto2.setConclusionDate(DATETOMORROW)
 
 
     }
@@ -152,29 +158,47 @@ class GetTournamentsSpockTest extends Specification{
 
         and: "a topic dto"
         topicDto = new TopicDto()
-        topicDto.setId(1)
         topicDto.setName(NAME)
 
         and: "a topic conjunction dto"
         topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.setId(1)
         topicConjunctionDto.addTopic(topicDto)
 
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setId(1)
+        assdto.setTitle(TITLE2)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
         topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
 
         and:
         def tcl = new ArrayList<TopicConjunction>()
         tcl.add(topicConjunction)
         ass = new Assessment(courseExecution, tcl, assdto)
 
+        and:
+        questionOne = new Question()
+        questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
+        questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        questionOne.addTopic(topic)
 
-        then:"add to repository"
+        questionTwo = new Question()
+        questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
+        questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        questionTwo.addTopic(topic)
+
+        then: "add to repository"
+        questionRepository.save(questionOne)
+        questionRepository.save(questionTwo)
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(user)
@@ -232,6 +256,26 @@ class GetTournamentsSpockTest extends Specification{
         @Bean
         TournamentService tournamentService() {
             return new TournamentService()
+        }
+
+        @Bean
+        QuizService quizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService answerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        AnswersXmlImport answersXmlImport() {
+            return new AnswersXmlImport()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
         }
     }
 }

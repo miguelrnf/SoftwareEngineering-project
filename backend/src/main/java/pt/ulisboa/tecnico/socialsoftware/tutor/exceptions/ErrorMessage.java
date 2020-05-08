@@ -21,6 +21,7 @@ public enum ErrorMessage {
     INVALID_TITLE_FOR_QUIZ("Invalid title for quiz"),
     INVALID_TYPE_FOR_QUIZ("Invalid type for quiz"),
     INVALID_QUESTION_SEQUENCE_FOR_QUIZ("Invalid question sequence for quiz"),
+    MULTIPLE_QUIZ_ANSWERS("There are multiple answers for the same quiz"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
@@ -37,12 +38,17 @@ public enum ErrorMessage {
     COURSE_NOT_FOUND("Course not found with name %s"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
-    USERNAME_NOT_FOUND("Username %d not found"),
+    USERNAME_NOT_FOUND("Username %s not found"),
+    USERID_NOT_FOUND("User not found"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     SUGGESTION_NOT_FOUND("Suggestion %s not found"),
+
+    SUGGESTION_ALREADY_APP("The Suggestion was Already Approved"),
+    SUGGESTION_ALREADY_REJ("The Suggestion was Already Rejected"),
+
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
@@ -60,6 +66,9 @@ public enum ErrorMessage {
     ANSWERS_IMPORT_ERROR("Error importing answers: %s"),
     QUIZZES_IMPORT_ERROR("Error importing quizzes: %s"),
 
+    QUESTION_MISSING_DATA("Question Missind Data"),
+    QUESTION_MULTIPLE_CORRECT_OPTIONS ("Can't have multiple correct options"),
+
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
@@ -73,6 +82,8 @@ public enum ErrorMessage {
     TOURNAMENT_NOT_AVAILABLE("Tournament not available"),
     TOURNAMENT_UNABLE_EDIT("Unable to edit tournament, field: %s"),
     TOURNAMENT_UNABLE_REMOVE("Unable to remove, reason: %s"),
+    TOURNAMENT_PERMISSION_CANCEL("Only owner can cancel the tournament"),
+    TOURNAMENT_INVALID_STATUS("Tournament is %s"),
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
@@ -89,7 +100,7 @@ public enum ErrorMessage {
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
     EMPTY_SUGGESTIONS_LIST ("You don't have any suggestion"),
-
+    SUGGESTION_NOT_APPROVED("Suggestion is not approved"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),

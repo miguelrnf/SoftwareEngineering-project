@@ -87,7 +87,7 @@ class ImportExportQuestionsTest extends Specification {
         then:
         questionRepository.findQuestions(course.getId()).size() == 1
         def questionResult = questionService.findQuestions(course.getId()).get(0)
-        questionResult.getKey() == null
+        questionResult.getKey() == 1
         questionResult.getTitle() == QUESTION_TITLE
         questionResult.getContent() == QUESTION_CONTENT
         questionResult.getStatus() == Question.Status.AVAILABLE.name()

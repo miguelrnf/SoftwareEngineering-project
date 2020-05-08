@@ -11,7 +11,13 @@ public class UserDto implements Serializable {
     private String username;
     private String name;
     private User.Role role;
+    private Integer score;
     private String creationDate;
+    private Boolean isDashboardPrivate;
+    private Integer numberofsuggestions;
+    private Integer numberofsuggestionsapproved;
+
+
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -19,6 +25,18 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        if (user.getScore() == null )
+            this.score = 0;
+        else
+            this.score = user.getScore();
+
+        if(user.getDashboardPrivate() == null)
+            this.isDashboardPrivate = false;
+        else
+            this.isDashboardPrivate = user.getDashboardPrivate();
+
+        this.numberofsuggestions = user.getnumberofsuggs();
+        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
 
     }
 
@@ -61,8 +79,24 @@ public class UserDto implements Serializable {
         return creationDate;
     }
 
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Boolean getDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(Boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
     }
 
     @Override
@@ -81,7 +115,7 @@ public class UserDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDto userDto = (UserDto) o;
-        return id == userDto.id &&
+        return id.equals(userDto.id) &&
                 Objects.equals(username, userDto.username) &&
                 Objects.equals(name, userDto.name) &&
                 role == userDto.role;
@@ -90,5 +124,21 @@ public class UserDto implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, name, role);
+    }
+
+    public Integer getNumberofsuggestionsapproved() {
+        return numberofsuggestionsapproved;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
+    }
+
+    public Integer getNumberofsuggestions() {
+        return numberofsuggestions;
+    }
+
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
     }
 }

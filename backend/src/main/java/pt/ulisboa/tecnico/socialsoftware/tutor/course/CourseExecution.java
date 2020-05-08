@@ -47,7 +47,7 @@ public class CourseExecution implements DomainEntity {
     private final Set<Assessment> assessments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Tournament> tournaments = new HashSet<>();
+    private final Set<Tournament> tournaments = new HashSet<>();
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -184,4 +184,5 @@ public class CourseExecution implements DomainEntity {
                 ", assessments=" + assessments +
                 '}';
     }
+
 }

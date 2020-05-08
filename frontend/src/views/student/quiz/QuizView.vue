@@ -15,7 +15,10 @@
         <i class="fas fa-clock"></i>
         <span v-if="!hideTime">{{ submissionTimer }}</span>
       </span>
-      <span class="end-quiz" @click="confirmationDialog = true"
+      <span
+        class="end-quiz"
+        @click="confirmationDialog = true"
+        data-cy="endQuizButton"
         ><i class="fas fa-times" />End Quiz</span
       >
     </header>
@@ -93,7 +96,12 @@
           <v-btn color="secondary" text @click="confirmationDialog = false">
             Cancel
           </v-btn>
-          <v-btn color="primary" text @click="concludeQuiz">
+          <v-btn
+            color="primary"
+            text
+            @click="concludeQuiz"
+            data-cy="imSureButton"
+          >
             I'm sure
           </v-btn>
         </v-card-actions>
@@ -262,6 +270,8 @@ export default class QuizView extends Vue {
       this.calculateTime();
       this.confirmed = true;
       await this.statementManager.concludeQuiz();
+
+      await this.$store.dispatch('updateScore');
 
       if (
         !this.statementQuiz?.timeToResults &&

@@ -27,11 +27,16 @@
         >
           <v-btn text value="5">5</v-btn>
           <v-btn text value="10">10</v-btn>
-          <v-btn text value="20">20</v-btn>
+          <v-btn text value="20" data-cy="twentyQuestionsButton">20</v-btn>
         </v-btn-toggle>
       </div>
-      <div>
-        <v-btn @click="createQuiz" depressed color="primary">
+      <div data-cy="quizButtons">
+        <v-btn
+          @click="createQuiz"
+          depressed
+          color="primary"
+          data-cy="createQuizButton"
+        >
           Create quiz
         </v-btn>
       </div>
