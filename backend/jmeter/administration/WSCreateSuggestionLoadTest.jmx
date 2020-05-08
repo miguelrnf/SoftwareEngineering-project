@@ -106,6 +106,15 @@
     &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
     &quot;role&quot;: &quot;STUDENT&quot;&#xd;
   },&#xd;
+  &quot;title&quot;: &quot;string&quot;,&#xd;
+  &quot;options&quot;: [&#xd;
+    {&#xd;
+      &quot;content&quot;: &quot;string&quot;,&#xd;
+      &quot;correct&quot;: true,&#xd;
+      &quot;id&quot;: 0,&#xd;
+      &quot;sequence&quot;: 0&#xd;
+    }&#xd;
+  ],&#xd;
   &quot;_topicsList&quot;: [&#xd;
     {&#xd;
       &quot;id&quot;: 98,&#xd;
@@ -232,18 +241,21 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">afonso</stringProp>
+          <stringProp name="password">210044</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">afonso</stringProp>
+          <stringProp name="username">postgres</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM suggestions WHERE key=1 ;
+          <stringProp name="query">DELETE FROM options WHERE suggestion_id=1;
+DELETE FROM topics_suggestions WHERE suggestions__id=1;
+DELETE FROM suggestions WHERE key=1;
+
 
 
 

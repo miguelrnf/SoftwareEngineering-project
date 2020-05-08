@@ -73,14 +73,19 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">	
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (4,676,&apos;sugestao&apos;,null,4,&apos;APPROVED&apos;,&apos;2019-10-23 16:11:51.598289&apos;,11);
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id,title) values (4,676,&apos;sugestao&apos;,null,4,&apos;APPROVED&apos;,&apos;2019-10-23 16:11:51.598289&apos;,11,&apos;titulo&apos;);
 	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,4);
+	INSERT INTO options (id,suggestion_id,correct) values (2,4,&apos;true&apos;);
 
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (2,676,&apos;sugestao&apos;,null,2,&apos;APPROVED&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11);
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id,title) values (2,676,&apos;sugestao&apos;,null,2,&apos;APPROVED&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11,&apos;titulo&apos;);
 	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,2);
+	INSERT INTO options (id,suggestion_id,correct) values (0,2,&apos;true&apos;);
 
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (3,676,&apos;sugestao&apos;,null,3,&apos;APPROVED&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11);
-	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,3);</stringProp>
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id,title) values (3,676,&apos;sugestao&apos;,null,3,&apos;APPROVED&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11,&apos;titulo&apos;);
+	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,3);
+
+	INSERT INTO options (id,suggestion_id,correct) values (1,3,&apos;true&apos;);
+	</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -136,7 +141,7 @@
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">25</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">50</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">51</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -207,6 +212,12 @@
       &quot;sequence&quot;: 0&#xd;
     }&#xd;
   ],&#xd;
+  &quot;_student&quot;: {&#xd;
+    &quot;id&quot;: 676,&#xd;
+    &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
+    &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
+    &quot;role&quot;: &quot;STUDENT&quot;&#xd;
+  },&#xd;
   &quot;_questionStr&quot;: &quot;string&quot;&#xd;
 }</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -348,18 +359,19 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">vaz</stringProp>
+          <stringProp name="password">210044</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">vaz</stringProp>
+          <stringProp name="username">postgres</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM topics_suggestions ;
+          <stringProp name="query">DELETE FROM options WHERE suggestion_id&gt;=1;
+DELETE FROM topics_suggestions ;
 DELETE FROM suggestions WHERE key&gt;=1 ;
 
 

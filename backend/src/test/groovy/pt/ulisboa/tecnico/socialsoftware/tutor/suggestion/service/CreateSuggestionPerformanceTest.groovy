@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -82,6 +83,15 @@ class CreateSuggestionPerformanceTest extends Specification{
             sug.set_topicsList(topicList)
             def sugDto = new SuggestionDto(sug)
             sugDto.set_questionStr("question")
+            sugDto.setTitle("TITLE")
+
+            def optionDto = new OptionDto()
+            optionDto.setContent("vhgcvhbhcgfvh")
+            optionDto.setCorrect(true)
+            def options = new ArrayList<OptionDto>()
+            options.add(optionDto)
+            sugDto.setOptions(options)
+
             suggestionService.createSuggestion(course.getId(), sugDto)
         }
 

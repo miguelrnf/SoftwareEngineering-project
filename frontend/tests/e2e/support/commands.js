@@ -114,6 +114,14 @@ Cypress.Commands.add('getTeacherTournament', () => {
   cy.get('[data-cy="create"]').click();
 });
 
+Cypress.Commands.add('newQuestion', (str) => {
+  cy.get('[data-cy="Student"]').click();
+  cy.contains('Suggestions').click();
+  cy.contains('').click();
+
+
+});
+
 Cypress.Commands.add('createTournament', (tile, numbQuestions, isStudent) => {
   let year =
     '#availableDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';

@@ -65,22 +65,27 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">afonso</stringProp>
-          <stringProp name="password">afonso</stringProp>
+          <stringProp name="username">postgres</stringProp>
+          <stringProp name="password">210044</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (4,676,&apos;sugestao&apos;,null,4,&apos;TOAPPROVE&apos;,&apos;2019-10-23 16:11:51.598289&apos;,11);
+          <stringProp name="query">	
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id,title) values (4,676,&apos;sugestao&apos;,null,4,&apos;APPROVED&apos;,&apos;2019-10-23 16:11:51.598289&apos;,11,&apos;titulo&apos;);
 	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,4);
+	INSERT INTO options (id,suggestion_id,correct) values (2,4,&apos;true&apos;);
 
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (2,676,&apos;sugestao&apos;,null,2,&apos;TOAPPROVE&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11);
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id,title) values (2,676,&apos;sugestao&apos;,null,2,&apos;APPROVED&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11,&apos;titulo&apos;);
 	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,2);
+	INSERT INTO options (id,suggestion_id,correct) values (0,2,&apos;true&apos;);
 
-	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id) values (3,676,&apos;sugestao&apos;,null,3,&apos;TOAPPROVE&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11);
-	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,3);</stringProp>
+	INSERT INTO suggestions (_id,user_id,_question_str,justification,key,status,creation_date,course_execution_id,title) values (3,676,&apos;sugestao&apos;,null,3,&apos;APPROVED&apos;,&apos;2019-10-24 16:11:51.598289&apos;,11,&apos;titulo&apos;);
+	INSERT INTO topics_suggestions (topics_id,suggestions__id) values (98,3);
+
+	INSERT INTO options (id,suggestion_id,correct) values (1,3,&apos;true&apos;);
+	</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -358,19 +363,19 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">afonso</stringProp>
+          <stringProp name="password">210044</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">afonso</stringProp>
+          <stringProp name="username">postgres</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">DELETE FROM topics_suggestions ;
-
+DELETE FROM options WHERE suggestion_id&gt;=1;
 DELETE FROM suggestions WHERE key&gt;=1 ;
 
 

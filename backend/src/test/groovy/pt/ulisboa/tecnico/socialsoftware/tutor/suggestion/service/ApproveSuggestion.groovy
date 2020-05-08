@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -204,11 +205,35 @@ class ApproveSuggestion extends Specification{
     @Unroll
     def "valid approval"(){
         when:
+        def sug = new SuggestionDto()
+        def sug2 = new SuggestionDto()
+
+        sug.set_questionStr(SUGGESTION_CONTENT)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(VALID_U))
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
+
+        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus(String.valueOf(status))
-        sug.set_justification(j as String)
-        def result = suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))
+        sug.set_justification(j)
 
+
+        def result = suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
 
         then:
         result.get_justification() == sug.get_justification()
@@ -217,7 +242,7 @@ class ApproveSuggestion extends Specification{
 
         where:
         j                   |t          |    status
-        VALID_JUSTIFICATION |VALID_T    |    Suggestion.Status.APPROVED
+        EMPTY_SUGGESTION    |VALID_T    |    Suggestion.Status.APPROVED
         VALID_JUSTIFICATION |VALID_T    |    Suggestion.Status.REJECTED
 
     }
@@ -225,8 +250,34 @@ class ApproveSuggestion extends Specification{
     @Unroll
     def "invalid approval"(){
         when:
+        def sug = new SuggestionDto()
+        def sug2 = new SuggestionDto()
+
+        sug.set_questionStr(SUGGESTION_CONTENT)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(VALID_U))
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
+
+        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
+
         sug.setStatus("APPROVED")
-        sug.set_justification(j as String)
+        sug.set_justification(j)
+
+
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))
 
 
@@ -236,7 +287,7 @@ class ApproveSuggestion extends Specification{
 
         where:
         j                   |t               ||expected
-        EMPTY_SUGGESTION    |VALID_T         ||ErrorMessage.JUSTIFICATION_EMPTY.label
+        //EMPTY_SUGGESTION    |VALID_T         ||ErrorMessage.JUSTIFICATION_EMPTY.label
         VALID_JUSTIFICATION |VALID_U         ||ErrorMessage.USER_HAS_WRONG_ROLE.label
 
 

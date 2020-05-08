@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -217,6 +218,14 @@ class CreateSuggestionTest extends Specification{
         sug.set_topicsList(topicsDto)
 
         sug.set_student(new UserDto(u as User))
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
 
         then:
         def result = suggestionService.createSuggestion(courseExecution.getId(), sug)
@@ -269,6 +278,15 @@ class CreateSuggestionTest extends Specification{
         sug.set_topicsList(topicsDto)
 
         sug.set_student(new UserDto(VALID_U))
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
+
         suggestionService.createSuggestion(courseExecution.getId(),sug)
         sug.setKey(null)
         suggestionService.createSuggestion(courseExecution.getId(),sug)
