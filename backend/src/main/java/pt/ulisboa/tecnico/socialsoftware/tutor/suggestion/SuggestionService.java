@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -102,6 +103,7 @@ public class SuggestionService {
         }
 
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
+        suggestion.get_student().incrementNumberofsuggestions();
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
         suggestion.set_isprivate(suggestionDto.get_isprivate());
@@ -153,13 +155,11 @@ public class SuggestionService {
 
 
             suggestion.set_justification(suggestionDto.get_justification());
-            suggestion.get_student().incrementNumberofsuggestions();
 
         }
 
         else {
 
-            suggestion.get_student().incrementNumberofsuggestions();
             suggestion.get_student().incrementNumberofapprovedsuggestions();
 
         }
@@ -394,7 +394,8 @@ public class SuggestionService {
         QuestionDto questionDto = suggestionToQuestion(suggestionDto);
 
         if (questionDto.getCreationDate() == null) {
-            questionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
+            questionDto.setCreationDate(DateHandler.toISOString(LocalDateTime.now()));
+
         }
 
         Question question = new Question(course, questionDto);
