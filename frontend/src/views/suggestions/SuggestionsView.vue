@@ -78,7 +78,6 @@
         <v-chip
                 :color="getPrivacyColor(item._isprivate)" small>
 
-
           <span
                   class="white--text "
 

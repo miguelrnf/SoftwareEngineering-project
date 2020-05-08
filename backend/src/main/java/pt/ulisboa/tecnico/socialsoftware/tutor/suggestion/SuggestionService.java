@@ -102,6 +102,7 @@ public class SuggestionService {
         }
 
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
+        suggestion.get_student().incrementNumberofsuggestions();
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
         suggestion.set_isprivate(suggestionDto.get_isprivate());
@@ -136,13 +137,11 @@ public class SuggestionService {
 
 
             suggestion.set_justification(suggestionDto.get_justification());
-            suggestion.get_student().incrementNumberofsuggestions();
 
         }
 
         else {
 
-            suggestion.get_student().incrementNumberofsuggestions();
             suggestion.get_student().incrementNumberofapprovedsuggestions();
 
         }
