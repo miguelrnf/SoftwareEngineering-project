@@ -135,7 +135,7 @@ public class PostController {
     }
 
     @PutMapping("executions/{executionId}/posts/{postId}/edit/privacy")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("(hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public PostDto changePostPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return postService.changePostPrivacy(postId, user);

@@ -294,7 +294,7 @@ public class PostService {
     public PostDto changePostPrivacy(int id, User u) {
         Post post = checkIfPostExists(null, id);
         User user = checkIfUserExistsByUsername(u.getUsername());
-        checkIfUserOwnsPost(user, post);
+        if(user.getRole() != User.Role.TEACHER) checkIfUserOwnsPost(user, post);
 
         post.changePostPrivacy();
         return new PostDto(post);

@@ -104,10 +104,10 @@
       v-on:close-show-post-dialog="onCloseDialog"
     />
     <show-suggestion-dialog
-            v-if="currentSuggestion"
-            :dialog="suggestionDialog"
-            :suggestion="currentSuggestion"
-            v-on:close-show-suggestion-dialog="onCloseDialog"
+      v-if="currentSuggestion"
+      :dialog="suggestionDialog"
+      :suggestion="currentSuggestion"
+      v-on:close-show-suggestion-dialog="onCloseDialog"
     />
     <show-tournament-dialog
       v-if="currentTournament"
@@ -134,12 +134,10 @@ import Post from '@/models/management/Post';
 import PostViewDialog from '@/views/PostViewDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
-import { Student } from '@/models/management/Student';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import User from '@/models/user/User';
 import SuggViewDialog from '@/views/SuggViewDialog.vue';
-import Store from '@/store';
 import SuggsPreview from '@/views/SuggsPreview.vue';
 
 @Component({
@@ -195,12 +193,11 @@ export default class DashboardHomeView extends Vue {
           this.posts = ps.lists;
         }
         this.tournaments = await RemoteServices.getTournamentsByUser(
-                this.beStudent.username
+          this.beStudent.username
         );
 
-
         let ss = await RemoteServices.getSuggestionsbyUsername(
-                this.beStudent.username
+          this.beStudent.username
         );
 
         if (ss._suggslist != undefined) {

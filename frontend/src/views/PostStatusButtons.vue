@@ -105,6 +105,7 @@
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
+      data-cy="PostPrivacyButton"
       >{{ 'Private' }}</v-chip
     >
     <v-chip
@@ -118,6 +119,7 @@
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
+      data-cy="PostPrivacyButton"
       >{{ 'Public' }}</v-chip
     >
   </div>
@@ -162,7 +164,8 @@ export default class PostStatusButtons extends Vue {
   }
 
   changePostPrivacy(post: Post) {
-    if (this.isOwner(post)) post.postPrivacy = !post.postPrivacy;
+    if (this.isOwner(post) || this.isTeacher())
+      post.postPrivacy = !post.postPrivacy;
     RemoteServices.changePostPrivacy(post.id);
   }
 
