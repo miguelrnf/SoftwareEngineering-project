@@ -2,7 +2,7 @@
   <v-card max-height="350" min-height="100" outlined hover>
     <v-row>
       <v-card-title class="mt-n2 ml-3">{{
-        'Suggestion ' + suggestion._id
+        'Suggestion ' + suggestion.title
       }}</v-card-title>
       <v-spacer />
       <div class="mr-6 mt-3">
@@ -22,23 +22,16 @@
         ></v-chip>
       </div>
       <v-card-text>
-      <p class="headline font-weight-black">
-        <span v-html="convertMarkDown(suggestion.title)" />
-      </p>
-      <div class="headline text-left">
-        <span v-html="convertMarkDown(suggestion._questionStr)" />
-      </div>
-      <div class="text-right">
-        by
-        <span v-html="convertMarkDown(suggestion._student.username + ' on ' + suggestion.creationDate)" />
-      </div>
+        <div class="mt-n4 text-left">
+          <v-card-subtitle>Suggestion:</v-card-subtitle>
+
+          <v-card-text class="mt-n3">{{
+            suggestion._questionStr
+            }}</v-card-text>
+        </div>
       </v-card-text>
 
     </v-row>
-    <div class="mt-n4 text-left">
-      <v-card-subtitle>Suggestion Content:</v-card-subtitle>
-      <v-card-text class="mt-n3">{{ suggestion._questionStr }}</v-card-text>
-    </div>
   </v-card>
 </template>
 

@@ -94,28 +94,85 @@
       </h1>
 
       <h1 v-if="suggestion.status === 'APPROVED'">
-        <v-subheader>Creation Date:</v-subheader>
-        <v-card-text class="text-left">
-          <span>{{ suggestion.creationDate }}</span>
-        </v-card-text>
+        <v-card class="mx-auto" max-height="80%">
+          <v-app-bar dense color="grey lighten-2">
+            <v-row>
+              <v-card-title class="mt-n2 ml-3">{{
+                'Suggestion'  + suggestion._id
+                }}</v-card-title>
 
-        <v-subheader>Student Username:</v-subheader>
-        <v-card-text class="text-left">
-          <span>{{ student.username }}</span>
-        </v-card-text>
+              <v-spacer />
+              <div class="mr-6 mt-3">
+                <v-chip
+                        class="ma-1"
+                        x-small
+                        label
+                        :color="getColor1(suggestion._isprivate)"
+                        text-color="white"
+                        dark
+                ><span class="white--text ">{{
+                getPrivacyTag(suggestion._isprivate)
+              }}</span></v-chip
+                >
+                <v-chip
+                        class="ma-1"
+                        x-small
+                        label
+                        :color="getColor2(suggestion.status)"
+                        dark
+                ><span class="white--text ">{{ suggestion.status }}</span></v-chip
+                >
+              </div>
+            </v-row>
+          </v-app-bar>
 
-        <v-subheader>Question:</v-subheader>
-        <v-card-text class="text-left">
-          <span>{{ suggestion._questionStr }}</span>
-        </v-card-text>
+          <v-card-text>
+            <p class="headline font-weight-black text-left">
+              <span v-html="convertMarkDown(suggestion.title)" />
+            </p>
+            <div class="headline text-left">
+              <span v-html="convertMarkDown(suggestion._questionStr)" />
+            </div>
+            <v-row>
+              <span v-html="convertMarkDown('Options: ')" />
+              <v-chip
+                      v-for="option in suggestion.options"
+                      :key="option.id"
+                      class="ma-1"
+                      x-small
+                      :color="getChipColor(option.correct)"
+                      outlined
+                      :text-color="getTextColor(option.correct)"
+                      dark
+              >{{ option.content }}
+              </v-chip>
+            </v-row>
+            <v-row>
+              <span v-html="convertMarkDown('Topics: ')" />
+              <v-chip
+                      v-for="option in suggestion._topicsList"
+                      :key="option.id"
+                      class="ma-1"
+                      x-small
+                      color="grey"
+                      text-color="white"
+                      dark
+              ><span class="white--text">{{ option.name }}</span>
+              </v-chip>
+            </v-row>
+            <div class="text-right">
+              by
+              <span
+                      v-html="
+              convertMarkDown(
+                suggestion._student.username + ' on ' + suggestion.creationDate
+              )
+            "
+              />
+            </div>
+          </v-card-text>
+        </v-card>
 
-        <v-subheader>Topics:</v-subheader>
-        <ul>
-          <li v-for="option in suggestion._topicsList" :key="option.id">
-            <span class="text-left">{{ option.name }}</span>
-          </li>
-        </ul>
-        <br />
       </h1>
 
       <v-subheader>Make Your Suggestion Private:</v-subheader>
@@ -159,6 +216,8 @@
   import ToggleButton from 'vue-js-toggle-button';
   import { Student } from '@/models/management/Student';
   import User from '@/models/user/User';
+  import Image from '@/models/management/Image';
+  import { convertMarkDown } from '@/services/ConvertMarkdownService';
   Vue.use(ToggleButton);
 
   @Component
@@ -208,6 +267,41 @@
           await this.$store.dispatch('error', error);
         }
       }
+    }
+
+    getChipColor (iscorrect: boolean) {
+
+      if(iscorrect) return 'green';
+      return 'red';
+
+    }
+
+    getTextColor(iscorrect: boolean) {
+
+      if(iscorrect) return 'green';
+      return 'red';
+
+    }
+
+    convertMarkDown(text: string, image: Image | null = null): string {
+      return convertMarkDown(text, image);
+    }
+
+    getPrivacyTag(isprivate: boolean) {
+      if (isprivate) return 'PRIVATE';
+      else return 'PUBLIC';
+    }
+
+    getColor1(IsPrivate: boolean) {
+      let vazo = 'black';
+      if (IsPrivate) return vazo;
+      else return 'orange';
+    }
+
+    getColor2(Status: string) {
+      if (Status == 'TOAPPROVE') return 'yellow';
+      else if (Status == 'REJECTED') return 'red';
+      else return 'green';
     }
 
     async saveTopics() {
