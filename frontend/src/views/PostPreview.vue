@@ -1,11 +1,11 @@
 <template>
   <v-card max-height="350" min-height="100" outlined hover>
-    <v-row>
-      <v-card-title class="mt-n2 ml-3">{{
+    <v-row class="mx-0">
+      <v-card-title class="pa-2">{{
         post.question.question.title
       }}</v-card-title>
       <v-spacer />
-      <div class="mr-6 mt-3">
+      <div class="pa-2">
         <v-chip
           class="ma-1"
           x-small
@@ -35,9 +35,9 @@
         post.question.studentQuestion
       }}</v-card-text>
     </div>
-    <v-row>
+    <v-row class="mx-0">
       <v-spacer />
-      <div class="mr-6 mt-3">
+      <div>
         <v-chip
           class="ma-1"
           small
@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';

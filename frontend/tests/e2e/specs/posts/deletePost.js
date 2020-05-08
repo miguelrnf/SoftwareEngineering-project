@@ -1,4 +1,4 @@
-describe('Delete Post', () => {
+describe('Delete posts', () => {
     before(() => {
         cy.demoStudentLoginPosts();
         cy.gotoSubmitPost();

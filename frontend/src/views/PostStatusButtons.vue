@@ -98,38 +98,41 @@
       class="ma-2"
       small
       label
-      v-if="getColor3(post.postPrivacy) === 'black' && isOwner(post)"
+      v-if="
+        getColor3(post.postPrivacy) === 'black' &&
+          (isOwner(post) || isTeacher())
+      "
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
-      data-cy="PrivacyStatusButton"
+      data-cy="PostPrivacyButton"
       >{{ 'Private' }}</v-chip
     >
     <v-chip
       class="ma-2"
       small
       label
-      v-if="getColor3(post.postPrivacy) === 'orange' && isOwner(post)"
+      v-if="
+        getColor3(post.postPrivacy) === 'orange' &&
+          (isOwner(post) || isTeacher())
+      "
       :color="getColor3(post.postPrivacy)"
       dark
       @click="changePostPrivacy(post)"
-      data-cy="PrivacyStatusButton"
+      data-cy="PostPrivacyButton"
       >{{ 'Public' }}</v-chip
     >
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import RemoteServices from '../services/RemoteServices';
-import { PostAnswer } from '@/models/management/PostAnswer';
-import { PostQuestion } from '@/models/management/PostQuestion';
 
 @Component
 export default class PostStatusButtons extends Vue {
   @Prop({ type: Post, required: true }) readonly post!: Post;
-
 
   getColor(dStatus: boolean) {
     if (dStatus) return 'green';
@@ -161,7 +164,8 @@ export default class PostStatusButtons extends Vue {
   }
 
   changePostPrivacy(post: Post) {
-    if (this.isOwner(post)) post.postPrivacy = !post.postPrivacy;
+    if (this.isOwner(post) || this.isTeacher())
+      post.postPrivacy = !post.postPrivacy;
     RemoteServices.changePostPrivacy(post.id);
   }
 

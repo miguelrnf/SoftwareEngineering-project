@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -208,6 +209,18 @@ public class Suggestion {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public void addOptions(SuggestionDto suggestionDto){
+        int index = 0;
+        for (
+                OptionDto optionDto : suggestionDto.getOptions()) {
+            optionDto.setSequence(index++);
+            Option option = new Option(optionDto);
+            this.options.add(option);
+            option.setSuggestion(this);
+        }
+    }
+
 
     @Override
     public boolean equals(Object o) {

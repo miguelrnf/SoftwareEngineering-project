@@ -18,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -26,8 +28,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,9 @@ public class PostService {
 
     @Autowired
     private PostCommentRepository commentRepository;
+
+    @Autowired
+    private QuizService quizService;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -270,10 +275,26 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ListPostsDto postsByQuiz(int quizid) {
+        QuizDto quiz = quizService.findById(quizid);
+        List<PostDto> posts = quiz.getQuestions().stream()
+                .flatMap(x -> postQuestionRepository.findByQuestion(x.getId()).filter(y -> !y.isEmpty()).orElse(new ArrayList<>()).stream())
+                .map(y -> new PostDto(y.getPost())).collect(Collectors.toList());
+
+        ListPostsDto dto = new ListPostsDto();
+        dto.setLists(posts);
+        dto.setTotalPosts(posts.size());
+        return dto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto changePostPrivacy(int id, User u) {
         Post post = checkIfPostExists(null, id);
         User user = checkIfUserExistsByUsername(u.getUsername());
-        checkIfUserOwnsPost(user, post);
+        if(user.getRole() != User.Role.TEACHER) checkIfUserOwnsPost(user, post);
 
         post.changePostPrivacy();
         return new PostDto(post);

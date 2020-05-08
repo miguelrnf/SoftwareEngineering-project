@@ -20,6 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "questions")
 public class Question implements DomainEntity {
+
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
     }
@@ -145,6 +146,32 @@ public class Question implements DomainEntity {
             }
         }
     }
+
+    public void newOption(Option o){
+        options.add(o);
+        o.setQuestion(this);
+    }
+
+    public void addOptions(List<OptionDto> options, List<Option> optionList) {
+        if (options.stream().filter(OptionDto::getCorrect).count() != 1) {
+            throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
+        }
+
+        int index = 0;
+        for (OptionDto optionDto : options) {
+                Option option = optionList
+                        .stream()
+                        .filter(op -> op.getId().equals(optionDto.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
+
+
+                option.setContent(optionDto.getContent());
+                option.setCorrect(optionDto.getCorrect());
+                newOption(option);
+            }
+    }
+
 
     public void addOption(Option option) {
         options.add(option);
@@ -314,4 +341,5 @@ public class Question implements DomainEntity {
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
     }
+
 }

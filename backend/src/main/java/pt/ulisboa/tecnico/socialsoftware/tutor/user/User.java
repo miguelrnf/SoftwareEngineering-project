@@ -40,6 +40,8 @@ public class User implements UserDetails, DomainEntity {
     private String name;
     private String enrolledCoursesAcronyms;
 
+    private Integer score;
+
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes;
     private Integer numberOfInClassQuizzes;
@@ -74,6 +76,9 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
+    @Column(name = "is_dashboard_private", columnDefinition = "boolean default false")
+    private Boolean isDashboardPrivate;
+
     public User() {
     }
 
@@ -82,6 +87,7 @@ public class User implements UserDetails, DomainEntity {
         setUsername(username);
         this.key = key;
         this.role = role;
+        this.score = 0;
         this.creationDate = DateHandler.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfInClassQuizzes = 0;
@@ -92,6 +98,7 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+        this.isDashboardPrivate = false;
         this.numberofsuggestions = 0;
         this.numberofsuggestionsapproved = 0;
     }
@@ -104,6 +111,13 @@ public class User implements UserDetails, DomainEntity {
 
     public Integer getnumberofapprovedsuggs () {return this.numberofsuggestionsapproved;}
 
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
+    }
 
     @Override
     public void accept(Visitor visitor) {
@@ -159,6 +173,19 @@ public class User implements UserDetails, DomainEntity {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
 
+    public Integer getScore() {
+        if(score == null)
+            this.score = 0;
+        return score;
+    }
+
+    public void changeScore(int points) {
+            this.score += points;
+
+        if (this.score < 0)
+            this.score = 0;
+    }
+
     public Role getRole() {
         return role;
     }
@@ -209,6 +236,18 @@ public class User implements UserDetails, DomainEntity {
 
     public void setPostQuestions(Set<PostQuestion> postQuestions) {
         this.postQuestions = postQuestions;
+    }
+
+    public Boolean getDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(Boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
+    }
+
+    public void changeDashboardPrivacy() {
+        this.isDashboardPrivate = !this.isDashboardPrivate;
     }
 
     public Integer getNumberOfTeacherQuizzes() {

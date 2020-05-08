@@ -153,7 +153,7 @@ public class QuizAnswer implements DomainEntity {
         return isCompleted() &&
                 getQuiz().getCourseExecution().getId().equals(courseExecutionId) &&
                 (!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || getQuiz().getResultsDate().isBefore(DateHandler.now())
-                );
+                ) && !getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT);
     }
 
     public void calculateStatistics() {

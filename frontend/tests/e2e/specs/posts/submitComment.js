@@ -22,7 +22,7 @@ describe('Comment Post', () => {
   it('submit a comment', () => {
     cy.gotoPosts();
     cy.viewPost('[TEST§1] I dont understand');
-    cy.comment('comment','wow');
+    cy.comment('comment', 'wow');
   });
 
   it('submit an invalid comment', () => {
@@ -34,7 +34,6 @@ describe('Comment Post', () => {
   it('submit a reply', () => {
     cy.gotoPosts();
     cy.viewPost('[TEST§1] I dont understand');
-    cy.comment('reply','amazing');
+    cy.comment('reply', 'amazing');
   });
-
 });

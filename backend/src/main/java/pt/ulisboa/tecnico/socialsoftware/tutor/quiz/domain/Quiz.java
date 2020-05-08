@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         })
 public class Quiz implements DomainEntity {
     public enum QuizType {
-        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS
+        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS, TOURNAMENT
     }
 
     @Id
@@ -78,6 +79,10 @@ public class Quiz implements DomainEntity {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
+    @OneToOne
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
+
     public Quiz() {}
 
     public Quiz(QuizDto quizDto) {
@@ -119,6 +124,14 @@ public class Quiz implements DomainEntity {
             generateKeys();
 
         return key;
+    }
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     public void setKey(Integer key) {

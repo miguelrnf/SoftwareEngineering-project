@@ -39,7 +39,7 @@
                 :question="item"
                 :topics="topics"
                 v-on:question-changed-topics="onQuestionChangedTopics"
-              />
+               />
 
             </template>-->
 

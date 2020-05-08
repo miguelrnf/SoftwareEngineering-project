@@ -24,15 +24,15 @@ describe('Post Buttons', () => {
         cy.pressStatusButton('[TEST§1] I dont understand', 'DiscussStatusButton');
     });
 
+    it('list posts as student and press change privacy status button', () => {
+        cy.demoStudentLoginPosts();
+        cy.gotoPosts();
+        cy.pressStatusButton('[TEST§1] I dont understand', 'PostPrivacyButton');
+    });
+
     it('list posts as teacher and press change post status button', () => {
         cy.demoTeacherLoginPosts();
         cy.gotoPosts();
         cy.pressStatusButton('[TEST§1] I dont understand', 'PostStatusButton');
-    });
-
-    it('list posts as student and press change post privacy button', () => {
-        cy.demoStudentLoginPosts();
-        cy.gotoPosts();
-        cy.pressStatusButton('[TEST§1] I dont understand', 'PrivacyStatusButton');
     });
 });

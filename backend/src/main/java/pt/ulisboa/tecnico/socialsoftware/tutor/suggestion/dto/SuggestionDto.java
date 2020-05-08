@@ -53,6 +53,8 @@ public class SuggestionDto implements Serializable{
 
         this.options = suggestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
 
+        this.title= suggestion.getTitle();
+
     }
 
 

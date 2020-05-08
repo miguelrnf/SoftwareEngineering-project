@@ -13,10 +13,7 @@
 
       <v-card-text class="text-left">
         <show-post :post="post" />
-        <show-commnents
-          :comments="post.comments"
-          :post="post"
-        ></show-commnents>
+        <show-commnents :comments="post.comments" :post="post"></show-commnents>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -36,7 +33,6 @@
         >
       </v-card-actions>
     </v-card>
-    <!--TODO - MAKE THIS DIALOG A TEXT FIELD-->
     <answer-post
       v-if="acceptAnswer"
       :post="post"
@@ -56,7 +52,6 @@ import AnswerPost from '@/views/AnswerPostDialog.vue';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import RemoteServices from '@/services/RemoteServices';
 import ShowComments from '@/views/ShowComments.vue';
-import { PostComment } from '@/models/management/PostComment';
 
 @Component({
   components: {

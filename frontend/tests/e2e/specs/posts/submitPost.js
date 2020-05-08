@@ -4,7 +4,7 @@ describe('Submit Post', () => {
   });
 
   afterEach(() => {
-    cy.contains('Logout').click()
+    cy.contains('Logout').click();
   });
 
   it('login as student and submit a post', () => {
@@ -27,5 +27,4 @@ describe('Submit Post', () => {
     cy.submitPost('§§§§', 'Wow');
     cy.closeErrorMessage();
   });
-
 });

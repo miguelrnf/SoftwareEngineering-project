@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -130,8 +128,14 @@ public class PostController {
         return postService.postsByUser(user);
     }
 
-    @PutMapping("executions/{executionId}/posts/{postId}/edit/privacy")
+    @GetMapping("executions/{executionId}/posts/quiz/{quizid}")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public ListPostsDto getPage(@PathVariable int executionId, @PathVariable int quizid) {
+        return postService.postsByQuiz(quizid);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/edit/privacy")
+    @PreAuthorize("(hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public PostDto changePostPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return postService.changePostPrivacy(postId, user);

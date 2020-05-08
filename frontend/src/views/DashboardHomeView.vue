@@ -1,9 +1,12 @@
 <template>
   <div align="center">
-    <v-card width="95%" v-if="isReal">
+    <v-card
+      width="95%"
+      v-if="isReal && (!this.beStudent.dashboardPrivate || this.isOwnDashboard)"
+    >
       <v-row>
-        <v-card-subtitle class="text-center">
-          Dashboard ??
+        <v-card-subtitle class="mx-xl-2 display-2 font-weight-black">
+          Dashboard
         </v-card-subtitle>
         <v-spacer />
         <v-autocomplete
@@ -18,17 +21,43 @@
         />
       </v-row>
       <v-card>
-        <v-card-subtitle class="text-left">User details ?</v-card-subtitle>
-        <v-card-text class="text-left">Some details here ?</v-card-text>
+        <v-row>
+          <v-col class="pa-2">
+            <v-card-subtitle class="text-left">
+              Username: {{ beStudent.username }} <v-spacer /> Currency:
+              {{ beStudent.score }} Achandos
+            </v-card-subtitle>
+          </v-col>
+          <v-col class="pa-0" :align-self="'center'" cols="2">
+            <v-switch
+              class="my-0"
+              v-if="isOwnDashboard"
+              v-model="beStudent.dashboardPrivate"
+              :label="`${textLabel}`"
+              color="red"
+              @change="changePrivacy()"
+            />
+          </v-col>
+        </v-row>
       </v-card>
-      <v-row scrollable no-gutters>
+      <v-row scrollable no-gutters class="mx-0">
         <v-col v-for="n in 3" :key="n" cols="12" sm="4">
           <v-card tile outlined>
-            <v-app-bar dense elevation="2" color="grey lighten-2" flat>
+            <v-app-bar
+              dense
+              elevation="2"
+              color="grey lighten-2"
+              flat
+              class="mx-0"
+            >
               <v-toolbar-title>{{ getColumnAppBar(n) }}</v-toolbar-title>
             </v-app-bar>
-            <v-card style="max-height: 550px" class="overflow-y-auto" flat>
-              <div v-if="n === 1 && isOwnDashboard">
+            <v-card
+              style="max-height: 550px"
+              class="overflow-y-auto overflow-x-hidden"
+              flat
+            >
+              <div v-if="n === 1">
                 <post-preview
                   v-for="p in posts"
                   :key="p.id"
@@ -36,16 +65,8 @@
                   @click.native="showPostOpenDialog(p)"
                 ></post-preview>
               </div>
-              <div v-if="n === 1 && !isOwnDashboard">
-                <post-preview
-                  v-for="p in searchedPosts"
-                  :key="p.id"
-                  :post="p"
-                  @click.native="showPostOpenDialog(p)"
-                ></post-preview>
-              </div>
 
-              <div v-if="n === 2 && isOwnDashboard">
+              <div v-if="n === 2">
                 <suggestion-preview
                   v-for="s in suggestions"
                   :key="s.id"
@@ -53,19 +74,15 @@
                   @click.native="showSuggOpenDialog(s)"
                 ></suggestion-preview>
               </div>
-              <div v-if="n === 2 && !isOwnDashboard">
-                <suggestion-preview
-                  v-for="s in searchedSuggs"
-                  :key="s.id"
-                  :post="s"
-                  @click.native="showSuggOpenDialog(s)"
-                ></suggestion-preview>
-              </div>
+
               <div v-if="n === 3">
-                <v-card v-for="t in 10" :key="t" hover>
-                  <v-card-title tile flat>{{ t }}</v-card-title>
-                  <!--<tournament-preview></tournament-preview>-->
-                </v-card>
+                <tournament-preview
+                  v-for="t in tournaments"
+                  :key="t.id"
+                  :tournament="t"
+                  @click.native="showTournamentOpenDialog(t)"
+                >
+                </tournament-preview>
               </div>
             </v-card>
           </v-card>
@@ -92,15 +109,18 @@
       :suggestion="currentSuggestion"
       v-on:close-show-suggestion-dialog="onCloseDialog"
     />
-    <!--<show-tournament-dialog
-            v-if="currentTournament"
-            :dialog="tournamentDialog"
-            :post="currenttournament"
-            v-on:save-post="onSavetournament"
-            v-on:close-show-post-dialog="onCloseDialog"
-    />-->
+    <show-tournament-dialog
+      v-if="currentTournament"
+      :dialog="tournamentDialog"
+      :tournament="currentTournament"
+      :student="beStudent"
+      v-on:close-show-tournament-dialog="onCloseDialog"
+    />
     <v-card v-if="!isReal">
       <v-card-text>The specified user does not exist :(</v-card-text>
+    </v-card>
+    <v-card v-else-if="this.beStudent.dashboardPrivate && !this.isOwnDashboard">
+      <v-card-text>The specified user has a private dashboard :(</v-card-text>
     </v-card>
   </div>
 </template>
@@ -109,20 +129,23 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import PostPreview from '@/views/PostPreview.vue';
+import TournamentPreview from '@/views/TournamentPreview.vue';
 import Post from '@/models/management/Post';
 import PostViewDialog from '@/views/PostViewDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
-import { Student } from '@/models/management/Student';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
+import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
+import User from '@/models/user/User';
 import SuggViewDialog from '@/views/SuggViewDialog.vue';
-import Store from '@/store';
 import SuggsPreview from '@/views/SuggsPreview.vue';
 
 @Component({
   components: {
     'post-preview': PostPreview,
+    'tournament-preview': TournamentPreview,
     'show-post-dialog': PostViewDialog,
+    'show-tournament-dialog': TournamentViewDialog,
     'student-dashboard': StudentDashboardView,
     'show-suggestion-dialog': SuggViewDialog,
     'suggestion-preview': SuggsPreview
@@ -133,8 +156,8 @@ export default class DashboardHomeView extends Vue {
   readonly isOwnDashboard!: boolean;
   @Prop({ type: Boolean, required: true })
   readonly isReal!: boolean;
-  @Prop({ type: Array, required: false })
-  readonly searchedPosts!: Post[];
+  @Prop({ type: User, required: false })
+  readonly student!: User;
   @Prop({ type: Array, required: false })
   readonly searchedSuggs!: Suggestion[];
   posts: Post[] = [];
@@ -146,33 +169,49 @@ export default class DashboardHomeView extends Vue {
   postDialog: boolean = false;
   suggestionDialog: boolean = false;
   tournamentDialog: boolean = false;
-  students: Student[] = [];
-  selectedStudent: Student | null = null;
+  students: User[] = [];
+  selectedStudent: User | null = null;
   searchedStudent: string = '';
   dashboardDialog: boolean = false;
+  beStudent: User | undefined = undefined;
+  textLabel: string = '';
 
   async created() {
+    if (this.student == null) this.beStudent = this.$store.getters.getUser;
+    else this.beStudent = this.student;
+
+    if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
+    else this.textLabel = 'Public';
+
     this.students = await RemoteServices.getCourseStudents(
       this.$store.getters.getCurrentCourse
     );
-    let ps = await RemoteServices.getPostsByUser(
-      this.$store.getters.getUser.username
-    );
-    if (ps.lists != undefined) {
-      this.posts = ps.lists;
+    if (this.beStudent?.username != null) {
+      if (!this.beStudent.dashboardPrivate || this.isOwnDashboard) {
+        let ps = await RemoteServices.getPostsByUser(this.beStudent.username);
+        if (ps.lists != undefined) {
+          this.posts = ps.lists;
+        }
+        this.tournaments = await RemoteServices.getTournamentsByUser(
+          this.beStudent.username
+        );
+
+        let ss = await RemoteServices.getSuggestionsbyUsername(
+          this.beStudent.username
+        );
+
+        if (ss._suggslist != undefined) {
+          this.suggestions = ss._suggslist;
+        }
+      }
     }
-
-    let ss = await RemoteServices.getSuggestionsbyUsername(
-      this.$store.getters.getUser.username
-    );
-
-    if (ss._suggslist != undefined) {
-      this.suggestions = ss._suggslist;
-    }
-
-    console.log(this.suggestions);
 
     // Falta getSuggestionsByUser e getTournamentByUser
+  }
+  async changePrivacy() {
+    if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
+    else this.textLabel = 'Public';
+    await RemoteServices.changeDashboardPrivacy();
   }
 
   getColumnAppBar(n: number): string {
@@ -192,6 +231,14 @@ export default class DashboardHomeView extends Vue {
     this.postDialog = true;
   }
 
+  showTournamentOpenDialog(tournament: Tournament) {
+    this.currentTournament = tournament;
+    this.tournamentDialog = true;
+    this.beStudent = this.students.find(
+      student => student.username == this.beStudent?.username
+    );
+  }
+
   showSuggOpenDialog(sugg: Suggestion) {
     this.currentSuggestion = sugg;
     this.suggestionDialog = true;
@@ -208,8 +255,8 @@ export default class DashboardHomeView extends Vue {
     this.selectedStudent = null;
     this.searchedStudent = '';
     this.postDialog = false;
+    this.tournamentDialog = false;
     this.suggestionDialog = false;
-    // Falta fechar os dialogs das suggestions e/ou tournaments
   }
 
   searchForDashboard(s: string) {
