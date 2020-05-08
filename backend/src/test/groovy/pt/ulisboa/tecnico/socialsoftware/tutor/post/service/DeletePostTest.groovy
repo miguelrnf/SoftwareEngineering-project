@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService

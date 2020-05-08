@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.user
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 

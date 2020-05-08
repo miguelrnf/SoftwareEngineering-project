@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 @Transactional
