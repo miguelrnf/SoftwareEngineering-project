@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion;
 
+import org.hibernate.graph.SubGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -12,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -103,12 +105,18 @@ public class SuggestionService {
         }
 
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
+
+        updateUserSuggestions(suggestion);
         suggestion.get_student().incrementNumberofsuggestions();
+
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.set_topicsList(topics);
         suggestion.set_isprivate(suggestionDto.get_isprivate());
 
         //new
+        System.out.println(suggestionDto);
+        System.out.println("___________________________________________________________");
+
         checkTitleAndOptions(suggestionDto);
         suggestion.addOptions(suggestionDto);
         suggestion.setTitle(suggestionDto.getTitle());
@@ -159,8 +167,13 @@ public class SuggestionService {
         }
 
         else {
+            if(suggestion.get_student().getnumberofapprovedsuggs() == null){
 
-            suggestion.get_student().incrementNumberofapprovedsuggestions();
+            }
+            else{
+                updateUserSuggestions(suggestion);
+                suggestion.get_student().incrementNumberofapprovedsuggestions();
+            }
 
         }
 
@@ -398,7 +411,17 @@ public class SuggestionService {
 
         }
 
-        Question question = new Question(course, questionDto);
+        System.out.println(questionDto.getOptions());
+        System.out.println("________________________________________________________________________________");
+        Question question = new Question();
+        question.setTitle(questionDto.getTitle());
+        question.setKey(questionDto.getKey());
+        question.setContent(questionDto.getContent());
+        question.setStatus(Question.Status.valueOf(questionDto.getStatus()));
+        question.setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
+        question.setCourse(course);
+        question.addOptions(questionDto.getOptions(),suggestion.getOptions());
+
 
         suggestion.setStatus(Suggestion.Status.QUESTION);
 
@@ -424,5 +447,28 @@ public class SuggestionService {
         return questionDto;
     }
 
+
+    public void updateUserSuggestions(Suggestion s){
+        if (s.get_student().getnumberofsuggs()==null || s.get_student().getnumberofapprovedsuggs()==null){
+
+            List<Suggestion> tmp = new ArrayList<>();
+
+            tmp = suggestionRepository.listAllSuggestions(s.get_student().getId()).stream().filter(suggestion -> s.get_student().getUsername().equals(suggestion.get_student().getUsername())).collect(Collectors.toList());
+
+            if (tmp==null) {
+                s.get_student().setNumberofsuggestions(0);
+                s.get_student().setNumberofsuggestionsapproved(0);
+            }
+            else
+                s.get_student().setNumberofsuggestions(tmp.size());
+                tmp.stream().filter(suggestion -> suggestion.getStatus().equals("APPROVED")).collect(Collectors.toList());
+
+                if (tmp==null) {
+                    s.get_student().setNumberofsuggestionsapproved(0);
+                }
+                else
+                    s.get_student().setNumberofsuggestionsapproved(tmp.size());
+        }
+    }
 
 }

@@ -243,9 +243,6 @@ export default class RemoteServices {
   }
 
   static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
-    console.log(sugg);
-    console.log(sugg);
-    console.log(sugg);
     return httpClient
       .put(
         `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`,

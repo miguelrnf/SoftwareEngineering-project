@@ -239,7 +239,6 @@ class addQuestionTest extends Specification{
         }
         sug.set_topicsList(topicsDto)
 
-        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setTitle("TITLE")
 
@@ -249,7 +248,11 @@ class addQuestionTest extends Specification{
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         sug.setOptions(options)
+
+        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
+
         sug.setStatus(Suggestion.Status.APPROVED.name());
+
 
         when: 'are created two questions'
         suggestionService.addQuestion(course.getId(), sug, new UserDto(INVALID_U_ROLE))

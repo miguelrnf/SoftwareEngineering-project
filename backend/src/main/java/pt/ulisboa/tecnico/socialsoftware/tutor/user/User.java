@@ -104,6 +104,13 @@ public class User implements UserDetails, DomainEntity {
 
     public Integer getnumberofapprovedsuggs () {return this.numberofsuggestionsapproved;}
 
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
+    }
 
     @Override
     public void accept(Visitor visitor) {
