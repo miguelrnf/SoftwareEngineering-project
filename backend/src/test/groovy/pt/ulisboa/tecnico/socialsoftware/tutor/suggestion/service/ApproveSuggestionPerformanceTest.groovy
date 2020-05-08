@@ -72,7 +72,7 @@ class ApproveSuggestionPerfomanceTest extends Specification{
         topicList.add(topic)
 
         and: "3000 valid suggestions"
-        for (int i = 1; i <= 3000; i++) {
+        for (int i = 1; i <= 2; i++) {
             def suggestion = new Suggestion()
             suggestion.setKey(i)
             suggestion.set_student(userS)

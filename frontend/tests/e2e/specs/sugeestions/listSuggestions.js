@@ -1,6 +1,6 @@
 describe('Suggestion list', () => {
   beforeEach(() => {
-    cy.demoStudentLogin();
+    cy.demoStudentLoginSuggestion();
   });
 
   afterEach(() => {
@@ -9,15 +9,15 @@ describe('Suggestion list', () => {
   });
 
   it('login, creates a suggestion and search the suggestion\n', () => {
-    cy.createSuggestion('ola');
-    cy.listSuggestion('ola');
+    cy.createSuggestion('ola', 'adeus', 'bruh');
+    cy.listSuggestion('adeus');
   });
 
   it('login, creates a invalid suggestion and search for it', () => {
-    cy.createSuggestion(' ');
+    cy.createSuggestion(' ', ' ', ' ');
     cy.get('.v-alert__dismissible > .v-btn__content > .v-icon').click();
     cy.get('[data-cy="cancel"]').click();
-    cy.notfoundSuggestion('adeus');
+    cy.notfoundSuggestion('lllllalsd');
     cy.contains('No matching records found');
   });
 });

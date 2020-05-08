@@ -23,7 +23,7 @@
           >Cancel</v-btn
         >
 
-        <v-btn dark color="red darken-1" @click="RejectSuggestion"
+        <v-btn dark color="red darken-1" @click="RejectSuggestion" data-cy="rejectButton"
           >Reject</v-btn
         >
       </v-card-actions>

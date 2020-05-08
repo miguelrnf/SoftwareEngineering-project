@@ -96,6 +96,7 @@
               class="mr-2"
               v-on="on"
               @click="showSuggestionDialog(item)"
+              data-cy="showSuggButton"
               >visibility</v-icon
             >
           </template>
@@ -103,7 +104,7 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editSuggestion(item)"
+            <v-icon small class="mr-2" v-on="on" @click="editSuggestion(item)" data-cy="editSuggButton"
               >edit</v-icon
             >
           </template>

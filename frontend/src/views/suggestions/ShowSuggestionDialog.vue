@@ -92,7 +92,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
+        <v-btn dark color="blue darken-1" @click="closeQuestionDialog" data-cy="closeButton"
           >close</v-btn
         >
       </v-card-actions>

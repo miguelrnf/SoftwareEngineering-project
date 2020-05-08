@@ -76,7 +76,7 @@ class CreateSuggestionPerformanceTest extends Specification{
         topicRepository.save(topic)
 
         when: "create 3000 suggestions"
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 2; i++) {
             def sug = new Suggestion()
             sug.set_student(userS)
             sug.set_topicsList(topicList)

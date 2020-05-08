@@ -1,6 +1,6 @@
 describe('Suggestion creation', () => {
   beforeEach(() => {
-    cy.demoStudentLogin();
+    cy.demoStudentLoginSuggestion();
   });
 
   afterEach(() => {
@@ -9,11 +9,11 @@ describe('Suggestion creation', () => {
   });
 
   it('login and creates a suggestion', () => {
-    cy.createSuggestion('O achando é esperto?');
+    cy.createSuggestion('TITULO', 'O achando é esperto?', 'OPCAO');
   });
 
   it('login and creates a invalid suggestion', () => {
-    cy.createSuggestion(' ');
+    cy.createSuggestion(' ', ' ', ' ');
     cy.get('.v-alert__dismissible > .v-btn__content > .v-icon').click();
   });
 });

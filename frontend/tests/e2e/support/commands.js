@@ -269,7 +269,7 @@ Cypress.Commands.add('demoStudentLoginPosts', () => {
 
 Cypress.Commands.add('demoStudenDashboard', () => {
   cy.get('[data-cy="Dashboard"]').click();
-}
+});
 
 Cypress.Commands.add('demoStudentLoginDashboard', () => {
   cy.visit('/');
@@ -400,3 +400,106 @@ Cypress.Commands.add('checkPostsByQuiz', () => {
     cy.get('[data-cy="checkPostsByQuizButton"]').click()
 
 });
+
+//################################################# Suggestion feature
+
+Cypress.Commands.add('demoStudentLoginSuggestion', () => {
+  cy.visit('/')
+  cy.get('[data-cy="demoStudentLoginButton"]').click()
+  cy.get('[data-cy="Student"]').click()
+  cy.contains('Suggestions').click()
+})
+
+Cypress.Commands.add('demoTeacherLoginSuggestion', () => {
+  cy.visit('/')
+  cy.get('[data-cy="demoTeacherLoginButton"]').click()
+  cy.get('[data-cy="management"]').click()
+  cy.contains('Suggestions').click()
+})
+
+Cypress.Commands.add('createSuggestion', (title, content, option) => {
+  cy.get('[data-cy="createButton"]').click();
+  cy.get('[data-cy="titleTextArea"]').type(title, { force: true });
+  cy.get('[data-cy="content"]').type(content, { force: true })
+  cy.get('[data-cy="correctToggleButton"]').first().click({ force: true });
+  cy.get('[data-cy="optionTextArea"]').eq(0).type(option, { force: true });
+  cy.get('[data-cy="optionTextArea"]').eq(1).type(option, { force: true });
+  cy.get('[data-cy="optionTextArea"]').eq(2).type(option, { force: true });
+  cy.get('[data-cy="optionTextArea"]').eq(3).type(option, { force: true });
+  cy.get('[data-cy="topics"]').type('a'.concat('{downarrow}{enter}'), { force: true });
+  cy.get('[data-cy="saveButton"]').click();
+})
+
+Cypress.Commands.add('listSuggestion', (contentPart) => {
+  cy.get('[data-cy="search"]').type(contentPart.concat('{downarrow}{enter}'))
+  cy.contains(contentPart).get('[data-cy=showSuggButton]').first().click()
+  cy.get('[data-cy="closeButton"]').click()
+})
+
+Cypress.Commands.add('notfoundSuggestion', (contentPart) => {
+  cy.get('[data-cy="search"]').type(contentPart.concat('{downarrow}{enter}'))
+})
+
+Cypress.Commands.add('editSuggestion', (contentPart, newContent) => {
+  cy.get('[data-cy="search"]').type(contentPart.concat('{downarrow}{enter}'))
+  cy.contains(contentPart).get('[data-cy=editSuggButton]').first().click()
+  cy.get('[data-cy="content"]').type(newContent, {force: true})
+  cy.get('[data-cy="saveButton"]').click()
+})
+
+Cypress.Commands.add('editSuggestionPrivacy', (contentPart) => {
+  cy.get('[data-cy="search"]').type(contentPart.concat('{downarrow}{enter}'))
+  cy.contains(contentPart).get('[data-cy=editSuggButton]').first().click();
+  cy.get('[data-cy="togglePrivacyButton"]').click( {force: true})
+  cy.get('[data-cy="saveButton"]').click()
+})
+
+Cypress.Commands.add('changeToQuestion', (contentPart) => {
+  cy.contains(contentPart)
+    .parent()
+    .parent()
+    .parent()
+    .find('[data-cy=addQuestionButton]')
+    .click();
+  cy.get('[data-cy="saveButton"]').click()
+})
+
+Cypress.Commands.add('createBlankSuggestion', (content) => {
+  cy.get('[data-cy="Student"]').click()
+  cy.contains('Suggestions').click()
+  cy.get('[data-cy="createButton"]').click()
+  cy.get('[data-cy="saveButton"]').click()
+})
+
+Cypress.Commands.add('QuickApproveSuggestion', (content) => {
+  cy.contains(content)
+  cy.get('[data-cy="quickApproveButton"]').first().click({force: true})
+})
+
+Cypress.Commands.add('QuickRejectSuggestion', (content) => {
+  cy.contains(content)
+  cy.get('[data-cy="quickRejectButton"]').first().click({force: true})
+
+})
+
+Cypress.Commands.add('ShowSuggestion', (content) => {
+  cy.contains(content)
+  cy.get('[data-cy="showSuggestionButton"]').first().click({force: true})
+
+})
+
+Cypress.Commands.add('CloseSuggestion', (content) => {
+  cy.get('[data-cy="closeSuggestionButton"]').click({force: true})
+
+})
+
+Cypress.Commands.add('ApproveSuggestion', (content) => {
+  cy.get('[data-cy="approveSuggestionButton"]').click({force: true})
+
+})
+
+Cypress.Commands.add('RejectSuggestion', (content) => {
+  cy.get('[data-cy="rejectSuggestionButton"]').click({force: true})
+
+})
+
