@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
 
 public class StudentDto implements Serializable {
     private String username;
@@ -21,19 +21,27 @@ public class StudentDto implements Serializable {
     private int percentageOfCorrectStudentAnswers = 0;
     private String creationDate;
     private String lastAccess;
+    private Integer score;
+    private boolean isDashboardPrivate;
+    private int numberofsuggs = 0;
+    private int numberofapprovedsuggs = 0;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
         this.name = user.getName();
-
         this.numberOfTeacherQuizzes = user.getNumberOfTeacherQuizzes();
         this.numberOfInClassQuizzes = user.getNumberOfInClassQuizzes();
         this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
-
         this.numberOfAnswers = user.getNumberOfTeacherAnswers() + user.getNumberOfInClassAnswers() + user.getNumberOfStudentAnswers();
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
         this.numberOfInClassAnswers = user.getNumberOfInClassAnswers();
         this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
+        this.lastAccess = DateHandler.toISOString(user.getLastAccess());
+        this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        if (user.getScore() == null )
+            this.score = 0;
+        else
+            this.score = user.getScore();
 
         if (this.numberOfTeacherAnswers != 0)
             this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
@@ -44,10 +52,11 @@ public class StudentDto implements Serializable {
         if (this.numberOfAnswers != 0)
             this.percentageOfCorrectAnswers = (user.getNumberOfCorrectTeacherAnswers() + user.getNumberOfCorrectInClassAnswers() + user.getNumberOfCorrectStudentAnswers())  * 100 / this.numberOfAnswers;
 
-        if (user.getLastAccess() != null)
-            this.lastAccess = user.getLastAccess().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        if (user.getCreationDate() != null)
-            this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        if(user.getDashboardPrivate() == null)
+            this.isDashboardPrivate = false;
+        else
+            this.isDashboardPrivate = user.getDashboardPrivate();
+
     }
 
     public String getUsername() {
@@ -74,12 +83,28 @@ public class StudentDto implements Serializable {
         this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
     }
 
+    public boolean isDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
+    }
+
     public Integer getNumberOfStudentQuizzes() {
         return numberOfStudentQuizzes;
     }
 
     public void setNumberOfStudentQuizzes(Integer numberOfStudentQuizzes) {
         this.numberOfStudentQuizzes = numberOfStudentQuizzes;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public Integer getNumberOfAnswers() {
@@ -184,5 +209,21 @@ public class StudentDto implements Serializable {
                 ", creationDate='" + creationDate + '\'' +
                 ", lastAccess='" + lastAccess + '\'' +
                 '}';
+    }
+
+    public int getNumberofapprovedsuggs() {
+        return numberofapprovedsuggs;
+    }
+
+    public void setNumberofapprovedsuggs(int numberofapprovedsuggs) {
+        this.numberofapprovedsuggs = numberofapprovedsuggs;
+    }
+
+    public int getNumberofsuggs() {
+        return numberofsuggs;
+    }
+
+    public void setNumberofsuggs(int numberofsuggs) {
+        this.numberofsuggs = numberofsuggs;
     }
 }

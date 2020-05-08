@@ -4,16 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Shared
@@ -33,6 +36,7 @@ class DeletePostTest extends Specification {
     public static final String VALID_NAME_2 = "Mike Litoris"
     public static final String VALID_USERNAME_1 = "BenDover69"
     public static final String VALID_USERNAME_2 = "MikeLitoris420"
+    public static final String VALID_TITLE = "Title"
 
     @Autowired
     PostService postService
@@ -119,6 +123,7 @@ class DeletePostTest extends Specification {
         def question = new Question()
         question.setKey(VALID_KEY)
         question.setContent(VALID_QUESTION)
+        question.setTitle(VALID_TITLE)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
@@ -187,6 +192,26 @@ class DeletePostTest extends Specification {
         @Bean
         PostService postService() {
             return new PostService()
+        }
+
+        @Bean
+        QuizService quizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService answerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
+        }
+
+        @Bean
+        AnswersXmlImport xmlImporter() {
+            return new AnswersXmlImport()
         }
     }
 }

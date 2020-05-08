@@ -4,17 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
@@ -38,6 +42,7 @@ class SubmitPostTest extends Specification {
     public static final String VALID_NAME = "Ben Dover"
     public static final String VALID_USERNAME = "BenDover69"
     public static final String VALID_USERNAME_TEACHER = "something"
+    public static final String VALID_TITLE = "Title"
     public static final String TOO_MANY_CHARS =
                     '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -98,7 +103,6 @@ class SubmitPostTest extends Specification {
     def setupSpec() {
         given: "a valid question"
         VALID_Q = new QuestionDto()
-        VALID_Q.setId()
         VALID_Q.setKey(VALID_KEY)
         VALID_Q.setContent(VALID_QUESTION)
 
@@ -139,6 +143,7 @@ class SubmitPostTest extends Specification {
         def question = new Question()
         question.setKey(VALID_KEY)
         question.setContent(VALID_QUESTION)
+        question.setTitle(VALID_TITLE)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
@@ -149,13 +154,15 @@ class SubmitPostTest extends Specification {
         quizQuestion.setQuestion(question)
         quiz.setKey(VALID_KEY)
         quiz.addQuizQuestion(quizQuestion)
+        quiz.setType('GENERATED')
 
         and: "a quiz answer"
         def user = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
         def quizAnswer = new QuizAnswer(user, quiz)
         def questionAnswer = new QuestionAnswer()
-        questionAnswer.setQuizQuestion()
-        quizAnswer.addQuestionAnswer()
+        quizQuestion.setQuiz(quiz)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        quizAnswer.addQuestionAnswer(questionAnswer)
 
         and: "a user that answered the question"
         user.addQuizAnswer(quizAnswer)
@@ -239,6 +246,26 @@ class SubmitPostTest extends Specification {
         @Bean
         PostService postService() {
             return new PostService()
+        }
+
+        @Bean
+        QuizService quizService() {
+            return new QuizService()
+        }
+
+        @Bean
+        AnswerService answerService() {
+            return new AnswerService()
+        }
+
+        @Bean
+        QuestionService questionService() {
+            return new QuestionService()
+        }
+
+        @Bean
+        AnswersXmlImport xmlImporter() {
+            return new AnswersXmlImport()
         }
     }
 }

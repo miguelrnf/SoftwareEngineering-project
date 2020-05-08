@@ -4,7 +4,7 @@
     <v-container class="create-buttons">
       <v-card-text>
         <v-text-field
-          v-model="tournamentManager.title"
+          v-model="tournament.title"
           label="*Title"
           data-cy="title"
         />
@@ -13,7 +13,7 @@
         <p>Assessment</p>
         <v-btn-toggle
           v-if="availableAssessments.length > 0"
-          v-model="tournamentManager.assessmentId"
+          v-model="tournament.assessmentDto.id"
           mandatory
           class="button-group"
         >
@@ -33,7 +33,7 @@
       <v-container>
         <p class="pl-0">Number of Questions</p>
         <v-btn-toggle
-          v-model="tournamentManager.numberOfQuestions"
+          v-model="tournament.numberOfQuestions"
           mandatory
           class="button-group"
         >
@@ -43,33 +43,31 @@
           <v-btn text value="40">40</v-btn>
         </v-btn-toggle>
       </v-container>
-      <v-card-text>
+      <v-container fluid>
         <v-row>
           <v-col cols="12" sm="6">
-            <v-datetime-picker
+            <VueCtkDateTimePicker
               label="*Available Date"
-              format="yyyy-MM-dd HH:mm"
-              v-model="tournamentManager.availableDate"
-              date-format="yyyy-MM-dd"
-              time-format="HH:mm"
+              id="availableDateInput"
+              v-model="tournament.availableDate"
+              format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
             >
-            </v-datetime-picker>
+            </VueCtkDateTimePicker>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" sm="6">
-            <v-datetime-picker
+            <VueCtkDateTimePicker
               label="*Conclusion Date"
-              format="yyyy-MM-dd HH:mm"
-              v-model="tournamentManager.conclusionDate"
-              date-format="yyyy-MM-dd"
-              time-format="HH:mm"
+              id="conclusionDateInput"
+              v-model="tournament.conclusionDate"
+              format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
             >
-            </v-datetime-picker>
+            </VueCtkDateTimePicker>
           </v-col>
         </v-row>
-      </v-card-text>
+      </v-container>
       <v-container>
         <v-btn
           @click="createTournament"
@@ -88,16 +86,18 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Assessment from '@/models/management/Assessment';
 import RemoteServices from '@/services/RemoteServices';
-import TournamentManager from '@/models/tournament/TournamentManager';
+import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
+import { Tournament } from '@/models/management/Tournament';
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+
+Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component
 export default class CreateTournamentView extends Vue {
-  tournamentManager: TournamentManager = TournamentManager.getInstance;
+  tournament: Tournament = new Tournament();
   availableAssessments: Assessment[] = [];
-
   async created() {
     await this.$store.dispatch('loading');
-    this.tournamentManager.reset();
     try {
       this.availableAssessments = await RemoteServices.getAvailableAssessments();
     } catch (error) {
@@ -108,9 +108,10 @@ export default class CreateTournamentView extends Vue {
 
   async createTournament() {
     try {
-      await this.tournamentManager.getNewTournament();
-      await this.tournamentManager.reset();
-      await this.$router.push({ name: 'own-Tournaments' });
+      await RemoteServices.createNewTournament(this.tournament);
+      if (this.$store.getters.getUser.role === 'TEACHER')
+        await this.$router.push({ name: 'all-tournaments' });
+      else await this.$router.push({ name: 'own-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

@@ -4,13 +4,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
@@ -40,6 +40,8 @@ public class User implements UserDetails, DomainEntity {
     private String name;
     private String enrolledCoursesAcronyms;
 
+    private Integer score;
+
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes;
     private Integer numberOfInClassQuizzes;
@@ -49,6 +51,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
+    private Integer numberofsuggestions;
+    private Integer numberofsuggestionsapproved;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -72,6 +76,9 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
+    @Column(name = "is_dashboard_private", columnDefinition = "boolean default false")
+    private Boolean isDashboardPrivate;
+
     public User() {
     }
 
@@ -80,7 +87,8 @@ public class User implements UserDetails, DomainEntity {
         setUsername(username);
         this.key = key;
         this.role = role;
-        this.creationDate = LocalDateTime.now();
+        this.score = 0;
+        this.creationDate = DateHandler.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfInClassQuizzes = 0;
         this.numberOfStudentQuizzes = 0;
@@ -90,6 +98,25 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+        this.isDashboardPrivate = false;
+        this.numberofsuggestions = 0;
+        this.numberofsuggestionsapproved = 0;
+    }
+
+    public void incrementNumberofsuggestions () {this.numberofsuggestions++;}
+
+    public void incrementNumberofapprovedsuggestions () {this.numberofsuggestionsapproved++;}
+
+    public Integer getnumberofsuggs () {return this.numberofsuggestions;}
+
+    public Integer getnumberofapprovedsuggs () {return this.numberofsuggestionsapproved;}
+
+    public void setNumberofsuggestions(Integer numberofsuggestions) {
+        this.numberofsuggestions = numberofsuggestions;
+    }
+
+    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
+        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
     }
 
     @Override
@@ -134,7 +161,6 @@ public class User implements UserDetails, DomainEntity {
         return name;
     }
 
-
     public void setName(String name) {
         this.name = name;
     }
@@ -145,6 +171,19 @@ public class User implements UserDetails, DomainEntity {
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
+    }
+
+    public Integer getScore() {
+        if(score == null)
+            this.score = 0;
+        return score;
+    }
+
+    public void changeScore(int points) {
+            this.score += points;
+
+        if (this.score < 0)
+            this.score = 0;
     }
 
     public Role getRole() {
@@ -199,6 +238,18 @@ public class User implements UserDetails, DomainEntity {
         this.postQuestions = postQuestions;
     }
 
+    public Boolean getDashboardPrivate() {
+        return isDashboardPrivate;
+    }
+
+    public void setDashboardPrivate(Boolean dashboardPrivate) {
+        isDashboardPrivate = dashboardPrivate;
+    }
+
+    public void changeDashboardPrivacy() {
+        this.isDashboardPrivate = !this.isDashboardPrivate;
+    }
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
@@ -214,7 +265,7 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public Integer getNumberOfStudentQuizzes() {
-        if(this.numberOfStudentQuizzes == null)
+        if (this.numberOfStudentQuizzes == null)
             this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
@@ -310,7 +361,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                            questionAnswer.getOption().getCorrect())
+                        questionAnswer.getOption().getCorrect())
                     .count();
 
         return numberOfCorrectInClassAnswers;
@@ -327,7 +378,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                            questionAnswer.getOption().getCorrect())
+                        questionAnswer.getOption().getCorrect())
                     .count();
 
         return numberOfCorrectStudentAnswers;

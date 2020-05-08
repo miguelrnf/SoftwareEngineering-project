@@ -26,7 +26,12 @@
         <p class="len">{{ limit }}</p>
       </v-container>
       <v-container>
-        <v-btn @click="submitPost" depressed color="primary" data-cy="submitButton">
+        <v-btn
+          @click="submitPost"
+          depressed
+          color="primary"
+          data-cy="submitButton"
+        >
           Submit post
         </v-btn>
       </v-container>

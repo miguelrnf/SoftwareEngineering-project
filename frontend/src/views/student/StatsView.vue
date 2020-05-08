@@ -57,6 +57,38 @@
           <p>Percentage of questions seen</p>
         </div>
       </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+          <animated-number :number="user.numberofsuggestions"></animated-number>
+        </div>
+        <div class="project-name">
+          <p>Number of Suggestions</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+          <animated-number
+            :number="user.numberofsuggestionsapproved"
+          ></animated-number>
+        </div>
+        <div class="project-name">
+          <p>Number of Approved Suggestions</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+          <animated-number
+            :number="
+              (user.numberofsuggestionsapproved / user.numberofsuggestions) *
+                100
+            "
+            >%</animated-number
+          >
+        </div>
+        <div class="project-name">
+          <p>Percentage of Approved Suggestions</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -66,21 +98,26 @@ import { Component, Vue } from 'vue-property-decorator';
 import StudentStats from '@/models/statement/StudentStats';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
+import User from '@/models/user/User';
 
 @Component({
   components: { AnimatedNumber }
 })
 export default class StatsView extends Vue {
   stats: StudentStats | null = null;
+  user: User | null = null;
 
   async created() {
     await this.$store.dispatch('loading');
     try {
       this.stats = await RemoteServices.getUserStats();
+      this.user = this.$store.getters.getUser;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+
+    console.log(this.user);
   }
 }
 </script>

@@ -8,9 +8,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -19,10 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
-import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 //Testing
 
@@ -81,12 +77,21 @@ class CreateSuggestionPerformanceTest extends Specification{
         topicRepository.save(topic)
 
         when: "create 3000 suggestions"
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 2; i++) {
             def sug = new Suggestion()
             sug.set_student(userS)
             sug.set_topicsList(topicList)
             def sugDto = new SuggestionDto(sug)
             sugDto.set_questionStr("question")
+            sugDto.setTitle("TITLE")
+
+            def optionDto = new OptionDto()
+            optionDto.setContent("vhgcvhbhcgfvh")
+            optionDto.setCorrect(true)
+            def options = new ArrayList<OptionDto>()
+            options.add(optionDto)
+            sugDto.setOptions(options)
+
             suggestionService.createSuggestion(course.getId(), sugDto)
         }
 

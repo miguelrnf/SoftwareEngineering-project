@@ -229,10 +229,6 @@ VALUES (6969, ${pid}, ${tid}, &apos;ANSWER&apos;);
                 <stringProp name="Header.name">Authorization</stringProp>
                 <stringProp name="Header.value">${token}</stringProp>
               </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Content-Type</stringProp>
-                <stringProp name="Header.value">application/json</stringProp>
-              </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
@@ -242,11 +238,7 @@ VALUES (6969, ${pid}, ${tid}, &apos;ANSWER&apos;);
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
-	&quot;page&quot;: 1,&#xd;
-  &quot;perPage&quot;: 15&#xd;
-}&#xd;
-&#xd;
+                  <stringProp name="Argument.value">&#xd;
 </stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -256,7 +248,8 @@ VALUES (6969, ${pid}, ${tid}, &apos;ANSWER&apos;);
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts</stringProp>
+
+            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/5/1</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>

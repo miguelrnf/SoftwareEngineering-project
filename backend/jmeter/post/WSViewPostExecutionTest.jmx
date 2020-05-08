@@ -244,7 +244,7 @@ VALUES (6969, ${pid}, ${tid}, &apos;ANSWER&apos;);</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/${pkey}</stringProp>
+            <stringProp name="HTTPSampler.path">executions/${courseExecutionId}/posts/${pid}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>

@@ -18,6 +18,7 @@ import Loading from '@/components/Loading.vue';
 import '@/assets/css/_global.scss';
 import '@/assets/css/_scrollbar.scss';
 import '@/assets/css/_question.scss';
+
 require('typeface-roboto');
 
 @Component({
@@ -39,7 +40,7 @@ export default class App extends Vue {
 
 <style scoped>
 #app {
-  background-image: url('assets/img/background_optimized.webp');
+  background-image: url('assets/img/background.jpg');
   background-position: 0 0;
   background-repeat: no-repeat;
   background-size: 100% 100%;

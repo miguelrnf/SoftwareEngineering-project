@@ -8,7 +8,9 @@
         <div class="col">Ends</div>
         <div class="col">Questions</div>
         <div class="col">Status</div>
-        <div class="col">Participants</div>
+        <div class="col">Assessment</div>
+        <div class="col">Solved</div>
+        <div class="col last-col"></div>
       </li>
       <li class="list-row" v-for="t in tournaments" :key="t.id">
         <div class="col" data-cy="title">
@@ -30,7 +32,31 @@
           {{ t.status }}
         </div>
         <div class="col">
-          {{ t.enrolledStudents.length }}
+          {{ t.assessmentDto.title }}
+        </div>
+        <div class="col">
+          <v-icon v-if="t.completed === true" color="green">
+            fas fa-check
+          </v-icon>
+          <v-icon v-else color="red">fas fa-times </v-icon>
+        </div>
+        <div class="col">
+          <v-btn
+            v-if="isSolvable(t)"
+            class="btn"
+            color="primary"
+            @click="solveQuiz(t.quiz)"
+          >
+            Solve
+          </v-btn>
+          <v-btn
+            v-else-if="prepareToResults(t)"
+            class="btn"
+            color="primary"
+            @click="showResults(t)"
+          >
+            Results
+          </v-btn>
         </div>
       </li>
     </ul>
@@ -41,6 +67,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Tournament } from '@/models/management/Tournament';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementManager from '@/models/statement/StatementManager';
 
 @Component
 export default class EnrolledTournamentsView extends Vue {
@@ -54,6 +82,33 @@ export default class EnrolledTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async solveQuiz(quiz: StatementQuiz) {
+    let statementManager: StatementManager = StatementManager.getInstance;
+    statementManager.statementQuiz = quiz;
+    await this.$router.push({ name: 'solve-quiz' });
+  }
+
+  async showResults(tournament: Tournament) {
+    let t = await RemoteServices.getTournament(
+      tournament.id,
+      this.$store.getters.getUser.username
+    );
+    let statementManager: StatementManager = StatementManager.getInstance;
+    statementManager.correctAnswers = t.solved.correctAnswers;
+    statementManager.statementQuiz = t.solved.statementQuiz;
+    await this.$router.push({ name: 'quiz-results' });
+  }
+
+  prepareToResults(t: Tournament): boolean {
+    return (
+      t.completed && t.quiz?.timeToResults != null && t.quiz?.timeToResults <= 0
+    );
+  }
+
+  isSolvable(t: Tournament): boolean {
+    return t.status == 'OPEN' && !t.completed;
   }
 }
 </script>
@@ -100,6 +155,8 @@ export default class EnrolledTournamentsView extends Vue {
       flex-basis: 25% !important;
       margin: auto; /* Important */
       text-align: center;
+      word-wrap: break-word;
+      max-width: 15%;
     }
 
     .list-row {

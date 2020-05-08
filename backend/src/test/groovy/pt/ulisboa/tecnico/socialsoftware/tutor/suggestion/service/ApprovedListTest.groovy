@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -224,6 +225,31 @@ class ApprovedListTest extends Specification {
     @Unroll
     def "valid list"(){
         when:
+        def sug = new SuggestionDto()
+        def sug2 = new SuggestionDto()
+
+        sug.set_questionStr(SUGGESTION_CONTENT)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(VALID_U))
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
+
+        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
+        sug.setKey(null)
+        sug2 = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus(a)
         sug.set_justification(VALID_JUSTIFICATION as String)
@@ -247,17 +273,46 @@ class ApprovedListTest extends Specification {
 
     }
 
+
     @Unroll
     def "invalid user"(){
         when:
 
-        sug.setStatus(APPROVED)
+        when:
+        def sug = new SuggestionDto()
+        def sug2 = new SuggestionDto()
+
+        sug.set_questionStr(SUGGESTION_CONTENT)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        sug.set_topicsList(topicsDto)
+
+        sug.set_student(new UserDto(VALID_U))
+        sug.setTitle("TITLE")
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        sug.setOptions(options)
+
+        sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
+        sug.setKey(null)
+        sug2 = suggestionService.createSuggestion(courseExecution.getId(),sug)
+
+        sug.setStatus("APPROVED")
         sug.set_justification(VALID_JUSTIFICATION as String)
-        sug2.setStatus(APPROVED)
+        sug2.setStatus("APPROVED")
         sug2.set_justification(VALID_JUSTIFICATION as String)
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
         suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))
+
 
         suggestionService.approvedSuggestionList(courseExecution.getId(), new UserDto(t as User))
 

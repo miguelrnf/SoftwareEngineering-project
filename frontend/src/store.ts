@@ -54,6 +54,9 @@ export default new Vuex.Store({
     },
     currentCourse(state, currentCourse: Course) {
       state.currentCourse = currentCourse;
+    },
+    score(state, user: User) {
+      state.user = user;
     }
   },
   actions: {
@@ -98,6 +101,12 @@ export default new Vuex.Store({
     async demoAdminLogin({ commit }) {
       const authResponse = await RemoteServices.demoAdminLogin();
       commit('login', authResponse);
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
+    },
+    async updateScore({ commit }) {
+      const user = await RemoteServices.updateScore();
+      commit('score', user);
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },

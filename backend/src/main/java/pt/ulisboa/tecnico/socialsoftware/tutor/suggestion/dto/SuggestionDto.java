@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -25,6 +26,11 @@ public class SuggestionDto implements Serializable{
     private String _status;
     private UserDto _student;
     private CourseExecution _courseexecution;
+    private List<OptionDto> options = new ArrayList<>();
+    private Boolean _isprivate = false;
+
+
+    private String title;
 
 
     public SuggestionDto(){
@@ -40,10 +46,14 @@ public class SuggestionDto implements Serializable{
         this._student=new UserDto(suggestion.get_student());
         this._questionStr=suggestion.get_questionStr();
         this._status=suggestion.getStatus().name();
+        this._isprivate = suggestion.get_isprivate();
 
         if (suggestion.getCreationDate() != null)
             this.creationDate = suggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
+        this.options = suggestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+
+        this.title= suggestion.getTitle();
 
     }
 
@@ -124,14 +134,26 @@ public class SuggestionDto implements Serializable{
         this._courseexecution = _courseexecution;
     }
 
+    public List<OptionDto> getOptions() {
+        return options;
+    }
 
+    public void setOptions(List<OptionDto> options) {
+        this.options = options;
+    }
+    public String getTitle() {
+        return title;
+    }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SuggestionDto that = (SuggestionDto) o;
-        return _id == that._id &&
+        return _id.equals(that._id) &&
                 Objects.equals(key, that.key) &&
                 Objects.equals(_questionStr, that._questionStr) &&
                 Objects.equals(_topicsList, that._topicsList) &&
@@ -160,5 +182,13 @@ public class SuggestionDto implements Serializable{
                 ", _status='" + _status + '\'' +
                 ", _student=" + _student +
                 '}';
+    }
+
+    public Boolean get_isprivate() {
+        return _isprivate;
+    }
+
+    public void set_isprivate(Boolean _isprivate) {
+        this._isprivate = _isprivate;
     }
 }
