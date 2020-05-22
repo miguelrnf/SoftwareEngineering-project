@@ -191,14 +191,14 @@ class SuggestionDashboard extends Specification {
 
         and: "valid suggesiton"
         VALID_SUGGESTION = new SuggestionDto()
-        VALID_SUGGESTION.set_id(VALID_ID)
-        VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
+        VALID_SUGGESTION.setId(VALID_ID)
+        VALID_SUGGESTION.setStudentQuestion(SUGGESTION_CONTENT)
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
         VALID_SUGGESTION.set_changed(null)
         VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
-        VALID_SUGGESTION.set_student(VALID_Udto)
+        VALID_SUGGESTION.setStudent(VALID_Udto)
 
         and: "a valid user - STUDENT "
         VALID_U1 = new User()
@@ -242,8 +242,8 @@ class SuggestionDashboard extends Specification {
 
         and: "valid suggestion"
         def suggestion = new Suggestion()
-        suggestion.set_student(userS)
-        suggestion.set_questionStr(SUGGESTION_CONTENT)
+        suggestion.setStudent(userS)
+        suggestion.setStudentQuestion(SUGGESTION_CONTENT)
         suggestion.setKey(VALID_KEY)
         suggestion.setCreationDate(LocalDateTime.now())
         suggestion.setCourse(courseExecution)

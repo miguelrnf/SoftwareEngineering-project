@@ -179,16 +179,16 @@ class ApproveSuggestion extends Specification{
 
         and: "a suggestion"
         sug = new SuggestionDto()
-        sug.set_questionStr(SUGGESTION_CONTENT as String)
+        sug.setStudentQuestion(SUGGESTION_CONTENT as String)
         sug.setKey(VALID_KEY)
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
-        sug.set_topicsList(topicsDto)
-        sug.set_id(VALID_ID)
-        sug.set_student(new UserDto(userS))
+        sug.setTopicsList(topicsDto)
+        sug.setId(VALID_ID)
+        sug.setStudent(new UserDto(userS))
 
         suggestion = new Suggestion(courseExecution, userS, sug)
 
@@ -208,16 +208,16 @@ class ApproveSuggestion extends Specification{
         def sug = new SuggestionDto()
         def sug2 = new SuggestionDto()
 
-        sug.set_questionStr(SUGGESTION_CONTENT)
+        sug.setStudentQuestion(SUGGESTION_CONTENT)
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
 
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
 
-        sug.set_student(new UserDto(VALID_U))
+        sug.setStudent(new UserDto(VALID_U))
         sug.setTitle("TITLE")
 
         def optionDto = new OptionDto()
@@ -230,13 +230,13 @@ class ApproveSuggestion extends Specification{
         sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus(String.valueOf(status))
-        sug.set_justification(j)
+        sug.setJustification(j)
 
 
         def result = suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
 
         then:
-        result.get_justification() == sug.get_justification()
+        result.getJustification() == sug.getJustification()
         result.getStatus() == String.valueOf(status)
 
 
@@ -253,16 +253,16 @@ class ApproveSuggestion extends Specification{
         def sug = new SuggestionDto()
         def sug2 = new SuggestionDto()
 
-        sug.set_questionStr(SUGGESTION_CONTENT)
+        sug.setStudentQuestion(SUGGESTION_CONTENT)
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
 
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
 
-        sug.set_student(new UserDto(VALID_U))
+        sug.setStudent(new UserDto(VALID_U))
         sug.setTitle("TITLE")
 
         def optionDto = new OptionDto()
@@ -275,7 +275,7 @@ class ApproveSuggestion extends Specification{
         sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus("APPROVED")
-        sug.set_justification(j)
+        sug.setJustification(j)
 
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))

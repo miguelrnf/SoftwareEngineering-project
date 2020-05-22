@@ -22,12 +22,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "sugg_indx_0", columnList = "key")
         })
 public class Suggestion {
-    public Boolean get_isprivate() {
-        return _isprivate;
+    public Boolean getIsprivate() {
+        return isprivate;
     }
 
-    public void set_isprivate(Boolean _isprivate) {
-        this._isprivate = _isprivate;
+    public void setIsprivate(Boolean isprivate) {
+        this.isprivate = isprivate;
     }
 
     public enum Status {
@@ -36,25 +36,25 @@ public class Suggestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer _id;
+    private Integer id;
 
     @Column(unique=true, nullable = false)
     private Integer key;
 
-    @Column(columnDefinition = "TEXT")
-    private String _questionStr;
+    @Column(name = "title")
+    private String title;
+
+    @Column(columnDefinition = "student_question")
+    private String studentQuestion;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "suggestions")
     private Set<Topic> topics = new HashSet<>();
 
-    @Column(name = "changed_status", columnDefinition = "boolean default false")
-    private Boolean _changed;
+    @Column(name = "teacher_explanation")
+    private String teacherExplanation;
 
-    @Column(name = "justification")
-    private String _justification;
-
-    @Column(name = "isprivate")
-    private Boolean _isprivate;
+    @Column(name = "privacy")
+    private Boolean isprivate;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -73,8 +73,6 @@ public class Suggestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
-    private String title;
-
     public Suggestion() {
     }
 
@@ -82,10 +80,9 @@ public class Suggestion {
         checkConsistentSuggestion(suggestionDto);
         this.key= suggestionDto.getKey();
         this.student= user;
-        this._questionStr= suggestionDto.get_questionStr();
-        this._changed = false;
-        this._justification = "";
-        this._isprivate = false;
+        this.studentQuestion = suggestionDto.getStudentQuestion();
+        this.teacherExplanation = "";
+        this.isprivate = false;
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -109,19 +106,19 @@ public class Suggestion {
     }
 
     private void checkConsistentSuggestion(SuggestionDto suggestionDto) {
-        if (suggestionDto.get_questionStr().trim().length() == 0 ){
+        if (suggestionDto.getStudentQuestion().trim().length() == 0 ){
             throw new TutorException(SUGGESTION_EMPTY);
         }
-        if (suggestionDto.get_questionStr().trim().length() > 500 ){
+        if (suggestionDto.getStudentQuestion().trim().length() > 500 ){
             throw new TutorException(SUGGESTION_TOO_LONG);
         }
     }
 
-    public Set<Topic> get_topicsList() {
+    public Set<Topic> getTopicsList() {
         return topics;
     }
 
-    public void set_topicsList(Set<Topic> t) {
+    public void setTopicsList(Set<Topic> t) {
         this.topics = t;
     }
 
@@ -132,12 +129,12 @@ public class Suggestion {
     public void setCourse(CourseExecution courseExecution) {
         this.courseExecution = courseExecution;
     }
-    public Integer get_id() {
-        return _id;
+    public Integer getId() {
+        return id;
     }
 
-    public void set_id(Integer _id) {
-        this._id = _id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getKey() {
@@ -148,34 +145,23 @@ public class Suggestion {
         this.key = key;
     }
 
-    public String get_questionStr() {
-        return _questionStr;
+    public String getStudentQuestion() {
+        return studentQuestion;
     }
 
-    public void set_questionStr(String _questionStr) {
-        this._questionStr = _questionStr;
+    public void setStudentQuestion(String studentQuestion) {
+        this.studentQuestion = studentQuestion;
     }
 
-
-
-
-    public Boolean get_changed() {
-        return _changed;
+    public String getTeacherExplanation() {
+        return teacherExplanation;
     }
 
-    public void set_changed(Boolean _changed) {
-        this._changed = _changed;
-    }
-
-    public String get_justification() {
-        return _justification;
-    }
-
-    public void set_justification(String _justification) {
-        if (_justification.length() == 0 ){
+    public void setTeacherExplanation(String teacherExplanation) {
+        if (teacherExplanation.length() == 0 ){
             throw new TutorException(JUSTIFICATION_EMPTY);
         }
-        this._justification = _justification;
+        this.teacherExplanation = teacherExplanation;
     }
 
     public LocalDateTime getCreationDate() {
@@ -186,11 +172,11 @@ public class Suggestion {
         this.creationDate = creationDate;
     }
 
-    public User get_student() {
+    public User getStudent() {
         return student;
     }
 
-    public void set_student(User student) {
+    public void setStudent(User student) {
         this.student = student;
     }
 
@@ -227,12 +213,11 @@ public class Suggestion {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Suggestion that = (Suggestion) o;
-        return Objects.equals(_id, that._id) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(key, that.key) &&
-                Objects.equals(_questionStr, that._questionStr) &&
+                Objects.equals(studentQuestion, that.studentQuestion) &&
                 Objects.equals(topics, that.topics) &&
-                Objects.equals(_changed, that._changed) &&
-                Objects.equals(_justification, that._justification) &&
+                Objects.equals(teacherExplanation, that.teacherExplanation) &&
                 status == that.status &&
                 Objects.equals(courseExecution, that.courseExecution) &&
                 Objects.equals(student, that.student);
@@ -240,6 +225,6 @@ public class Suggestion {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, key, _questionStr, topics, _changed, _justification, status, courseExecution, student);
+        return Objects.hash(id, key, studentQuestion, topics, teacherExplanation, status, courseExecution, student);
     }
 }

@@ -188,24 +188,24 @@ class ApprovedListTest extends Specification {
 
         and: "a suggestion"
         sug = new SuggestionDto()
-        sug.set_questionStr(SUGGESTION_CONTENT as String)
+        sug.setStudentQuestion(SUGGESTION_CONTENT as String)
         sug.setKey(VALID_KEY)
 
         sug2 = new SuggestionDto()
-        sug2.set_questionStr(SUGGESTION_CONTENT as String)
+        sug2.setStudentQuestion(SUGGESTION_CONTENT as String)
         sug2.setKey(VALID_KEY2)
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
-        sug.set_topicsList(topicsDto)
-        sug.set_id(VALID_ID)
-        sug.set_student(new UserDto(userS))
+        sug.setTopicsList(topicsDto)
+        sug.setId(VALID_ID)
+        sug.setStudent(new UserDto(userS))
 
-        sug2.set_topicsList(topicsDto)
-        sug2.set_id(VALID_ID2)
-        sug2.set_student(new UserDto(userS))
+        sug2.setTopicsList(topicsDto)
+        sug2.setId(VALID_ID2)
+        sug2.setStudent(new UserDto(userS))
 
         suggestion = new Suggestion(courseExecution, userS, sug)
         suggestion2 = new Suggestion(courseExecution, userS, sug2)
@@ -228,16 +228,16 @@ class ApprovedListTest extends Specification {
         def sug = new SuggestionDto()
         def sug2 = new SuggestionDto()
 
-        sug.set_questionStr(SUGGESTION_CONTENT)
+        sug.setStudentQuestion(SUGGESTION_CONTENT)
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
 
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
 
-        sug.set_student(new UserDto(VALID_U))
+        sug.setStudent(new UserDto(VALID_U))
         sug.setTitle("TITLE")
 
         def optionDto = new OptionDto()
@@ -252,9 +252,9 @@ class ApprovedListTest extends Specification {
         sug2 = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus(a)
-        sug.set_justification(VALID_JUSTIFICATION as String)
+        sug.setJustification(VALID_JUSTIFICATION as String)
         sug2.setStatus(b)
-        sug2.set_justification(VALID_JUSTIFICATION as String)
+        sug2.setJustification(VALID_JUSTIFICATION as String)
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
         suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))
@@ -282,16 +282,16 @@ class ApprovedListTest extends Specification {
         def sug = new SuggestionDto()
         def sug2 = new SuggestionDto()
 
-        sug.set_questionStr(SUGGESTION_CONTENT)
+        sug.setStudentQuestion(SUGGESTION_CONTENT)
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
 
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
 
-        sug.set_student(new UserDto(VALID_U))
+        sug.setStudent(new UserDto(VALID_U))
         sug.setTitle("TITLE")
 
         def optionDto = new OptionDto()
@@ -306,9 +306,9 @@ class ApprovedListTest extends Specification {
         sug2 = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus("APPROVED")
-        sug.set_justification(VALID_JUSTIFICATION as String)
+        sug.setJustification(VALID_JUSTIFICATION as String)
         sug2.setStatus("APPROVED")
-        sug2.set_justification(VALID_JUSTIFICATION as String)
+        sug2.setJustification(VALID_JUSTIFICATION as String)
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
         suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))

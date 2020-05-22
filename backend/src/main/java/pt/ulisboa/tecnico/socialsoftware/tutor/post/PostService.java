@@ -63,8 +63,7 @@ public class PostService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto submitPost(PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
-        String username = postQuestionDto.getUser().getUsername();
-        User user = checkIfUserExistsByUsername(username);
+        User user = checkIfUserExistsByUsername(postQuestionDto.getUser().getUsername());
 
         checkIfUserHasRoleStudent(user);
         Question question = checkIfQuestionExists(postQuestionDto);
