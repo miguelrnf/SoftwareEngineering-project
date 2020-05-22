@@ -196,7 +196,6 @@ class SuggestionDashboard extends Specification {
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
-        VALID_SUGGESTION.set_changed(null)
         VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
         VALID_SUGGESTION.setStudent(VALID_Udto)
 
@@ -230,10 +229,14 @@ class SuggestionDashboard extends Specification {
 
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+        def set = new HashSet<CourseExecution>()
+        set.add(courseExecution)
+        userS.setCourseExecutions(set)
 
 
         and: "a user with the role student that didn't create that suggestion"
         def userS2 = new User(VALID_NAME2, VALID_USERNAME2, 3, User.Role.STUDENT)
+        userS2.setCourseExecutions(set)
 
         and:
         def topic = new Topic();

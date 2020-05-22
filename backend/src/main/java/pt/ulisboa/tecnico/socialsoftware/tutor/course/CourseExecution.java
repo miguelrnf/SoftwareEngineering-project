@@ -78,6 +78,10 @@ public class CourseExecution implements DomainEntity {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Course.Type getType() {
         return type;
     }

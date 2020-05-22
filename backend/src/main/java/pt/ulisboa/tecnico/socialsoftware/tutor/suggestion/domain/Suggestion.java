@@ -22,14 +22,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "sugg_indx_0", columnList = "key")
         })
 public class Suggestion {
-    public Boolean getIsprivate() {
-        return isprivate;
-    }
-
-    public void setIsprivate(Boolean isprivate) {
-        this.isprivate = isprivate;
-    }
-
     public enum Status {
         TOAPPROVE, APPROVED, REJECTED, QUESTION
     }
@@ -44,7 +36,7 @@ public class Suggestion {
     @Column(name = "title")
     private String title;
 
-    @Column(columnDefinition = "student_question")
+    @Column(name = "student_question")
     private String studentQuestion;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "suggestions")
@@ -207,6 +199,13 @@ public class Suggestion {
         }
     }
 
+    public Boolean getIsprivate() {
+        return isprivate;
+    }
+
+    public void setIsprivate(Boolean isprivate) {
+        this.isprivate = isprivate;
+    }
 
     @Override
     public boolean equals(Object o) {
