@@ -215,15 +215,8 @@ public class SuggestionService {
     public ListByUsernameDto listAllSuggestionsbyUsername(String username) {
         User u = checkIfUserExists(username);
         ListByUsernameDto dto = new ListByUsernameDto();
-        System.out.println("*************************************************************************");
-        System.out.println(suggestionRepository.findAll());
-        System.out.println("############################################################################");
-        System.out.println(u.toString());
-        System.out.println("############################################################################");
-        System.out.println(u.getCourseExecutions().stream().map(c -> suggestionRepository.listAllSuggestionsbyCourseId(c.getId())));
-        System.out.println("*************************************************************************");
         List<SuggestionDto> list = u.getCourseExecutions().stream().flatMap(c -> suggestionRepository.listAllSuggestionsbyCourseId(c.getId())
-                .stream().map(SuggestionDto::new).filter(s -> s.getStudent().getUsername().equals(username)).collect(Collectors.toList()).stream())
+                .stream().map(SuggestionDto::new).filter(s -> s.getStudent().getUsername().equals(username)))
                 .collect(Collectors.toList());
         dto.setListByUsernameDto(list);
         dto.setNumberofapprovedsuugs(u.getnumberofapprovedsuggs());
