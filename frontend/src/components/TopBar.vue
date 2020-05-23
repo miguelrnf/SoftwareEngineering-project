@@ -262,7 +262,8 @@
         </v-menu>
 
 
-        <v-btn to="/study/home"
+        <v-btn
+                to="/study/home"
                v-if="isStudent && currentCourse"
                text dark
                data-cy="Study"
@@ -559,14 +560,14 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/study/home" v-if="isStudent && currentCourse">
+        <!--<v-list-item to="/study/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
             <v-icon>fas fa-book-reader</v-icon>
           </v-list-item-action>
           <v-list-item-content class="mobileTitle">
            Study
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item>-->
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
           <v-list-item-action>
