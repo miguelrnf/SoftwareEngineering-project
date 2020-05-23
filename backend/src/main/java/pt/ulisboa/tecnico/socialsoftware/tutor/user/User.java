@@ -51,8 +51,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers;
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
-    private Integer numberofsuggestions;
-    private Integer numberofsuggestionsapproved;
+    private Integer numberOfSuggestions;
+    private Integer numberOfSuggestionsApproved;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -63,12 +63,11 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
     @ManyToMany
     private Set<Tournament> tournaments = new HashSet<>();
-
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Suggestion> suggestions = new HashSet<>();
@@ -99,24 +98,30 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
         this.isDashboardPrivate = false;
-        this.numberofsuggestions = 0;
-        this.numberofsuggestionsapproved = 0;
+        this.numberOfSuggestions = 0;
+        this.numberOfSuggestionsApproved = 0;
     }
 
-    public void incrementNumberofsuggestions () {this.numberofsuggestions++;}
-
-    public void incrementNumberofapprovedsuggestions () {this.numberofsuggestionsapproved++;}
-
-    public Integer getnumberofsuggs () {return this.numberofsuggestions;}
-
-    public Integer getnumberofapprovedsuggs () {return this.numberofsuggestionsapproved;}
-
-    public void setNumberofsuggestions(Integer numberofsuggestions) {
-        this.numberofsuggestions = numberofsuggestions;
+    public void incrementNumberOfSuggestions() {
+        if (this.numberOfSuggestions != null) this.numberOfSuggestions++;
+        else this.numberOfSuggestions = 1;
     }
 
-    public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
-        this.numberofsuggestionsapproved = numberofsuggestionsapproved;
+    public void incrementNumberOfApprovedSuggestions() {
+        if (this.numberOfSuggestionsApproved != null) this.numberOfSuggestionsApproved++;
+        else this.numberOfSuggestionsApproved = 1;
+    }
+
+    public Integer getNumberOfSuggestions() {return this.numberOfSuggestions;}
+
+    public Integer getNumberOfSuggestionsApproved() {return this.numberOfSuggestionsApproved;}
+
+    public void setNumberOfSuggestions(Integer numberofsuggestions) {
+        this.numberOfSuggestions = numberofsuggestions;
+    }
+
+    public void setNumberOfSuggestionsApproved(Integer numberofsuggestionsapproved) {
+        this.numberOfSuggestionsApproved = numberofsuggestionsapproved;
     }
 
     @Override

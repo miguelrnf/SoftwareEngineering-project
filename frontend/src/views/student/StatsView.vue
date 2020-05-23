@@ -116,8 +116,6 @@ export default class StatsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-
-    console.log(this.user);
   }
 }
 </script>

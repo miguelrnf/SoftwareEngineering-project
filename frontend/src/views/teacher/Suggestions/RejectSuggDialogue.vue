@@ -10,7 +10,7 @@
         <v-textarea
           outline
           rows="10"
-          v-model="suggestion._justification"
+          v-model="suggestion.teacherExplanation"
           label="Content"
           data-cy="content"
         ></v-textarea>
@@ -48,8 +48,8 @@ export default class RejectSuggestionDialog extends Vue {
   async RejectSuggestion() {
     this.suggestion.status = 'REJECTED';
 
-    if (this.suggestion._justification == '') {
-      this.suggestion._justification = 'No justification was given';
+    if (this.suggestion.teacherExplanation == '') {
+      this.suggestion.teacherExplanation = 'No justification was given';
     }
     const result = await RemoteServices.approveSuggestion(this.suggestion);
     this.$emit('save-suggestion', result);

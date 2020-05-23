@@ -147,7 +147,7 @@ class ListAllByUsername extends Specification {
 
         and: "valid course"
         VALID_COURSE = new HashSet<CourseExecution>()
-        VALID_COURSE.add (new CourseExecution(new Course(COURSE_NAME, "TECNICO" as Course.Type), ACRONYM, ACADEMIC_TERM, "TECNICO" as Course.Type))
+        VALID_COURSE.add(new CourseExecution(new Course(COURSE_NAME, "TECNICO" as Course.Type), ACRONYM, ACADEMIC_TERM, "TECNICO" as Course.Type))
 
         and: "a user with the role teacher"
         VALID_U_ROLE = new User()
@@ -174,6 +174,7 @@ class ListAllByUsername extends Specification {
         VALID_U.setRole(User.Role.STUDENT)
         VALID_U.setUsername(VALID_USERNAME)
         VALID_U.setName(VALID_NAME)
+        VALID_U.setCourseExecutions(VALID_COURSE)
 
         and: "valid user DTO"
         VALID_Udto = new UserDto(VALID_U)
@@ -191,16 +192,15 @@ class ListAllByUsername extends Specification {
 
         and: "valid suggesiton"
         VALID_SUGGESTION = new SuggestionDto()
-        VALID_SUGGESTION.set_id(VALID_ID)
-        VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
-        VALID_SUGGESTION.set_isprivate(null);
+        VALID_SUGGESTION.setId(VALID_ID)
+        VALID_SUGGESTION.setStudentQuestion(SUGGESTION_CONTENT)
+        VALID_SUGGESTION.setIsPrivate(null);
         VALID_SUGGESTION.setStatus('TOAPPROVE');
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
-        VALID_SUGGESTION.set_changed(null)
         VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
-        VALID_SUGGESTION.set_student(VALID_Udto)
+        VALID_SUGGESTION.setStudent(VALID_Udto)
 
         and: "a valid user - STUDENT "
         VALID_U1 = new User()
@@ -232,6 +232,9 @@ class ListAllByUsername extends Specification {
 
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+        def set = new HashSet<CourseExecution>()
+        set.add(courseExecution)
+        userS.setCourseExecutions(set)
 
 
         and: "a user with the role student that didn't create that suggestion"
@@ -244,8 +247,8 @@ class ListAllByUsername extends Specification {
 
         and: "valid suggestion"
         def suggestion = new Suggestion()
-        suggestion.set_student(userS)
-        suggestion.set_questionStr(SUGGESTION_CONTENT)
+        suggestion.setStudent(userS)
+        suggestion.setStudentQuestion(SUGGESTION_CONTENT)
         suggestion.setKey(VALID_KEY)
         suggestion.setCreationDate(LocalDateTime.now())
         suggestion.setCourse(courseExecution)
@@ -270,13 +273,10 @@ class ListAllByUsername extends Specification {
 
 
         then:
-        (result._suggslist.size()) == (VALID_SUGGESTION_LIST.size())
+        result._suggslist.size() == VALID_SUGGESTION_LIST.size()
 
         for(int i = 0; i < result._suggslist.size(); i++) {
-
-            assert result._suggslist.get(i).get_questionStr() == VALID_SUGGESTION_LIST.get(i).get_questionStr()
-
-
+            assert result._suggslist.get(i).getStudentQuestion() == VALID_SUGGESTION_LIST.get(i).getStudentQuestion()
         }
 
 

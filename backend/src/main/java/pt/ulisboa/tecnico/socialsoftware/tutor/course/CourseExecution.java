@@ -37,7 +37,7 @@ public class CourseExecution implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(mappedBy = "courseExecutions")
+    @ManyToMany(mappedBy = "courseExecutions", fetch=FetchType.LAZY)
     private final Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
@@ -76,6 +76,10 @@ public class CourseExecution implements DomainEntity {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Course.Type getType() {
