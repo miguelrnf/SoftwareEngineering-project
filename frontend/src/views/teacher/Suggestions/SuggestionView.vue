@@ -349,7 +349,7 @@ export default class SuggestionsView extends Vue {
 
   async onSaveSuggestion(sugg: Suggestion) {
     //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
-    this.suggestions.unshift(sugg);
+    //this.suggestions.unshift(sugg);
     this.rejectSuggDialogue = false;
     this.addQuestionDialog = false;
     this.currentSuggestion = null;

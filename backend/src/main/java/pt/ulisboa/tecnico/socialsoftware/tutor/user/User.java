@@ -107,7 +107,10 @@ public class User implements UserDetails, DomainEntity {
         else this.numberOfSuggestions = 1;
     }
 
-    public void incrementNumberOfApprovedSuggestions() {this.numberOfSuggestionsApproved++;}
+    public void incrementNumberOfApprovedSuggestions() {
+        if (this.numberOfSuggestionsApproved != null) this.numberOfSuggestionsApproved++;
+        else this.numberOfSuggestionsApproved = 1;
+    }
 
     public Integer getNumberOfSuggestions() {return this.numberOfSuggestions;}
 
