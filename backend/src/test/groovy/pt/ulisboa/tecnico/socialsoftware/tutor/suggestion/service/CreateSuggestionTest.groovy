@@ -41,6 +41,7 @@ class CreateSuggestionTest extends Specification{
     public static final String VALID_USERNAME_TEACHER = "something"
     public static final String VALID_NAME_TOPIC = "Spock"
     public static final String EMPTY_SUGGESTION = ""
+    public static final String ARGUMENTO = "argumento"
     public static final String TOO_MANY_CHARS =
             '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
                     '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
@@ -220,6 +221,8 @@ class CreateSuggestionTest extends Specification{
         sug.setStudent(new UserDto(u as User))
         sug.setTitle("TITLE")
 
+        sug.setArgumento(ARGUMENTO)
+
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_CONTENT)
         optionDto.setCorrect(true)
@@ -279,6 +282,7 @@ class CreateSuggestionTest extends Specification{
 
         sug.setStudent(new UserDto(VALID_U))
         sug.setTitle("TITLE")
+        sug.setArgumento(ARGUMENTO)
 
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_CONTENT)

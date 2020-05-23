@@ -30,6 +30,16 @@ public class SuggestionDto implements Serializable{
 
     private String title;
 
+    public String getArgumento() {
+        return argumento;
+    }
+
+    public void setArgumento(String argumento) {
+        this.argumento = argumento;
+    }
+
+    private String argumento;
+
 
     public SuggestionDto(){
     }
@@ -51,7 +61,7 @@ public class SuggestionDto implements Serializable{
         this.options = suggestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
 
         this.title= suggestion.getTitle();
-
+        this.argumento = suggestion.getArgumento();
     }
 
 

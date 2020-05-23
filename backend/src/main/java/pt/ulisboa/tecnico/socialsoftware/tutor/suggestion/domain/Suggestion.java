@@ -65,6 +65,16 @@ public class Suggestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
+    private String argumento;
+
+    public String getArgumento() {
+        return argumento;
+    }
+
+    public void setArgumento(String argumento) {
+        this.argumento = argumento;
+    }
+
     public Suggestion() {
     }
 
@@ -75,6 +85,8 @@ public class Suggestion {
         this.studentQuestion = suggestionDto.getStudentQuestion();
         this.teacherExplanation = "";
         this.isprivate = false;
+
+        this.argumento = suggestionDto.getArgumento();
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -103,6 +115,10 @@ public class Suggestion {
         }
         if (suggestionDto.getStudentQuestion().trim().length() > 500 ){
             throw new TutorException(SUGGESTION_TOO_LONG);
+        }
+
+        if (suggestionDto.getArgumento().trim().length() == 0 ){
+            throw new TutorException(NOARGUMENT);
         }
     }
 
