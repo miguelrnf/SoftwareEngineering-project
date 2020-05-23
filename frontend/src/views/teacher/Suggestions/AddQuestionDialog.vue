@@ -23,7 +23,7 @@
               <v-textarea
                 outline
                 rows="10"
-                v-model="currentSuggestion._questionStr"
+                v-model="currentSuggestion.studentQuestion"
                 label="Content"
                 outlined
                 data-cy="content"
@@ -117,7 +117,7 @@ export default class AddQuestionDialog extends Vue {
   currentSuggestion!: Suggestion;
 
   questionTopics: Topic[] = JSON.parse(
-    JSON.stringify(this.suggestion._topicsList)
+    JSON.stringify(this.suggestion.topicsList)
   );
 
   created() {
@@ -169,9 +169,9 @@ export default class AddQuestionDialog extends Vue {
   }
 
   async saveTopics() {
-    if (this.suggestion._id) {
+    if (this.suggestion.id) {
       try {
-        this.suggestion._topicsList = this.questionTopics;
+        this.suggestion.topicsList = this.questionTopics;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -179,7 +179,7 @@ export default class AddQuestionDialog extends Vue {
 
     this.$emit(
       'question-changed-topics',
-      this.suggestion._id,
+      this.suggestion.id,
       this.questionTopics
     );
   }

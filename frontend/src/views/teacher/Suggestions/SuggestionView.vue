@@ -25,12 +25,12 @@
 
       <template v-slot:item._questionStr="{ item }">
         <p
-          v-html="convertMarkDownNoFigure(item._questionStr, null)"
+          v-html="convertMarkDownNoFigure(item.studentQuestion, null)"
           @click="showSuggestionDialog(item)"
       /></template>
       <template v-slot:item._questionStr="{ item }">
         <p
-          v-html="convertMarkDown(item._questionStr, null)"
+          v-html="convertMarkDown(item.studentQuestion, null)"
           @click="showSuggestionDialog(item)"
       /></template>
 
@@ -46,7 +46,7 @@
       <template v-slot:item._topicsList="{ item }">
         <v-row justify="space-around">
           <v-chip-group center-active column active-class="primary--text">
-            <v-chip v-for="tag in item._topicsList" :key="tag.name">
+            <v-chip v-for="tag in item.topicsList" :key="tag.name">
               {{ tag.name }}
             </v-chip>
           </v-chip-group>
@@ -247,10 +247,10 @@ export default class SuggestionsView extends Vue {
 
   onSuggestionTopics(suggestionId: Number, topics: Topic[]) {
     let sugg = this.suggestions.find(
-      (sugg: Suggestion) => sugg._id == suggestionId
+      (sugg: Suggestion) => sugg.id == suggestionId
     );
     if (sugg) {
-      sugg._topicsList = topics;
+      sugg.topicsList = topics;
     }
   }
 

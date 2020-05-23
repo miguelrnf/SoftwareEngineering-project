@@ -99,8 +99,8 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-  &quot;_questionStr&quot;: &quot;string&quot;,&#xd;
-  &quot;_student&quot;: {&#xd;
+  &quot;studentQuestion&quot;: &quot;string&quot;,&#xd;
+  &quot;student&quot;: {&#xd;
     &quot;id&quot;: 676,&#xd;
     &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
     &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
@@ -115,7 +115,7 @@
       &quot;sequence&quot;: 0&#xd;
     }&#xd;
   ],&#xd;
-  &quot;_topicsList&quot;: [&#xd;
+  &quot;topicsList&quot;: [&#xd;
     {&#xd;
       &quot;id&quot;: 98,&#xd;
       &quot;name&quot;: &quot;Uber&quot;&#xd;

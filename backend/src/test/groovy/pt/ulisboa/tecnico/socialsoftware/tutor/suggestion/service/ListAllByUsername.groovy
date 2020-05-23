@@ -194,7 +194,7 @@ class ListAllByUsername extends Specification {
         VALID_SUGGESTION = new SuggestionDto()
         VALID_SUGGESTION.setId(VALID_ID)
         VALID_SUGGESTION.setStudentQuestion(SUGGESTION_CONTENT)
-        VALID_SUGGESTION.setIsprivate(null);
+        VALID_SUGGESTION.setIsPrivate(null);
         VALID_SUGGESTION.setStatus('TOAPPROVE');
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))

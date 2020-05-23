@@ -63,7 +63,7 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
     @ManyToMany
@@ -102,13 +102,16 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfSuggestionsApproved = 0;
     }
 
-    public void incrementNumberofsuggestions () {this.numberOfSuggestions++;}
+    public void incrementNumberOfSuggestions() {
+        if (this.numberOfSuggestions != null) this.numberOfSuggestions++;
+        else this.numberOfSuggestions = 1;
+    }
 
-    public void incrementNumberofapprovedsuggestions () {this.numberOfSuggestionsApproved++;}
+    public void incrementNumberOfApprovedSuggestions() {this.numberOfSuggestionsApproved++;}
 
-    public Integer getnumberofsuggs () {return this.numberOfSuggestions;}
+    public Integer getNumberOfSuggestions() {return this.numberOfSuggestions;}
 
-    public Integer getnumberofapprovedsuggs () {return this.numberOfSuggestionsApproved;}
+    public Integer getNumberOfSuggestionsApproved() {return this.numberOfSuggestionsApproved;}
 
     public void setNumberOfSuggestions(Integer numberofsuggestions) {
         this.numberOfSuggestions = numberofsuggestions;
