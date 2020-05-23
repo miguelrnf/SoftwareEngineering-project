@@ -10,7 +10,7 @@
           class="ma-1"
           x-small
           label
-          :color="getColor1(suggestion._isprivate)"
+          :color="getColor1(suggestion.isprivate)"
           dark
         ></v-chip>
         <v-chip

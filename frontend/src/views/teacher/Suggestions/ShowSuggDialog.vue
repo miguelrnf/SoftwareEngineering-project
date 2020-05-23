@@ -10,7 +10,7 @@
       <v-app-bar dense color="grey lighten-2">
         <v-row>
           <v-card-title class="mt-n2 ml-3">{{
-            'Suggestion' + suggestion._id
+            'Suggestion' + suggestion.id
           }}</v-card-title>
 
           <v-spacer />
@@ -19,11 +19,11 @@
               class="ma-1"
               x-small
               label
-              :color="getColor1(suggestion._isprivate)"
+              :color="getColor1(suggestion.isprivate)"
               text-color="white"
               dark
               ><span class="white--text ">{{
-                getPrivacyTag(suggestion._isprivate)
+                getPrivacyTag(suggestion.isprivate)
               }}</span></v-chip
             >
             <v-chip
@@ -43,7 +43,7 @@
           <span v-html="convertMarkDown(suggestion.title)" />
         </p>
         <div class="headline text-left">
-          <span v-html="convertMarkDown(suggestion._questionStr)" />
+          <span v-html="convertMarkDown(suggestion.studentQuestion)" />
         </div>
         <v-row>
           <span v-html="convertMarkDown('Options: ')" />
@@ -62,7 +62,7 @@
         <v-row>
           <span v-html="convertMarkDown('Topics: ')" />
           <v-chip
-            v-for="option in suggestion._topicsList"
+            v-for="option in suggestion.topicsList"
             :key="option.id"
             class="ma-1"
             x-small
@@ -77,7 +77,7 @@
           <span
             v-html="
               convertMarkDown(
-                suggestion._student.username + ' on ' + suggestion.creationDate
+                suggestion.student.username + ' on ' + suggestion.creationDate
               )
             "
           />
@@ -90,7 +90,7 @@
         </v-app-bar>
 
         <v-card-text class="text-left">
-          <span>{{ suggestion._justification }}</span>
+          <span>{{ suggestion.teacherExplanation }}</span>
         </v-card-text>
       </h1>
       <br />
@@ -105,7 +105,7 @@
           >close</v-btn
         >
 
-        <h1 v-if="suggestion.status == 'TOAPPROVE'">
+        <h1 v-if="suggestion.status === 'TOAPPROVE'">
           <v-btn
             dark
             color="green darken-1"

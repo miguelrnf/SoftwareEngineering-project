@@ -15,31 +15,18 @@ import java.util.stream.Collectors;
 
 public class SuggestionDto implements Serializable{
 
-
     private Integer id;
     private Integer key;
     private String studentQuestion;
     private List<TopicDto> topicsList = new ArrayList<>();
-    private String justification;
+    private String teacherExplanation;
     private String creationDate = null;
     private String status;
     private UserDto student;
-    private CourseExecution courseExecution;
+    private Integer courseExecution;
     private List<OptionDto> options = new ArrayList<>();
-    private Boolean isprivate = false;
-
+    private Boolean isPrivate = false;
     private String title;
-
-    public String getArgumento() {
-        return argumento;
-    }
-
-    public void setArgumento(String argumento) {
-        this.argumento = argumento;
-    }
-
-    private String argumento;
-
 
     public SuggestionDto(){
     }
@@ -48,12 +35,12 @@ public class SuggestionDto implements Serializable{
         this.id = suggestion.getId();
         this.key=suggestion.getKey();
         this.topicsList = suggestion.getTopicsList().stream().map(TopicDto::new).collect(Collectors.toList());
-        this.courseExecution = suggestion.getCourse();
-        this.justification =suggestion.getTeacherExplanation();
+        this.courseExecution = suggestion.getCourse().getId();
+        this.teacherExplanation =suggestion.getTeacherExplanation();
         this.student =new UserDto(suggestion.getStudent());
         this.studentQuestion =suggestion.getStudentQuestion();
         this.status =suggestion.getStatus().name();
-        this.isprivate = suggestion.getIsprivate();
+        this.isPrivate = suggestion.getIsPrivate();
 
         if (suggestion.getCreationDate() != null)
             this.creationDate = suggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -61,7 +48,7 @@ public class SuggestionDto implements Serializable{
         this.options = suggestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
 
         this.title= suggestion.getTitle();
-        this.argumento = suggestion.getArgumento();
+
     }
 
 
@@ -97,12 +84,12 @@ public class SuggestionDto implements Serializable{
         this.topicsList = topicsList;
     }
 
-    public String getJustification() {
-        return justification;
+    public String getTeacherExplanation() {
+        return teacherExplanation;
     }
 
-    public void setJustification(String justification) {
-        this.justification = justification;
+    public void setTeacherExplanation(String teacherExplanation) {
+        this.teacherExplanation = teacherExplanation;
     }
 
     public String getCreationDate() {
@@ -129,19 +116,19 @@ public class SuggestionDto implements Serializable{
         this.student = student;
     }
 
-    public void setCourse(CourseExecution _courseexecution) {
-        this.courseExecution = _courseexecution;
+    public void setCourse(Integer courseExecutionId) {
+        this.courseExecution = courseExecutionId;
     }
 
     public List<OptionDto> getOptions() {
         return options;
     }
 
-    public CourseExecution getCourseExecution() {
+    public Integer getCourseExecution() {
         return courseExecution;
     }
 
-    public void setCourseExecution(CourseExecution courseExecution) {
+    public void setCourseExecution(Integer courseExecutionId) {
         this.courseExecution = courseExecution;
     }
 
@@ -164,7 +151,7 @@ public class SuggestionDto implements Serializable{
                 Objects.equals(key, that.key) &&
                 Objects.equals(studentQuestion, that.studentQuestion) &&
                 Objects.equals(topicsList, that.topicsList) &&
-                Objects.equals(justification, that.justification) &&
+                Objects.equals(teacherExplanation, that.teacherExplanation) &&
                 Objects.equals(creationDate, that.creationDate) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(student, that.student);
@@ -172,28 +159,31 @@ public class SuggestionDto implements Serializable{
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, key, studentQuestion, topicsList, justification, creationDate, status, student);
+        return Objects.hash(id, key, studentQuestion, topicsList, teacherExplanation, creationDate, status, student);
     }
 
     @Override
     public String toString() {
         return "SuggestionDto{" +
-                "_id=" + id +
+                "id=" + id +
                 ", key=" + key +
-                ", _questionStr='" + studentQuestion + '\'' +
-                ", _topicsList=" + topicsList +
-                ", _justification='" + justification + '\'' +
+                ", studentQuestion='" + studentQuestion + '\'' +
+                ", topicsList=" + topicsList +
+                ", teacherExplanation='" + teacherExplanation + '\'' +
                 ", creationDate='" + creationDate + '\'' +
-                ", _status='" + status + '\'' +
-                ", _student=" + student +
+                ", status='" + status + '\'' +
+                ", student=" + student.getUsername() +
+                ", options=" + options +
+                ", isprivate=" + isPrivate +
+                ", title='" + title + '\'' +
                 '}';
     }
 
-    public Boolean getIsprivate() {
-        return isprivate;
+    public Boolean getIsPrivate() {
+        return isPrivate;
     }
 
-    public void setIsprivate(Boolean isprivate) {
-        this.isprivate = isprivate;
+    public void setIsPrivate(Boolean isPrivate) {
+        this.isPrivate = isPrivate;
     }
 }

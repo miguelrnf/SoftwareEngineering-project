@@ -249,7 +249,6 @@ export default class RemoteServices {
         sugg
       )
       .then(response => {
-        console.log(new Suggestion(response.data));
         return new Suggestion(response.data);
       })
       .catch(async error => {

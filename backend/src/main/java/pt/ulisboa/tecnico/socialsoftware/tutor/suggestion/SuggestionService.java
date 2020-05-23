@@ -81,11 +81,11 @@ public class SuggestionService {
 
         Suggestion suggestion = new Suggestion(course, user, suggestionDto);
 
-        user.incrementNumberofsuggestions();
+        user.incrementNumberOfSuggestions();
 
         suggestion.setCreationDate(LocalDateTime.now());
         suggestion.setTopicsList(topics);
-        suggestion.setIsprivate(suggestionDto.getIsprivate());
+        suggestion.setIsPrivate(suggestionDto.getIsPrivate());
 
         //new
         checkTitleAndOptions(suggestionDto);
@@ -118,12 +118,12 @@ public class SuggestionService {
         suggestion.setStatus( Suggestion.Status.valueOf(suggestionDto.getStatus()));
 
         if (suggestionDto.getStatus().equals("REJECTED")) {
-            suggestion.setTeacherExplanation(suggestionDto.getJustification());
-            suggestion.getStudent().incrementNumberofsuggestions();
+            suggestion.setTeacherExplanation(suggestionDto.getTeacherExplanation());
+            suggestion.getStudent().incrementNumberOfSuggestions();
         }
 
         else
-            suggestion.getStudent().incrementNumberofapprovedsuggestions();
+            suggestion.getStudent().incrementNumberOfApprovedSuggestions();
 
         return new SuggestionDto(suggestion);
     }
@@ -178,12 +178,12 @@ public class SuggestionService {
         }
 
         else if (s.getStudentQuestion().equals(suggestionDto.getStudentQuestion())) {
-            s.setIsprivate(suggestionDto.getIsprivate());
+            s.setIsPrivate(suggestionDto.getIsPrivate());
             return new SuggestionDto(s);
         }
 
         s.setStudentQuestion(suggestionDto.getStudentQuestion());
-        s.setIsprivate(suggestionDto.getIsprivate());
+        s.setIsPrivate(suggestionDto.getIsPrivate());
         s.setStatus(Suggestion.Status.TOAPPROVE);
 
         //new
@@ -219,7 +219,7 @@ public class SuggestionService {
                 .stream().map(SuggestionDto::new).filter(s -> s.getStudent().getUsername().equals(username)))
                 .collect(Collectors.toList());
         dto.setListByUsernameDto(list);
-        dto.setNumberofapprovedsuugs(u.getnumberofapprovedsuggs());
+        dto.setNumberofapprovedsuugs(u.getNumberOfSuggestionsApproved());
         dto.setNumberofsuggs(list.size());
 
         return dto;

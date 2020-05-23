@@ -29,9 +29,9 @@
             <stringProp name="Argument.value">8080</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="courseId" elementType="Argument">
-            <stringProp name="Argument.name">courseId</stringProp>
-            <stringProp name="Argument.value">2</stringProp>
+          <elementProp name="courseExecutionId" elementType="Argument">
+            <stringProp name="Argument.name">courseExecutionId</stringProp>
+            <stringProp name="Argument.value">11</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -99,8 +99,28 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-   &quot;id&quot;: 98,&#xd;
-   &quot;name&quot;: &quot;Uber&quot;&#xd;
+  &quot;studentQuestion&quot;: &quot;string&quot;,&#xd;
+  &quot;student&quot;: {&#xd;
+    &quot;id&quot;: 676,&#xd;
+    &quot;name&quot;: &quot;Demo Student&quot;,&#xd;
+    &quot;username&quot;: &quot;Demo-Student&quot;,&#xd;
+    &quot;role&quot;: &quot;STUDENT&quot;&#xd;
+  },&#xd;
+  &quot;title&quot;: &quot;string&quot;,&#xd;
+  &quot;options&quot;: [&#xd;
+    {&#xd;
+      &quot;content&quot;: &quot;string&quot;,&#xd;
+      &quot;correct&quot;: true,&#xd;
+      &quot;id&quot;: 0,&#xd;
+      &quot;sequence&quot;: 0&#xd;
+    }&#xd;
+  ],&#xd;
+  &quot;topicsList&quot;: [&#xd;
+    {&#xd;
+      &quot;id&quot;: 98,&#xd;
+      &quot;name&quot;: &quot;Uber&quot;&#xd;
+    }&#xd;
+  ]&#xd;
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -110,8 +130,8 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/courses/${courseId}/general/getTopicQuestions</stringProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <stringProp name="HTTPSampler.path">/courses/${courseExecutionId}/suggestions</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -232,7 +252,10 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">
+          <stringProp name="query">DELETE FROM options WHERE suggestion_id=1;
+DELETE FROM topics_suggestions WHERE suggestions__id=1;
+DELETE FROM suggestions WHERE key=1;
+
 
 
 

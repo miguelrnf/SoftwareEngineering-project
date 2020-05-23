@@ -252,9 +252,9 @@ class ApprovedListTest extends Specification {
         sug2 = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus(a)
-        sug.setJustification(VALID_JUSTIFICATION as String)
+        sug.setTeacherExplanation(VALID_JUSTIFICATION as String)
         sug2.setStatus(b)
-        sug2.setJustification(VALID_JUSTIFICATION as String)
+        sug2.setTeacherExplanation(VALID_JUSTIFICATION as String)
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
         suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))
@@ -306,9 +306,9 @@ class ApprovedListTest extends Specification {
         sug2 = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus("APPROVED")
-        sug.setJustification(VALID_JUSTIFICATION as String)
+        sug.setTeacherExplanation(VALID_JUSTIFICATION as String)
         sug2.setStatus("APPROVED")
-        sug2.setJustification(VALID_JUSTIFICATION as String)
+        sug2.setTeacherExplanation(VALID_JUSTIFICATION as String)
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
         suggestionService.approveSuggestion(courseExecution.getId(), sug2, new UserDto(VALID_T as User))

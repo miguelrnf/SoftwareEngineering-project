@@ -35,8 +35,8 @@ public class UserDto implements Serializable {
         else
             this.isDashboardPrivate = user.getDashboardPrivate();
 
-        this.numberofsuggestions = user.getnumberofsuggs();
-        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
+        this.numberofsuggestions = user.getNumberOfSuggestions();
+        this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
 
     }
 
