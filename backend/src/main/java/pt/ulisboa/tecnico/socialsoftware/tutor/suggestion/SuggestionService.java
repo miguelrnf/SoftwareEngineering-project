@@ -66,9 +66,6 @@ public class SuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SuggestionDto createSuggestion(int courseId, SuggestionDto suggestionDto){
-        System.out.println("********************************************");
-        System.out.println(suggestionDto.toString());
-        System.out.println("********************************************");
         CourseExecution course = courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(suggestionDto.getStudent().getUsername());
 
@@ -98,10 +95,6 @@ public class SuggestionService {
         topics.forEach(topic -> topic.addSuggestion(suggestion));
 
         entityManager.persist(suggestion);
-
-        System.out.println("********************************************");
-        System.out.println(suggestion.toString());
-        System.out.println("********************************************");
 
         return new SuggestionDto(suggestion);
     }

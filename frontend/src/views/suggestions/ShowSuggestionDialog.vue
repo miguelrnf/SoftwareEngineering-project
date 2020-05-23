@@ -150,7 +150,6 @@ export default class ShowSuggestionDialog extends Vue {
   }
 
   created() {
-    console.log(this.suggestion);
   }
 }
 </script>

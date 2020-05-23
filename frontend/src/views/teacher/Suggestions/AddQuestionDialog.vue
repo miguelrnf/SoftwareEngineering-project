@@ -140,7 +140,6 @@ export default class AddQuestionDialog extends Vue {
         new Option(),
         new Option()
       ];
-    console.log(this.currentSuggestion);
   }
 
   // TODO use EasyMDE with these configs
