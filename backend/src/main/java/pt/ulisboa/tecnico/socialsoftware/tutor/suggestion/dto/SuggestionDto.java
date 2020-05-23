@@ -15,38 +15,32 @@ import java.util.stream.Collectors;
 
 public class SuggestionDto implements Serializable{
 
-
-    private Integer _id;
+    private Integer id;
     private Integer key;
-    private String _questionStr;
-    private List<TopicDto> _topicsList = new ArrayList<>();
-    private Boolean _changed = false;
-    private String _justification;
+    private String studentQuestion;
+    private List<TopicDto> topicsList = new ArrayList<>();
+    private String teacherExplanation;
     private String creationDate = null;
-    private String _status;
-    private UserDto _student;
-    private CourseExecution _courseexecution;
+    private String status;
+    private UserDto student;
+    private Integer courseExecution;
     private List<OptionDto> options = new ArrayList<>();
-    private Boolean _isprivate = false;
-
-
+    private Boolean isPrivate = false;
     private String title;
-
 
     public SuggestionDto(){
     }
 
     public SuggestionDto(Suggestion suggestion) {
-        this._id= suggestion.get_id();
+        this.id = suggestion.getId();
         this.key=suggestion.getKey();
-        this._topicsList = suggestion.get_topicsList().stream().map(TopicDto::new).collect(Collectors.toList());
-        this._courseexecution = suggestion.getCourse();
-        this._changed=suggestion.get_changed();
-        this._justification=suggestion.get_justification();
-        this._student=new UserDto(suggestion.get_student());
-        this._questionStr=suggestion.get_questionStr();
-        this._status=suggestion.getStatus().name();
-        this._isprivate = suggestion.get_isprivate();
+        this.topicsList = suggestion.getTopicsList().stream().map(TopicDto::new).collect(Collectors.toList());
+        this.courseExecution = suggestion.getCourse().getId();
+        this.teacherExplanation =suggestion.getTeacherExplanation();
+        this.student =new UserDto(suggestion.getStudent());
+        this.studentQuestion =suggestion.getStudentQuestion();
+        this.status =suggestion.getStatus().name();
+        this.isPrivate = suggestion.getIsPrivate();
 
         if (suggestion.getCreationDate() != null)
             this.creationDate = suggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -58,12 +52,12 @@ public class SuggestionDto implements Serializable{
     }
 
 
-    public Integer get_id() {
-        return _id;
+    public Integer getId() {
+        return id;
     }
 
-    public void set_id(Integer _id) {
-        this._id = _id;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getKey() {
@@ -74,36 +68,28 @@ public class SuggestionDto implements Serializable{
         this.key = key;
     }
 
-    public String get_questionStr() {
-        return _questionStr;
+    public String getStudentQuestion() {
+        return studentQuestion;
     }
 
-    public void set_questionStr(String _questionStr) {
-        this._questionStr = _questionStr;
+    public void setStudentQuestion(String studentQuestion) {
+        this.studentQuestion = studentQuestion;
     }
 
-    public List<TopicDto> get_topicsList() {
-        return _topicsList;
+    public List<TopicDto> getTopicsList() {
+        return topicsList;
     }
 
-    public void set_topicsList(List<TopicDto> _topicsList) {
-        this._topicsList = _topicsList;
+    public void setTopicsList(List<TopicDto> topicsList) {
+        this.topicsList = topicsList;
     }
 
-    public Boolean get_changed() {
-        return _changed;
+    public String getTeacherExplanation() {
+        return teacherExplanation;
     }
 
-    public void set_changed(Boolean _changed) {
-        this._changed = _changed;
-    }
-
-    public String get_justification() {
-        return _justification;
-    }
-
-    public void set_justification(String _justification) {
-        this._justification = _justification;
+    public void setTeacherExplanation(String teacherExplanation) {
+        this.teacherExplanation = teacherExplanation;
     }
 
     public String getCreationDate() {
@@ -115,27 +101,35 @@ public class SuggestionDto implements Serializable{
     }
 
     public String getStatus() {
-        return this._status;
+        return this.status;
     }
 
     public void setStatus(String status) {
-        this._status = status;
+        this.status = status;
     }
 
-    public UserDto get_student() {
-        return _student;
+    public UserDto getStudent() {
+        return student;
     }
 
-    public void set_student(UserDto _student) {
-        this._student = _student;
+    public void setStudent(UserDto student) {
+        this.student = student;
     }
 
-    public void setCourse(CourseExecution _courseexecution) {
-        this._courseexecution = _courseexecution;
+    public void setCourse(Integer courseExecutionId) {
+        this.courseExecution = courseExecutionId;
     }
 
     public List<OptionDto> getOptions() {
         return options;
+    }
+
+    public Integer getCourseExecution() {
+        return courseExecution;
+    }
+
+    public void setCourseExecution(Integer courseExecutionId) {
+        this.courseExecution = courseExecution;
     }
 
     public void setOptions(List<OptionDto> options) {
@@ -153,42 +147,43 @@ public class SuggestionDto implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SuggestionDto that = (SuggestionDto) o;
-        return _id.equals(that._id) &&
+        return id.equals(that.id) &&
                 Objects.equals(key, that.key) &&
-                Objects.equals(_questionStr, that._questionStr) &&
-                Objects.equals(_topicsList, that._topicsList) &&
-                Objects.equals(_changed, that._changed) &&
-                Objects.equals(_justification, that._justification) &&
+                Objects.equals(studentQuestion, that.studentQuestion) &&
+                Objects.equals(topicsList, that.topicsList) &&
+                Objects.equals(teacherExplanation, that.teacherExplanation) &&
                 Objects.equals(creationDate, that.creationDate) &&
-                Objects.equals(_status, that._status) &&
-                Objects.equals(_student, that._student);
+                Objects.equals(status, that.status) &&
+                Objects.equals(student, that.student);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id, key, _questionStr, _topicsList, _changed, _justification, creationDate, _status, _student);
+        return Objects.hash(id, key, studentQuestion, topicsList, teacherExplanation, creationDate, status, student);
     }
 
     @Override
     public String toString() {
         return "SuggestionDto{" +
-                "_id=" + _id +
+                "id=" + id +
                 ", key=" + key +
-                ", _questionStr='" + _questionStr + '\'' +
-                ", _topicsList=" + _topicsList +
-                ", _changed=" + _changed +
-                ", _justification='" + _justification + '\'' +
+                ", studentQuestion='" + studentQuestion + '\'' +
+                ", topicsList=" + topicsList +
+                ", teacherExplanation='" + teacherExplanation + '\'' +
                 ", creationDate='" + creationDate + '\'' +
-                ", _status='" + _status + '\'' +
-                ", _student=" + _student +
+                ", status='" + status + '\'' +
+                ", student=" + student.getUsername() +
+                ", options=" + options +
+                ", isprivate=" + isPrivate +
+                ", title='" + title + '\'' +
                 '}';
     }
 
-    public Boolean get_isprivate() {
-        return _isprivate;
+    public Boolean getIsPrivate() {
+        return isPrivate;
     }
 
-    public void set_isprivate(Boolean _isprivate) {
-        this._isprivate = _isprivate;
+    public void setIsPrivate(Boolean isPrivate) {
+        this.isPrivate = isPrivate;
     }
 }

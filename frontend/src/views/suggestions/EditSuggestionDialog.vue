@@ -10,7 +10,7 @@
       <v-card-title>
         <span class="headline">
           {{
-            editSuggestion && editSuggestion._id === null
+            editSuggestion && editSuggestion.id === null
               ? 'New Suggestion'
               : 'Edit Suggestion'
           }}
@@ -36,7 +36,7 @@
                 <v-textarea
                   outline
                   rows="10"
-                  v-model="editSuggestion._questionStr"
+                  v-model="editSuggestion.studentQuestion"
                   label="Content"
                   outlined
                   data-cy="content"
@@ -104,7 +104,7 @@
           <v-app-bar dense color="grey lighten-2">
             <v-row>
               <v-card-title class="mt-n2 ml-3">{{
-                'Suggestion' + suggestion._id
+                'Suggestion' + suggestion.id
               }}</v-card-title>
 
               <v-spacer />
@@ -113,11 +113,11 @@
                   class="ma-1"
                   x-small
                   label
-                  :color="getColor1(suggestion._isprivate)"
+                  :color="getColor1(suggestion.isprivate)"
                   text-color="white"
                   dark
                   ><span class="white--text ">{{
-                    getPrivacyTag(suggestion._isprivate)
+                    getPrivacyTag(suggestion.isprivate)
                   }}</span></v-chip
                 >
                 <v-chip
@@ -139,7 +139,7 @@
               <span v-html="convertMarkDown(suggestion.title)" />
             </p>
             <div class="headline text-left">
-              <span v-html="convertMarkDown(suggestion._questionStr)" />
+              <span v-html="convertMarkDown(suggestion.studentQuestion)" />
             </div>
             <v-row>
               <span v-html="convertMarkDown('Options: ')" />
@@ -158,7 +158,7 @@
             <v-row>
               <span v-html="convertMarkDown('Topics: ')" />
               <v-chip
-                v-for="option in suggestion._topicsList"
+                v-for="option in suggestion.topicsList"
                 :key="option.id"
                 class="ma-1"
                 x-small
@@ -173,7 +173,7 @@
               <span
                 v-html="
                   convertMarkDown(
-                    suggestion._student.username +
+                    suggestion.student.username +
                       ' on ' +
                       suggestion.creationDate
                   )
@@ -187,7 +187,7 @@
       <v-subheader>Make Your Suggestion Private:</v-subheader>
       <v-card-actions>
         <toggle-button
-          v-model="editSuggestion._isprivate"
+          v-model="editSuggestion.isprivate"
           :value="false"
           :color="{ checked: 'red', unchecked: 'green' }"
           :width="75"
@@ -240,7 +240,7 @@ export default class EditSuggestionDialog extends Vue {
   student: User | null = null;
 
   questionTopics: Topic[] = JSON.parse(
-    JSON.stringify(this.suggestion._topicsList)
+    JSON.stringify(this.suggestion.topicsList)
   );
 
   async created() {
@@ -249,12 +249,12 @@ export default class EditSuggestionDialog extends Vue {
   }
 
   async saveSuggestion() {
-    if (this.editSuggestion && !this.editSuggestion._questionStr) {
+    if (this.editSuggestion && !this.editSuggestion.studentQuestion) {
       await this.$store.dispatch('error', 'Suggestion must have content');
       return;
     }
 
-    if (this.editSuggestion && this.editSuggestion._id != null) {
+    if (this.editSuggestion && this.editSuggestion.id != null) {
       try {
         const result = await RemoteServices.updateSuggestion(
           this.editSuggestion
@@ -265,10 +265,8 @@ export default class EditSuggestionDialog extends Vue {
       }
     } else if (this.editSuggestion) {
       try {
-        this.editSuggestion._questionStr = this.editSuggestion._questionStr;
-        this.editSuggestion._student = this.$store.getters.getUser;
-        this.editSuggestion._topicsList = this.questionTopics;
-        this.editSuggestion._isprivate = this.editSuggestion._isprivate;
+        this.editSuggestion.student = this.$store.getters.getUser;
+        this.editSuggestion.topicsList = this.questionTopics;
         const result = await RemoteServices.createSuggestion(
           this.editSuggestion
         );
@@ -311,9 +309,9 @@ export default class EditSuggestionDialog extends Vue {
   }
 
   async saveTopics() {
-    if (this.suggestion._id) {
+    if (this.suggestion.id) {
       try {
-        this.suggestion._topicsList = this.questionTopics;
+        this.suggestion.topicsList = this.questionTopics;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -321,7 +319,7 @@ export default class EditSuggestionDialog extends Vue {
 
     this.$emit(
       'question-changed-topics',
-      this.suggestion._id,
+      this.suggestion.id,
       this.questionTopics
     );
   }
