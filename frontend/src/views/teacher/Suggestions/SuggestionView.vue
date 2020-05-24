@@ -275,6 +275,7 @@ export default class SuggestionsView extends Vue {
   }
 
   showSuggestionDialog(sugg: Suggestion) {
+    RemoteServices.setCheckMark(sugg)
     this.currentSuggestion = sugg;
     this.questionDialog = true;
   }
@@ -298,6 +299,8 @@ export default class SuggestionsView extends Vue {
   }
 
   async ApproveSuggestion(sugg: Suggestion) {
+    RemoteServices.setCheckMark(sugg)
+
     if (sugg && sugg.status == 'REJECTED') {
       await this.$store.dispatch(
         'error',
@@ -317,6 +320,9 @@ export default class SuggestionsView extends Vue {
   }
 
   async RejectSuggestion(sugg: Suggestion) {
+
+    RemoteServices.setCheckMark(sugg)
+
     if (sugg != null) {
       this.currentSuggestion = sugg;
     }
@@ -343,6 +349,8 @@ export default class SuggestionsView extends Vue {
     return this.convertMarkDownNoFigure(text, image);
   }
   async AddQuestion(sugg: Suggestion) {
+    RemoteServices.setCheckMark(sugg)
+
     this.currentSuggestion = sugg;
     this.addQuestionDialog = true;
   }

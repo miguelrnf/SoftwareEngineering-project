@@ -264,8 +264,8 @@ public class SuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SuggestionDto setCheckMark(int courseExecutionId, SuggestionDto suggestionDto, UserDto userDto){
-        String username = userDto.getUsername();
+    public SuggestionDto setCheckMark(int courseExecutionId, SuggestionDto suggestionDto, String username){
+       
         courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecutionId));
         User user = checkIfUserExists(username);
 
