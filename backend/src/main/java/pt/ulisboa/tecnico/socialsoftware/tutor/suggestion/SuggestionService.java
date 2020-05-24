@@ -265,7 +265,7 @@ public class SuggestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SuggestionDto setCheckMark(int courseExecutionId, SuggestionDto suggestionDto, String username){
-        String username = userDto.getUsername();
+       
         courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecutionId));
         User user = checkIfUserExists(username);
 
