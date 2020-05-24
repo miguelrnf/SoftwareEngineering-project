@@ -71,7 +71,7 @@ public class SuggestionController {
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public SuggestionDto setCheckMark(Principal principal, @PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
         User user = (User)((Authentication)principal).getPrincipal();
-        return this.suggestionService.setCheckMark(courseExecutionId, suggDto, new UserDto(user));
+        return this.suggestionService.setCheckMark(courseExecutionId, suggDto, user.getUsername());
     }
 
 
