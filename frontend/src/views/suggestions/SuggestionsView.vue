@@ -104,18 +104,7 @@
           </template>
           <span>Edit Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              small
-              class="mr-2"
-              v-on="on"
-              @click="duplicateSuggestion(item)"
-              >cached</v-icon
-            >
-          </template>
-          <span>Duplicate Suggestion</span>
-        </v-tooltip>
+
         <!--  <v-tooltip bottom>
            <template v-slot:activator="{ on }">
              <v-icon
@@ -285,11 +274,6 @@ export default class SuggestionsView extends Vue {
     this.editSuggestionDialog = true;
   }
 
-  duplicateSuggestion(sugg: Suggestion) {
-    this.currentSuggestion = new Suggestion(sugg);
-    this.currentSuggestion.id = null;
-    this.editSuggestionDialog = true;
-  }
 
   async onSaveSuggestion(sugg: Suggestion) {
     //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
