@@ -228,6 +228,25 @@ export default class RemoteServices {
       });
   }
 
+  //--------------------------------------Study remote services --------------------------
+
+  static getTopicQuestions(topicName: String): Promise<Question[]> {
+    return httpClient
+        .get(
+            `/courses/${Store.getters.getCurrentCourse.courseId}/general/getTopicQuestions/${topicName}`,
+        )
+        .then(response => {
+          return response.data.map((question: any) => {
+            return new Question(question);
+          });
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+
+
   static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
       .put(

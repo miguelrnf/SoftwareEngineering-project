@@ -42,11 +42,11 @@ public class GeneralService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> answeredQuestionsOfTopic(int courseId, UserDto userdto, TopicDto topicDto) {
+    public List<QuestionDto> answeredQuestionsOfTopic(int courseId, UserDto userdto, String topicName) {
 
         User u = checkIfUserExists(userdto.getUsername());
 
-        Topic topic = checkIfTopicExists(courseId, topicDto);
+        Topic topic = checkIfTopicExists(courseId, topicName);
 
 
         List<QuestionDto> studentAnsweredQuestions = u.getQuizAnswers().stream()
@@ -62,8 +62,8 @@ public class GeneralService {
     }
 
 
-    private Topic checkIfTopicExists(int courseId, TopicDto topicDto){
-        Topic topic = topicRepository.findTopicByName(courseId, topicDto.getName());
+    private Topic checkIfTopicExists(int courseId, String topicName){
+        Topic topic = topicRepository.findTopicByName(courseId, topicName);
         if(topic == null) throw new TutorException(TOPIC_NOT_FOUND);
         return topic;
     }

@@ -27,12 +27,12 @@ public class GeneralController {
         this.generalService = generalService;
     }
 
-    @GetMapping(value = "/courses/{courseId}/general/getTopicQuestions")
+    @GetMapping(value = "/courses/{courseId}/general/getTopicQuestions/{topicName}")
     @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseId, 'COURSE.ACCESS'))")
-    public List<QuestionDto> answeredQuestionsOfTopic(Principal principal, @PathVariable int courseId, @Valid @RequestBody TopicDto topicDto) {
+    public List<QuestionDto> answeredQuestionsOfTopic(Principal principal, @PathVariable int courseId, @PathVariable String topicName) {
 
         User user = (User)((Authentication)principal).getPrincipal();
 
-        return this.generalService.answeredQuestionsOfTopic(courseId, new UserDto(user), topicDto);
+        return this.generalService.answeredQuestionsOfTopic(courseId, new UserDto(user), topicName);
     }
 }
