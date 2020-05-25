@@ -44,6 +44,13 @@ public class SuggestionController {
         return this.suggestionService.editSuggestion(suggDto);
     }
 
+    @DeleteMapping(value = "/courses/{courseExecutionId}/suggestions/delete/{suggestionId}")
+    @PreAuthorize("((hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public SuggestionDto deleteSuggestion(Principal principal,@PathVariable int courseExecutionId, @PathVariable int suggestionId) {
+        User user = (User)((Authentication)principal).getPrincipal();
+        return this.suggestionService.deleteSuggestion(courseExecutionId,  suggestionId,  user.getUsername());
+    }
+
     @GetMapping(value = "/courses/{courseExecutionId}/suggestions/listall")
     @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public List<SuggestionDto> listAllSuggestions(Principal principal,@PathVariable int courseExecutionId) {

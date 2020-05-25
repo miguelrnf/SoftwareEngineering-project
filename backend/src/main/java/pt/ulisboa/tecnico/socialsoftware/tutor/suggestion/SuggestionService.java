@@ -147,17 +147,22 @@ public class SuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
-        String username = userDto.getUsername();
+    public SuggestionDto deleteSuggestion(int courseId, int suggestionId, String username){
+
         courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
 
-        if(!user.getUsername().equals(suggestionDto.getStudent().getUsername()))  throw new TutorException(NOT_SUGGESTION_CREATOR);
 
-        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getId());
+        Suggestion suggestion = checkIfSuggestionExists(suggestionId);
 
-        entityManager.remove(suggestion);
+
+        suggestion.remove(user.getRole());
+
+        suggestionRepository.delete(suggestion);
+
+        return new SuggestionDto(suggestion);
     }
+
 
     @Retryable(
             value = { SQLException.class },
