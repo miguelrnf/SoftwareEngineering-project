@@ -149,7 +149,7 @@
       v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
     />
     <add-question-dialog
-      v-if="currentSuggestion"
+      v-if="currentSuggestion && addQuestionDialog"
       v-model="addQuestionDialog"
       :suggestion="currentSuggestion"
       :dialog="addQuestionDialog"
@@ -157,11 +157,11 @@
       v-on:close-add-question-dialog="onCloseAddQuestionDialog"
     />
     <reject-suggestion-dialog
-      v-if="currentSuggestion"
+      v-if="currentSuggestion && rejectSuggDialogue"
       v-model="rejectSuggDialogue"
       :suggestion="currentSuggestion"
       :dialog="rejectSuggDialogue"
-      v-on:save-suggestion="onSaveSuggestion"
+      v-on:save-suggestion="onRejectSuggestion"
       v-on:close-rejection="onCloseShowRejectDialog"
     />
   </v-card>
@@ -176,7 +176,7 @@ import Topic from '@/models/management/Topic';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 import Suggestion from '@/models/management/Suggestion';
 import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
-import ShowSuggestionDialog from '@/views/ShowSuggestion.vue';
+import ShowSuggestionDialog from '@/views/ShowSuggestionDialog.vue';
 import AddQuestionDialog from '@/views/teacher/suggestions/AddQuestionDialog.vue';
 import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestionDialog.vue';
 
@@ -302,8 +302,12 @@ export default class SuggestionsView extends Vue {
     this.editSuggestionDialog = true;
   }
 
+  async onRejectSuggestion() {
+    this.currentSuggestion = null;
+    this.rejectSuggDialogue = false;
+  }
+
   async onSaveSuggestion(sugg: Suggestion) {
-    //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
     this.suggestions.unshift(sugg);
     this.editSuggestionDialog = false;
     this.addQuestionDialog = false;
@@ -326,9 +330,11 @@ export default class SuggestionsView extends Vue {
   }
 
   isOwner(suggestion: Suggestion): boolean {
-    return (
-      this.$store.getters.getUser.username === suggestion.student?.username
-    );
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === suggestion.student?.username
+      );
+    } else return false;
   }
 
   isTeacher(): boolean {
