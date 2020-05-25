@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto" max-height="80%">
     <v-app-bar dense color="grey lighten-2">
-      <v-toolbar-title> {{ post.question.question.title }}</v-toolbar-title>
+      <v-toolbar-title>{{ post.question.question.title }}</v-toolbar-title>
       <v-spacer />
       <post-status-buttons :post="post"></post-status-buttons>
       <v-tooltip bottom v-if="isOwner(post)">
@@ -59,7 +59,6 @@
         <span v-html="convertMarkDown(post.answer.teacherAnswer)" />
       </p>
       <div class="text-right">
-        by
         <span v-html="convertMarkDown(post.answer.user.username)" />
       </div>
     </v-card-text>
@@ -133,21 +132,10 @@ export default class ShowPost extends Vue {
     this.$emit('save-post', this.post);
   }
 
-  getColor3(privacy: boolean) {
-    if (privacy) return 'black';
-    else return 'orange';
-  }
-
   isOwnerAnswer(post: Post): boolean {
     if (post.answer != null)
       return this.$store.getters.getUser.username === post.answer.user.username;
     else return false;
-  }
-
-  changeAnswerPrivacy(post: Post) {
-    if (post.answerPrivacy != null && this.isOwnerAnswer(post))
-      post.answerPrivacy = !post.answerPrivacy;
-    RemoteServices.changeAnswerPrivacy(post.id);
   }
 }
 </script>

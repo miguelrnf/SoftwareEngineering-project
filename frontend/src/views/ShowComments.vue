@@ -65,6 +65,7 @@
           data-cy="replyBox"
         ></v-textarea>
         <v-card-text v-for="child in c.children" :key="child.id">
+          <v-divider></v-divider>
           <v-card-title>{{ c.user.username.concat(' replied:') }}</v-card-title>
           <v-card-text v-html="convertMarkDown(child.comment)" />
         </v-card-text>

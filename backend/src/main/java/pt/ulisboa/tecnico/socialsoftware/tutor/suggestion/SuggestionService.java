@@ -204,7 +204,8 @@ public class SuggestionService {
         User u = checkIfUserExists(userdto.getUsername());
 
         return u.getCourseExecutions().stream().flatMap(c -> suggestionRepository.listAllSuggestionsbyCourseId(c.getId())
-                .stream().map(SuggestionDto::new)).filter(s -> u.getRole() != User.Role.STUDENT || s.getStudent().getUsername().equals(u.getUsername()))
+                .stream().map(SuggestionDto::new))
+                .filter(s -> u.getRole() != User.Role.STUDENT || s.getStudent().getUsername().equals(u.getUsername()))
                 .collect(Collectors.toList());
     }
 

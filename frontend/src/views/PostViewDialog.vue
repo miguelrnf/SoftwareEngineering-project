@@ -13,7 +13,7 @@
 
       <v-card-text class="text-left">
         <show-post :post="post" />
-        <show-commnents :comments="post.comments" :post="post"></show-commnents>
+        <show-comments :comments="post.comments" :post="post"></show-comments>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -25,10 +25,7 @@
           data-cy="answerPostButton"
           >answer</v-btn
         >
-        <v-btn
-          dark
-          color="blue darken-1"
-          @click="$emit('close-show-post-dialog')"
+        <v-btn color="primary" text @click="$emit('close-show-post-dialog')"
           >close</v-btn
         >
       </v-card-actions>
@@ -57,7 +54,7 @@ import ShowComments from '@/views/ShowComments.vue';
   components: {
     'show-post': ShowPost,
     'answer-post': AnswerPost,
-    'show-commnents': ShowComments
+    'show-comments': ShowComments
   }
 })
 export default class PostViewDialog extends Vue {

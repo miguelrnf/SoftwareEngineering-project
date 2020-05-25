@@ -137,7 +137,7 @@ import { Tournament } from '@/models/management/Tournament';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import User from '@/models/user/User';
-import SuggViewDialog from '@/views/SuggViewDialog.vue';
+import SuggViewDialog from '@/views/ShowSuggestion.vue';
 import SuggsPreview from '@/views/SuggsPreview.vue';
 
 @Component({
@@ -217,7 +217,7 @@ export default class DashboardHomeView extends Vue {
       case 1:
         return 'Posts';
       case 2:
-        return 'Suggestions';
+        return 'suggestions';
       case 3:
         return 'Tournaments';
     }
