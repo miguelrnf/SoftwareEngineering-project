@@ -1,21 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-height="80%">
-    <v-app-bar dense color="grey lighten-2">
-      <v-toolbar-title> {{ 'Comments' }}</v-toolbar-title>
-      <v-spacer />
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-icon
-            class="mr-2"
-            v-on="on"
-            @click="writeComment"
-            data-cy="commentButton"
-            >fas fa-comment</v-icon
-          >
-        </template>
-        <span>Comment</span>
-      </v-tooltip>
-    </v-app-bar>
+  <div>
     <v-textarea
       v-if="typingComment"
       filled
@@ -27,9 +11,9 @@
       @keydown.enter.exact="submitComment"
       data-cy="commentBox"
     ></v-textarea>
-    <v-card-text v-if="comments.length === 0">{{
+    <div class="text-left ml-3 mt-3" v-if="comments.length === 0">{{
       "Currently there's no comments on this post. Be the first one by pressing the comment button."
-    }}</v-card-text>
+    }}</div>
     <v-list v-if="comments.length !== 0">
       <v-card
         v-for="c in comments.filter(cc => cc.parent == null)"
@@ -37,10 +21,13 @@
         outlined
         class="mx-auto"
       >
-        <v-card-title>{{ c.user.username.concat(' wrote:') }}</v-card-title>
-        <v-card-text>
-          <span v-html="convertMarkDown(c.comment)" />
-        </v-card-text>
+        <div class="headline grey--text font-weight-bold text-left ml-3">
+          {{ c.user.username.concat(' wrote:') }}
+        </div>
+        <v-divider inset class="mt-3"></v-divider>
+        <div class="text-left ml-5 mt-3">
+          {{ c.comment }}
+        </div>
         <!--For the time being you cannot reply to a comment that just got posted since it has no id-->
         <v-card-actions v-if="c.id">
           <v-spacer />
@@ -64,17 +51,23 @@
           @keydown.enter.exact="submitComment"
           data-cy="replyBox"
         ></v-textarea>
-        <v-card-text v-for="child in c.children" :key="child.id">
-          <v-card-title>{{ c.user.username.concat(' replied:') }}</v-card-title>
-          <v-card-text v-html="convertMarkDown(child.comment)" />
-        </v-card-text>
+        <div v-for="child in c.children" :key="child.id" class="mb-5">
+          <v-divider></v-divider>
+          <div class="headline grey--text font-weight-bold text-left ml-3">
+            {{ c.user.username.concat(' replied:') }}
+          </div>
+          <v-divider inset class="mt-3"></v-divider>
+          <div class="text-left ml-5 mt-3">
+            {{ child.comment }}
+          </div>
+        </div>
       </v-card>
     </v-list>
-  </v-card>
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import { PostComment } from '@/models/management/PostComment';
@@ -89,8 +82,8 @@ export default class ShowComments extends Vue {
   readonly comments!: PostComment[];
   @Prop({ type: Post, required: true })
   readonly post!: Post;
-  typingComment: boolean = false;
-  typingReply: boolean = false;
+  @Model('typing-comment', Boolean) typingComment!: boolean;
+  @Model('typing-reply', Boolean) typingReply!: boolean;
   comment: string = '';
   selectedComment: PostComment | null = null;
 
@@ -98,15 +91,10 @@ export default class ShowComments extends Vue {
     return convertMarkDown(text, image);
   }
 
-  writeComment() {
-    this.typingComment = !this.typingComment;
-    if (this.typingReply) this.typingReply = !this.typingReply;
-  }
-
   writeReply(comment: PostComment) {
     if (comment === this.selectedComment || !this.typingReply)
-      this.typingReply = !this.typingReply;
-    if (this.typingComment) this.typingComment = !this.typingComment;
+      this.$emit('typing-reply');
+    if (this.typingComment) this.$emit('typing-comment');
     this.selectedComment = comment;
   }
 
@@ -129,8 +117,8 @@ export default class ShowComments extends Vue {
       RemoteServices.writeComment(pc);
     }
     this.comment = '';
-    this.typingComment = false;
-    this.typingReply = false;
+    if (this.typingComment) this.$emit('typing-comment');
+    if (this.typingReply) this.$emit('typing-reply');
   }
 }
 </script>

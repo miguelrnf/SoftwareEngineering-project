@@ -10,7 +10,7 @@ export default class Suggestion {
   teacherExplanation: string = '';
   student!: User | null;
   studentQuestion: string = '';
-  isprivate: boolean = false;
+  isPrivate: boolean = false;
 
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topicsList: Topic[] = [];
@@ -24,7 +24,7 @@ export default class Suggestion {
       this.teacherExplanation = jsonObj.teacherExplanation;
       this.student = jsonObj.student;
       this.studentQuestion = jsonObj.studentQuestion;
-      this.isprivate = jsonObj.isprivate;
+      this.isPrivate = jsonObj.isPrivate;
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)
