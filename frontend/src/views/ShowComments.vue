@@ -11,9 +11,9 @@
       @keydown.enter.exact="submitComment"
       data-cy="commentBox"
     ></v-textarea>
-    <v-card-text v-if="comments.length === 0">{{
+    <div class="text-left ml-3 mt-3" v-if="comments.length === 0">{{
       "Currently there's no comments on this post. Be the first one by pressing the comment button."
-    }}</v-card-text>
+    }}</div>
     <v-list v-if="comments.length !== 0">
       <v-card
         v-for="c in comments.filter(cc => cc.parent == null)"
@@ -21,9 +21,12 @@
         outlined
         class="mx-auto"
       >
-        <div>{{ c.user.username.concat(' wrote:') }}</div>
-        <div>
-          <span v-html="convertMarkDown(c.comment)" />
+        <div class="headline grey--text font-weight-bold text-left ml-3">
+          {{ c.user.username.concat(' wrote:') }}
+        </div>
+        <v-divider inset class="mt-3"></v-divider>
+        <div class="text-left ml-5 mt-3">
+          {{ c.comment }}
         </div>
         <!--For the time being you cannot reply to a comment that just got posted since it has no id-->
         <v-card-actions v-if="c.id">
@@ -48,11 +51,16 @@
           @keydown.enter.exact="submitComment"
           data-cy="replyBox"
         ></v-textarea>
-        <v-card-text v-for="child in c.children" :key="child.id">
+        <div v-for="child in c.children" :key="child.id" class="mb-5">
           <v-divider></v-divider>
-          <div>{{ c.user.username.concat(' replied:') }}</div>
-          <div v-html="convertMarkDown(child.comment)" />
-        </v-card-text>
+          <div class="headline grey--text font-weight-bold text-left ml-3">
+            {{ c.user.username.concat(' replied:') }}
+          </div>
+          <v-divider inset class="mt-3"></v-divider>
+          <div class="text-left ml-5 mt-3">
+            {{ child.comment }}
+          </div>
+        </div>
       </v-card>
     </v-list>
   </div>
