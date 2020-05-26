@@ -6,6 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -113,6 +115,20 @@ public class TournamentController {
             throw new TutorException(AUTHENTICATION_ERROR);
 
         return this.tournamentservice.cancelTournament(tournamentId, user.getUsername());
+    }
+
+    @PutMapping("/tournaments/fiftyFifty/{quizId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public StatementQuestionDto removeTwoOptions(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        return tournamentservice.removeTwoOptions(statementQuestionDto, quizId);
+    }
+
+    @PutMapping("/tournaments/rigthAnswer/{quizId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public StatementQuestionDto rigthAnswer(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        return tournamentservice.rigthAnswer(statementQuestionDto, quizId);
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/delete") //ONLY FOR CLEAN DATABASE AFTER EACH TEST

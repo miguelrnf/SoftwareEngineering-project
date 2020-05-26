@@ -28,6 +28,10 @@ public class Tournament {
         CREATED, OPEN, CLOSED, CANCELED
     }
 
+    public enum TournamentType {
+        STANDARD, EVALUATION, TEAM, ADVANCED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -49,6 +53,9 @@ public class Tournament {
 
     @Enumerated(EnumType.STRING)
     private TournamentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private TournamentType type;
 
     @ManyToOne
     @JoinColumn(name = "assessment_id")
@@ -81,6 +88,19 @@ public class Tournament {
         this.owner = user;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         this.assessment = assessment;
+        setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
+    }
+
+    public TournamentType getType() {
+        return type;
+    }
+
+    public void setType(TournamentType type) {
+        this.type = type;
+    }
+
+    public TournamentStatus getStatus() {
+        return status;
     }
 
     public Integer getId() {
@@ -89,10 +109,6 @@ public class Tournament {
 
     public String getTitle() {
         return title;
-    }
-
-    public TournamentStatus getStatus() {
-        return status;
     }
 
     public User getOwner() {
