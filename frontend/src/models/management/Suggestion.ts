@@ -3,37 +3,34 @@ import User from '@/models/user/User';
 import Option from '@/models/management/Option';
 
 export default class Suggestion {
-  _id: number | null = null;
+  id: number | null = null;
   title: string = '';
   status: string = 'TOAPPROVE';
   creationDate!: string | null;
-  sequence: number | null = null;
-  changed: boolean = false;
-  _justification: string = '';
-  _student!: User | null;
-  _questionStr: string = '';
-  _isprivate: boolean = false;
+  teacherExplanation: string = '';
+  student!: User | null;
+  studentQuestion: string = '';
+  isprivate: boolean = false;
 
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
-  _topicsList: Topic[] = [];
+  topicsList: Topic[] = [];
 
   constructor(jsonObj?: Suggestion) {
     if (jsonObj) {
-      this._id = jsonObj._id;
+      this.id = jsonObj.id;
       this.title = jsonObj.title;
       this.status = jsonObj.status;
       this.creationDate = jsonObj.creationDate;
-      this.changed = jsonObj.changed;
-      this._justification = jsonObj._justification;
-      this._student = jsonObj._student;
-      this._questionStr = jsonObj._questionStr;
-      this._isprivate = jsonObj._isprivate;
+      this.teacherExplanation = jsonObj.teacherExplanation;
+      this.student = jsonObj.student;
+      this.studentQuestion = jsonObj.studentQuestion;
+      this.isprivate = jsonObj.isprivate;
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)
       );
 
-      this._topicsList = jsonObj._topicsList.map(
+      this.topicsList = jsonObj.topicsList.map(
         (topic: Topic) => new Topic(topic)
       );
     }

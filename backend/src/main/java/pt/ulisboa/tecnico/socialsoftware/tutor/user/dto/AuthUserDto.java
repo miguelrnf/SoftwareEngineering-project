@@ -35,8 +35,8 @@ public class AuthUserDto implements Serializable {
             this.score = 0;
         else
             this.score = user.getScore();
-        this.numberofsuggestions = user.getnumberofsuggs();
-        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
+        this.numberofsuggestions = user.getNumberOfSuggestions();
+        this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -44,8 +44,8 @@ public class AuthUserDto implements Serializable {
         this.username = user.getUsername();
         this.role = user.getRole();
         this.courses = getActiveAndInactiveCourses(user, currentCourses);
-        this.numberofsuggestions = user.getnumberofsuggs();
-        this.numberofsuggestionsapproved = user.getnumberofapprovedsuggs();
+        this.numberofsuggestions = user.getNumberOfSuggestions();
+        this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
     }
 
     public String getName() {

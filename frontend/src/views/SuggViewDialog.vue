@@ -13,11 +13,11 @@
               class="ma-1"
               x-small
               label
-              :color="getColor1(suggestion._isprivate)"
+              :color="getColor1(suggestion.isprivate)"
               text-color="white"
               dark
               ><span class="white--text ">{{
-                getPrivacyTag(suggestion._isprivate)
+                getPrivacyTag(suggestion.isprivate)
               }}</span></v-chip
             >
             <v-chip
@@ -56,7 +56,7 @@
         <v-row>
           <span v-html="convertMarkDown('Topics: ')" />
           <v-chip
-            v-for="option in suggestion._topicsList"
+            v-for="option in suggestion.topicsList"
             :key="option.id"
             class="ma-1"
             x-small
@@ -84,7 +84,7 @@
         </v-app-bar>
 
         <v-card-text class="text-left">
-          <span>{{ suggestion._justification }}</span>
+          <span>{{ suggestion.teacherExplanation }}</span>
         </v-card-text>
       </h1>
       <br />

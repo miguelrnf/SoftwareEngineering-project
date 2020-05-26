@@ -46,7 +46,7 @@ public class Suggestion {
     private String teacherExplanation;
 
     @Column(name = "privacy")
-    private Boolean isprivate;
+    private Boolean isPrivate;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -54,7 +54,7 @@ public class Suggestion {
     @Enumerated(EnumType.STRING)
     public Status status = Status.TOAPPROVE;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
@@ -65,6 +65,7 @@ public class Suggestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
+
     public Suggestion() {
     }
 
@@ -74,7 +75,8 @@ public class Suggestion {
         this.student= user;
         this.studentQuestion = suggestionDto.getStudentQuestion();
         this.teacherExplanation = "";
-        this.isprivate = false;
+        this.isPrivate = false;
+
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -104,6 +106,7 @@ public class Suggestion {
         if (suggestionDto.getStudentQuestion().trim().length() > 500 ){
             throw new TutorException(SUGGESTION_TOO_LONG);
         }
+
     }
 
     public Set<Topic> getTopicsList() {
@@ -199,12 +202,12 @@ public class Suggestion {
         }
     }
 
-    public Boolean getIsprivate() {
-        return isprivate;
+    public Boolean getIsPrivate() {
+        return isPrivate;
     }
 
-    public void setIsprivate(Boolean isprivate) {
-        this.isprivate = isprivate;
+    public void setIsPrivate(Boolean isprivate) {
+        this.isPrivate = isprivate;
     }
 
     @Override
@@ -225,5 +228,22 @@ public class Suggestion {
     @Override
     public int hashCode() {
         return Objects.hash(id, key, studentQuestion, topics, teacherExplanation, status, courseExecution, student);
+    }
+
+    @Override
+    public String toString() {
+        return "SuggestionDto{" +
+                "id=" + id +
+                ", key=" + key +
+                ", studentQuestion='" + studentQuestion + '\'' +
+                ", topicsList=" + topics +
+                ", teacherExplanation='" + teacherExplanation + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", status='" + status + '\'' +
+                ", student=" + student.getUsername() +
+                ", options=" + options +
+                ", isprivate=" + isPrivate +
+                ", title='" + title + '\'' +
+                '}';
     }
 }

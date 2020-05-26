@@ -230,13 +230,13 @@ class ApproveSuggestion extends Specification{
         sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus(String.valueOf(status))
-        sug.setJustification(j)
+        sug.setTeacherExplanation(j)
 
 
         def result = suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(VALID_T as User))
 
         then:
-        result.getJustification() == sug.getJustification()
+        result.getTeacherExplanation() == sug.getTeacherExplanation()
         result.getStatus() == String.valueOf(status)
 
 
@@ -275,7 +275,7 @@ class ApproveSuggestion extends Specification{
         sug = suggestionService.createSuggestion(courseExecution.getId(),sug)
 
         sug.setStatus("APPROVED")
-        sug.setJustification(j)
+        sug.setTeacherExplanation(j)
 
 
         suggestionService.approveSuggestion(courseExecution.getId(), sug, new UserDto(t as User))
