@@ -32,6 +32,23 @@
                             Phasellus dolor. Fusce neque. Fusce fermentum odio nec arcu. Pellentesque libero tortor, tincidunt et, tincidunt eget, semper nec, quam. Phasellus blandit leo ut odio.
                         </p>
                     </v-card-text>
+                    <v-card-actions>
+                        <v-btn
+                                text
+                                color="primary"
+                                small
+                                :loading="loading"
+                                :disabled="loading"
+                                @click=loader
+                        >
+                            Show Suggested Quiz
+                        </v-btn>
+                          <v-card-text style="position: relative">
+                                <span
+                                        v-show="!hidden"
+                                >sdgfddfdggdf</span>
+                        </v-card-text>
+                    </v-card-actions>
                 </v-card>
             </v-tab-item>
             <v-tab-item>
@@ -118,6 +135,9 @@ export default class StudyHomeView extends Vue {
 
         selectedTopics: Topic[] = [];
 
+        private loading: boolean = false;
+        private hidden: boolean = true;
+
         async created() {
             this.topics = await RemoteServices.getTopics();
         }
@@ -136,6 +156,17 @@ export default class StudyHomeView extends Vue {
         newSummary() {
             this.summaryDialog = true;
         }
+        data () {
+            return {
+                hidden: true,
+            }
+        }
+
+        loader () {
+            this.loading = true
+            setTimeout(() => (this.loading = false, this.hidden = false), 2500)
+        }
+
     }
 
 </script>

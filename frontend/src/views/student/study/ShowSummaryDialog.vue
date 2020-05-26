@@ -65,7 +65,19 @@
                 Show Answers
             </v-btn>
         </div>
+
+
+
       <v-card-actions>
+        <div class="text-center">
+          <v-pagination
+                  v-model="page"
+                  :length=topicsOrderMax
+                  circle
+                  @input="changeTopicPage(page)"
+          ></v-pagination>
+          </div>
+
         <v-spacer />
         <v-btn
           color="primary"
@@ -74,8 +86,11 @@
           data-cy="closeButton"
           >close</v-btn
         >
+
       </v-card-actions>
+
     </v-card>
+
   </v-dialog>
 </template>
 
@@ -96,8 +111,11 @@ export default class ShowSummaryDialog extends Vue {
   questions: Question[] = [];
   topic: Topic = this.topics[0];
 
+  topicsOrderMax: number = 0;
+
   async created() {
     await this.getSummary();
+    this.topicsOrderMax=this.topics.length;
   }
   async getSummary() {
     if (this.topics.length != 0) {
@@ -121,6 +139,7 @@ export default class ShowSummaryDialog extends Vue {
     data () {
         return {
             showNav: false,
+            page: 1
         }
     }
 
@@ -130,6 +149,12 @@ export default class ShowSummaryDialog extends Vue {
           return options[i].content
       }
     }
+
+    changeTopicPage(page: number){
+      this.topic = this.topics[page-1]
+      this.getSummary()
+    }
+
 }
 
 </script>
