@@ -22,7 +22,65 @@
         ><i class="fas fa-times" />End Quiz</span
       >
     </header>
-
+    <div class="power-up">
+      <v-tooltip top>
+        <template v-slot:activator="{ show }">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="show"
+            @click="removeTwoOptions"
+            :disabled="fiftyFifty"
+          >
+            <span class="fifty">50:50</span>
+          </v-btn>
+        </template>
+        <span>Eliminate two answers</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ show }">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="show"
+          >
+            <v-icon class="pa-0">far fa-lightbulb</v-icon>
+          </v-btn>
+        </template>
+        <span>Hint</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn class="mx-9 my-3" outlined large fab color="primary" v-on="on">
+            <v-icon class="pa-0">fas fa-redo</v-icon>
+          </v-btn>
+        </template>
+        <span>Change question</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="on"
+            @click="rigthAnswer"
+            :disabled="rightAns"
+          >
+            <v-icon class="pa-0">fas fa-check</v-icon>
+          </v-btn>
+        </template>
+        <span>Get Correct answer</span>
+      </v-tooltip>
+    </div>
     <div class="question-navigation">
       <div class="navigation-buttons">
         <span
@@ -57,6 +115,7 @@
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
       :backsies="!statementQuiz.oneWay"
+      :quiz-id="statementQuiz.id"
       @increase-order="confirmAnswer"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"
@@ -169,6 +228,9 @@ export default class QuizView extends Vue {
   hideTime: boolean = false;
   submissionTimer: string = '';
   resultsTimer: string = '';
+  fiftyFifty: boolean = false;
+  rightAns: boolean = false;
+  show: boolean = false;
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -180,6 +242,44 @@ export default class QuizView extends Vue {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });
       }
+    }
+  }
+
+  async removeTwoOptions() {
+    let question;
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        this.statementQuiz.questions[
+          this.questionOrder
+        ] = await RemoteServices.removeTwoOptions(
+          question,
+          this.statementQuiz.id
+        );
+        this.fiftyFifty = true;
+        this.show = false;
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async rigthAnswer() {
+    let question;
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        this.statementQuiz.questions[
+          this.questionOrder
+        ] = await RemoteServices.rigthAnswer(question, this.statementQuiz.id);
+        this.rightAns = true;
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
   }
 
@@ -294,3 +394,10 @@ export default class QuizView extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.fifty {
+  font-weight: bold;
+  font-size: large;
+}
+</style>

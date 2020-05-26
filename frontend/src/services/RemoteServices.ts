@@ -21,6 +21,7 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
+import StatementQuestion from '@/models/statement/StatementQuestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -899,6 +900,40 @@ export default class RemoteServices {
       )
       .then(response => {
         return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async removeTwoOptions(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .put(
+        `tournaments/fiftyFifty/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return new StatementQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rigthAnswer(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .put(
+        `tournaments/rigthAnswer/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return new StatementQuestion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
