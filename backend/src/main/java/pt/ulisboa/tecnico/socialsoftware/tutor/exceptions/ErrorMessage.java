@@ -48,6 +48,9 @@ public enum ErrorMessage {
 
     SUGGESTION_ALREADY_APP("The Suggestion was Already Approved"),
     SUGGESTION_ALREADY_REJ("The Suggestion was Already Rejected"),
+    SUGGESTION__REM_ALREADY_APP("Can't Remove - The Suggestion was Already Approved"),
+    SUGGESTION__REM_ALREADY_QUESTION("Can't Remove - The Suggestion is Already a Question"),
+
 
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),

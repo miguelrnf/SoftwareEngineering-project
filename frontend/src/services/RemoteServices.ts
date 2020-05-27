@@ -256,10 +256,37 @@ export default class RemoteServices {
       });
   }
 
+  static setCheckMark(sugg: Suggestion): Promise<Suggestion> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/setCheckMark`,
+        sugg
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async deleteQuestion(questionId: number) {
     return httpClient.delete(`/questions/${questionId}`).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
+  }
+
+  static async deleteSuggestion(suggestionId: number): Promise<Suggestion> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/delete/${suggestionId}`
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async setQuestionStatus(

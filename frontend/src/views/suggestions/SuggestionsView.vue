@@ -132,7 +132,35 @@
           </template>
           <span>Change to Question</span>
         </v-tooltip>
+        <v-tooltip bottom>
+           <template v-slot:activator="{ on }">
+             <v-icon
+               small
+               class="mr-2"
+               v-on="on"
+               @click="deleteSuggestion(item)"
+               color="red"
+               >delete</v-icon
+             >
+           </template>
+           <span>Delete Suggestion</span>
+         </v-tooltip>
       </template>
+      <template v-slot:item.checkMark="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    :color="getCheckMarkColor(item.checkMark)"
+                    small
+                    class="mr-2"
+                    v-on="on"
+
+            >fas fa-check</v-icon
+            >
+          </template>
+          <span> {{ getCheckMarkTip(item.checkMark) }}</span>
+        </v-tooltip>
+        </template>
     </v-data-table>
     <edit-suggestion-dialog
       v-if="currentSuggestion && editSuggestionDialog"
@@ -182,7 +210,6 @@ import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestion
 
 @Component({
   components: {
-    AddQuestionDialog,
     'show-suggestion-dialog': ShowSuggestionDialog,
     'edit-suggestion-dialog': EditSuggestionDialog,
     'edit-question-topics': EditQuestionTopics,
@@ -224,7 +251,13 @@ export default class SuggestionsView extends Vue {
       value: 'action',
       align: 'center',
       sortable: false
+    },
+    {
+      text: 'Seen',
+      value:'checkMark',
+      align: 'center'
     }
+
   ];
 
   @Watch('editSuggestionDialog')
@@ -272,6 +305,17 @@ export default class SuggestionsView extends Vue {
     if (isprivate) return 'black';
     else return 'orange';
   }
+
+  getCheckMarkColor(checkMark: boolean) {
+    if (checkMark) return 'blue';
+    else return 'grey';
+  }
+
+  getCheckMarkTip(checkMark: boolean) {
+    if (checkMark) return 'Seen';
+    else return 'Not Seen';
+  }
+
   getPrivacyTag(isprivate: boolean) {
     if (isprivate) return 'PRIVATE';
     else return 'PUBLIC';
@@ -391,21 +435,21 @@ export default class SuggestionsView extends Vue {
     this.addQuestionDialog = false;
   }
 
-  /*async deleteSuggestion(toDeletequestion: Suggestion) {
+  async deleteSuggestion(suggestion: Suggestion) {
     if (
-      toDeletequestion.id &&
+      suggestion.id &&
       confirm('Are you sure you want to delete this question?')
     ) {
       try {
-        await RemoteServices.deleteQuestion(toDeletequestion.id);//delete suggestion criar
-        this.questions = this.questions.filter(
-          question => question.id != toDeletequestion.id
+        await RemoteServices.deleteSuggestion(suggestion.id);//delete suggestion criar
+        this.suggestions = this.suggestions.filter(
+          sugg => sugg.id != suggestion.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
     }
-  }*/
+  }
 }
 </script>
 
