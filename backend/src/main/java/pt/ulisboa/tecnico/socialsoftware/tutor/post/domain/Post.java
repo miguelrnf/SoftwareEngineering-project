@@ -29,6 +29,9 @@ public class Post {
     @Column(name = "post_status", columnDefinition = "boolean default true")
     private Boolean postStatus;
 
+    @Column(name = "checkmark", columnDefinition = "boolean default false")
+    private Boolean checkMark;
+
     @Column(name = "discuss_status", columnDefinition = "boolean default false")
     private Boolean discussStatus;
 
@@ -170,6 +173,14 @@ public class Post {
 
     public void changeAnswerPrivacy() {
         this.answerPrivacy = !this.answerPrivacy;
+    }
+
+    public Boolean getCheckMark() {
+        return checkMark;
+    }
+
+    public void setCheckMark(Boolean checkMark) {
+        this.checkMark = checkMark;
     }
 
     @Override

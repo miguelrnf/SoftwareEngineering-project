@@ -141,6 +141,13 @@ public class PostController {
         return postService.changePostPrivacy(postId, user);
     }
 
+    @PutMapping(value = "/executions/{executionId}/{postId}/setCheckMark")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public PostDto setCheckMark(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User)((Authentication)principal).getPrincipal();
+        return this.postService.setCheckMark(postId, user.getUsername());
+    }
+
     @PutMapping("executions/{executionId}/posts/{postId}/answer/edit/privacy")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public PostDto changeAnswerPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {

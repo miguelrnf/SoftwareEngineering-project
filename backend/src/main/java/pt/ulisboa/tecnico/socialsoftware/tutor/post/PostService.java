@@ -313,6 +313,21 @@ public class PostService {
         return new PostDto(post);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public PostDto setCheckMark(int id, String username){
+
+        Post post = checkIfPostExists(null, id);
+        User user = checkIfUserExistsByUsername(username);
+        checkIfUserHasRoleTeacher(user);
+
+        post.setCheckMark(true);
+        return new PostDto(post);
+
+    }
+
     private PostComment checkIfCommentParentExists(PostCommentDto dto) {
         if(dto.getKey() != null) {
             return commentRepository.findByKey(dto.getParent().getKey()).orElseThrow(() -> new TutorException(COMMENT_NO_PARENT));
