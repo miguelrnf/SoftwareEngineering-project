@@ -265,6 +265,23 @@ public class SuggestionService {
         return new QuestionDto(question);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SuggestionDto setCheckMark(int courseExecutionId, SuggestionDto suggestionDto, String username){
+       
+        courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecutionId));
+        User user = checkIfUserExists(username);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getId());
+
+        suggestion.setCheckMark(true);
+
+        return new SuggestionDto(suggestion);
+
+    }
+
     private QuestionDto suggestionToQuestion(SuggestionDto sugg){
         if (!sugg.getStatus().equals("APPROVED")) throw new TutorException(SUGGESTION_NOT_APPROVED);
 
@@ -316,6 +333,7 @@ public class SuggestionService {
     }
 
     private void checkTitleAndOptions(SuggestionDto suggestionDto) {
+
         if (suggestionDto.getTitle().trim().length() == 0 ||
                 suggestionDto.getStudentQuestion().trim().length() == 0 ||
                 suggestionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
@@ -326,4 +344,6 @@ public class SuggestionService {
             throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
         }
     }
+
+
 }

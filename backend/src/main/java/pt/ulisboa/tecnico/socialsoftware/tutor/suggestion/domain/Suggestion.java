@@ -51,6 +51,9 @@ public class Suggestion {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Column(name = "checkMark", columnDefinition = "boolean default false")
+    private Boolean checkMark;
+
     @Enumerated(EnumType.STRING)
     public Status status = Status.TOAPPROVE;
 
@@ -268,5 +271,13 @@ public class Suggestion {
                 ", isprivate=" + isPrivate +
                 ", title='" + title + '\'' +
                 '}';
+    }
+
+    public Boolean getCheckMark() {
+        return checkMark;
+    }
+
+    public void setCheckMark(Boolean checkMark) {
+        this.checkMark = checkMark;
     }
 }

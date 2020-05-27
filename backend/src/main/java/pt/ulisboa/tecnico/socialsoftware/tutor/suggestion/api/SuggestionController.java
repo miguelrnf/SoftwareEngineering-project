@@ -74,4 +74,12 @@ public class SuggestionController {
         return this.suggestionService.addQuestion(courseId, suggDto, new UserDto(user));
     }
 
+    @PutMapping(value = "/courses/{courseExecutionId}/suggestions/setCheckMark")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public SuggestionDto setCheckMark(Principal principal, @PathVariable int courseExecutionId, @Valid @RequestBody SuggestionDto suggDto) {
+        User user = (User)((Authentication)principal).getPrincipal();
+        return this.suggestionService.setCheckMark(courseExecutionId, suggDto, user.getUsername());
+    }
+
+
 }

@@ -130,6 +130,21 @@
            <span>Delete Suggestion</span>
          </v-tooltip>
       </template>
+      <template v-slot:item.checkMark="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    :color="getCheckMarkColor(item.checkMark)"
+                    small
+                    class="mr-2"
+                    v-on="on"
+
+            >fas fa-check</v-icon
+            >
+          </template>
+          <span> {{ getCheckMarkTip(item.checkMark) }}</span>
+        </v-tooltip>
+        </template>
     </v-data-table>
     <edit-suggestion-dialog
       v-if="currentSuggestion && editSuggestionDialog"
@@ -199,7 +214,13 @@ export default class SuggestionsView extends Vue {
       value: 'action',
       align: 'center',
       sortable: false
+    },
+    {
+      text: 'Seen',
+      value:'checkMark',
+      align: 'center'
     }
+
   ];
 
   @Watch('editSuggestionDialog')
@@ -212,6 +233,7 @@ export default class SuggestionsView extends Vue {
   async created() {
     this.topics = await RemoteServices.getTopics();
     this.suggestions = await RemoteServices.getSuggestions();
+    console.log(this.suggestions);
   }
 
   customFilter(value: string, search: string, suggestion: Suggestion) {
@@ -261,6 +283,17 @@ export default class SuggestionsView extends Vue {
     if (isprivate) return 'black';
     else return 'orange';
   }
+
+  getCheckMarkColor(checkMark: boolean) {
+    if (checkMark) return 'blue';
+    else return 'grey';
+  }
+
+  getCheckMarkTip(checkMark: boolean) {
+    if (checkMark) return 'Seen';
+    else return 'Not Seen';
+  }
+
   getPrivacyTag(isprivate: boolean) {
     if (isprivate) return 'PRIVATE';
     else return 'PUBLIC';
