@@ -37,6 +37,7 @@ class GenerateStudentTopicQuizTest extends Specification {
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String TOPIC_NAME = "TOPIC"
+    public static final String TOPIC_NAME2 = "TOPIC2"
 
     @Autowired
     GeneralService generalService
@@ -72,6 +73,7 @@ class GenerateStudentTopicQuizTest extends Specification {
     def courseExecution
     def questionOne
     def questionTwo
+    def questionThree
     def assessment
 
     def setup() {
@@ -92,6 +94,11 @@ class GenerateStudentTopicQuizTest extends Specification {
         topic.setCourse(course)
         topicRepository.save(topic)
 
+        def topic2 = new Topic()
+        topic2.setName("TOPIC2")
+        topic2.setCourse(course)
+        topicRepository.save(topic2)
+
         questionOne = new Question()
         questionOne.setKey(1)
         questionOne.setContent("Question Content")
@@ -108,13 +115,24 @@ class GenerateStudentTopicQuizTest extends Specification {
         questionTwo.setCourse(course)
         questionTwo.addTopic(topic)
 
+        questionThree = new Question()
+        questionThree.setKey(3)
+        questionThree.setContent("Question Content")
+        questionThree.setTitle("Question Title")
+        questionThree.setStatus(Question.Status.AVAILABLE)
+        questionThree.setCourse(course)
+        questionThree.addTopic(topic2)
+
         userRepository.save(user)
         questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
+        questionRepository.save(questionThree)
 
         def topicConjunction = new TopicConjunction()
         topicConjunction.addTopic(topic)
+        topicConjunction.addTopic(topic2)
         topic.addTopicConjunction(topicConjunction)
+        topic2.addTopicConjunction(topicConjunction)
         topicConjunctionRepository.save(topicConjunction)
 
         assessment = new Assessment()
@@ -134,7 +152,7 @@ class GenerateStudentTopicQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        generalService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME)
+        generalService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME2)
 
         then:
         quizRepository.count() == 1L
@@ -147,9 +165,9 @@ class GenerateStudentTopicQuizTest extends Specification {
         result.getQuizQuestions().size() == 1
         def resQuizQuestion = result.getQuizQuestions().stream().collect(Collectors.toList()).get(0)
         resQuizQuestion.getQuiz() == result
-        resQuizQuestion.getQuestion() == questionOne || resQuizQuestion.getQuestion() == questionTwo
-        (questionOne.getQuizQuestions().size() == 1 &&  questionTwo.getQuizQuestions().size() == 0) ||  (questionOne.getQuizQuestions().size() == 0 &&  questionTwo.getQuizQuestions().size() == 1)
-        questionOne.getQuizQuestions().contains(resQuizQuestion) || questionTwo.getQuizQuestions().contains(resQuizQuestion)
+        resQuizQuestion.getQuestion() == questionOne || resQuizQuestion.getQuestion() == questionTwo || resQuizQuestion.getQuestion() == questionThree
+        (questionOne.getQuizQuestions().size() == 1 &&  questionTwo.getQuizQuestions().size() == 0 ) ||  (questionThree.getQuizQuestions().size() == 1 &&  questionTwo.getQuizQuestions().size() == 0 &&  questionOne.getQuizQuestions().size() == 0)
+        questionOne.getQuizQuestions().contains(resQuizQuestion) || questionTwo.getQuizQuestions().contains(resQuizQuestion)|| questionThree.getQuizQuestions().contains(resQuizQuestion)
     }
 
     def 'generate quiz for two question and there are two questions available'() {

@@ -100,6 +100,10 @@ public class GeneralService {
         return u;
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto generateStudentTopicQuiz(UserDto userdto, int executionId, StatementCreationDto quizDetails, String topicName) {
         User user = checkIfUserExists(userdto.getUsername());
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
@@ -112,13 +116,15 @@ public class GeneralService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
+
         List<Question> topicAvailableQuestions = availableQuestions.stream()
                 .filter(question -> question.getTopics().contains(topic))
                 .collect(Collectors.toList());
 
-        if(quizDetails.getAssessment() != null) {
+
+        /*if(quizDetails.getAssessment() != null) {
             topicAvailableQuestions = statementService.filterByAssessment(topicAvailableQuestions, quizDetails);
-        }
+        }*/
 
         if (topicAvailableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
