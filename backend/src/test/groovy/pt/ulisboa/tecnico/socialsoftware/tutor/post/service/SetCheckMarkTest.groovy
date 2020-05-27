@@ -204,7 +204,6 @@ class SetCheckMarkTest extends Specification{
 
     }
 
-//checkmark test
     @Unroll
     def "valid set post CheckMark"() {
         when:
