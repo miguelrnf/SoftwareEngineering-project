@@ -59,7 +59,7 @@ public class SuggestionController {
 
         return this.suggestionService.listAllSuggestionsbyUsername(username);
     }
-//
+
     @PostMapping(value = "/courses/{courseId}/suggestions/newquestion")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')) or hasRole('ROLE_ADMIN')")
     public QuestionDto addQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody SuggestionDto suggDto) {
