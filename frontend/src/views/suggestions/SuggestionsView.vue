@@ -196,19 +196,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
-import Topic from '@/models/management/Topic';
-import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
-import Suggestion from '@/models/management/Suggestion';
-import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
-import ShowSuggestionDialog from '@/views/ShowSuggestionDialog.vue';
-import AddQuestionDialog from '@/views/teacher/suggestions/AddQuestionDialog.vue';
-import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestionDialog.vue';
+  import { Component, Vue, Watch } from 'vue-property-decorator';
+  import RemoteServices from '@/services/RemoteServices';
+  import { convertMarkDown } from '@/services/ConvertMarkdownService';
+  import Image from '@/models/management/Image';
+  import Topic from '@/models/management/Topic';
+  import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
+  import Suggestion from '@/models/management/Suggestion';
+  import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
+  import ShowSuggestionDialog from '@/views/ShowSuggestionDialog.vue';
+  import AddQuestionDialog from '@/views/teacher/suggestions/AddQuestionDialog.vue';
+  import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestionDialog.vue';
 
-@Component({
+  @Component({
   components: {
     'show-suggestion-dialog': ShowSuggestionDialog,
     'edit-suggestion-dialog': EditSuggestionDialog,
