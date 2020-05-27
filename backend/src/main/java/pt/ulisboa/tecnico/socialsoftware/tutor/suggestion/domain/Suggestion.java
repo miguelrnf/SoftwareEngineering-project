@@ -210,6 +210,32 @@ public class Suggestion {
         this.isPrivate = isprivate;
     }
 
+    public void remove(User.Role role) {
+        if(role.equals(User.Role.STUDENT)){
+            canRemove();
+        }
+
+
+        getTopicsList().forEach(topic -> topic.getSuggestions().remove(this));
+        getTopicsList().clear();
+        getOptions().forEach(option -> option.setSuggestion(null));
+        getOptions().clear();
+        getCourse().getSuggestions().remove(this);
+        courseExecution = null;
+
+    }
+
+    private void canRemove() {
+        if (this.getStatus().equals(Status.APPROVED)) {
+            throw new TutorException(SUGGESTION__REM_ALREADY_APP);
+        }
+        if (this.getStatus().equals(Status.QUESTION)) {
+            throw new TutorException(SUGGESTION__REM_ALREADY_QUESTION);
+        }
+    }
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

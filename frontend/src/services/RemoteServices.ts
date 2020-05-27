@@ -276,6 +276,19 @@ export default class RemoteServices {
     });
   }
 
+  static async deleteSuggestion(suggestionId: number): Promise<Suggestion> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/delete/${suggestionId}`
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async setQuestionStatus(
     questionId: number,
     status: String

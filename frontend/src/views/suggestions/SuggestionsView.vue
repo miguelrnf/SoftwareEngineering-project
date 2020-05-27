@@ -116,20 +116,19 @@
           </template>
           <span>Duplicate Suggestion</span>
         </v-tooltip>
-
-        <!--  <v-tooltip bottom>
+        <v-tooltip bottom>
            <template v-slot:activator="{ on }">
              <v-icon
                small
                class="mr-2"
                v-on="on"
-               @click="deleteQuestion(item)"
+               @click="deleteSuggestion(item)"
                color="red"
                >delete</v-icon
              >
            </template>
-           <span>Delete Question</span>
-         </v-tooltip>-->
+           <span>Delete Suggestion</span>
+         </v-tooltip>
       </template>
       <template v-slot:item.checkMark="{ item }">
         <v-tooltip bottom>
@@ -347,23 +346,23 @@ export default class SuggestionsView extends Vue {
     }
   }
 
-  //TODO ???n sei se e preciso
 
-  /*async deleteSuggestion(toDeletequestion: Suggestion) {
+
+  async deleteSuggestion(suggestion: Suggestion) {
     if (
-      toDeletequestion.id &&
+      suggestion.id &&
       confirm('Are you sure you want to delete this question?')
     ) {
       try {
-        await RemoteServices.deleteQuestion(toDeletequestion.id);//delete suggestion criar
-        this.questions = this.questions.filter(
-          question => question.id != toDeletequestion.id
+        await RemoteServices.deleteSuggestion(suggestion.id);//delete suggestion criar
+        this.suggestions = this.suggestions.filter(
+          sugg => sugg.id != suggestion.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
     }
-  }*/
+  }
 }
 </script>
 

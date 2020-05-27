@@ -36,7 +36,8 @@ public class SuggestionDto implements Serializable{
         this.id = suggestion.getId();
         this.key=suggestion.getKey();
         this.topicsList = suggestion.getTopicsList().stream().map(TopicDto::new).collect(Collectors.toList());
-        this.courseExecution = suggestion.getCourse().getId();
+
+        this.courseExecution = suggestion.getCourse() != null ? suggestion.getCourse().getId() : null;
         this.teacherExplanation =suggestion.getTeacherExplanation();
         this.student =new UserDto(suggestion.getStudent());
         this.studentQuestion =suggestion.getStudentQuestion();
