@@ -62,7 +62,7 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto submitPost(PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
+    public PostDto submitPost(PostQuestionDto postQuestionDto) {
         User user = checkIfUserExistsByUsername(postQuestionDto.getUser().getUsername());
 
         checkIfUserHasRoleStudent(user);

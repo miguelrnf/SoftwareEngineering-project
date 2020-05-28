@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" @keydown.esc="closeQuestionDialog" max-width="75%">
+  <v-dialog
+    :value="dialog"
+    @input="closeQuestionDialog"
+    @keydown.esc="closeQuestionDialog"
+    max-width="75%"
+  >
     <v-card>
       <v-card-title>
         <span class="headline">{{ 'Reject Suggestion' }}</span>
@@ -36,14 +41,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Suggestion from '@/models/management/Suggestion';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class RejectSuggestionDialog extends Vue {
   @Prop({ type: Suggestion, required: true }) suggestion!: Suggestion;
-  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
+  @Model('dialog', Boolean) dialog!: boolean;
 
   async RejectSuggestion() {
     this.suggestion.status = 'REJECTED';

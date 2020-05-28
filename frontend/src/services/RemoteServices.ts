@@ -249,6 +249,8 @@ export default class RemoteServices {
         sugg
       )
       .then(response => {
+<<<<<<< HEAD
+=======
         return new Suggestion(response.data);
       })
       .catch(async error => {
@@ -263,6 +265,7 @@ export default class RemoteServices {
         sugg
       )
       .then(response => {
+>>>>>>> develop
         return new Suggestion(response.data);
       })
       .catch(async error => {

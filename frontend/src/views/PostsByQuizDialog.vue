@@ -34,7 +34,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Post from '../models/management/Post';
 import PostPreview from '@/views/PostPreview.vue';
-import PostViewDialog from '@/views/PostViewDialog.vue';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
 
 @Component({
   components: {
