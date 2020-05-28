@@ -55,13 +55,14 @@ public class ShopService {
     public ShopItemDto addShopItem(ShopItemDto shopItemDto) {
         try {
             checkIfShopItemExistsByName(shopItemDto);
-            throw new TutorException(ErrorMessage.ITEM_ALREADY_EXISTS, shopItemDto.getName());
         } catch (TutorException e) {
+            if(checkIfItemIsPowerUp(shopItemDto.getType())) throw new TutorException(ErrorMessage.CANT_ADD_POWER_UP);
             ShopItem item = new ShopItem(shopItemDto.getName(), shopItemDto.getType(), shopItemDto.getPrice(),
                     shopItemDto.getDescription(), shopItemDto.getIcon(), shopItemDto.getColor());
             entityManager.persist(item);
             return new ShopItemDto(item);
         }
+        throw new TutorException(ErrorMessage.ITEM_ALREADY_EXISTS, shopItemDto.getName());
     }
 
     @Retryable(
@@ -70,6 +71,7 @@ public class ShopService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ShopItemDto deleteShopItem(int shopItemId) {
         ShopItem item = checkIfShopItemExistsById(shopItemId);
+        if(checkIfItemIsPowerUp(item.getType().toString())) throw new TutorException(ErrorMessage.CANT_REMOVE_POWER_UP);
 
         entityManager.remove(item);
         return new ShopItemDto(item);
@@ -91,5 +93,9 @@ public class ShopService {
         if(item.isEmpty())
             throw new TutorException(ErrorMessage.NON_EXISTING_ITEM_ID, id);
         else return item.get();
+    }
+
+    private boolean checkIfItemIsPowerUp(String type) {
+        return type.equals("POWER_UP");
     }
 }

@@ -63,8 +63,8 @@ public class ShopItem {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setType(String type) {
+        this.type = Type.valueOf(type);
     }
 
     public Integer getPrice() {
@@ -97,5 +97,18 @@ public class ShopItem {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return "ShopItem{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", icon='" + icon + '\'' +
+                ", color='" + color + '\'' +
+                '}';
     }
 }

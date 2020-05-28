@@ -81,4 +81,17 @@ public class ShopItemDto implements Serializable {
     public void setColor(String color) {
         this.color = color;
     }
+
+    @Override
+    public String toString() {
+        return "ShopItemDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", icon='" + icon + '\'' +
+                ", color='" + color + '\'' +
+                '}';
+    }
 }
