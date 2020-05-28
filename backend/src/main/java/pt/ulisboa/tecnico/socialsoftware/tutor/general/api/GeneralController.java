@@ -47,6 +47,7 @@ public class GeneralController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
+        quizDetails.setNumberOfQuestions(1);
 
         return generalService.generateStudentTopicQuiz(new UserDto(user), executionId, quizDetails, topicName);
     }

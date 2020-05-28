@@ -358,6 +358,20 @@ export default class RemoteServices {
       });
   }
 
+  static async generateTopicStatementQuiz(params: object, topicName: String): Promise<StatementQuiz> {
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/general/newTopicQuiz/${topicName}`,
+        params
+      )
+      .then(response => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getOpenedTournaments(): Promise<Tournament[]> {
     return httpClient
       .get(
