@@ -1,14 +1,24 @@
 <template>
   <div align="center">
     <v-card
+      class="table"
       width="95%"
       v-if="isReal && (!this.beStudent.dashboardPrivate || this.isOwnDashboard)"
     >
       <v-row>
-        <v-card-subtitle class="mx-xl-2 display-2 font-weight-black">
-          Dashboard
-        </v-card-subtitle>
-        <v-spacer />
+      <v-card-title color="primary">
+        <v-icon left>fas fa-star</v-icon>
+        Dashboard
+      </v-card-title>
+      <v-switch
+              class="mt-6 ml-7 "
+              v-if="isOwnDashboard"
+              v-model="beStudent.dashboardPrivate"
+              :label="`${textLabel}`"
+              color="red"
+              @change="changePrivacy()"
+      />
+      <v-spacer/>
         <v-autocomplete
           v-if="isOwnDashboard"
           v-model="searchedStudent"
@@ -20,74 +30,73 @@
           @keydown.enter.native="searchForDashboard(searchedStudent)"
         />
       </v-row>
-      <v-card>
-        <v-row>
-          <v-col class="pa-2">
-            <v-card-subtitle class="text-left">
-              Username: {{ beStudent.username }} <v-spacer /> Currency:
-              {{ beStudent.score }} Achandos
-            </v-card-subtitle>
-          </v-col>
-          <v-col class="pa-0" :align-self="'center'" cols="2">
-            <v-switch
-              class="my-0"
-              v-if="isOwnDashboard"
-              v-model="beStudent.dashboardPrivate"
-              :label="`${textLabel}`"
-              color="red"
-              @change="changePrivacy()"
-            />
-          </v-col>
-        </v-row>
-      </v-card>
-      <v-row scrollable no-gutters class="mx-0">
-        <v-col v-for="n in 3" :key="n" cols="12" sm="4">
-          <v-card tile outlined>
-            <v-app-bar
-              dense
-              elevation="2"
-              color="grey lighten-2"
-              flat
-              class="mx-0"
-            >
-              <v-toolbar-title>{{ getColumnAppBar(n) }}</v-toolbar-title>
-            </v-app-bar>
-            <v-card
-              style="max-height: 550px"
-              class="overflow-y-auto overflow-x-hidden"
-              flat
-            >
-              <div v-if="n === 1">
-                <post-preview
-                  v-for="p in posts"
-                  :key="p.id"
-                  :post="p"
-                  @click.native="showPostOpenDialog(p)"
-                ></post-preview>
-              </div>
-
-              <div v-if="n === 2">
-                <suggestion-preview
-                  v-for="s in suggestions"
-                  :key="s.id"
-                  :suggestion="s"
-                  @click.native="showSuggOpenDialog(s)"
-                ></suggestion-preview>
-              </div>
-
-              <div v-if="n === 3">
-                <tournament-preview
-                  v-for="t in tournaments"
-                  :key="t.id"
-                  :tournament="t"
-                  @click.native="showTournamentOpenDialog(t)"
-                >
-                </tournament-preview>
-              </div>
-            </v-card>
-          </v-card>
+      <v-row>
+        <v-col class="pa-2">
+          <v-card-subtitle class="text-left">
+            Username: {{ beStudent.username }} <v-spacer /> Currency:
+            {{ beStudent.score }} Achandos
+          </v-card-subtitle>
         </v-col>
       </v-row>
+
+
+      <v-tabs>
+        <v-tab>
+          <v-icon left>fas fa-book</v-icon>
+          Posts
+        </v-tab>
+        <v-tab>
+          <v-icon left>question_answer</v-icon>
+          Suggestions
+        </v-tab>
+        <v-tab>
+          <v-icon left>fas fa-trophy</v-icon>
+          Tournaments
+        </v-tab>
+
+        <v-tab-item class="pb-10">
+          <v-card flat>
+            <v-card-text>
+                <div>
+                  <post-preview
+                          v-for="p in posts"
+                          class="mb-2"
+                          :key="p.id"
+                          :post="p"
+                          @click.native="showPostOpenDialog(p)"
+                  ></post-preview>
+                </div>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <v-card flat>
+            <v-card-text>
+              <suggestion-preview
+                      v-for="s in suggestions"
+                      class="mb-2"
+                      :key="s.id"
+                      :suggestion="s"
+                      @click.native="showSuggOpenDialog(s)"
+              ></suggestion-preview>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <v-card flat>
+            <v-card-text>
+              <tournament-preview
+                      v-for="t in tournaments"
+                      class="mb-2"
+                      :key="t.id"
+                      :tournament="t"
+                      @click.native="showTournamentOpenDialog(t)"
+              >
+              </tournament-preview>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
     </v-card>
     <student-dashboard
       v-if="dashboardDialog"
@@ -240,6 +249,9 @@ export default class DashboardHomeView extends Vue {
   showSuggOpenDialog(sugg: Suggestion) {
     this.currentSuggestion = sugg;
     this.suggestionDialog = true;
+    this.beStudent = this.students.find(
+            student => student.username == this.beStudent?.username
+    );
   }
 
   async onSavePost(post: Post) {
