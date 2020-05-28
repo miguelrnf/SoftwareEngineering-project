@@ -23,6 +23,14 @@ export default class StatementManager {
     this.statementQuiz = await RemoteServices.generateStatementQuiz(params);
   }
 
+  async getTopicQuizStatement(topicName: String) {
+    let params = {
+      assessment: null,
+      numberOfQuestions: null
+    };
+    this.statementQuiz = await RemoteServices.generateTopicStatementQuiz(params, topicName);
+  }
+
   async concludeQuiz() {
     if (this.statementQuiz) {
       let answers = await RemoteServices.concludeQuiz(this.statementQuiz.id);
