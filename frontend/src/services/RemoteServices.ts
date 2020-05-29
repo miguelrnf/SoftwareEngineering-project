@@ -329,6 +329,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getAvailableTopics(): Promise<Topic[]> {
+    return httpClient
+      .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/general/getAvailableTopics`)
+      .then(response => {
+        return response.data.map((topic: any) => {
+          return new Topic(topic);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
       .get(
@@ -365,6 +378,7 @@ export default class RemoteServices {
         params
       )
       .then(response => {
+        console.log(response.data)
         return new StatementQuiz(response.data);
       })
       .catch(async error => {

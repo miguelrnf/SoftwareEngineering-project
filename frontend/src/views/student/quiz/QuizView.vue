@@ -145,7 +145,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+  import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
@@ -158,9 +158,10 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
   }
 })
 export default class QuizView extends Vue {
+  @Prop({ type: StatementManager, required: false }) readonly statementManager1!: StatementManager;
   statementManager: StatementManager = StatementManager.getInstance;
   statementQuiz: StatementQuiz | null =
-    StatementManager.getInstance.statementQuiz;
+          StatementManager.getInstance.statementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   nextConfirmationDialog: boolean = false;
@@ -171,14 +172,22 @@ export default class QuizView extends Vue {
   resultsTimer: string = '';
 
   async created() {
-    if (!this.statementQuiz?.id) {
-      await this.$router.push({ name: 'create-quiz' });
-    } else {
-      try {
-        await RemoteServices.startQuiz(this.statementQuiz?.id);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-        await this.$router.push({ name: 'available-quizzes' });
+    console.log(this.statementManager1)
+
+    if(this.statementManager1){
+      this.statementManager = this.statementManager1
+      this.statementQuiz = this.statementManager1.statementQuiz
+    }
+    else {
+      if (!this.statementQuiz?.id) {
+        await this.$router.push({path: '/student/create'});
+      } else {
+        try {
+          await RemoteServices.startQuiz(this.statementQuiz?.id);
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+          await this.$router.push({path: '/student/available-quizzes'});
+        }
       }
     }
   }
@@ -277,7 +286,7 @@ export default class QuizView extends Vue {
         !this.statementQuiz?.timeToResults &&
         this.statementManager.correctAnswers.length !== 0
       ) {
-        await this.$router.push({ name: 'quiz-results' });
+        await this.$router.push({ path: '/student/results' });
       }
     } catch (error) {
       await this.$store.dispatch('error', error);

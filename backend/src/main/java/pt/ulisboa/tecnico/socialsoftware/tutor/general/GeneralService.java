@@ -104,10 +104,26 @@ public class GeneralService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TopicDto> getAvailableTopics(int executionId){
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
+
+        List<TopicDto> topics = availableQuestions.stream().
+                flatMap(question -> question.getTopics().stream()).distinct().map(topic -> new TopicDto(topic)).collect(Collectors.toList());
+
+        return topics;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto generateStudentTopicQuiz(UserDto userdto, int executionId, StatementCreationDto quizDetails, String topicName) {
         User user = checkIfUserExists(userdto.getUsername());
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         Topic topic = checkIfTopicExists(courseExecution.getCourse().getId(), topicName);
+
+        quizDetails.setNumberOfQuestions(1);
 
         Quiz quiz = new Quiz();
         quiz.setKey(quizService.getMaxQuizKey() + 1);
@@ -143,6 +159,6 @@ public class GeneralService {
         quizAnswerRepository.save(quizAnswer);
 
 
-        return null;
+        return new StatementQuizDto(quizAnswer);
     }
 }

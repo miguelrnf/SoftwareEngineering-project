@@ -38,6 +38,12 @@ public class GeneralController {
         return this.generalService.answeredQuestionsOfTopic(courseId, new UserDto(user), topicName);
     }
 
+    @GetMapping(value = "/courses/{executionId}/general/getAvailableTopics")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    public List<TopicDto> answeredQuestionsOfTopic(@PathVariable int executionId) {
+        return this.generalService.getAvailableTopics(executionId);
+    }
+
     @PostMapping("/courses/{executionId}/general/newTopicQuiz/{topicName}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @PathVariable String topicName, @RequestBody StatementCreationDto quizDetails) {
@@ -46,8 +52,6 @@ public class GeneralController {
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-
-        quizDetails.setNumberOfQuestions(1);
 
         return generalService.generateStudentTopicQuiz(new UserDto(user), executionId, quizDetails, topicName);
     }

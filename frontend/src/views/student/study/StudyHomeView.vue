@@ -41,27 +41,26 @@
                         >
                             Show Suggested Quiz
                         </v-btn>
-                        <v-card-text style="position: relative">
                                 <span
                                         v-show="!hidden"
                                 >sdgfddfdggdf</span>
-                        </v-card-text>
 
                     <v-container fluid>
                         <v-row align="center">
-                            <v-col cols="6">
-                                <v-subheader >Create Quiz of Topic:</v-subheader>
-                            </v-col>
+
                             <v-col>
                                 <v-select
+                                        v-model="topicName"
                                         :items="topics"
                                         item-text="name"
                                         menu-props="auto"
-                                        label="Select Topic"
+                                        label="Select Topic and Create Quiz"
                                         hide-details
                                         prepend-icon="map"
                                         single-line
-                                        @click=""
+                                        @change="createQuiz"
+                                        :statementManager1="statementManager"
+
                                 >
                                 </v-select>
                             </v-col>
@@ -93,18 +92,21 @@
 
                         </v-toolbar>
 
-                        <v-list two-line flat>
+                        <!--<v-list two-line flat>
                             <v-list-item-group
                                     v-model="selected"
                                     multiple
-                                    active-class="pink--text"
+                                    active-class="pink&#45;&#45;text"
                             >
-                                <template v-for="(item, index) in items">
-                                    <v-list-item :key="item.title">
-                                        <template v-slot:default="{ active, toggle }">
+                                <template>
+                                    <v-list-item v-for="item in selectedTopics"
+                                            :key="item.title" >
+
+
+                                        <template v-slot:default="{ active, toggle } ">
                                             <v-list-item-content>
                                                 <v-list-item-title v-text="item.title"></v-list-item-title>
-                                                <v-list-item-subtitle class="text--primary" v-text="item.headline"></v-list-item-subtitle>
+                                                <v-list-item-subtitle class="text&#45;&#45;primary" v-text="item.headline"></v-list-item-subtitle>
                                                 <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
                                             </v-list-item-content>
 
@@ -124,16 +126,19 @@
                                                     star
                                                 </v-icon>
                                             </v-list-item-action>
+
+
                                         </template>
+
                                     </v-list-item>
 
                                     <v-divider
-                                            v-if="index + 1 < items.length"
+                                            v-if="index + 1 < selectedTopics.length"
                                             :key="index"
                                     ></v-divider>
                                 </template>
                             </v-list-item-group>
-                        </v-list>
+                        </v-list>-->
                     </v-card>
 
                 </v-card>
@@ -207,7 +212,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-import Topic from '@/models/management/Topic';
+    import Topic from '@/models/management/Topic';
     import RemoteServices from '@/services/RemoteServices';
     import ShowSummaryDialog from '@/views/student/study/ShowSummaryDialog.vue';
     import StatementManager from "@/models/statement/StatementManager";
@@ -223,6 +228,8 @@ export default class StudyHomeView extends Vue {
 
         selectedTopics: Topic[] = [];
 
+        topicName: String="";
+
         private loading: boolean = false;
         private hidden: boolean = true;
 
@@ -231,13 +238,14 @@ export default class StudyHomeView extends Vue {
         async created() {
             this.statementManager.reset();
 
-            this.topics = await RemoteServices.getTopics();
+            this.topics = await RemoteServices.getAvailableTopics();
         }
 
-        async createQuiz(topicName: String) {
+        async createQuiz() {
             try {
-                await this.statementManager.getTopicQuizStatement(topicName);
-                await this.$router.push({ name: 'solve-quiz' });
+                await this.statementManager.getTopicQuizStatement(this.topicName);
+                console.log(this.statementManager)
+                await this.$router.push({ path: '/student/quiz' });
             } catch (error) {
                 await this.$store.dispatch('error', error);
             }
@@ -256,6 +264,7 @@ export default class StudyHomeView extends Vue {
         newSummary() {
             this.summaryDialog = true;
         }
+
         data () {
             return {
                 hidden: true,
