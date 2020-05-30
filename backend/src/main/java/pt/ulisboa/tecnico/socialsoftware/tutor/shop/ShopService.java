@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemListDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.repository.ShopRepository;
@@ -45,6 +46,7 @@ public class ShopService {
     public ShopItemDto buyShopItem(User user, int shopItemId) {
         ShopItem item = checkIfShopItemExistsById(shopItemId);
         checkIfUserHasEnoughAchandos(user, item.getPrice());
+        user.addItem(new UserItem(item, user));
         return new ShopItemDto(item);
     }
 
