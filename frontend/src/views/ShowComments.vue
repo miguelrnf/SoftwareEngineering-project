@@ -11,9 +11,11 @@
       @keydown.enter.exact="submitComment"
       data-cy="commentBox"
     ></v-textarea>
-    <div class="text-left ml-3 mt-3" v-if="comments.length === 0">{{
-      "Currently there's no comments on this post. Be the first one by pressing the comment button."
-    }}</div>
+    <div class="text-left ml-3 mt-3" v-if="comments.length === 0">
+      {{
+        "Currently there's no comments on this post. Be the first one by pressing the comment button."
+      }}
+    </div>
     <v-list v-if="comments.length !== 0">
       <v-card
         v-for="c in comments.filter(cc => cc.parent == null)"
