@@ -138,7 +138,7 @@ public class StudyService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         Topic topic = checkIfTopicExists(courseExecution.getCourse().getId(), topicName);
 
-        quizDetails.setNumberOfQuestions(1);
+        quizDetails.setNumberOfQuestions(5);
 
         Quiz quiz = new Quiz();
         quiz.setKey(quizService.getMaxQuizKey() + 1);
