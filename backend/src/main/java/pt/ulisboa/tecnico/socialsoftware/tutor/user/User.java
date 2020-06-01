@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import jdk.jshell.SourceCodeAnalysis;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -530,6 +531,26 @@ public class User implements UserDetails, DomainEntity {
         }
 
         return result;
+    }
+
+    public int getNumberApprovedSuggestions(){
+         return  (int) suggestions.stream().filter(x -> x.getStatus().equals(Suggestion.Status.APPROVED)).count();
+    }
+
+    public int getNumberToApproveSuggestions(){
+        return  (int) suggestions.stream().filter(x -> x.getStatus().equals(Suggestion.Status.TOAPPROVE)).count();
+    }
+
+    public int getNumberRejectedSuggestions(){
+        return  (int) suggestions.stream().filter(x -> x.getStatus().equals(Suggestion.Status.REJECTED)).count();
+    }
+
+    public int getNumberTournamentsDone(){
+        return  tournaments.size();
+    }
+
+    public int getNumberPostsSubmitted(){
+        return  postQuestions.size();
     }
 
     @Override

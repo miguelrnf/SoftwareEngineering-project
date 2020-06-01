@@ -91,6 +91,13 @@ public class StatsService {
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
+
+        statsDto.setApproveSuggestions(user.getNumberApprovedSuggestions());
+        statsDto.setPendingSuggestions(user.getNumberToApproveSuggestions());
+        statsDto.setRejectedSuggestions(user.getNumberRejectedSuggestions());
+        statsDto.setTournamentDone(user.getNumberTournamentsDone());
+        statsDto.setPostSubmitted(user.getNumberPostsSubmitted());
+
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
