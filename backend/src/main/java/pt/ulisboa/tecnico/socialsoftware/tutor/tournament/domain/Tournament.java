@@ -57,6 +57,12 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private TournamentType type;
 
+    @Column(name = "cost")
+    private Integer cost;
+
+    @Column(name = "prize")
+    private Integer prize;
+
     @ManyToOne
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
@@ -89,6 +95,7 @@ public class Tournament {
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         this.assessment = assessment;
         setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
+        setCostAndPrize(tournamentDto.getCost(), tournamentDto.getPrize(), this.type);
     }
 
     public TournamentType getType() {
@@ -131,6 +138,22 @@ public class Tournament {
         this.id = id;
     }
 
+    public Integer getCost() {
+        return cost;
+    }
+
+    public void setCost(Integer cost) {
+        this.cost = cost;
+    }
+
+    public Integer getPrize() {
+        return prize;
+    }
+
+    public void setPrize(Integer prize) {
+        this.prize = prize;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -165,6 +188,16 @@ public class Tournament {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public void setCostAndPrize(Integer cost, Integer prize, TournamentType type) {
+        if (type == TournamentType.ADVANCED){
+            this.cost = cost;
+            this.prize = prize;
+        } else if (type == TournamentType.STANDARD){
+            this.cost = 0;
+            this.prize = 2;
+        }
     }
 
     public LocalDateTime getAvailableDate() {
