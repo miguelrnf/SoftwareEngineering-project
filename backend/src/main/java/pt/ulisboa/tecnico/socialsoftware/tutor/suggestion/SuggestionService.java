@@ -147,17 +147,22 @@ public class SuggestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteSuggestion(int courseId, SuggestionDto suggestionDto, UserDto userDto){
-        String username = userDto.getUsername();
+    public SuggestionDto deleteSuggestion(int courseId, int suggestionId, String username){
+
         courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
 
-        if(!user.getUsername().equals(suggestionDto.getStudent().getUsername()))  throw new TutorException(NOT_SUGGESTION_CREATOR);
 
-        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getId());
+        Suggestion suggestion = checkIfSuggestionExists(suggestionId);
 
-        entityManager.remove(suggestion);
+
+        suggestion.remove(user.getRole());
+
+        suggestionRepository.delete(suggestion);
+
+        return new SuggestionDto(suggestion);
     }
+
 
     @Retryable(
             value = { SQLException.class },
@@ -204,7 +209,8 @@ public class SuggestionService {
         User u = checkIfUserExists(userdto.getUsername());
 
         return u.getCourseExecutions().stream().flatMap(c -> suggestionRepository.listAllSuggestionsbyCourseId(c.getId())
-                .stream().map(SuggestionDto::new)).filter(s -> u.getRole() != User.Role.STUDENT || s.getStudent().getUsername().equals(u.getUsername()))
+                .stream().map(SuggestionDto::new))
+                .filter(s -> u.getRole() != User.Role.STUDENT || s.getStudent().getUsername().equals(u.getUsername()))
                 .collect(Collectors.toList());
     }
 
@@ -258,6 +264,23 @@ public class SuggestionService {
         questionRepository.save(question);
 
         return new QuestionDto(question);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SuggestionDto setCheckMark(int courseExecutionId, SuggestionDto suggestionDto, String username){
+
+        courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecutionId));
+        User user = checkIfUserExists(username);
+
+        Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getId());
+
+        suggestion.setCheckMark(true);
+
+        return new SuggestionDto(suggestion);
+
     }
 
     private QuestionDto suggestionToQuestion(SuggestionDto sugg){

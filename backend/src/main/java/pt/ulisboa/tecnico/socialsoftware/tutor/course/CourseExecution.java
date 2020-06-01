@@ -175,6 +175,14 @@ public class CourseExecution implements DomainEntity {
 
     public void addSuggestion(Suggestion suggestion) {this.suggestions.add(suggestion); }
 
+    public Set<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void setSuggestions(Set<Suggestion> suggestions) {
+        this.suggestions = suggestions;
+    }
+
     @Override
     public String toString() {
         return "CourseExecution{" +
@@ -186,6 +194,7 @@ public class CourseExecution implements DomainEntity {
                 ", users=" + users +
                 ", quizzes=" + quizzes +
                 ", assessments=" + assessments +
+                ", suggestions=" + suggestions +
                 '}';
     }
 

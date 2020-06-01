@@ -42,4 +42,16 @@ describe('Administration walkthrough', () => {
     cy.demoTeacherLoginSuggestion();
     cy.changeToQuestion('SUGESTAO§§§§§§§21312');
   });
+
+  it('Show a Suggestion and approve and goes to student to see checkmark', () => {
+    cy.demoTeacherLoginSuggestion();
+    cy.ShowSuggestion('SUGESTAO');
+    cy.ApproveSuggestion();
+    cy.CloseSuggestion();
+    cy.contains('Logout').click();
+    cy.demoStudentLoginSuggestion();
+    cy.wait(3000);
+    cy.contains('Logout').click();
+
+  });
 });

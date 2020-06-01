@@ -10,8 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
@@ -28,30 +26,48 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @DataJpaTest
-class DeleteSuggestionTest extends Specification{
+class SetCheckMarkTest extends Specification{
+
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String SUGGESTION_CONTENT = 'suggestion content'
-    public static final String SUGGESTION_TITLE = 'suggestion title'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
     public static final int VALID_KEY = 1
-    public static final int VALID_KEY2 = 2
     public static final int INVALID_KEY = -1
     public static final int VALID_ID = 1
-    public static final int VALID_ID2 = 2
     public static final int INVALID_ID = -1
     public static final String VALID_NAME = "Ben Dover"
-    public static final String REJECTED = "REJECTED"
-    public static final String APPROVED = "APPROVED"
     public static final String VALID_USERNAME = "BenDover69"
     public static final String VALID_USERNAME_TEACHER = "something"
     public static final String VALID_NAME_TOPIC = "Spock"
     public static final String EMPTY_SUGGESTION = ""
     public static final String VALID_USERNAME_T = "Teacher"
     public static final String VALID_JUSTIFICATION = "approved/rejected"
-
+    public static final String TOO_MANY_CHARS =
+            '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
+                    '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
+                    'smTxBwLMoIvXebgzIDG20yloMadbiY8RT7IcMYSRkAFZJqT4xS6Zr9MXLA0ceLetDLYTvWkXokBo4hGcq4cWhXTF6EpK9JV' +
+                    'wzx7qH0ftW3nakG1dYonRLFvsvAHDby5eomorAjt35goeFCKiiqGd69NIZhVJm7LIqArqndg52o0cUGIm064b0TbxN9naBy' +
+                    '3bFhiDjNh22m8XPgbVh4OHloTKVW0xELfMPDWXjeVsXQrEudyKuUrJKzhRBGoxkXHgNcnASnGTfSm4VQGVsQbuWGiOQ7RLn' +
+                    'bs1xN568BiF1vQ3MTHvhS922likFcpOEnTqpG41UOiSYJuGXnybo1Pr5fNirhtBhf2lQTKlX6Np0EsshuDjGqBqjWJg3npy' +
+                    'vwdgl6bAjG7wt0RaDf6g22iIv5dys9KCd6mZB5mCh1W1naEAaUZkS0d52fwhciRVmAUqlQxmfdl650O14FntY93IWILmChH' +
+                    'wa7vsaXqFJbMM5c4hN2M2mCjVbQYimYHGty6JaJGJ6vBAjkFqRRTC98u5xLBijcUgIfswDdO2JatYs5feyUEEvlB4WO3QcF' +
+                    'jYzZdZKjgpNfNXc86zBD3cgUZpk30wSsxN1MgVutK335D4KmqyMcZ5vD4fBoZtJPgAcjOFLSJucrZVr28ln8wL404Slm3EA' +
+                    'VBiTuQJWUYlaMJ33nJh6UGeZx1Hwj0fThLq2UtWN9KsBRKnvPl54Ixprv4bisZ6CLYoIh4bhNNZGzVTYmchtvYfVahe153l' +
+                    '9vusIYIQt7jSaqSrzlzdS94a1qa3rKiGqvFpgBsbPvzQ6eDpA6WgSTrUgJTuNr5ns1UNG2Y0KqGqvFpgBsbPvzQ6eDpA6Wg' +
+                    '5EdnCpIJFNNr0enpzluxNDqldKmHf6TZvTeLpj6laJPTYaZeI3DYv9KGVXtykpTq0hjXtS75Y3VhBlHlPPI3E1HlmHNI5pH' +
+                    '5QYoF24hA7Dd8z6nxA8NStjuugQmKMuZYKV5jugeFtcqt2yoT4LzVMtAvtB7jGMQ8ua4Pxm1QifflguBuJDNmXdtNkpwX3l' +
+                    'smTxBwLMoIvXebgzIDG20yloMadbiY8RT7IcMYSRkAFZJqT4xS6Zr9MXLA0ceLetDLYTvWkXokBo4hGcq4cWhXTF6EpK9JV' +
+                    'wzx7qH0ftW3nakG1dYonRLFvsvAHDby5eomorAjt35goeFCKiiqGd69NIZhVJm7LIqArqndg52o0cUGIm064b0TbxN9naBy' +
+                    '3bFhiDjNh22m8XPgbVh4OHloTKVW0xELfMPDWXjeVsXQrEudyKuUrJKzhRBGoxkXHgNcnASnGTfSm4VQGVsQbuWGiOQ7RLn' +
+                    'bs1xN568BiF1vQ3MTHvhS922likFcpOEnTqpG41UOiSYJuGXnybo1Pr5fNirhtBhf2lQTKlX6Np0EsshuDjGqBqjWJg3npy' +
+                    'vwdgl6bAjG7wt0RaDf6g22iIv5dys9KCd6mZB5mCh1W1naEAaUZkS0d52fwhciRVmAUqlQxmfdl650O14FntY93IWILmChH' +
+                    'wa7vsaXqFJbMM5c4hN2M2mCjVbQYimYHGty6JaJGJ6vBAjkFqRRTC98u5xLBijcUgIfswDdO2JatYs5feyUEEvlB4WO3QcF' +
+                    'jYzZdZKjgpNfNXc86zBD3cgUZpk30wSsxN1MgVutK335D4KmqyMcZ5vD4fBoZtJPgAcjOFLSJucrZVr28ln8wL404Slm3EA' +
+                    'VBiTuQJWUYlaMJ33nJh6UGeZx1Hwj0fThLq2UtWN9KsBRKnvPl54Ixprv4bisZ6CLYoIh4bhNNZGzVTYmchtvYfVahe153l' +
+                    '9vusIYIQt7jSaqSrzlzdS94a1qa3rKiSTrx_'
     @Autowired
     SuggestionService suggestionService
 
@@ -100,11 +116,7 @@ class DeleteSuggestionTest extends Specification{
     @Shared
     def suggestion
 
-    @Shared
-    def suggestion2
-
     def sug
-    def sug2
 
     def course
     def courseExecution
@@ -170,10 +182,6 @@ class DeleteSuggestionTest extends Specification{
         sug.setStudentQuestion(SUGGESTION_CONTENT as String)
         sug.setKey(VALID_KEY)
 
-        sug2 = new SuggestionDto()
-        sug2.setStudentQuestion(SUGGESTION_CONTENT as String)
-        sug2.setKey(VALID_KEY2)
-
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
@@ -181,20 +189,8 @@ class DeleteSuggestionTest extends Specification{
         sug.setTopicsList(topicsDto)
         sug.setId(VALID_ID)
         sug.setStudent(new UserDto(userS))
-        sug.setTitle(SUGGESTION_TITLE)
 
-        sug2.setTopicsList(topicsDto)
-        sug2.setId(VALID_ID2)
-        sug2.setStudent(new UserDto(userS))
-
-
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        sug.setOptions(options)
-
+        suggestion = new Suggestion(courseExecution, userS, sug)
 
         then: "add to repository"
         courseRepository.save(course)
@@ -202,19 +198,48 @@ class DeleteSuggestionTest extends Specification{
         userRepository.save(userS)
         userRepository.save(userT)
         topicRepository.save(VALID_TOPIC)
-
+        suggestionRepository.save(suggestion)
     }
 
 
-    def "valid deletion"() {
+
+    def "Teacher sees suggestion"(){
         when:
-        suggestionService.createSuggestion(courseExecution.getId(), sug)
-        suggestionService.deleteSuggestion(courseExecution.getId(), suggestionRepository.findAll().get(0).getId(), VALID_USERNAME )
+        def suggestionDto = new SuggestionDto()
+        def sug2 = new SuggestionDto()
+
+        suggestionDto.setStudentQuestion(SUGGESTION_CONTENT)
+
+        List<TopicDto> topicsDto = new ArrayList<>();
+        for (t in VALID_TOPIC_LIST){
+            topicsDto.add(new TopicDto(t));
+        }
+
+        suggestionDto.setTopicsList(topicsDto)
+
+        suggestionDto.setStudent(new UserDto(VALID_U))
+        suggestionDto.setTitle("TITLE")
+
+        suggestionDto.setCheckMark(false)
+
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        suggestionDto.setOptions(options)
+
+        suggestionDto = suggestionService.createSuggestion(courseExecution.getId(),suggestionDto)
+
+        def result = suggestionService.setCheckMark(courseExecution.getId(), suggestionDto, new UserDto(VALID_T as User))
 
         then:
-        suggestionRepository.findAll().size()==0
+        result.getCheckMark() == true
+
 
     }
+
 
     @TestConfiguration
     static class SuggestionServiceImplTestContextConfiguration {

@@ -51,6 +51,9 @@ public class Suggestion {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Column(name = "checkMark", columnDefinition = "boolean default false")
+    private Boolean checkMark;
+
     @Enumerated(EnumType.STRING)
     public Status status = Status.TOAPPROVE;
 
@@ -65,7 +68,6 @@ public class Suggestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
-
     public Suggestion() {
     }
 
@@ -76,7 +78,6 @@ public class Suggestion {
         this.studentQuestion = suggestionDto.getStudentQuestion();
         this.teacherExplanation = "";
         this.isPrivate = false;
-
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -106,7 +107,6 @@ public class Suggestion {
         if (suggestionDto.getStudentQuestion().trim().length() > 500 ){
             throw new TutorException(SUGGESTION_TOO_LONG);
         }
-
     }
 
     public Set<Topic> getTopicsList() {
@@ -151,6 +151,7 @@ public class Suggestion {
     public String getTeacherExplanation() {
         return teacherExplanation;
     }
+
 
     public void setTeacherExplanation(String teacherExplanation) {
         if (teacherExplanation.length() == 0 ){
@@ -210,6 +211,30 @@ public class Suggestion {
         this.isPrivate = isprivate;
     }
 
+    public void remove(User.Role role) {
+        if(role.equals(User.Role.STUDENT)){
+            canRemove();
+        }
+
+
+        getTopicsList().forEach(topic -> topic.getSuggestions().remove(this));
+        getTopicsList().clear();
+        getOptions().forEach(option -> option.setSuggestion(null));
+        getOptions().clear();
+        getCourse().getSuggestions().remove(this);
+        courseExecution = null;
+
+    }
+
+    private void canRemove() {
+        if (this.getStatus().equals(Status.APPROVED)) {
+            throw new TutorException(SUGGESTION__REM_ALREADY_APP);
+        }
+        if (this.getStatus().equals(Status.QUESTION)) {
+            throw new TutorException(SUGGESTION__REM_ALREADY_QUESTION);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -245,5 +270,13 @@ public class Suggestion {
                 ", isprivate=" + isPrivate +
                 ", title='" + title + '\'' +
                 '}';
+    }
+
+    public Boolean getCheckMark() {
+        return checkMark;
+    }
+
+    public void setCheckMark(Boolean checkMark) {
+        this.checkMark = checkMark;
     }
 }

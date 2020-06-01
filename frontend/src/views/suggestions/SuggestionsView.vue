@@ -22,6 +22,7 @@
 
           <v-spacer />
           <v-btn
+            v-if="!isTeacher()"
             color="primary"
             dark
             @click="newSuggestion"
@@ -30,40 +31,16 @@
           >
         </v-card-title>
       </template>
-
-      <template v-slot:item._questionStr="{ item }">
+      <template v-slot:item.studentQuestion="{ item }">
         <p
           v-html="convertMarkDown(item.studentQuestion, null)"
           @click="showSuggestionDialog(item)"
       /></template>
-
-      <!--<template v-slot:item.topics="{ item }">
-        <edit-question-topics
-          :question="item"
-          :topics="topics"
-          v-on:question-changed-topics="onQuestionChangedTopics"
-        />
-
-      </template>-->
-
       <template v-slot:item._topicsList="{ item }">
-        <v-row justify="space-around">
-          <v-chip-group center-active column active-class="primary--text">
-            <v-chip v-for="tag in item.topicsList" :key="tag.name">
-              {{ tag.name }}
-            </v-chip>
-          </v-chip-group>
-        </v-row>
+        <v-chip v-for="tag in item.topicsList" :key="tag.name" class="ma-1">
+          {{ tag.name }}
+        </v-chip>
       </template>
-
-      <!--<template v-slot:item.difficulty="{ item }">
-        <v-chip
-          v-if="item.difficulty"
-          :color="getDifficultyColor(item.difficulty)"
-          dark
-          >{{ item.difficulty + '%' }}</v-chip
-        >
-      </template>-->
 
       <template v-slot:item.status="{ item }">
         <v-chip v-if="item.status" :color="getStatusColor(item.status)" small>
@@ -71,9 +48,9 @@
         </v-chip>
       </template>
 
-      <template v-slot:item._isprivate="{ item }">
-        <v-chip :color="getPrivacyColor(item.isprivate)" small>
-          <span class="white--text ">{{ getPrivacyTag(item.isprivate) }}</span>
+      <template v-slot:item.isPrivate="{ item }">
+        <v-chip :color="getPrivacyColor(item.isPrivate)" small>
+          <span class="white--text">{{ getPrivacyTag(item.isPrivate) }}</span>
         </v-chip>
       </template>
 
@@ -91,7 +68,7 @@
           </template>
           <span>Show Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isOwner(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               small
@@ -116,20 +93,74 @@
           </template>
           <span>Duplicate Suggestion</span>
         </v-tooltip>
-        <!--  <v-tooltip bottom>
+        <v-tooltip bottom v-if="isTeacher()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="ApproveSuggestion(item)"
+              data-cy="quickApproveButton"
+              >done</v-icon
+            >
+          </template>
+          <span>Approve Suggestion</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isTeacher()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="RejectSuggestion(item)"
+              data-cy="quickRejectButton"
+              >highlight_off</v-icon
+            >
+          </template>
+          <span>Reject Suggestion</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isTeacher()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="AddQuestion(item)"
+              data-cy="addQuestionButton"
+              >fas fa-book-medical</v-icon
+            >
+          </template>
+          <span>Change to Question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
            <template v-slot:activator="{ on }">
              <v-icon
                small
                class="mr-2"
                v-on="on"
-               @click="deleteQuestion(item)"
+               @click="deleteSuggestion(item)"
                color="red"
                >delete</v-icon
              >
            </template>
-           <span>Delete Question</span>
-         </v-tooltip>-->
+           <span>Delete Suggestion</span>
+         </v-tooltip>
       </template>
+      <template v-slot:item.checkMark="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+                    :color="getCheckMarkColor(item.checkMark)"
+                    small
+                    class="mr-2"
+                    v-on="on"
+
+            >fas fa-check</v-icon
+            >
+          </template>
+          <span> {{ getCheckMarkTip(item.checkMark) }}</span>
+        </v-tooltip>
+        </template>
     </v-data-table>
     <edit-suggestion-dialog
       v-if="currentSuggestion && editSuggestionDialog"
@@ -145,25 +176,45 @@
       :suggestion="currentSuggestion"
       v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
     />
+    <add-question-dialog
+      v-if="currentSuggestion && addQuestionDialog"
+      v-model="addQuestionDialog"
+      :suggestion="currentSuggestion"
+      :dialog="addQuestionDialog"
+      v-on:save-suggestion="onSaveSuggestion"
+      v-on:close-add-question-dialog="onCloseAddQuestionDialog"
+    />
+    <reject-suggestion-dialog
+      v-if="currentSuggestion && rejectSuggDialogue"
+      v-model="rejectSuggDialogue"
+      :suggestion="currentSuggestion"
+      :dialog="rejectSuggDialogue"
+      v-on:save-suggestion="onRejectSuggestion"
+      v-on:close-rejection="onCloseShowRejectDialog"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
-import Topic from '@/models/management/Topic';
-import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
-import Suggestion from '@/models/management/Suggestion';
-import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
-import ShowSuggestionDialog from '@/views/suggestions/ShowSuggestionDialog.vue';
+  import { Component, Vue, Watch } from 'vue-property-decorator';
+  import RemoteServices from '@/services/RemoteServices';
+  import { convertMarkDown } from '@/services/ConvertMarkdownService';
+  import Image from '@/models/management/Image';
+  import Topic from '@/models/management/Topic';
+  import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
+  import Suggestion from '@/models/management/Suggestion';
+  import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
+  import ShowSuggestionDialog from '@/views/ShowSuggestionDialog.vue';
+  import AddQuestionDialog from '@/views/teacher/suggestions/AddQuestionDialog.vue';
+  import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestionDialog.vue';
 
-@Component({
+  @Component({
   components: {
     'show-suggestion-dialog': ShowSuggestionDialog,
     'edit-suggestion-dialog': EditSuggestionDialog,
-    'edit-question-topics': EditQuestionTopics
+    'edit-question-topics': EditQuestionTopics,
+    'reject-suggestion-dialog': RejectSuggestionDialog,
+    'add-question-dialog': AddQuestionDialog
   }
 })
 export default class SuggestionsView extends Vue {
@@ -173,10 +224,11 @@ export default class SuggestionsView extends Vue {
   editSuggestionDialog: boolean = false;
   questionDialog: boolean = false;
   search: string = '';
-  statusList = ['TOAPPROVE', 'APPROVED', 'REJECTED'];
+  addQuestionDialog: boolean = false;
+  rejectSuggDialogue: boolean = false;
 
   headers: object = [
-    { text: 'Suggestion', value: '_questionStr', align: 'left' },
+    { text: 'Suggestion', value: 'studentQuestion', align: 'left' },
     {
       text: 'Topics',
       value: '_topicsList',
@@ -184,7 +236,7 @@ export default class SuggestionsView extends Vue {
       sortable: false
     },
 
-    { text: 'Privacy', value: '_isprivate', align: 'center' },
+    { text: 'Privacy', value: 'isPrivate', align: 'center' },
 
     { text: 'Status', value: 'status', align: 'center' },
 
@@ -199,7 +251,13 @@ export default class SuggestionsView extends Vue {
       value: 'action',
       align: 'center',
       sortable: false
+    },
+    {
+      text: 'Seen',
+      value:'checkMark',
+      align: 'center'
     }
+
   ];
 
   @Watch('editSuggestionDialog')
@@ -237,20 +295,6 @@ export default class SuggestionsView extends Vue {
     }
   }
 
-  /*async setStatus(questionId: number, status: string) {
-    try {
-      await RemoteServices.setQuestionStatus(questionId, status);
-      let question = this.questions.find(
-        question => question.id === questionId
-      );
-      if (question) {
-        question.status = status;
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }*/
-
   getStatusColor(status: string) {
     if (status === 'REJECTED') return 'red';
     else if (status === 'TOAPPROVE') return 'yellow';
@@ -261,6 +305,17 @@ export default class SuggestionsView extends Vue {
     if (isprivate) return 'black';
     else return 'orange';
   }
+
+  getCheckMarkColor(checkMark: boolean) {
+    if (checkMark) return 'blue';
+    else return 'grey';
+  }
+
+  getCheckMarkTip(checkMark: boolean) {
+    if (checkMark) return 'Seen';
+    else return 'Not Seen';
+  }
+
   getPrivacyTag(isprivate: boolean) {
     if (isprivate) return 'PRIVATE';
     else return 'PUBLIC';
@@ -291,10 +346,15 @@ export default class SuggestionsView extends Vue {
     this.editSuggestionDialog = true;
   }
 
+  async onRejectSuggestion() {
+    this.currentSuggestion = null;
+    this.rejectSuggDialogue = false;
+  }
+
   async onSaveSuggestion(sugg: Suggestion) {
-    //this.suggestions = this.suggestions.filter(q => q.id !== sugg.id);
     this.suggestions.unshift(sugg);
     this.editSuggestionDialog = false;
+    this.addQuestionDialog = false;
     this.currentSuggestion = null;
   }
 
@@ -313,23 +373,83 @@ export default class SuggestionsView extends Vue {
     }
   }
 
-  //TODO ???n sei se e preciso
+  isOwner(suggestion: Suggestion): boolean {
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === suggestion.student?.username
+      );
+    } else return false;
+  }
 
-  /*async deleteSuggestion(toDeletequestion: Suggestion) {
+  isTeacher(): boolean {
+    return this.$store.getters.isTeacher;
+  }
+
+  async AddQuestion(sugg: Suggestion) {
+    this.currentSuggestion = sugg;
+    this.addQuestionDialog = true;
+  }
+
+  async ApproveSuggestion(sugg: Suggestion) {
+    if (sugg && sugg.status == 'REJECTED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not approve a rejected suggestion before the students edits it'
+      );
+    } else if (sugg && sugg.status == 'APPROVED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not approve a suggestion twice'
+      );
+    } else {
+      sugg.status = 'APPROVED';
+      await RemoteServices.approveSuggestion(sugg);
+    }
+  }
+
+  async RejectSuggestion(sugg: Suggestion) {
+    if (sugg != null) {
+      this.currentSuggestion = sugg;
+    }
+
+    if (sugg && sugg.status == 'REJECTED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not reject a question twice'
+      );
+    } else if (sugg && sugg.status == 'APPROVED') {
+      await this.$store.dispatch(
+        'error',
+        'You can not reject an approved suggestion'
+      );
+    } else {
+      this.rejectSuggDialogue = true;
+    }
+  }
+
+  onCloseShowRejectDialog() {
+    this.rejectSuggDialogue = false;
+  }
+
+  onCloseAddQuestionDialog() {
+    this.addQuestionDialog = false;
+  }
+
+  async deleteSuggestion(suggestion: Suggestion) {
     if (
-      toDeletequestion.id &&
+      suggestion.id &&
       confirm('Are you sure you want to delete this question?')
     ) {
       try {
-        await RemoteServices.deleteQuestion(toDeletequestion.id);//delete suggestion criar
-        this.questions = this.questions.filter(
-          question => question.id != toDeletequestion.id
+        await RemoteServices.deleteSuggestion(suggestion.id);//delete suggestion criar
+        this.suggestions = this.suggestions.filter(
+          sugg => sugg.id != suggestion.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
     }
-  }*/
+  }
 }
 </script>
 

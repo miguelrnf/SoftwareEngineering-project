@@ -151,7 +151,7 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
-import PostViewDialog from '@/views/PostViewDialog.vue';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
 import EditPostDialog from './EditPostDialog.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
@@ -283,7 +283,11 @@ export default class PostsView extends Vue {
   }
 
   isOwner(post: Post): boolean {
-    return this.$store.getters.getUser.username === post.question.user.username;
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === post.question.user.username
+      );
+    } else return false;
   }
 
   redirectPost() {}

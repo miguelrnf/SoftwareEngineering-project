@@ -1,68 +1,31 @@
 <template>
-  <v-card class="mx-auto" max-height="80%">
-    <v-app-bar dense color="grey lighten-2">
-      <v-toolbar-title> {{ post.question.question.title }}</v-toolbar-title>
-      <v-spacer />
-      <post-status-buttons :post="post"></post-status-buttons>
-      <v-tooltip bottom v-if="isOwner(post)">
-        <template v-slot:activator="{ on }">
-          <v-icon small class="mr-2" v-on="on" @click="editPost(post)"
-            >edit</v-icon
-          >
-        </template>
-        <span>Edit Post</span>
-      </v-tooltip>
-      <v-tooltip bottom v-if="isTeacher() && post.answer != null">
-        <template v-slot:activator="{ on }">
-          <v-icon small class="mr-2" v-on="on" @click="editAnswer(post)"
-            >edit</v-icon
-          >
-        </template>
-        <span>Edit Answer</span>
-      </v-tooltip>
-      <v-menu left bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item v-for="n in 5" :key="n" @click="() => {}">
-            <v-list-item-title>Option {{ n }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
-    <v-card-text>
-      <p class="headline font-weight-black">
-        <span v-html="convertMarkDown(post.question.question.content)" />
-      </p>
-      <div class="headline text-left">
-        <span v-html="convertMarkDown(post.question.studentQuestion)" />
+  <div class="text-left">
+    <div class="mt-3 ml-3">
+      <div class="headline grey--text font-weight-bold">
+        {{ post.question.question.content }}
       </div>
-      <div class="text-right">
-        by
-        <span v-html="convertMarkDown(post.question.user.username)" />
+      <div class="ml-5 mt-3">
+        {{ post.question.studentQuestion }}
       </div>
-    </v-card-text>
-    <v-card-text
+      <div class="font-weight-light text-right mr-3">
+        {{ post.question.user.username }}
+      </div>
+    </div>
+    <v-divider inset class="mt-3"></v-divider>
+    <div
       v-if="
         post.answer != null &&
           post.answer.teacherAnswer !== '' &&
           (!post.answerPrivacy || isTeacher() || isOwner(post))
       "
+      class="mt-3 ml-3"
     >
-      <p class="subtitle-1 font-weight-light">
-        <span v-html="convertMarkDown('Answer:')" />
-      </p>
-      <p class="headline font-weight-dark">
-        <span v-html="convertMarkDown(post.answer.teacherAnswer)" />
-      </p>
-      <div class="text-right">
-        by
-        <span v-html="convertMarkDown(post.answer.user.username)" />
+      <div class="headline grey--text font-weight-bold">{{ 'Answer:' }}</div>
+      <div class="ml-5 mt-3">{{ post.answer.teacherAnswer }}</div>
+      <div class="font-weight-light text-right mr-3">
+        {{ post.answer.user.username }}
       </div>
-    </v-card-text>
+    </div>
     <edit-post-dialog
       v-model="editPostDialog"
       :post="post"
@@ -76,7 +39,7 @@
       v-on:save-post-edit-answer="onSavePostEvent"
       v-on:close-edit-answer-dialog="onCloseEditAnswerDialog"
     />
-  </v-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -87,7 +50,6 @@ import Post from '@/models/management/Post';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditPostDialog from '@/views/EditPostDialog.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -106,14 +68,18 @@ export default class ShowPost extends Vue {
   }
 
   isOwner(post: Post): boolean {
-    return this.$store.getters.getUser.username === post.question.user.username;
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === post.question.user.username
+      );
+    } else return false;
   }
 
-  editPost(post: Post) {
+  editPost() {
     this.editPostDialog = true;
   }
 
-  editAnswer(post: Post) {
+  editAnswer() {
     this.editAnswerDialog = true;
   }
 
@@ -131,23 +97,6 @@ export default class ShowPost extends Vue {
 
   onSavePostEvent() {
     this.$emit('save-post', this.post);
-  }
-
-  getColor3(privacy: boolean) {
-    if (privacy) return 'black';
-    else return 'orange';
-  }
-
-  isOwnerAnswer(post: Post): boolean {
-    if (post.answer != null)
-      return this.$store.getters.getUser.username === post.answer.user.username;
-    else return false;
-  }
-
-  changeAnswerPrivacy(post: Post) {
-    if (post.answerPrivacy != null && this.isOwnerAnswer(post))
-      post.answerPrivacy = !post.answerPrivacy;
-    RemoteServices.changeAnswerPrivacy(post.id);
   }
 }
 </script>
