@@ -105,13 +105,13 @@ public class TournamentService {
 
         User user = findUsername(tournamentDto.getOwner().getUsername());
 
-        if(user.getRole() == User.Role.ADMIN){
+        if(user.getRole() == User.Role.ADMIN)
             throw new TutorException(TOURNAMENT_PERMISSION);
-        }
+
+        if(user.getRole() == User.Role.STUDENT && (tournamentDto.getType().equals("EVALUATION") || tournamentDto.getType().equals("ADVANCED")))
+            throw new TutorException(TOURNAMENT_PERMISSION);
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
-
-        tournamentDto.setType("STANDARD");
 
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
 
