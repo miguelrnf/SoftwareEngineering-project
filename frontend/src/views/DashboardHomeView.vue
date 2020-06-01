@@ -162,8 +162,8 @@
                   />
                 </v-card>
                 <v-card max-width="97%"  v-else class="pb-10" height="255" >
-                  <v-card-text>NO SUGGESTIONS SUBMITTED</v-card-text>
-                  <v-icon left x-large>fas fa-exclamation-triangle</v-icon>
+                  <v-card-text class="pt-12">NO SUGGESTIONS SUBMITTED</v-card-text>
+                  <v-icon class="pt-6" left x-large>fas fa-exclamation-triangle</v-icon>
 
                 </v-card>
               </v-col>
@@ -180,7 +180,7 @@
                 </v-card>
               </v-col>
               <v-col>
-                <v-card max-width="97%">
+                <v-card max-width="97%" v-if=" this.correctAnswers !== 0 || this.wrongAnswers !== 0">
                   <v-card-text>CORRECT ANSWERS</v-card-text>
                   <GChart
                           type="PieChart"
@@ -188,6 +188,12 @@
                           :options="chartOptions"
                           @ready="getStats"
                   />
+                </v-card>
+
+                <v-card max-width="97%"  v-else class="pb-10" height="255" >
+                  <v-card-text class="pt-12">NO ANSWERED QUESTIONS</v-card-text>
+                  <v-icon class="pt-6" left x-large>fas fa-exclamation-triangle</v-icon>
+
                 </v-card>
               </v-col>
             </v-row>
@@ -238,8 +244,8 @@
                   />
                 </v-card>
                 <v-card max-width="97%"  v-else class="pb-10" height="255">
-                  <v-card-text>NO TOURNAMENTS DONE</v-card-text>
-                  <v-icon left x-large>fas fa-exclamation-triangle</v-icon>
+                  <v-card-text class="pt-12">NO TOURNAMENTS DONE</v-card-text>
+                  <v-icon class="pt-6" left x-large>fas fa-exclamation-triangle</v-icon>
                 </v-card>
               </v-col>
               <v-col>
@@ -254,8 +260,8 @@
                   />
                 </v-card>
                 <v-card max-width="97%"  v-else class="pb-10 " height="255">
-                  <v-card-text >NO POSTS SUBMITTED</v-card-text>
-                  <v-icon   center x-large>fas fa-exclamation-triangle</v-icon>
+                  <v-card-text class="pt-12">NO POSTS SUBMITTED</v-card-text>
+                  <v-icon class="pt-6" x-large>fas fa-exclamation-triangle</v-icon>
                 </v-card>
 
               </v-col>
@@ -356,6 +362,10 @@ export default class DashboardHomeView extends Vue {
   beStudent: User | undefined = undefined;
   textLabel: string = '';
   stats: StudentStats | null = null;
+  wrongAnswers: number | null=null;
+  correctAnswers: number | null = null;
+
+
 
 
   suggestionChartData : Array<Object> = [];
@@ -415,6 +425,7 @@ export default class DashboardHomeView extends Vue {
   }
 
   async getStats(){
+
     console.log(this.stats);
     console.log(this.stats?.approveSuggestions);
     console.log(this.stats?.pendingSuggestions);
@@ -431,6 +442,10 @@ export default class DashboardHomeView extends Vue {
       ['Total Unique Not Answered Question', this.stats?.totalAvailableQuestions - this.stats?.totalUniqueQuestions ],
       ['Total Unique Answered Question', this.stats?.totalUniqueQuestions],
     ];
+
+    this.wrongAnswers = this.stats?.totalAnswers - (this.stats?.correctAnswers * this.stats?.totalAnswers)/100;
+    this.correctAnswers =  (this.stats?.correctAnswers * this.stats?.totalAnswers)/100;
+
 
     this.correctChartData = [
       ['Title', 'Number'],
