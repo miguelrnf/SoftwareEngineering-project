@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.general.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.study.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -20,7 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.general.GeneralService
+import pt.ulisboa.tecnico.socialsoftware.tutor.study.StudyService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -40,7 +40,7 @@ class GenerateStudentTopicQuizTest extends Specification {
     public static final String TOPIC_NAME2 = "TOPIC2"
 
     @Autowired
-    GeneralService generalService
+    StudyService studyService
 
     @Autowired
     QuizRepository quizRepository
@@ -152,7 +152,7 @@ class GenerateStudentTopicQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        generalService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME2)
+        studyService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME2)
 
         then:
         quizRepository.count() == 1L
@@ -177,7 +177,7 @@ class GenerateStudentTopicQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        generalService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME)
+        studyService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME)
 
         then:
         quizRepository.count() == 1L
@@ -200,7 +200,7 @@ class GenerateStudentTopicQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        generalService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME)
+        studyService.generateStudentTopicQuiz(new UserDto(user), courseExecution.getId(), quizForm, TOPIC_NAME)
 
         then:
         TutorException exception = thrown()
@@ -212,8 +212,8 @@ class GenerateStudentTopicQuizTest extends Specification {
     static class QuizServiceImplTestContextConfiguration {
 
         @Bean
-        GeneralService generalService() {
-            return new GeneralService()
+        StudyService studyService() {
+            return new StudyService()
         }
         @Bean
         StatementService statementService() {

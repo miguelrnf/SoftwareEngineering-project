@@ -72,6 +72,9 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Suggestion> suggestions = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Quiz> quizzes = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
@@ -531,6 +534,16 @@ public class User implements UserDetails, DomainEntity {
 
         return result;
     }
+
+    public Set<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(Set<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
+
+    public void addQuiz(Quiz q){quizzes.add(q);}
 
     @Override
     public String toString() {

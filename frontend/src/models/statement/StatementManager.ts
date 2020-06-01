@@ -29,7 +29,6 @@ export default class StatementManager {
       numberOfQuestions: null
     };
     this.statementQuiz = await RemoteServices.generateTopicStatementQuiz(params, topicName);
-    console.log(this.statementQuiz)
   }
 
   async concludeQuiz() {

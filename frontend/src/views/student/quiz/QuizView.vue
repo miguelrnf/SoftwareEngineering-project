@@ -172,8 +172,6 @@ export default class QuizView extends Vue {
   resultsTimer: string = '';
 
   async created() {
-    console.log(this.statementManager1)
-
     if(this.statementManager1){
       this.statementManager = this.statementManager1
       this.statementQuiz = this.statementManager1.statementQuiz

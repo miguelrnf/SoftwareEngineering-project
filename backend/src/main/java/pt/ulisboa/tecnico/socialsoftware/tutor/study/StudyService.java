@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.general;
+package pt.ulisboa.tecnico.socialsoftware.tutor.study;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -23,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -30,15 +30,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPIC_NOT_FOUND;
 
 @Service
-public class GeneralService {
+public class StudyService {
     @Autowired
     private TopicRepository topicRepository;
 
@@ -82,7 +82,6 @@ public class GeneralService {
                 .map(questionAnswer -> new QuestionDto(questionAnswer.getQuizQuestion().getQuestion()))
                 .collect(Collectors.toList());
 
-        System.out.println(studentAnsweredQuestions);
 
         return studentAnsweredQuestions;
     }
@@ -112,6 +111,22 @@ public class GeneralService {
                 flatMap(question -> question.getTopics().stream()).distinct().map(topic -> new TopicDto(topic)).collect(Collectors.toList());
 
         return topics;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SolvedQuizDto> getOwnQuizzes(UserDto userdto, int executionId){
+        User user = checkIfUserExists(userdto.getUsername());
+
+        return user.getQuizzes().stream()
+                .filter(quiz -> quiz.getCourseExecution().getId() == executionId)
+                .flatMap(quiz -> quiz.getQuizAnswers().stream())
+                .filter(quizAnswer -> quizAnswer.getUser()==user)
+                .map(SolvedQuizDto::new)
+                .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
+                .collect(Collectors.toList());
     }
 
     @Retryable(
@@ -148,7 +163,10 @@ public class GeneralService {
 
         topicAvailableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), topicAvailableQuestions);
 
-        quiz.generate(topicAvailableQuestions);
+        quiz.generateWithName(topicAvailableQuestions, topicName);
+
+        quiz.setStudent(user);
+        user.addQuiz(quiz);
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
 
@@ -161,4 +179,49 @@ public class GeneralService {
 
         return new StatementQuizDto(quizAnswer);
     }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String suggestionStudentTopicQuiz(UserDto userdto, int executionId) {
+        String topicName="";
+        User user = checkIfUserExists(userdto.getUsername());
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        List<TopicDto> availableTopics = getAvailableTopics(executionId);
+
+        List<Topic> myTopics = user.getQuizzes().stream()
+                .flatMap(quiz -> quiz.getQuizQuestions().stream())
+                .flatMap(quizQuestion -> quizQuestion.getQuestion().getTopics().stream())
+                .collect(Collectors.toList());
+
+        List<Topic> solvedTopics = user.getQuizAnswers().stream()
+                .flatMap(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().stream())
+                .flatMap(quizQuestion -> quizQuestion.getQuestion().getTopics().stream())
+                .collect(Collectors.toList());
+
+        List<Topic> difference = availableTopics.stream()
+                .map(y -> checkIfTopicExists(courseExecution.getCourse().getId(), y.getName()))
+                .filter(x -> !myTopics.contains(x) && !solvedTopics.contains(x))
+                .collect(Collectors.toList());
+
+        Random rand = new Random();
+
+        if(difference.size() > 0)
+            topicName = difference.get(rand.nextInt(difference.size())).getName();
+        else{
+            myTopics.addAll(solvedTopics);
+            Map<Topic, Long> frequencyMap = myTopics.stream().collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+
+            long min = Collections.min(frequencyMap.values());
+
+            List<String> l = frequencyMap.entrySet().stream().filter(x -> x.getValue()==min).map(topicLongEntry -> topicLongEntry.getKey().getName()).collect(Collectors.toList());
+
+            topicName = l.get(rand.nextInt(l.size()));
+        }
+
+        return topicName;
+    }
+
 }

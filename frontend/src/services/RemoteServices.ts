@@ -233,11 +233,38 @@ export default class RemoteServices {
   static getTopicQuestions(topicName: String): Promise<Question[]> {
     return httpClient
         .get(
-            `/courses/${Store.getters.getCurrentCourse.courseId}/general/getTopicQuestions/${topicName}`,
+            `/courses/${Store.getters.getCurrentCourse.courseId}/study/getTopicQuestions/${topicName}`,
         )
         .then(response => {
           return response.data.map((question: any) => {
             return new Question(question);
+          });
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async getSuggestTopicQuiz(): Promise<string> {
+    return httpClient
+        .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getSuggestedTopic`, {
+        })
+        .then(response => {
+          return response.data as string;
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async getMyOwnTopicQuizzes(): Promise<SolvedQuiz[]> {
+    return httpClient
+        .get(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getMyOwnQuizzes`
+        )
+        .then(response => {
+          return response.data.map((solvedQuiz: any) => {
+            return new SolvedQuiz(solvedQuiz);
           });
         })
         .catch(async error => {
@@ -331,7 +358,7 @@ export default class RemoteServices {
 
   static async getAvailableTopics(): Promise<Topic[]> {
     return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/general/getAvailableTopics`)
+      .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getAvailableTopics`)
       .then(response => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
@@ -374,11 +401,10 @@ export default class RemoteServices {
   static async generateTopicStatementQuiz(params: object, topicName: String): Promise<StatementQuiz> {
     return httpClient
       .post(
-        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/general/newTopicQuiz/${topicName}`,
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/newTopicQuiz/${topicName}`,
         params
       )
       .then(response => {
-        console.log(response.data)
         return new StatementQuiz(response.data);
       })
       .catch(async error => {

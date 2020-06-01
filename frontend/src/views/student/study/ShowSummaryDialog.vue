@@ -4,17 +4,18 @@
     @keydown.esc="$emit('dialog', false)"
     @input="closeSummaryDialog"
     max-width="90%"
-    max-height="100%"
   >
-    <v-card>
+    <v-card class="mx-auto" max-height="80%">
+
       <div id="typography">
-        <!--<div class="title">
-                <h2>{{topic.name}}</h2>
-            </div>-->
+
         <div class="md-layout">
           <div class="md-layout-item">
             <div class="tim-typo">
+              <br />
+
               <h1>
+
                 {{ topic.name }}
 
               </h1>

@@ -43,7 +43,16 @@
                         </v-btn>
                                 <span
                                         v-show="!hidden"
-                                >sdgfddfdggdf</span>
+                                >
+                                    -
+                                </span>
+                    <v-btn
+                            v-show="!hidden"
+                            text
+                            small
+                            @click=createQuiz(suggestedQuiz)
+                    >{{suggestedQuiz}}
+                    </v-btn>
 
                     <v-container fluid>
                         <v-row align="center">
@@ -51,14 +60,14 @@
                             <v-col>
                                 <v-select
                                         v-model="topicName"
-                                        :items="topics"
+                                        :items="availableTopics"
                                         item-text="name"
                                         menu-props="auto"
                                         label="Select Topic and Create Quiz"
                                         hide-details
                                         prepend-icon="map"
                                         single-line
-                                        @change="createQuiz"
+                                        @change="createQuiz(topicName)"
                                         :statementManager1="statementManager"
 
                                 >
@@ -92,26 +101,25 @@
 
                         </v-toolbar>
 
-                        <!--<v-list two-line flat>
+                        <v-list two-line flat>
                             <v-list-item-group
                                     v-model="selected"
                                     multiple
                                     active-class="pink&#45;&#45;text"
                             >
                                 <template>
-                                    <v-list-item v-for="item in selectedTopics"
-                                            :key="item.title" >
+                                    <v-list-item v-for="item in quizzes"
+                                            :key="item" >
 
 
                                         <template v-slot:default="{ active, toggle } ">
                                             <v-list-item-content>
-                                                <v-list-item-title v-text="item.title"></v-list-item-title>
-                                                <v-list-item-subtitle class="text&#45;&#45;primary" v-text="item.headline"></v-list-item-subtitle>
-                                                <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
+                                                <v-list-item-title v-text="item.statementQuiz.title"></v-list-item-title>
+                                                <v-list-item-subtitle v-text="item.answerDate"></v-list-item-subtitle>
                                             </v-list-item-content>
 
                                             <v-list-item-action>
-                                                <v-list-item-action-text v-text="item.action"></v-list-item-action-text>
+                                                <v-list-item-action-text ></v-list-item-action-text>
                                                 <v-icon
                                                         v-if="!active"
                                                         color="grey lighten-1"
@@ -133,12 +141,12 @@
                                     </v-list-item>
 
                                     <v-divider
-                                            v-if="index + 1 < selectedTopics.length"
+                                            v-if="index + 1 < quizzes.length"
                                             :key="index"
                                     ></v-divider>
                                 </template>
                             </v-list-item-group>
-                        </v-list>-->
+                        </v-list>
                     </v-card>
 
                 </v-card>
@@ -147,13 +155,9 @@
                 <v-card flat>
                     <v-card-text>
                         <p>
-                            Morbi nec metus. Suspendisse faucibus, nunc et pellentesque egestas, lacus ante convallis tellus, vitae iaculis lacus elit id tortor. Sed mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non adipiscing dolor urna a orci. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Nunc sed turpis.
+                            Here you can create a summary with all the questions that you have seen, which are related to one or more topics that you choose.
                         </p>
 
-
-                        <p class="mb-0">
-                            Donec venenatis vulputate lorem. Aenean viverra rhoncus pede. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. Fusce commodo aliquam arcu. Suspendisse enim turpis, dictum sed, iaculis a, condimentum nec, nisi.
-                        </p>
 
                         <v-card-text>
                             <v-autocomplete
@@ -194,9 +198,11 @@
                         </v-card-text>
 
                     </v-card-text>
+
                 </v-card>
 
             </v-tab-item>
+
         </v-tabs>
 
         <show-summary-dialog
@@ -216,6 +222,7 @@
     import RemoteServices from '@/services/RemoteServices';
     import ShowSummaryDialog from '@/views/student/study/ShowSummaryDialog.vue';
     import StatementManager from "@/models/statement/StatementManager";
+    import SolvedQuiz from "@/models/statement/SolvedQuiz";
 
     @Component({
         components: {
@@ -224,6 +231,7 @@
     })
 export default class StudyHomeView extends Vue {
         topics: Topic[] = [];
+        availableTopics: Topic[] = [];
         summaryDialog: boolean = false;
 
         selectedTopics: Topic[] = [];
@@ -235,16 +243,29 @@ export default class StudyHomeView extends Vue {
 
         statementManager: StatementManager = StatementManager.getInstance;
 
-        async created() {
-            this.statementManager.reset();
+        suggestedQuiz: String="";
 
-            this.topics = await RemoteServices.getAvailableTopics();
+        quizzes: SolvedQuiz[] = [];
+
+
+        async created() {
+            await this.$store.dispatch('loading');
+            try {
+                this.statementManager.reset();
+
+                this.topics = await RemoteServices.getTopics();
+                this.availableTopics = await RemoteServices.getAvailableTopics();
+
+                this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
+            } catch (error) {
+                await this.$store.dispatch('error', error);
+            }
+            await this.$store.dispatch('clearLoading');
         }
 
-        async createQuiz() {
+        async createQuiz(topic: String) {
             try {
-                await this.statementManager.getTopicQuizStatement(this.topicName);
-                console.log(this.statementManager)
+                await this.statementManager.getTopicQuizStatement(topic);
                 await this.$router.push({ path: '/student/quiz' });
             } catch (error) {
                 await this.$store.dispatch('error', error);
@@ -271,9 +292,14 @@ export default class StudyHomeView extends Vue {
             }
         }
 
-        loader () {
-            this.loading = true
-            setTimeout(() => (this.loading = false, this.hidden = false), 2500)
+        async loader () {
+            try {
+                this.loading = true
+                setTimeout(() => (this.loading = false, this.hidden = false), 2500)
+                this.suggestedQuiz = await RemoteServices.getSuggestTopicQuiz()
+            } catch (error) {
+                await this.$store.dispatch('error', error);
+            }
         }
 
     }
