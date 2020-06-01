@@ -10,6 +10,12 @@
         />
       </v-card-text>
       <v-container>
+        <p class="pl-0">Type</p>
+        <v-btn-toggle v-model="tournament.type" mandatory class="button-group">
+          <v-btn text value="STANDARD">STANDARD</v-btn>
+        </v-btn-toggle>
+      </v-container>
+      <v-container>
         <p>Assessment</p>
         <v-btn-toggle
           v-if="availableAssessments.length > 0"
@@ -36,58 +42,12 @@
           v-model="tournament.numberOfQuestions"
           mandatory
           class="button-group"
-          @change="calculatePrize"
         >
           <v-btn text value="10">10</v-btn>
           <v-btn text value="20">20</v-btn>
           <v-btn text value="30">30</v-btn>
           <v-btn text value="40">40</v-btn>
         </v-btn-toggle>
-      </v-container>
-      <v-container>
-        <p class="pl-0">Type</p>
-        <v-btn-toggle v-model="tournament.type" mandatory class="button-group">
-          <v-btn text value="STANDARD">STANDARD</v-btn>
-          <v-btn v-if="$store.getters.isTeacher" text value="ADVANCED"
-            >ADVANCED</v-btn
-          >
-        </v-btn-toggle>
-      </v-container>
-      <v-container v-if="tournament.type === 'ADVANCED'">
-        <v-row>
-          <v-col cols="10">
-            <v-container>
-              <p class="pl-0">Cost to enter (Achandos)</p>
-              <v-slider
-                v-model="tournament.cost"
-                class="align-center"
-                :max="100"
-                :min="10"
-                hide-details
-                :thumb-size="24"
-                thumb-label="always"
-                thumb-color="primary"
-                @input="calculatePrize"
-              >
-              </v-slider>
-            </v-container>
-          </v-col>
-          <v-col>
-            <v-container>
-              <p class="pl-0">Prize per question</p>
-              <v-text-field
-                v-model="tournament.prize"
-                class="mt-0 pt-0"
-                hide-details
-                single-line
-                readonly
-                style="width: 100%"
-                type="number"
-                suffix="Achandos"
-              ></v-text-field>
-            </v-container>
-          </v-col>
-        </v-row>
       </v-container>
       <v-container fluid>
         <v-row>
@@ -161,11 +121,6 @@ export default class CreateTournamentView extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-  }
-
-  calculatePrize() {
-    this.tournament.prize =
-      (this.tournament.cost * 2) / this.tournament.numberOfQuestions;
   }
 }
 </script>

@@ -21,8 +21,6 @@ export class Tournament {
   completed!: boolean;
   solved!: SolvedQuiz;
   type!: string;
-  cost!: number;
-  prize!: number;
 
   constructor(jsonObj?: Tournament) {
     if (jsonObj) {
@@ -30,8 +28,6 @@ export class Tournament {
       this.number = jsonObj.number;
       this.title = jsonObj.title;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
-      this.cost = jsonObj.cost;
-      this.prize = jsonObj.prize;
       this.status = jsonObj.status;
       this.completed = jsonObj.completed;
       this.type = jsonObj.type;
