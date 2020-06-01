@@ -12,6 +12,11 @@
         <span v-else v-html="convertMarkDown(option.content)" />
       </li>
     </ul>
+    <span
+      v-if="question.hint"
+      v-html="convertMarkDown('Hint: ' + question.hint)"
+    />
+    <span v-else v-html="convertMarkDown('Hint: No hint was given')" />
     <br />
   </div>
 </template>

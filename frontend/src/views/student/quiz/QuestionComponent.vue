@@ -51,8 +51,9 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 @Component
 export default class QuestionComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
+  @Prop(StatementQuestion) question!: StatementQuestion;
   @Prop(Number) optionId: number | undefined;
+  @Prop(Number) quizId!: number;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
@@ -79,4 +80,4 @@ export default class QuestionComponent extends Vue {
 }
 </script>
 
-<style lang="scss" scoped />
+<style lang="scss" scoped></style>

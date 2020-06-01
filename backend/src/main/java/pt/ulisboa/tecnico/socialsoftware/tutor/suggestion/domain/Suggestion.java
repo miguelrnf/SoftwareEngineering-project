@@ -36,6 +36,9 @@ public class Suggestion {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "hint")
+    private String hint;
+
     @Column(name = "student_question")
     private String studentQuestion;
 
@@ -75,6 +78,7 @@ public class Suggestion {
         this.studentQuestion = suggestionDto.getStudentQuestion();
         this.teacherExplanation = "";
         this.isPrivate = false;
+        this.hint = suggestionDto.getHint();
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -104,6 +108,14 @@ public class Suggestion {
         if (suggestionDto.getStudentQuestion().trim().length() > 500 ){
             throw new TutorException(SUGGESTION_TOO_LONG);
         }
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     public Set<Topic> getTopicsList() {

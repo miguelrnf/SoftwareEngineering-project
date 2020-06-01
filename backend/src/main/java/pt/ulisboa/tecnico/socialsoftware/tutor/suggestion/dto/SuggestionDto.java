@@ -27,6 +27,7 @@ public class SuggestionDto implements Serializable{
     private List<OptionDto> options = new ArrayList<>();
     private Boolean isPrivate = false;
     private String title;
+    private String hint;
 
     public SuggestionDto(){
     }
@@ -41,6 +42,7 @@ public class SuggestionDto implements Serializable{
         this.studentQuestion =suggestion.getStudentQuestion();
         this.status =suggestion.getStatus().name();
         this.isPrivate = suggestion.getIsPrivate();
+        this.hint = suggestion.getHint();
 
         if (suggestion.getCreationDate() != null)
             this.creationDate = suggestion.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -51,6 +53,13 @@ public class SuggestionDto implements Serializable{
 
     }
 
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
 
     public Integer getId() {
         return id;

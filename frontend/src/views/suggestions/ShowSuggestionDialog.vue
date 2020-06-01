@@ -149,7 +149,6 @@ export default class ShowSuggestionDialog extends Vue {
     this.$emit('close-show-suggestion-dialog');
   }
 
-  created() {
-  }
+  created() {}
 }
 </script>

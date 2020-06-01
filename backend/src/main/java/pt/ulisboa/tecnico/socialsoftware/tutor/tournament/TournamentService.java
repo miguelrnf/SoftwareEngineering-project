@@ -14,9 +14,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -25,6 +27,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementOptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
@@ -74,6 +78,9 @@ public class TournamentService {
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
 
+    @Autowired
+    private OptionRepository optionRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -102,6 +109,8 @@ public class TournamentService {
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
+        tournamentDto.setType("STANDARD");
+
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
@@ -124,7 +133,6 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
-
 
     @Retryable(
             value = { SQLException.class },
@@ -220,25 +228,29 @@ public class TournamentService {
                             tournamentDto.setQuiz(new StatementQuizDto(quizAnswer));
                     }
 
-                    if(tournament.getQuiz() != null){
-                        QuizAnswer answer = user.getQuizAnswers().stream()
-                        .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
-                        .collect(Collectors.toList()).get(0);
 
-                        if ((checkStatus(tournament) == Tournament.TournamentStatus.OPEN || checkStatus(tournament) == Tournament.TournamentStatus.CLOSED) && tournamentDto.getQuiz().getId() == null)
-                            tournamentDto.setQuiz(new StatementQuizDto(answer));
+                    if(tournament.getQuiz() != null) {
+                        List<QuizAnswer> answerList = user.getQuizAnswers().stream()
+                                .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
+                                .collect(Collectors.toList());
+                        if (!answerList.isEmpty()) {
+                            QuizAnswer answer = answerList.get(0);
 
-                        tournamentDto.setCompleted(answer.isCompleted());
+                            if ((checkStatus(tournament) == Tournament.TournamentStatus.OPEN || checkStatus(tournament) == Tournament.TournamentStatus.CLOSED) && tournamentDto.getQuiz().getId() == null)
+                                tournamentDto.setQuiz(new StatementQuizDto(answer));
 
-                        if (tournamentDto.isCompleted() && checkStatus(tournament) == Tournament.TournamentStatus.CLOSED){
-                            List<SolvedQuizDto> temp = user.getQuizAnswers().stream()
-                                    .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
-                                    .map(SolvedQuizDto::new).collect(Collectors.toList());
+                            tournamentDto.setCompleted(answer.isCompleted());
 
-                            if (temp.size() != 1)
-                                throw new TutorException(MULTIPLE_QUIZ_ANSWERS);
+                            if (tournamentDto.isCompleted() && checkStatus(tournament) == Tournament.TournamentStatus.CLOSED) {
+                                List<SolvedQuizDto> temp = user.getQuizAnswers().stream()
+                                        .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
+                                        .map(SolvedQuizDto::new).collect(Collectors.toList());
 
-                            tournamentDto.setSolved(temp.get(0));
+                                if (temp.size() != 1)
+                                    throw new TutorException(MULTIPLE_QUIZ_ANSWERS);
+
+                                tournamentDto.setSolved(temp.get(0));
+                            }
                         }
                     }
 
@@ -382,8 +394,10 @@ public class TournamentService {
             tournament.setStatus(Tournament.TournamentStatus.CREATED);
         else if(DateHandler.now().isBefore(tournament.getConclusionDate())){
             tournament.setStatus(Tournament.TournamentStatus.OPEN);
-            if(tournament.getQuiz() == null)
+            if(tournament.getQuiz() == null) {
                 generateTournamentQuiz(tournament.getId());
+            }
+
         }
         else
             tournament.setStatus(Tournament.TournamentStatus.CLOSED);
@@ -469,12 +483,114 @@ public class TournamentService {
                 });
 
         tournament.getQuiz().setType("TOURNAMENT");
+        tournament.getQuiz().setOneWay(true);
         tournament.getQuiz().setAvailableDate(tournament.getAvailableDate());
         tournament.getQuiz().setConclusionDate(tournament.getConclusionDate());
         tournament.getQuiz().setResultsDate(tournament.getConclusionDate());
         tournament.getQuiz().setCreationDate(DateHandler.now());
         tournament.getQuiz().setTitle(tournament.getTitle());
         tournament.getQuiz().setTournament(tournament);
+    }
+
+    private Question findQuestion(Integer questionId){
+        return questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatementQuestionDto removeTwoOptions(StatementQuestionDto statementQuestionDto, Integer quizId){
+        List<StatementOptionDto> statementOptionDtos = statementQuestionDto.getOptions();
+        List<Option> options = new ArrayList<>();
+        int size;
+        int i = 0;
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if(quiz.getTournament() == null){
+            throw new TutorException(TOURNAMENT_NOT_FOUND);
+        }
+
+        if(quiz.getTournament().getType() != Tournament.TournamentType.STANDARD){
+            throw new TutorException(TOURNAMENT_INVALID_TYPE);
+        }
+
+        statementOptionDtos.forEach(statementOptionDto -> {
+            Option o = optionRepository.findById(statementOptionDto.getOptionId()).orElseThrow(()-> new TutorException(OPTION_NOT_FOUND, statementOptionDto.getOptionId()));
+            options.add(o);
+        });
+
+        size = options.size();
+        if(size != 1) {
+            while (options.size() > size / 2) {
+                if (!options.get(i).getCorrect())
+                    options.remove(options.get(i));
+                i++;
+            }
+        }
+
+        statementOptionDtos = options.stream().map(StatementOptionDto::new).collect(Collectors.toList());
+
+        statementQuestionDto.setOptions(statementOptionDtos);
+
+        return statementQuestionDto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatementQuestionDto rigthAnswer(StatementQuestionDto statementQuestionDto, Integer quizId){
+        List<StatementOptionDto> statementOptionDtos = statementQuestionDto.getOptions();
+        List<Option> options = new ArrayList<>();
+
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if(quiz.getTournament() == null){
+            throw new TutorException(TOURNAMENT_NOT_FOUND);
+        }
+
+        if(quiz.getTournament().getType() != Tournament.TournamentType.STANDARD){
+            throw new TutorException(TOURNAMENT_INVALID_TYPE);
+        }
+
+        statementOptionDtos.forEach(statementOptionDto -> {
+            Option o = optionRepository.findById(statementOptionDto.getOptionId()).orElseThrow(()-> new TutorException(OPTION_NOT_FOUND, statementOptionDto.getOptionId()));
+            options.add(o);
+        });
+
+        options.removeIf(o -> !o.getCorrect());
+
+        statementOptionDtos = options.stream().map(StatementOptionDto::new).collect(Collectors.toList());
+
+        statementQuestionDto.setOptions(statementOptionDtos);
+
+        return statementQuestionDto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String getHint(StatementQuestionDto statementQuestionDto, Integer quizId){
+        List<Question> q = new ArrayList<>();
+
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if(quiz.getTournament() == null){
+            throw new TutorException(TOURNAMENT_NOT_FOUND);
+        }
+
+        if(quiz.getTournament().getType() != Tournament.TournamentType.STANDARD){
+            throw new TutorException(TOURNAMENT_INVALID_TYPE);
+        }
+
+        quiz.getQuizQuestions().forEach(quizQuestion -> {
+            if (quizQuestion.getQuestion().getContent().equals(statementQuestionDto.getContent()))
+                q.add(quizQuestion.getQuestion());
+                            });
+
+        return q.get(0).getHint();
     }
 
 }

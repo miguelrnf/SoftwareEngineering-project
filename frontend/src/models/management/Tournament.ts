@@ -20,6 +20,7 @@ export class Tournament {
   quiz!: StatementQuiz;
   completed!: boolean;
   solved!: SolvedQuiz;
+  type!: string;
 
   constructor(jsonObj?: Tournament) {
     if (jsonObj) {
@@ -29,6 +30,7 @@ export class Tournament {
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.status = jsonObj.status;
       this.completed = jsonObj.completed;
+      this.type = jsonObj.type;
 
       if (jsonObj.creationDate)
         this.creationDate = ISOtoString(jsonObj.creationDate);

@@ -10,6 +10,12 @@
         />
       </v-card-text>
       <v-container>
+        <p class="pl-0">Type</p>
+        <v-btn-toggle v-model="tournament.type" mandatory class="button-group">
+          <v-btn text value="STANDARD">STANDARD</v-btn>
+        </v-btn-toggle>
+      </v-container>
+      <v-container>
         <p>Assessment</p>
         <v-btn-toggle
           v-if="availableAssessments.length > 0"

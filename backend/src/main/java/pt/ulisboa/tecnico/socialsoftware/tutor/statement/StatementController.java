@@ -107,4 +107,11 @@ public class StatementController {
 
         return statementService.concludeQuiz(user.getId(), quizId);
     }
+
+    @GetMapping("/quizzes/{statementId}/type")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#statementId, 'QUIZ.ACCESS')")
+    public Boolean showPowerUps(@PathVariable int statementId){
+        return statementService.showPowerUps(statementId);
+    }
+
 }
