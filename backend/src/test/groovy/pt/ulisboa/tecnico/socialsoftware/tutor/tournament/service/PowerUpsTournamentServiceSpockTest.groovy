@@ -217,6 +217,7 @@ class PowerUpsTournamentServiceSpockTest extends Specification {
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         questionOne.addTopic(topic)
+        questionOne.setHint("Teste_1234")
 
         and:
         quizQuestion = new QuizQuestion()
@@ -325,6 +326,21 @@ class PowerUpsTournamentServiceSpockTest extends Specification {
         then:"the return data are correct"
         result.getOptions().size() == 1
         result.getOptions().get(0).getOptionId() == option2.getId()
+    }
+
+    def "power Up hint"() {
+        given:
+        assdto.setId(tempId++)
+        tournamentDto.setOwner(new UserDto(STUDENT))
+        tournamentDto.setAssessmentDto(assdto)
+        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        quiz.setTournament(new Tournament(tournament,  STUDENT, ass))
+
+        when:
+        def result = tournamentService.getHint(statementQuestionOne, quiz.getId())
+
+        then:"the return data are correct"
+        result.equals(questionOne.getHint())
     }
 
     @TestConfiguration

@@ -6,7 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
@@ -131,7 +130,7 @@ public class TournamentController {
         return tournamentservice.rigthAnswer(statementQuestionDto, quizId);
     }
 
-    @GetMapping("/tournaments/getHint/{quizId}")
+    @PutMapping("/tournaments/getHint/{quizId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public String getHint(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
 

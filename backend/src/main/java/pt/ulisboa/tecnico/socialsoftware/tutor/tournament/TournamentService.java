@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -18,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -485,6 +483,7 @@ public class TournamentService {
                 });
 
         tournament.getQuiz().setType("TOURNAMENT");
+        tournament.getQuiz().setOneWay(true);
         tournament.getQuiz().setAvailableDate(tournament.getAvailableDate());
         tournament.getQuiz().setConclusionDate(tournament.getConclusionDate());
         tournament.getQuiz().setResultsDate(tournament.getConclusionDate());
@@ -593,7 +592,5 @@ public class TournamentService {
 
         return q.get(0).getHint();
     }
-
-
 
 }

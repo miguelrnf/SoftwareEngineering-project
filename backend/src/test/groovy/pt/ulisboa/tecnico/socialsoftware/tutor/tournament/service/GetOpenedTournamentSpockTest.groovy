@@ -224,6 +224,8 @@ class GetOpenedTournamentSpockTest extends Specification{
         tournamentDto2.setStatus(Tournament.TournamentStatus.OPEN.name())
         tournamentDto1.setAssessmentDto(assdto)
         tournamentDto2.setAssessmentDto(assdto)
+        tournamentDto1.setType("STANDARD")
+        tournamentDto2.setType("STANDARD")
         def tournament1 = new Tournament(tournamentDto1, user, ass)
         def tournament2 = new Tournament(tournamentDto2, user, ass)
         tournament1.setCourseExecution(courseExecution)
