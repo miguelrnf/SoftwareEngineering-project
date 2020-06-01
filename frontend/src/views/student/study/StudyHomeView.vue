@@ -103,23 +103,21 @@
 
                         <v-list two-line flat>
                             <v-list-item-group
-                                    v-model="selected"
                                     multiple
-                                    active-class="pink&#45;&#45;text"
                             >
                                 <template>
                                     <v-list-item v-for="item in quizzes"
-                                            :key="item" >
+                                            :key="item.statementQuiz.id" >
 
 
                                         <template v-slot:default="{ active, toggle } ">
-                                            <v-list-item-content>
+                                            <v-list-item-content @click="show(item)">
                                                 <v-list-item-title v-text="item.statementQuiz.title"></v-list-item-title>
                                                 <v-list-item-subtitle v-text="item.answerDate"></v-list-item-subtitle>
                                             </v-list-item-content>
 
                                             <v-list-item-action>
-                                                <v-list-item-action-text ></v-list-item-action-text>
+
                                                 <v-icon
                                                         v-if="!active"
                                                         color="grey lighten-1"
@@ -140,10 +138,6 @@
 
                                     </v-list-item>
 
-                                    <v-divider
-                                            v-if="index + 1 < quizzes.length"
-                                            :key="index"
-                                    ></v-divider>
                                 </template>
                             </v-list-item-group>
                         </v-list>
@@ -162,7 +156,7 @@
                         <v-card-text>
                             <v-autocomplete
                                     v-model="selectedTopics"
-                                    :items="topics"
+                                    :items="availableTopics"
                                     multiple
                                     return-object
                                     item-text="name"
@@ -209,6 +203,8 @@
                 v-if="summaryDialog"
                 :dialog="summaryDialog"
                 :topics="selectedTopics"
+                :availableTopics="availableTopics"
+                :statementManager="statementManager"
                 v-on:close-show-summary-dialog="onCloseShowSummaryDialog"
         />
 
@@ -253,7 +249,6 @@ export default class StudyHomeView extends Vue {
             try {
                 this.statementManager.reset();
 
-                this.topics = await RemoteServices.getTopics();
                 this.availableTopics = await RemoteServices.getAvailableTopics();
 
                 this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
@@ -302,6 +297,12 @@ export default class StudyHomeView extends Vue {
             }
         }
 
+        async show(quiz: SolvedQuiz) {
+            this.statementManager.correctAnswers = quiz.correctAnswers;
+            this.statementManager.statementQuiz = quiz.statementQuiz;
+            console.log(quiz)
+            await this.$router.push({path: '/student/results'});
+        }
     }
 
 </script>
