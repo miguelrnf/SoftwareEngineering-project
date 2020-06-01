@@ -25,14 +25,12 @@
                 <v-card flat>
                     <v-card-text>
                         <p>
-                            Sed aliquam ultrices mauris. Donec posuere vulputate arcu. Morbi ac felis. Etiam feugiat lorem non metus. Sed a libero.
+                            Here you can learn more about a certain topic, and create a quiz to test your knowledge.
+                            You can also access your previous created quizzes about each Topic and request a suggested quiz, based in your progress.
                         </p>
 
-                        <p class="mb-0">
-                            Phasellus dolor. Fusce neque. Fusce fermentum odio nec arcu. Pellentesque libero tortor, tincidunt et, tincidunt eget, semper nec, quam. Phasellus blandit leo ut odio.
-                        </p>
                     </v-card-text>
-                    <v-card-actions>
+
                         <v-btn
                                 text
                                 color="primary"
@@ -43,25 +41,123 @@
                         >
                             Show Suggested Quiz
                         </v-btn>
-                          <v-card-text style="position: relative">
                                 <span
                                         v-show="!hidden"
-                                >sdgfddfdggdf</span>
-                        </v-card-text>
-                    </v-card-actions>
+                                >
+                                    -
+                                </span>
+                    <v-btn
+                            v-show="!hidden"
+                            text
+                            small
+                            @click=createQuiz(suggestedQuiz)
+                    >{{suggestedQuiz}}
+                    </v-btn>
+
+                    <v-container fluid>
+                        <v-row align="center">
+
+                            <v-col>
+                                <v-select
+                                        v-model="topicName"
+                                        :items="availableTopics"
+                                        item-text="name"
+                                        menu-props="auto"
+                                        label="Select Topic and Create Quiz"
+                                        hide-details
+                                        prepend-icon="map"
+                                        single-line
+                                        @change="createQuiz(topicName)"
+                                        :statementManager1="statementManager"
+
+                                >
+                                </v-select>
+                            </v-col>
+
+                        </v-row>
+                    </v-container>
+
+                    <br/>
+
+                    <v-card
+                            flat
+                            class="mx-auto"
+                    >
+                        <v-toolbar
+                                height="37"
+                                color="primary"
+                                dark
+
+                        >
+
+                            <v-toolbar-title>My Topic Quizzes</v-toolbar-title>
+
+                            <v-spacer></v-spacer>
+
+                            <v-btn small
+                                   icon>
+                                <v-icon >mdi-magnify</v-icon>
+                            </v-btn>
+
+                        </v-toolbar>
+
+                        <v-list two-line flat>
+                            <v-list-item-group
+                                    v-model="selected"
+                                    multiple
+                                    active-class="pink&#45;&#45;text"
+                            >
+                                <template>
+                                    <v-list-item v-for="item in quizzes"
+                                            :key="item" >
+
+
+                                        <template v-slot:default="{ active, toggle } ">
+                                            <v-list-item-content>
+                                                <v-list-item-title v-text="item.statementQuiz.title"></v-list-item-title>
+                                                <v-list-item-subtitle v-text="item.answerDate"></v-list-item-subtitle>
+                                            </v-list-item-content>
+
+                                            <v-list-item-action>
+                                                <v-list-item-action-text ></v-list-item-action-text>
+                                                <v-icon
+                                                        v-if="!active"
+                                                        color="grey lighten-1"
+                                                >
+                                                    star_border
+                                                </v-icon>
+
+                                                <v-icon
+                                                        v-else
+                                                        color="yellow"
+                                                >
+                                                    star
+                                                </v-icon>
+                                            </v-list-item-action>
+
+
+                                        </template>
+
+                                    </v-list-item>
+
+                                    <v-divider
+                                            v-if="index + 1 < quizzes.length"
+                                            :key="index"
+                                    ></v-divider>
+                                </template>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-card>
+
                 </v-card>
             </v-tab-item>
             <v-tab-item>
                 <v-card flat>
                     <v-card-text>
                         <p>
-                            Morbi nec metus. Suspendisse faucibus, nunc et pellentesque egestas, lacus ante convallis tellus, vitae iaculis lacus elit id tortor. Sed mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non adipiscing dolor urna a orci. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Nunc sed turpis.
+                            Here you can create a summary with all the questions that you have seen, which are related to one or more topics that you choose.
                         </p>
 
-
-                        <p class="mb-0">
-                            Donec venenatis vulputate lorem. Aenean viverra rhoncus pede. In dui magna, posuere eget, vestibulum et, tempor auctor, justo. Fusce commodo aliquam arcu. Suspendisse enim turpis, dictum sed, iaculis a, condimentum nec, nisi.
-                        </p>
 
                         <v-card-text>
                             <v-autocomplete
@@ -102,9 +198,11 @@
                         </v-card-text>
 
                     </v-card-text>
+
                 </v-card>
 
             </v-tab-item>
+
         </v-tabs>
 
         <show-summary-dialog
@@ -113,16 +211,18 @@
                 :topics="selectedTopics"
                 v-on:close-show-summary-dialog="onCloseShowSummaryDialog"
         />
-        
+
     </v-card>
 
 </template>
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-import Topic from '@/models/management/Topic';
+    import Topic from '@/models/management/Topic';
     import RemoteServices from '@/services/RemoteServices';
     import ShowSummaryDialog from '@/views/student/study/ShowSummaryDialog.vue';
+    import StatementManager from "@/models/statement/StatementManager";
+    import SolvedQuiz from "@/models/statement/SolvedQuiz";
 
     @Component({
         components: {
@@ -131,17 +231,46 @@ import Topic from '@/models/management/Topic';
     })
 export default class StudyHomeView extends Vue {
         topics: Topic[] = [];
+        availableTopics: Topic[] = [];
         summaryDialog: boolean = false;
 
         selectedTopics: Topic[] = [];
 
+        topicName: String="";
+
         private loading: boolean = false;
         private hidden: boolean = true;
 
+        statementManager: StatementManager = StatementManager.getInstance;
+
+        suggestedQuiz: String="";
+
+        quizzes: SolvedQuiz[] = [];
+
+
         async created() {
-            this.topics = await RemoteServices.getTopics();
+            await this.$store.dispatch('loading');
+            try {
+                this.statementManager.reset();
+
+                this.topics = await RemoteServices.getTopics();
+                this.availableTopics = await RemoteServices.getAvailableTopics();
+
+                this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
+            } catch (error) {
+                await this.$store.dispatch('error', error);
+            }
+            await this.$store.dispatch('clearLoading');
         }
 
+        async createQuiz(topic: String) {
+            try {
+                await this.statementManager.getTopicQuizStatement(topic);
+                await this.$router.push({ path: '/student/quiz' });
+            } catch (error) {
+                await this.$store.dispatch('error', error);
+            }
+        }
 
         removeTopic(topic: Topic) {
             this.selectedTopics = this.selectedTopics.filter(
@@ -156,15 +285,21 @@ export default class StudyHomeView extends Vue {
         newSummary() {
             this.summaryDialog = true;
         }
+
         data () {
             return {
                 hidden: true,
             }
         }
 
-        loader () {
-            this.loading = true
-            setTimeout(() => (this.loading = false, this.hidden = false), 2500)
+        async loader () {
+            try {
+                this.loading = true
+                setTimeout(() => (this.loading = false, this.hidden = false), 2500)
+                this.suggestedQuiz = await RemoteServices.getSuggestTopicQuiz()
+            } catch (error) {
+                await this.$store.dispatch('error', error);
+            }
         }
 
     }
