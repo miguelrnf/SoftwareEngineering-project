@@ -251,7 +251,7 @@ export default class StudyHomeView extends Vue {
 
                 this.availableTopics = await RemoteServices.getAvailableTopics();
 
-                this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
+                this.quizzes = (await RemoteServices.getMyOwnTopicQuizzes()).reverse();
             } catch (error) {
                 await this.$store.dispatch('error', error);
             }

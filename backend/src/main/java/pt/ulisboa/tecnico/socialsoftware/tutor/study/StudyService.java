@@ -125,6 +125,7 @@ public class StudyService {
                 .flatMap(quiz -> quiz.getQuizAnswers().stream())
                 .filter(quizAnswer -> quizAnswer.getUser()==user)
                 .map(SolvedQuizDto::new)
+                .filter(solvedQuizDto -> solvedQuizDto.getAnswerDate()!=null)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());
     }
