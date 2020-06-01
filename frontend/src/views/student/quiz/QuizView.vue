@@ -22,16 +22,16 @@
         ><i class="fas fa-times" />End Quiz</span
       >
     </header>
-    <div class="power-up">
+    <div class="power-up" v-if="this.showPowerUps">
       <v-tooltip top>
-        <template v-slot:activator="{ show }">
+        <template v-slot:activator="{ on }">
           <v-btn
             class="mx-9 my-3"
             outlined
             large
             fab
             color="primary"
-            v-on="show"
+            v-on="on"
             @click="removeTwoOptions"
             :disabled="fiftyFifty"
           >
@@ -41,27 +41,12 @@
         <span>Eliminate two answers</span>
       </v-tooltip>
       <v-tooltip top>
-        <template v-slot:activator="{ show }">
-          <v-btn
-            class="mx-9 my-3"
-            outlined
-            large
-            fab
-            color="primary"
-            v-on="show"
-          >
+        <template v-slot:activator="{ on }">
+          <v-btn class="mx-9 my-3" outlined large fab color="primary" v-on="on">
             <v-icon class="pa-0">far fa-lightbulb</v-icon>
           </v-btn>
         </template>
         <span>Hint</span>
-      </v-tooltip>
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn class="mx-9 my-3" outlined large fab color="primary" v-on="on">
-            <v-icon class="pa-0">fas fa-redo</v-icon>
-          </v-btn>
-        </template>
-        <span>Change question</span>
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -230,7 +215,8 @@ export default class QuizView extends Vue {
   resultsTimer: string = '';
   fiftyFifty: boolean = false;
   rightAns: boolean = false;
-  show: boolean = false;
+  show: boolean = true;
+  showPowerUps: boolean = false;
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -238,6 +224,18 @@ export default class QuizView extends Vue {
     } else {
       try {
         await RemoteServices.startQuiz(this.statementQuiz?.id);
+        await this.getQuizType();
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        await this.$router.push({ name: 'available-quizzes' });
+      }
+    }
+  }
+
+  async getQuizType() {
+    if (this.statementQuiz != null) {
+      try {
+        this.showPowerUps = await RemoteServices.getQuizType(this.statementQuiz);
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });

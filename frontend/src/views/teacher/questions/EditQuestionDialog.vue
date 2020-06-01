@@ -38,6 +38,13 @@
             :label="`Option ${index}`"
           ></v-textarea>
         </div>
+        <v-textarea
+          outlined
+          rows="1"
+          auto-grow
+          v-model="editQuestion.hint"
+          label="Hint (Optional)"
+        ></v-textarea>
       </v-card-text>
 
       <v-card-actions>

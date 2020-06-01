@@ -232,7 +232,6 @@ public class TournamentService {
 
 
                     if(tournament.getQuiz() != null) {
-                        System.out.println("O QUIZ NÂO É NULL!!!!  " + tournament.getQuiz().getTitle());
                         List<QuizAnswer> answerList = user.getQuizAnswers().stream()
                                 .filter(quizAnswer -> quizAnswer.getQuiz().getId().equals(tournament.getQuiz().getId()))
                                 .collect(Collectors.toList());
@@ -399,7 +398,6 @@ public class TournamentService {
             tournament.setStatus(Tournament.TournamentStatus.OPEN);
             if(tournament.getQuiz() == null) {
                 generateTournamentQuiz(tournament.getId());
-                System.out.println("GEREI!!!");
             }
 
         }
@@ -569,6 +567,31 @@ public class TournamentService {
         statementQuestionDto.setOptions(statementOptionDtos);
 
         return statementQuestionDto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String getHint(StatementQuestionDto statementQuestionDto, Integer quizId){
+        List<Question> q = new ArrayList<>();
+
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if(quiz.getTournament() == null){
+            throw new TutorException(TOURNAMENT_NOT_FOUND);
+        }
+
+        if(quiz.getTournament().getType() != Tournament.TournamentType.STANDARD){
+            throw new TutorException(TOURNAMENT_INVALID_TYPE);
+        }
+
+        quiz.getQuizQuestions().forEach(quizQuestion -> {
+            if (quizQuestion.getQuestion().getContent().equals(statementQuestionDto.getContent()))
+                q.add(quizQuestion.getQuestion());
+                            });
+
+        return q.get(0).getHint();
     }
 
 

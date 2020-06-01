@@ -100,6 +100,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getQuizType(statementQuiz: StatementQuiz): Promise<boolean> {
+    return httpClient
+      .get(`/quizzes/${statementQuiz.id}/type`)
+      .then(response => {
+        return response.data as boolean;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)

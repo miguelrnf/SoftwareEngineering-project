@@ -131,6 +131,13 @@ public class TournamentController {
         return tournamentservice.rigthAnswer(statementQuestionDto, quizId);
     }
 
+    @GetMapping("/tournaments/getHint/{quizId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public String getHint(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        return tournamentservice.getHint(statementQuestionDto, quizId);
+    }
+
     @DeleteMapping("/tournaments/{tournamentId}/delete") //ONLY FOR CLEAN DATABASE AFTER EACH TEST
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity deleteTournament(@PathVariable Integer tournamentId) {
