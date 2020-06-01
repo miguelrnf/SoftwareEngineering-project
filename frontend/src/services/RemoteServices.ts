@@ -951,6 +951,23 @@ export default class RemoteServices {
       });
   }
 
+  static async getHint(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<string> {
+    return httpClient
+      .put(
+        `tournaments/getHint/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async changeDiscussStatus(id: number): Promise<Post> {
     return httpClient
       .put(
