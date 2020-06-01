@@ -152,6 +152,7 @@ public class Suggestion {
         return teacherExplanation;
     }
 
+
     public void setTeacherExplanation(String teacherExplanation) {
         if (teacherExplanation.length() == 0 ){
             throw new TutorException(JUSTIFICATION_EMPTY);
@@ -233,8 +234,6 @@ public class Suggestion {
             throw new TutorException(SUGGESTION__REM_ALREADY_QUESTION);
         }
     }
-
-
 
     @Override
     public boolean equals(Object o) {

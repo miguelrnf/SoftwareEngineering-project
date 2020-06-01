@@ -314,13 +314,13 @@ import RemoteServices from '@/services/RemoteServices';
 import PostPreview from '@/views/PostPreview.vue';
 import TournamentPreview from '@/views/TournamentPreview.vue';
 import Post from '@/models/management/Post';
-import PostViewDialog from '@/views/PostViewDialog.vue';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import User from '@/models/user/User';
-import SuggViewDialog from '@/views/SuggViewDialog.vue';
+import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
 import SuggsPreview from '@/views/SuggsPreview.vue';
 import { GChart } from "vue-google-charts";
 import StudentStats from '@/models/statement/StudentStats';
@@ -472,8 +472,6 @@ export default class DashboardHomeView extends Vue {
     else this.textLabel = 'Public';
     await RemoteServices.changeDashboardPrivacy();
   }
-
-
 
   showPostOpenDialog(post: Post) {
     this.currentPost = post;

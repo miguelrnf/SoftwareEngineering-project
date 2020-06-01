@@ -116,7 +116,7 @@ Cypress.Commands.add('getTeacherTournament', () => {
 
 Cypress.Commands.add('newQuestion', (str) => {
   cy.get('[data-cy="Student"]').click();
-  cy.contains('Suggestions').click();
+  cy.contains('suggestions').click();
   cy.contains('').click();
 
 
@@ -415,14 +415,14 @@ Cypress.Commands.add('demoStudentLoginSuggestion', () => {
   cy.visit('/')
   cy.get('[data-cy="demoStudentLoginButton"]').click()
   cy.get('[data-cy="Student"]').click()
-  cy.contains('Suggestions').click()
+  cy.contains('suggestions').click()
 })
 
 Cypress.Commands.add('demoTeacherLoginSuggestion', () => {
   cy.visit('/')
   cy.get('[data-cy="demoTeacherLoginButton"]').click()
   cy.get('[data-cy="management"]').click()
-  cy.contains('Suggestions').click()
+  cy.contains('suggestions').click()
 })
 
 Cypress.Commands.add('createSuggestion', (title, content, option) => {
@@ -474,7 +474,7 @@ Cypress.Commands.add('changeToQuestion', (contentPart) => {
 
 Cypress.Commands.add('createBlankSuggestion', (content) => {
   cy.get('[data-cy="Student"]').click()
-  cy.contains('Suggestions').click()
+  cy.contains('suggestions').click()
   cy.get('[data-cy="createButton"]').click()
   cy.get('[data-cy="saveButton"]').click()
 })
