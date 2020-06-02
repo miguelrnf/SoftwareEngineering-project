@@ -55,7 +55,7 @@
       </v-container>
       <v-container v-if="tournament.type === 'ADVANCED'">
         <v-row>
-          <v-col cols="10">
+          <v-col cols="9">
             <v-container>
               <p class="pl-0">Cost to enter (Achandos)</p>
               <v-slider
@@ -74,7 +74,20 @@
           </v-col>
           <v-col>
             <v-container>
-              <p class="pl-0">Prize per question</p>
+              <p class="test">
+                Prize per question
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-icon color="grey" small v-on="on">
+                      far fa-question-circle
+                    </v-icon>
+                  </template>
+                  <span
+                    >The score that the student wins per right answer,<br />
+                    if the answer is wrong he loses half of this value</span
+                  >
+                </v-tooltip>
+              </p>
               <v-text-field
                 v-model="tournament.prize"
                 class="mt-0 pt-0"
@@ -186,5 +199,8 @@ export default class CreateTournamentView extends Vue {
 .button-group {
   flex-wrap: wrap;
   justify-content: center;
+}
+.test {
+  text-align: left;
 }
 </style>
