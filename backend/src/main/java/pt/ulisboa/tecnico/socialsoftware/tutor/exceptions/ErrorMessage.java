@@ -110,6 +110,7 @@ public enum ErrorMessage {
 
     USER_HAS_WRONG_ROLE("User has wrong role"),
     SUGGESTION_TOO_LONG("Suggestion is too long"),
+    NOARGUMENT("no argument"),
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),

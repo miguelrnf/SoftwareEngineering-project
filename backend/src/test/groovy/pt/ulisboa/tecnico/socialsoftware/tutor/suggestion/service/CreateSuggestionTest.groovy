@@ -220,6 +220,7 @@ class CreateSuggestionTest extends Specification{
         sug.setStudent(new UserDto(u as User))
         sug.setTitle("TITLE")
 
+
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_CONTENT)
         optionDto.setCorrect(true)

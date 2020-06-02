@@ -1,5 +1,5 @@
 <template>
-  <div align="center">
+  <div >
     <v-card
       class="table"
       width="95%"
@@ -416,7 +416,6 @@ export default class DashboardHomeView extends Vue {
       }
 
 
-
     }
     this.stats = await RemoteServices.getUserStats();
 
@@ -426,9 +425,7 @@ export default class DashboardHomeView extends Vue {
 
   async getStats(){
 
-    console.log(this.stats);
-    console.log(this.stats?.approveSuggestions);
-    console.log(this.stats?.pendingSuggestions);
+
     this.suggestionChartData = [
       ['Title', 'Number'],
       ['Number Of Rejected Suggestions', this.stats?.rejectedSuggestions],

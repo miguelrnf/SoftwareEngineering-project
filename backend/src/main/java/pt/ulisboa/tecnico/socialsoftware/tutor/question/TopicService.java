@@ -16,6 +16,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -34,6 +37,7 @@ public class TopicService {
 
     @Autowired
     private TopicRepository topicRepository;
+
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findTopicCourse(int topicId) {
@@ -124,5 +128,6 @@ public class TopicService {
                 this.topicRepository.delete(topic)
         );
     }
+
 }
 

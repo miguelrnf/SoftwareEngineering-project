@@ -54,7 +54,7 @@ export default class AvailableQuizzesView extends Vue {
   async solveQuiz(quiz: StatementQuiz) {
     let statementManager: StatementManager = StatementManager.getInstance;
     statementManager.statementQuiz = quiz;
-    await this.$router.push({ name: 'solve-quiz' });
+    await this.$router.push({ path: '/student/quiz' });
   }
 }
 </script>
