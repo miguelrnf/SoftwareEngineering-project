@@ -36,6 +36,8 @@ import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTourname
 import PostGeneralView from '@/views/PostGeneralView.vue';
 import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
+import ShopGeneralView from '@/views/ShopGeneralView.vue';
+import ShopHomeView from '@/views/ShopHomeView.vue';
 
 Vue.use(Router);
 
@@ -289,7 +291,7 @@ let router = new Router({
           name: 'all-posts',
           component: PostsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            title: process.env.VUE_APP_NAME + ' - All Posts',
             requiredAuth: 'None'
           }
         }
@@ -306,7 +308,23 @@ let router = new Router({
           component: DashboardHomeView,
           props: { isOwnDashboard: true, isReal: true },
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Submit Post',
+            title: process.env.VUE_APP_NAME + ' - Dashboard',
+            requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/shop',
+      name: 'shop',
+      component: ShopGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'shop-home',
+          component: ShopHomeView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Shop',
             requiredAuth: 'Student'
           }
         }

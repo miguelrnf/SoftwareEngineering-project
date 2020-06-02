@@ -45,7 +45,7 @@ public class ShopService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public ShopItemDto buyShopItem(User user, int shopItemId) {
         ShopItem item = checkIfShopItemExistsById(shopItemId);
-        checkIfUserHasEnoughAchandos(user, item.getPrice());
+        if(user.getRole() == User.Role.STUDENT) checkIfUserHasEnoughAchandos(user, item.getPrice());
         user.addItem(new UserItem(item, user));
         return new ShopItemDto(item);
     }
