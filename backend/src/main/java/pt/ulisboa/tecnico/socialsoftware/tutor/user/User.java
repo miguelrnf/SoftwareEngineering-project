@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
@@ -81,6 +83,9 @@ public class User implements UserDetails, DomainEntity {
 
     @Column(name = "is_dashboard_private", columnDefinition = "boolean default false")
     private Boolean isDashboardPrivate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<UserItem> items = new HashSet<>();
 
     public User() {
     }
@@ -257,6 +262,22 @@ public class User implements UserDetails, DomainEntity {
 
     public void changeDashboardPrivacy() {
         this.isDashboardPrivate = !this.isDashboardPrivate;
+    }
+
+    public Set<UserItem> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<UserItem> items) {
+        this.items = items;
+    }
+
+    public void addItem(UserItem item) {
+        this.items.add(item);
+    }
+
+    public void removeItem(UserItem item) {
+        this.items.remove(item);
     }
 
     public Integer getNumberOfTeacherQuizzes() {
