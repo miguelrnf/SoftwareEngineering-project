@@ -36,6 +36,8 @@ import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTourname
 import PostGeneralView from '@/views/PostGeneralView.vue';
 import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
+import StudyGeneralView from '@/views/StudyGeneralView.vue';
+import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 
 Vue.use(Router);
 
@@ -242,15 +244,6 @@ let router = new Router({
           }
         },
         {
-          path: 'stats',
-          name: 'stats',
-          component: StatsView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - Stats',
-            requiredAuth: 'Student'
-          }
-        },
-        {
           path: 'suggestions',
           name: 'suggestions',
           component: SuggestionsView,
@@ -307,6 +300,23 @@ let router = new Router({
           props: { isOwnDashboard: true, isReal: true },
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/study',
+      name: 'study',
+      component: StudyGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'study-home',
+          component: StudyHomeView,
+          props: { isOwnDashboard: true, isReal: true },
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Study',
             requiredAuth: 'Student'
           }
         }
