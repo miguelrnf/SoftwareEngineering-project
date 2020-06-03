@@ -49,7 +49,7 @@ public class ClassroomController {
 
     @GetMapping(value = "/courses/{courseExecutionId}/classroom/list/{type}")
     @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
-    public List<ClassroomDto> listAllSuggestions(Principal principal, @PathVariable int courseExecutionId, @PathVariable String type) {
+    public List<ClassroomDto> listClassrooms(Principal principal, @PathVariable int courseExecutionId, @PathVariable String type) {
 
         User user = (User)((Authentication)principal).getPrincipal();
 

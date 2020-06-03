@@ -10,7 +10,7 @@ public class DocumentDto implements Serializable {
     private String type;
     private String title;
     private String content;
-    private ImageDto imageDto;
+    private ImageDto image;
     private String url;
     private Integer classroomId;
 
@@ -26,7 +26,7 @@ public class DocumentDto implements Serializable {
         this.url = document.getUrl(); //
 
         if (document.getImage() != null)
-            this.imageDto = new ImageDto(document.getImage());
+            this.image = new ImageDto(document.getImage());
     }
 
     public Integer getClassroomId() {
@@ -77,12 +77,12 @@ public class DocumentDto implements Serializable {
         this.content = content;
     }
 
-    public ImageDto getImageDto() {
-        return imageDto;
+    public ImageDto getimage() {
+        return image;
     }
 
-    public void setImageDto(ImageDto imageDto) {
-        this.imageDto = imageDto;
+    public void setimage(ImageDto imageDto) {
+        this.image = imageDto;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class DocumentDto implements Serializable {
                 ", type='" + type + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", imageDto=" + imageDto +
+                ", image=" + image +
                 ", url='" + url + '\'' +
                 ", classroomId=" + classroomId +
                 '}';

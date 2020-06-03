@@ -1,7 +1,7 @@
 import Question from '@/models/management/Question';
 import { ISOtoString } from '@/services/ConvertDateService';
 
-export class Quiz {
+export default class Quiz {
   id!: number;
   number!: number;
   scramble!: boolean;
