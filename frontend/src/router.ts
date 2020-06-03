@@ -38,6 +38,8 @@ import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 import StudyGeneralView from '@/views/StudyGeneralView.vue';
 import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
+import ClassroomHomeView from '@/views/classroom/ClassroomHomeView.vue';
+import ClassroomGeneralView from '@/views/ClassroomGeneralView.vue';
 
 Vue.use(Router);
 
@@ -152,6 +154,15 @@ let router = new Router({
           component: ImpExpView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - ImpExp',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'classroom',
+          name: 'classroom-management',
+          component: ClassroomHomeView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Classroom',
             requiredAuth: 'Teacher'
           }
         }
@@ -301,6 +312,24 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
             requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/classroom',
+      name: 'classroom',
+      component: ClassroomGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'classroom-home',
+          component: ClassroomHomeView,
+
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Classroom',
+            requiredAuth: 'Student'
+
           }
         }
       ]
