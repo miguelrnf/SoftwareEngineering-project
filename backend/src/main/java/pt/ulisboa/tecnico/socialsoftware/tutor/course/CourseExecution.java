@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -49,6 +50,8 @@ public class CourseExecution implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Tournament> tournaments = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Classroom> classrooms = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Suggestion> suggestions = new HashSet<>();
@@ -72,6 +75,14 @@ public class CourseExecution implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitCourseExecution(this);
+    }
+
+    public Set<Classroom> getClassrooms() {
+        return classrooms;
+    }
+
+    public void addClassroom(Classroom classroom){
+        this.classrooms.add(classroom);
     }
 
     public Integer getId() {

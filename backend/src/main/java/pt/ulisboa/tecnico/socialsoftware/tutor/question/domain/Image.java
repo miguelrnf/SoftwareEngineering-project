@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Document;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -24,6 +25,10 @@ public class Image implements DomainEntity {
     @OneToOne
     @JoinColumn(name="question_id")
     private Question question;
+
+    @OneToOne
+    @JoinColumn(name="document_id")
+    private Document document;
 
     public Image() {}
 
@@ -75,5 +80,13 @@ public class Image implements DomainEntity {
                 ", url='" + url + '\'' +
                 ", width=" + width +
                 '}';
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 }

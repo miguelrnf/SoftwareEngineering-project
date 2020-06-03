@@ -115,6 +115,19 @@ public enum ErrorMessage {
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),
 
+    //classroom
+    INVALID_TITLE_FOR_CLASSROOM("Invalid title"),
+    INVALID_TITLE_FOR_DOCUMENT("Invalid title"),
+    NO_STATUS("no initial status"),
+    NO_CHANGED_STATUS("no changed status"),
+    NO_TYPE("no initial type"),
+    NO_DOCUMENT_TYPE("no doc type given"),
+    CLASSROOM_NOT_FOUND("classroom not found"),
+    DOCUMENT_NOT_FOUND("document not found - doc id"),
+    INVALID_CLASSROOM_ID("invalid classroom id"),
+    NO_DATE("no date"),
+    NO_CONTENT("no content for type doc"),
+    NO_URL("no url for type video"),
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),
@@ -134,6 +147,8 @@ public enum ErrorMessage {
     INVALID_COMMENT("The comment you submitted is invalid"),
     INVALID_COMMENT_SEARCH("No results available"),
     COMMENT_NO_PARENT("The parent does not exist");
+
+
 
     public final String label;
 
