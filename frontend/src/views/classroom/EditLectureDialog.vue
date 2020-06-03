@@ -57,6 +57,21 @@
 
           </v-row>
 
+
+        <div class="videos">
+          <ul class="videos__list">
+            <li v-for="(video, index) in videos" :key="index" class="videos__item px-5 mb-5">
+              <LazyYoutubeVideo
+                      :src="video.url"
+                      :preview-image-size="video.previewImageSize"
+                      :aspect-ratio="video.aspectRatio"
+
+
+              />
+            </li>
+          </ul>
+        </div>
+
       </v-card>
 
       <v-card-actions>
@@ -90,15 +105,47 @@ import User from '@/models/user/User';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import ShowSuggestion from '@/views/ShowSuggestion.vue';
+import VueYouTubeEmbed, { getIdFromURL } from 'vue-youtube-embed';
+import LazyYoutubeVideo from 'vue-lazy-youtube-video'
+import 'vue-lazy-youtube-video/dist/style.css'
+
 
 Vue.use(ToggleButton);
 
 @Component({
   components: {
-    'show-suggestion': ShowSuggestion
-  }
+    'show-suggestion': ShowSuggestion,
+    LazyYoutubeVideo
+
+  },
+  data() {
+    return {
+      videos: [
+        {
+          url: "https://www.youtube.com/embed/KBMO_4Nj4HQ",
+          previewImageSize: "sddefault"
+        },
+        {
+          url: "https://www.youtube.com/embed/65MVwN_Kz1Q",
+          previewImageSize: "sddefault"
+        },
+        {
+          url: "https://www.youtube.com/embed/KbX1gYtPVYE",
+          previewImageSize: "sddefault",
+          aspectRatio: "1:1"
+        },
+        {
+          url: "https://www.youtube.com/embed/etKOc80-cw0",
+          previewImageSize: "sddefault"
+        }
+
+      ]
+    };
+  },
+
 })
 export default class EditLectureDialog extends Vue {
+
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Suggestion, required: true }) readonly lecture!: Suggestion;
   @Prop({ type: String, required: true }) readonly type!: String;
@@ -107,6 +154,9 @@ export default class EditLectureDialog extends Vue {
   student: User | null = null;
   date: String='';
 
+  videoId : String = '';
+  videoBase : String = 'https://www.youtube.com/embed/';
+
 
 
 
@@ -114,6 +164,8 @@ export default class EditLectureDialog extends Vue {
     this.editLecture = new Suggestion(this.lecture);
 
     this.student = await this.$store.getters.getUser;
+    this.videoId = getIdFromURL('https://www.youtube.com/watch?v=KBMO_4Nj4HQ');
+    console.log(this.videoId);
 
   }
 
@@ -151,10 +203,46 @@ export default class EditLectureDialog extends Vue {
     }
   }
 
+
 }
 </script>
-<style>
+<style lang="scss" scoped>
+  $gap: 20px;
   .stilo {
-    height:auto;
+    width: 40%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-left: 0;
+
+    list-style: none;
+
   }
+
+  .videos {
+    &list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding-left: 0;
+      margin: {
+        top: 0;
+        bottom: 15px;
+      }
+      list-style: none;
+    }
+
+    &item {
+      width: 30%;
+      height: 30%;
+
+      &:nth-child(n + 3) {
+        margin-top: $gap;
+      }
+    }
+  }
+
+
+
+
 </style>
