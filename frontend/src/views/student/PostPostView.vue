@@ -1,42 +1,49 @@
 <template>
-  <div class="container">
-    <h2>Submit Post</h2>
-    <v-container class="submit-post">
-      <v-container fluid>
-        <v-autocomplete
-          v-model="selectedQuestion"
-          :items="questions"
-          item-text="title"
-          item-value="id"
-          label="Pick a question"
-          solo
-          data-cy="pickQ"
-        ></v-autocomplete>
+    <div class="container">
+      <h2>Submit Post</h2>
+      <v-container class="submit-post">
+        <v-container fluid>
+          <v-autocomplete
+            v-model="selectedQuestion"
+            :items="questions"
+            item-text="title"
+            item-value="id"
+            label="Pick a Topic"
+            solo
+            data-cy="pickQ"
+          ></v-autocomplete>
+        </v-container>
+        <v-container fluid>
+          <label class="text-area">
+            <v-textarea
+              no-resize
+              v-model="message"
+              @input="checkConsistency"
+              placeholder="type your question here"
+              data-cy="typeQ"
+            ></v-textarea>
+          </label>
+          <p class="len">{{ limit }}</p>
+        </v-container>
+        <v-container>
+          <v-btn
+            color="primary"
+            text
+            @click="$emit('close-show-post-dialog', false)"
+            data-cy="cancel"
+            >Cancel</v-btn
+          >
+          <v-btn
+            color="green"
+            text
+            @click="submitPost"
+            depressed
+            data-cy="submitButton"
+            >Submit</v-btn
+          >
+        </v-container>
       </v-container>
-      <v-container fluid>
-        <label class="text-area">
-          <v-textarea
-            no-resize
-            v-model="message"
-            @input="checkConsistency"
-            placeholder="type your question here"
-            data-cy="typeQ"
-          ></v-textarea>
-        </label>
-        <p class="len">{{ limit }}</p>
-      </v-container>
-      <v-container>
-        <v-btn
-          @click="submitPost"
-          depressed
-          color="primary"
-          data-cy="submitButton"
-        >
-          Submit post
-        </v-btn>
-      </v-container>
-    </v-container>
-  </div>
+    </div>
 </template>
 
 <script lang="ts">

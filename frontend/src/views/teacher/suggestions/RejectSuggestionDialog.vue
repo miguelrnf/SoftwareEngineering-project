@@ -4,19 +4,21 @@
     @input="closeQuestionDialog"
     @keydown.esc="closeQuestionDialog"
     max-width="75%"
+    max-height="80%"
   >
     <v-card>
-      <v-card-title>
-        <span class="headline">{{ 'Reject Suggestion' }}</span>
-      </v-card-title>
+      <v-app-bar dense color="primary">
+        <v-card-title class="white--text">{{
+          'Reject This Suggestion'
+        }}</v-card-title>
+      </v-app-bar>
 
-      <v-subheader>Justification (Optional) </v-subheader>
       <v-flex xs12 sm12 md12>
         <v-textarea
           outline
           rows="10"
           v-model="suggestion.teacherExplanation"
-          label="Content"
+          label="Write a brief explanation for the student to understand why his suggestion was rejected"
           data-cy="content"
         ></v-textarea>
       </v-flex>
@@ -24,13 +26,12 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
+        <v-btn color="primary" text @click="closeQuestionDialog"
           >Cancel</v-btn
         >
-
         <v-btn
-          dark
           color="red darken-1"
+          text
           @click="RejectSuggestion"
           data-cy="rejectButton"
           >Reject</v-btn

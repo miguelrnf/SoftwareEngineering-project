@@ -44,37 +44,42 @@
               <v-flex xs24 sm12 md12>
                 <v-textarea
                   outline
-                  rows="10"
+                  rows="4"
                   v-model="editSuggestion.studentQuestion"
-                  label="Content"
+                  label="Suggestion Content"
                   outlined
                   data-cy="content"
                 ></v-textarea>
+                <v-divider></v-divider>
               </v-flex>
+              <v-textarea
+                outline
+                rows="1"
+                v-model="editSuggestion.options[0].content"
+                color="green"
+                :label="`Correct Option`"
+                data-cy="optionTextArea"
+              ></v-textarea>
               <v-flex
                 xs24
                 sm12
                 md12
-                v-for="index in editSuggestion.options.length"
+                v-for="index in editSuggestion.options.length - 1"
                 :key="index"
               >
-                <v-switch
-                  v-model="editSuggestion.options[index - 1].correct"
-                  class="ma-4"
-                  label="Correct"
-                  data-cy="correctToggleButton"
-                />
                 <v-textarea
                   outline
-                  rows="10"
-                  v-model="editSuggestion.options[index - 1].content"
-                  :label="`Option ${index}`"
+                  rows="1"
+                  v-model="editSuggestion.options[index].content"
+                  color="red"
+                  :label="`Options ${index + 1}`"
                   data-cy="optionTextArea"
                 ></v-textarea>
               </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
+        <v-divider></v-divider>
         <v-card-text>
           <v-autocomplete
             v-model="questionTopics"
@@ -116,15 +121,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
+          text
           @click="$emit('dialog', false)"
           data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
-          color="blue darken-1"
-          @click="saveSuggestion"
-          data-cy="saveButton"
+        <v-btn color="green" text @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>
@@ -164,6 +167,7 @@ export default class EditSuggestionDialog extends Vue {
 
   async created() {
     this.editSuggestion = new Suggestion(this.suggestion);
+    this.editSuggestion.options[0].correct = true;
     this.student = await this.$store.getters.getUser;
   }
 

@@ -9,7 +9,7 @@
     <v-divider></v-divider>
     <div class="mt-2 text-left">
       <span class="headline font-weight-black mr-10">
-        {{ 'Options' }}
+        {{ 'Options:' }}
       </span>
       <div class="mt-3">
         <v-chip
@@ -27,7 +27,7 @@
     <v-divider class="mt-4"></v-divider>
     <div class="mt-2 text-left">
       <span class="headline font-weight-black mr-10">
-        {{ 'Topics' }}
+        {{ 'Topics:' }}
       </span>
       <div class="mt-3">
         <v-chip
