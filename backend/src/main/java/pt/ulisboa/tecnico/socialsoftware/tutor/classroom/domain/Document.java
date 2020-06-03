@@ -48,8 +48,8 @@ public class Document implements DomainEntity {
         this.type = Document.Type.valueOf(documentDto.getType());
         this.title = documentDto.getTitle();
 
-        if (documentDto.getImageDto() != null)
-            setImage(new Image(documentDto.getImageDto()));
+        if (documentDto.getimage() != null)
+            setImage(new Image(documentDto.getimage()));
     }
 
     public void checkInfo(DocumentDto documentDto){
