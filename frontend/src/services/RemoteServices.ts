@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Store from '@/store';
 import Question from '@/models/management/Question';
-import Quiz  from '@/models/management/Quiz';
+import { Quiz } from '@/models/management/Quiz';
 import Course from '@/models/user/Course';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import StudentStats from '@/models/statement/StudentStats';

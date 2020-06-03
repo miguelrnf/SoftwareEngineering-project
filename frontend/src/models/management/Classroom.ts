@@ -1,5 +1,5 @@
 import Document from "@/models/management/Document";
-import Quiz from "@/models/management/Quiz";
+import {Quiz} from "@/models/management/Quiz";
 import {ISOtoString} from "@/services/ConvertDateService";
 
 export default class Classroom {
