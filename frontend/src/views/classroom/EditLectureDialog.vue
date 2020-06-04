@@ -5,7 +5,7 @@
     @keydown.esc="$emit('dialog', false)"
     max-width="75%"
     max-height="80%"
-    class="stilo"
+
 
   >
     <v-card>
@@ -59,18 +59,16 @@
           </v-row>
 
 
-        <div class="videos">
-          <ul class="videos__list">
-            <li v-for="(video, index) in videos" :key="index" class="videos__item px-5 mb-5">
+        <div >
+
+            <v-container class="test">
               <LazyYoutubeVideo
-                      :src="video.url"
-                      :preview-image-size="video.previewImageSize"
-                      :aspect-ratio="video.aspectRatio"
-
-
+                      :src="this.videoBase"
+                      :previewImageSize="sddefault"
               />
-            </li>
-          </ul>
+              </v-container>
+
+
         </div>
 
       </v-card>
@@ -78,13 +76,15 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
+          text
           @click="$emit('dialog', false)"
           data-cy="cancel"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="primary"
+          text
           @click="saveLecture"
           data-cy="saveButton"
           >Save</v-btn
@@ -143,7 +143,7 @@ export default class EditLectureDialog extends Vue {
   date!: string ;
 
   videoId : String = '';
-  videoBase : String = 'https://www.youtube.com/embed/';
+  videoBase : String = 'https://www.youtube.com/embed/KBMO_4Nj4HQ';
 
 
 
@@ -236,39 +236,13 @@ export default class EditLectureDialog extends Vue {
 </script>
 <style lang="scss" scoped>
   $gap: 20px;
-  .stilo {
+  .test {
     width: 40%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding-left: 0;
-
-    list-style: none;
+    alignment: left;
 
   }
 
-  .videos {
-    &list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding-left: 0;
-      margin: {
-        top: 0;
-        bottom: 15px;
-      }
-      list-style: none;
-    }
 
-    &item {
-      width: 30%;
-      height: 30%;
-
-      &:nth-child(n + 3) {
-        margin-top: $gap;
-      }
-    }
-  }
 
 
 

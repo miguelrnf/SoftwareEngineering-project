@@ -3,12 +3,12 @@
     :value="dialog"
     @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
-    max-width="75%"
-    max-height="80%"
-    class="stilo"
+    max-width="60%"
+
+
 
   >
-    <v-card>
+    <v-card class="ma-0 table"  height="60%">
       <v-row>
 
         <v-card-title color="primary" class="mb-5 table" >
@@ -50,13 +50,15 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
+          text
           @click="$emit('dialog', false)"
           data-cy="cancel"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="primary"
+          text
           @click="sav"
           data-cy="saveButton"
           >Save</v-btn
@@ -187,6 +189,14 @@ export default class EditDocumentDialog extends Vue {
 </script>
 <style lang="scss" scoped>
   $gap: 20px;
+
+
+  .testttt{
+    background: #761515;
+    position: absolute;
+    top: 50px;
+  }
+
   .stilo {
     width: 40%;
     display: flex;
@@ -212,8 +222,8 @@ export default class EditDocumentDialog extends Vue {
     }
 
     &item {
-      width: 30%;
-      height: 30%;
+      width: 30px;
+      height: 30px;
 
       &:nth-child(n + 3) {
         margin-top: $gap;
