@@ -22,6 +22,7 @@ import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
 import Classroom from "@/models/management/Classroom";
+import Document from '@/models/management/Document';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -334,28 +335,29 @@ export default class RemoteServices {
         });
   }
 
-  static async createDocument(params: Document): Promise<Classroom> {
+  static async createDocument(params: Document): Promise<Document> {
+    console.log(params);
     return httpClient
         .post(
             `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newDoc`,
             params
         )
         .then(response => {
-          return new Classroom(response.data);
+          return new Document(response.data);
         })
         .catch(async error => {
           throw Error(await this.errorMessage(error));
         });
   }
 
-  static async editDocument(params: Document): Promise<Classroom> {
+  static async editDocument(params: Document): Promise<Document> {
     return httpClient
         .put(
             `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/editDoc`,
             params
         )
         .then(response => {
-          return new Classroom(response.data);
+          return new Document(response.data);
         })
         .catch(async error => {
           throw Error(await this.errorMessage(error));

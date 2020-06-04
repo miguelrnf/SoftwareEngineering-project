@@ -3,12 +3,12 @@
     :value="dialog"
     @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
-    max-width="60%"
+    max-width="75%"
 
 
 
   >
-    <v-card class="ma-0 table"  height="60%">
+    <v-card class="px-12 ma-0 table"  height="60%">
       <v-row>
 
         <v-card-title color="primary" class="mb-5 table" >
@@ -17,35 +17,71 @@
         </v-card-title>
 
       </v-row>
-      <v-card class="pb-12">
-        <div class="pt-5"></div>
+      <v-row>
 
-          <v-row>
-          <v-col class="mx-5">
+        <v-textarea v-if="type !== 'New Document'"
 
-          </v-col>
-          <v-col class="mx-5">
+                :label=getDocumentLabel()
+                v-model="editDocument.title"
+                auto-grow
+                outlined
+                rows="5"
+                row-height="15"
 
-          </v-col>
+        ></v-textarea>
+        <v-textarea v-if="type === 'New Document'"
 
-          </v-row>
+                    :label=getDocumentLabel()
+                    v-model="editDocument.title"
+                    auto-grow
+                    outlined
+                    rows="5"
+                    row-height="15"
+
+        ></v-textarea>
+      </v-row>
+
+      <v-row>
+
+        <v-textarea v-if="type !== 'New Document'"
+
+                    label="Write Video Url Here"
+                    v-model="editDocument.url"
+                    auto-grow
+                    outlined
+                    rows="1"
+                    row-height="15"
+
+        ></v-textarea>
+        <v-textarea v-if="type === 'New Document'"
+
+                    label="Write Document Content Here"
+                    v-model="editDocument.content"
+                    auto-grow
+                    outlined
+                    rows="5"
+                    row-height="15"
+
+        ></v-textarea>
+      </v-row>
+      <v-row>
 
 
-        <div class="videos">
-          <ul class="videos__list">
-            <li v-for="(video, index) in videos" :key="index" class="videos__item px-5 mb-5">
-              <LazyYoutubeVideo
-                      :src="video.url"
-                      :preview-image-size="video.previewImageSize"
-                      :aspect-ratio="video.aspectRatio"
+
+        <v-btn v-if="type !== 'New Document'" text color="primary" @click="previewVideo()">Preview</v-btn>
+      </v-row>
+        <v-container class="test" >
+        <LazyYoutubeVideo
+                v-if="preview && type !== 'New Document'"
+                :src="previewVideo()"
+                preview-image-size=sddefault
 
 
-              />
-            </li>
-          </ul>
-        </div>
+        />
+        </v-container>
 
-      </v-card>
+
+
 
       <v-card-actions>
         <v-spacer />
@@ -59,7 +95,7 @@
         <v-btn
           color="primary"
           text
-          @click="sav"
+          @click="saveDocument"
           data-cy="saveButton"
           >Save</v-btn
         >
@@ -84,6 +120,7 @@ import VueYouTubeEmbed, { getIdFromURL } from 'vue-youtube-embed';
 import LazyYoutubeVideo from 'vue-lazy-youtube-video'
 import 'vue-lazy-youtube-video/dist/style.css'
 import Classroom from '@/models/management/Classroom';
+import Document from '@/models/management/Document';
 
 
 Vue.use(ToggleButton);
@@ -93,17 +130,7 @@ Vue.use(ToggleButton);
     LazyYoutubeVideo
 
   },
-  data() {
-    return {
-      videos: [
-        {
-          url: "https://www.youtube.com/embed/KBMO_4Nj4HQ",
-          previewImageSize: "sddefault"
-        },
 
-      ]
-    };
-  },
 
 })
 export default class EditDocumentDialog extends Vue {
@@ -111,18 +138,21 @@ export default class EditDocumentDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Document, required: true }) readonly document!: Document;
   @Prop({ type: String, required: true }) readonly type!: String;
+  @Prop({ type: Classroom, required: true }) readonly lecture!: Classroom;
+
 
   editDocument!: Document;
-  date!: string ;
 
-  videoId : String = '';
-  videoBase : String = 'https://www.youtube.com/embed/';
+  previewImageSize: string = "sddefault";
+  preview : boolean = false;
+  videoId : string = '';
+  videoBase : string = 'https://www.youtube.com/embed/';
 
 
 
 
   async created() {
-    this.editDocument = new Document();
+    this.editDocument = new Document(this.document);
     this.videoId = getIdFromURL('https://www.youtube.com/watch?v=KBMO_4Nj4HQ');
 
   }
@@ -136,37 +166,40 @@ export default class EditDocumentDialog extends Vue {
     }
   }
 
-  async saveLecture() {
-    this.editLecture.availableDate = this.date;
+  async saveDocument() {
+    this.editDocument.url = this.previewVideo();
 
-    if (this.editLecture && this.editLecture.id != null) {
+    if (this.editDocument && this.editDocument.id != null) {
 
       try {
-        const result = await RemoteServices.editClassroom(
-                this.editLecture
+
+        const result = await RemoteServices.editDocument(
+                this.editDocument
         );
-        this.$emit('save-lecture', result);
+        this.$emit('save-document', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
-    } else if (this.editLecture) {
+    } else if (this.editDocument) {
+
+
+
+      this.editDocument.classroomId = this.lecture.id;
+
+      if (this.type === 'New Document') {
+        this.editDocument.type = 'DOC'
+      }
+      else {
+        this.editDocument.type = 'VIDEO'
+      }
       try {
 
-        if (this.type === 'New Lecture') {
-          this.editLecture.type = 'LECTURE'
-        } else if (this.type === 'New Lab') {
-          this.editLecture.type = 'LAB'
-        } else {
-          this.editLecture.type = 'PROJECT'
-        }
-
-
-        this.editLecture.status='INACTIVE'
-
-        const result = await RemoteServices.createClassroom(
-                this.editLecture
+        const result = await RemoteServices.createDocument(
+                this.editDocument
         );
-        this.$emit('save-lecture', result);
+
+
+        this.$emit('save-document', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -174,14 +207,29 @@ export default class EditDocumentDialog extends Vue {
   }
 
 
+  previewVideo(){
+    var tempvar = '';
 
+    this.videoId = getIdFromURL(this.editDocument.url);
+
+    tempvar = this.videoBase;
+    tempvar = tempvar + this.videoId;
+    this.preview = true;
+    return tempvar
+  }
 
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
-
+  getDocumentLabel() {
+    if (this.type === 'New Document') {
+      return 'Write Document Title Here'
+    }  else {
+      return 'Write Video Title Here'
+    }
+  }
 
 
 
@@ -190,48 +238,11 @@ export default class EditDocumentDialog extends Vue {
 <style lang="scss" scoped>
   $gap: 20px;
 
-
-  .testttt{
-    background: #761515;
-    position: absolute;
-    top: 50px;
-  }
-
-  .stilo {
-    width: 40%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding-left: 0;
-
-    list-style: none;
+  .test {
+    justify-content: center;
+    width: 30%;
 
   }
-
-  .videos {
-    &list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding-left: 0;
-      margin: {
-        top: 0;
-        bottom: 15px;
-      }
-      list-style: none;
-    }
-
-    &item {
-      width: 30px;
-      height: 30px;
-
-      &:nth-child(n + 3) {
-        margin-top: $gap;
-      }
-    }
-  }
-
-
 
 
 </style>

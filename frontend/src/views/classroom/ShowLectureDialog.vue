@@ -3,7 +3,7 @@
     :value="dialog"
     @input="closeLectureDialog"
     @keydown.esc="closeLectureDialog"
-    max-width="80%"
+    max-width="100%"
 
   >
     <v-card  max-height="85%" class="px-5">
@@ -11,29 +11,101 @@
 
           <v-card-title color="primary" class="mb-5 table" >
             <v-icon left>{{getLectureTypeIcon()}}</v-icon>
-            {{getLectureTypeCaps()}}
+            {{getLectureTypeCaps() + ' - ' + this.lecture.title}}
           </v-card-title>
 
         </v-row>
         <v-tabs >
+
             <v-tab @click="setTabName('New Document')">
                 <v-icon left>far fa-bookmark</v-icon>
                 DOCUMENTATION
             </v-tab >
+
             <v-tab @click="setTabName('New Video')">
                 <v-icon left>fas fa-play</v-icon>
                 VIDEOS
             </v-tab>
+            <v-tab @click="setTabName('New Video')">
+                <v-icon left>ballot</v-icon>
+                QUIZZES
+            </v-tab>
             <v-spacer></v-spacer>
             <v-btn color="primary" class="mr-6" v-if="teacher" @click="newDocument">{{this.doctype}}</v-btn>
+            <v-tab-item>
+                <v-list >
+                    <v-list-group
+
+                            v-for="d in documents"
+                            :key="d.title"
+
+                    >
+                        <template v-slot:activator>
+                            <v-list-item-content >
+                                <v-list-item-title  v-text="d.content"></v-list-item-title>
+                            </v-list-item-content>
+
+
+
+                        </template>
+
+                        <v-list-item color="primary"
+                        >
+
+                            <v-icon large color="primary">mdi-chevron-double-up</v-icon>
+                            <v-icon @click="editDocument(d)" color="primary">edit</v-icon>
+                            <v-icon  color="error">delete</v-icon>
+                            <v-icon large color="primary">mdi-chevron-double-down</v-icon>
+
+                        </v-list-item>
+                    </v-list-group>
+                </v-list>
+            </v-tab-item>
+            <v-tab-item>
+                <v-list >
+                    <v-list-group
+
+                            v-for="v in videos"
+                            :key="v.title"
+
+                    >
+                        <template v-slot:activator>
+                            <v-list-item-content >
+                                <v-list-item-title  v-text="v.title"></v-list-item-title>
+                            </v-list-item-content>
+                        </template>
+
+                        <v-list-item color="primary"
+                        >
+
+
+                            <v-container class="test">
+                                <LazyYoutubeVideo
+                                        :src="v.url"
+                                        preview-image-size=sddefault
+                                />
+                            </v-container>
+
+
+                            <v-icon large color="primary">mdi-chevron-double-up</v-icon>
+                            <v-icon @click="editDocument(v)" color="primary">edit</v-icon>
+                            <v-icon  color="error">delete</v-icon>
+                            <v-icon large color="primary">mdi-chevron-double-down</v-icon>
+
+
+
+
+                        </v-list-item>
+                    </v-list-group>
+                </v-list>
+
+            </v-tab-item>
+            <v-tab-item>
+
+
+            </v-tab-item>
 
         </v-tabs>
-
-
-
-
-
-
 
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -47,6 +119,7 @@
                 :document="current"
                 :type="doctype"
                 :dialog="newOrEditDialog"
+                :lecture="this.lecture"
                 v-on:save-document="onSaveDocument"
         />
     </v-card>
@@ -54,7 +127,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import Suggestion from '@/models/management/Suggestion';
 import RemoteServices from '@/services/RemoteServices';
 import Image from '@/models/management/Image';
@@ -63,10 +136,12 @@ import ShowSuggestion from '@/views/ShowSuggestion.vue';
 import Classroom from '@/models/management/Classroom';
 import Document from '@/models/management/Document';
 import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
+  import LazyYoutubeVideo from 'vue-lazy-youtube-video';
 
 @Component({
   components: {
-    'edit-document-dialog': EditDocumentDialog
+    'edit-document-dialog': EditDocumentDialog,
+    LazyYoutubeVideo
   }
 })
 export default class ShowLectureDialog extends Vue {
@@ -86,9 +161,18 @@ export default class ShowLectureDialog extends Vue {
   newOrEditDialog: boolean = false;
   current: Document | null = null;
 
+  @Watch('newOrEditDialog')
+  closeError() {
+    if (!this.newOrEditDialog) {
+      this.current = null;
+    }
+  }
+
   async created() {
-    this.videos = this.lecture.documents.filter(d => d.type != 'VIDEO')
-    this.documents = this.lecture.documents.filter(d => d.type != 'DOC')
+    this.documents = this.lecture.documents.filter(d => d.type != 'VIDEO')
+
+    this.videos = this.lecture.documents.filter(d => d.type != 'DOC')
+    console.log(this.videos);
 
   }
 
@@ -116,12 +200,19 @@ export default class ShowLectureDialog extends Vue {
     }
   }
 
+  editDocument(doc: Document) {
+    this.current = doc;
+    this.newOrEditDialog = true;
+  }
+
+
   newDocument() {
     this.current = new Document();
     this.newOrEditDialog = true;
   }
 
   async onSaveDocument(doc: Document) {
+    console.log(this.documents)
 
     if(this.doctype === 'New Document'){
       this.documents = this.documents.filter(d => d.id != doc.id);
@@ -134,6 +225,7 @@ export default class ShowLectureDialog extends Vue {
 
     this.newOrEditDialog = false;
     this.current = null;
+    console.log(this.documents)
   }
 
   getLectureTypeIcon(){
@@ -149,11 +241,7 @@ export default class ShowLectureDialog extends Vue {
     this.doctype = str;
   }
 
-  getColor2(type: string) {
-    if (type == 'ACTIVE') return 'success';
-    else if (type == 'INACTIVE') return 'warning';
 
-  }
 
 
   convertMarkDown(text: string, image: Image | null = null): string {
@@ -163,3 +251,15 @@ export default class ShowLectureDialog extends Vue {
 
 }
 </script>
+
+<style lang="scss" scoped>
+    $gap: 20px;
+
+    .test {
+        justify-content: center;
+        width: 30%;
+
+    }
+
+
+</style>

@@ -7,6 +7,7 @@ export default class Document {
   content: string = '';
   image: Image | null = null;
   url: string = '';
+  classroomId: number | null = null;
 
   constructor(jsonObj?: Document) {
     if (jsonObj) {
@@ -16,6 +17,7 @@ export default class Document {
       this.content = jsonObj.content;
       this.image = jsonObj.image;
       this.url = jsonObj.url;
+      this.classroomId = jsonObj.classroomId;
     }
   }
 }

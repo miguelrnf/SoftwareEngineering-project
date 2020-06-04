@@ -4,46 +4,32 @@
     @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
     max-width="75%"
-    max-height="80%"
+
 
 
   >
-    <v-card>
-      <v-app-bar dense color="primary">
-        <v-toolbar-title class="white--text" v-if="type === 'New Lecture'">{{
-          editLecture && editLecture.id === null
-            ? 'New Lecture'
-            : 'Edit Lecture'
-        }}</v-toolbar-title>
-        <v-toolbar-title class="white--text" v-else-if="type === 'New Lab'">{{
-          editLecture && editLecture.id === null
-          ? 'New Lab'
-          : 'Edit Lab'
-          }}</v-toolbar-title>
-        <v-toolbar-title class="white--text" v-else>{{
-          editLecture && editLecture.id === null
-          ? 'New Project'
-          : 'Edit Project'
-          }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-app-bar>
-      <v-card class="pb-12">
-        <div class="pt-5"></div>
+    <v-card class="px-12 pt-5 ">
+      <v-row>
+      <v-card-title color="primary" class="mb-5 " >
+        <v-icon left>{{getLectureTypeIcon()}}</v-icon>
+        {{getLectureTypeCaps()}}
+      </v-card-title>
+      </v-row>
+      <v-row>
 
-          <v-row>
-          <v-col class="mx-5">
             <v-textarea
 
                     :label=getLectureLabel()
                     v-model="editLecture.title"
                     auto-grow
                     outlined
-                    rows="1"
+                    rows="20"
                     row-height="15"
 
             ></v-textarea>
-          </v-col>
-          <v-col class="mx-5">
+      </v-row>
+      <v-row >
+
             <VueCtkDateTimePicker
 
                     :label=getLectureDateLabel()
@@ -51,27 +37,9 @@
                     v-model="date"
                     format="YYYY-MM-DDTHH:mm:ssZ"
                     data-cy="availableDate"
-
             >
             </VueCtkDateTimePicker>
-          </v-col>
-
-          </v-row>
-
-
-        <div >
-
-            <v-container class="test">
-              <LazyYoutubeVideo
-                      :src="this.videoBase"
-                      :previewImageSize="sddefault"
-              />
-              </v-container>
-
-
-        </div>
-
-      </v-card>
+      </v-row>
 
       <v-card-actions>
         <v-spacer />
@@ -140,7 +108,7 @@ export default class EditLectureDialog extends Vue {
 
   editLecture!: Classroom;
   student: User | null = null;
-  date!: string ;
+  date: String | null = null;
 
   videoId : String = '';
   videoBase : String = 'https://www.youtube.com/embed/KBMO_4Nj4HQ';
@@ -169,17 +137,23 @@ export default class EditLectureDialog extends Vue {
   }
 
   getLectureDateLabel() {
-    if (this.type === 'New Lecture') {
-      return 'Date Of Class Of Type Lecture'
-    } else if (this.type === 'New Lab') {
-      return 'Date Of Class Of Type Lab'
-    } else {
-      return 'Date Of Class Of Type Project'
+
+      return 'Class Date'
+
+
+  }
+  getLectureTypeCaps() {
+    if(this.type === 'New Lecture'){
+      return 'LECTURE'
+    } else if (this.type === 'New Lab'){
+      return 'LAB'
+    }else {
+      return 'PROJECT'
     }
   }
 
   async saveLecture() {
-    this.editLecture.availableDate = this.date;
+    this.editLecture.availableDate =  this.date;
 
     if (this.editLecture && this.editLecture.id != null) {
 
@@ -214,6 +188,13 @@ export default class EditLectureDialog extends Vue {
       }
     }
   }
+  getLectureTypeIcon(){
+    if (this.editLecture && this.editLecture.id === null) {
+      return 'fas fa-plus';
+    }else {
+      return 'edit';
+    }
+  }
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
@@ -223,11 +204,11 @@ export default class EditLectureDialog extends Vue {
 
   getLectureLabel() {
     if (this.type === 'New Lecture') {
-      return 'Write Lecture Summary Here'
+      return 'Write Lecture Title Here'
     } else if (this.type === 'New Lab') {
-      return 'Write Lab Summary Here'
+      return 'Write Lab Title Here'
     } else {
-      return 'Write Project Summary Here'
+      return 'Write Project Title Here'
     }
   }
 

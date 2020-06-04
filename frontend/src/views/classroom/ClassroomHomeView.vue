@@ -29,6 +29,7 @@
 
         <v-tab-item class="pb-10">
           <v-data-table
+
                   :headers="headers"
                   :custom-filter="customFilter"
                   :items="lectures"
@@ -45,7 +46,7 @@
                 <v-text-field
                         v-model="search"
                         append-icon="search"
-                        label="Search"
+                        label="Search Lectures"
                         class="mx-2"
                         data-cy="search"
                 />
@@ -75,7 +76,7 @@
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="editSuggestion(item)"
+                          @click="editLecture(item)"
                           data-cy="editSuggButton"
                   >edit</v-icon
                   >
@@ -105,7 +106,7 @@
                 <v-text-field
                         v-model="search"
                         append-icon="search"
-                        label="Search"
+                        label="Search Labs"
                         class="mx-2"
                         data-cy="search"
                 />
@@ -135,7 +136,7 @@
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="editSuggestion(item)"
+                          @click="editLecture(item)"
                           data-cy="editSuggButton"
                   >edit</v-icon
                   >
@@ -165,7 +166,7 @@
                 <v-text-field
                         v-model="search"
                         append-icon="search"
-                        label="Search"
+                        label="Search Projects"
                         class="mx-2"
                         data-cy="search"
                 />
@@ -195,13 +196,27 @@
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="editSuggestion(item)"
+                          @click="editLecture(item)"
                           data-cy="editSuggButton"
                   >edit</v-icon
                   >
                 </template>
                 <span>Edit {{getLectureLabel()}}</span>
               </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          class="mr-2"
+                          v-on="on"
+                          @click="editLecture(item)"
+                          data-cy="editSuggButton"
+                  >delete</v-icon
+                  >
+                </template>
+                <span>Edit {{getLectureLabel()}}</span>
+              </v-tooltip>
+
 
             </template>
 
@@ -274,17 +289,19 @@ export default class ClassroomHomeView extends Vue {
 
   headers: object = [
     {
-      text: 'Class Date',
-      value: 'availableDate',
-      align: 'center'
-    },
-
-    {
-      text: 'Summary',
+      text: 'Title',
       align: 'center',
       value: 'title',
       sortable: false
     },
+
+    {
+      text: 'Date',
+      value: 'availableDate',
+      align: 'center'
+    },
+
+
 
 
     { text: 'Status', value: 'status', align: 'center' },
@@ -310,6 +327,9 @@ export default class ClassroomHomeView extends Vue {
     this.lectures = await RemoteServices.getClassrooms('LECTURE')
     this.lab = await RemoteServices.getClassrooms('LAB')
     this.project= await RemoteServices.getClassrooms('PROJECT')
+    console.log(this.lectures)
+    console.log(this.lab)
+    console.log(this.project)
 
   }
 
@@ -329,7 +349,10 @@ export default class ClassroomHomeView extends Vue {
     this.showDialog = true;
   }
 
-  onCloseShowDialog() {
+  async onCloseShowDialog() {
+    this.lectures = await RemoteServices.getClassrooms('LECTURE')
+    this.lab = await RemoteServices.getClassrooms('LAB')
+    this.project= await RemoteServices.getClassrooms('PROJECT')
     this.showDialog = false;
   }
 
@@ -342,7 +365,7 @@ export default class ClassroomHomeView extends Vue {
       return 'Project'
     }
   }
-  editSuggestion(lecture: Classroom) {
+  editLecture(lecture: Classroom) {
     this.current = lecture;
     this.newOrEditDialog = true;
   }
