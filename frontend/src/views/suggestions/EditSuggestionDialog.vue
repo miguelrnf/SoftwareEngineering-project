@@ -52,6 +52,11 @@
                 ></v-textarea>
                 <v-divider></v-divider>
               </v-flex>
+              <v-row>
+
+              <v-icon color="green" class="px-3"
+              >mdi-check-circle-outline</v-icon>
+
               <v-textarea
                 outline
                 rows="1"
@@ -60,21 +65,32 @@
                 :label="`Correct Option`"
                 data-cy="optionTextArea"
               ></v-textarea>
+
+              </v-row>
+
               <v-flex
                 xs24
                 sm12
                 md12
                 v-for="index in editSuggestion.options.length - 1"
                 :key="index"
+
               >
+                <v-row>
+                <v-icon color="red" class="px-3"
+                >mdi-close-circle-outline</v-icon>
+
                 <v-textarea
                   outline
                   rows="1"
                   v-model="editSuggestion.options[index].content"
                   color="red"
-                  :label="`Options ${index + 1}`"
+                  :label="`Option ${index + 1}`"
                   data-cy="optionTextArea"
                 ></v-textarea>
+                </v-row>
+
+
               </v-flex>
             </v-layout>
           </v-container>
@@ -228,3 +244,4 @@ export default class EditSuggestionDialog extends Vue {
   }
 }
 </script>
+

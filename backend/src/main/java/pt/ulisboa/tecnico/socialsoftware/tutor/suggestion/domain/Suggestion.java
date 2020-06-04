@@ -201,6 +201,9 @@ public class Suggestion {
             this.options.add(option);
             option.setSuggestion(this);
         }
+
+        Collections.shuffle(this.options);
+
     }
 
     public Boolean getIsPrivate() {
