@@ -125,12 +125,13 @@ public class Document implements DomainEntity {
     }
 
     public void editDocument(DocumentDto documentDto){
+
         if (documentDto.getType().equals("DOC") && this.type==Type.DOC ){
 
             this.setContent(documentDto.getContent());
 
         }
-        if (documentDto.getType().equals("VIDEO") && this.type==Type.VIDEO){
+        else if (documentDto.getType().equals("VIDEO") && this.type==Type.VIDEO){
 
             this.setUrl(documentDto.getUrl());
         }

@@ -37,14 +37,14 @@ public class ClassroomController {
 
     @PostMapping(value = "/courses/{courseExecutionId}/classroom/newDoc")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
-    public ClassroomDto newDocument(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
-        return this.classroomService.addDocument(courseExecutionId, documentDto);
+    public DocumentDto newDocument(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
+        return this.classroomService.addDocument(documentDto.getClassroomId(), documentDto);
     }
 
     @PutMapping(value = "/courses/{courseExecutionId}/classroom/editDoc")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
-    public ClassroomDto editClassroom(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
-        return this.classroomService.editDocument(courseExecutionId, documentDto);
+    public DocumentDto editClassroom(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
+        return this.classroomService.editDocument(documentDto.getClassroomId(), documentDto);
     }
 
     @GetMapping(value = "/courses/{courseExecutionId}/classroom/list/{type}")

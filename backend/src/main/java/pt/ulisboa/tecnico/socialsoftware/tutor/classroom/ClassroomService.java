@@ -109,7 +109,8 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClassroomDto addDocument(int classroomId, DocumentDto documentDto){
+    public DocumentDto addDocument(int classroomId, DocumentDto documentDto){
+
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
         Document document = new Document(documentDto);
@@ -120,7 +121,7 @@ public class ClassroomService {
 
         documentRepository.save(document);
 
-        return new ClassroomDto(classroom);
+        return new DocumentDto(document);
     }
 
     @Retryable(
@@ -146,7 +147,7 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClassroomDto editDocument(int classroomId, DocumentDto documentDto){
+    public DocumentDto editDocument(int classroomId, DocumentDto documentDto){
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
         Document document = documentRepository.findById(documentDto.getId()).orElseThrow(() -> new TutorException(DOCUMENT_NOT_FOUND, documentDto.getId()));
@@ -157,7 +158,7 @@ public class ClassroomService {
 
         document.editDocument(documentDto);
 
-        return new ClassroomDto(classroom);
+        return new DocumentDto(document);
     }
 
 

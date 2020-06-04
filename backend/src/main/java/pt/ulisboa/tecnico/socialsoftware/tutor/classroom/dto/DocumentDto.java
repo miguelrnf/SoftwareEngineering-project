@@ -14,6 +14,7 @@ public class DocumentDto implements Serializable {
     private String url;
     private Integer classroomId;
 
+
     public DocumentDto(){}
 
     public DocumentDto(Document document){
