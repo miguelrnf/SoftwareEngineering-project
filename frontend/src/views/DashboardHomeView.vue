@@ -109,6 +109,7 @@
                     <v-icon left x-large>question_answer</v-icon>
                     <v-list-item-content>
                       <v-list-item-title
+
                         class="headline mb-1">Total Suggestions Submitted:
                         <span>
                           {{this.stats.approveSuggestions + this.stats.rejectedSuggestions + this.stats.pendingSuggestions}}
@@ -151,8 +152,8 @@
             </v-row>
 
             <v-row >
-              <v-col>
-                <v-card max-width="97%"  v-if=" this.stats.approveSuggestions + this.stats.rejectedSuggestions + this.stats.pendingSuggestions !== 0">
+              <v-col >
+                <v-card max-width="97%"   v-if=" this.stats.approveSuggestions + this.stats.rejectedSuggestions + this.stats.pendingSuggestions !== 0">
                   <v-card-text>SUGGESTIONS</v-card-text>
                   <GChart
                           type="PieChart"
@@ -361,12 +362,23 @@ export default class DashboardHomeView extends Vue {
   dashboardDialog: boolean = false;
   beStudent: User | undefined = undefined;
   textLabel: string = '';
-  stats: StudentStats | null = null;
+  stats: StudentStats =  {
+    approveSuggestions: 0,
+    correctAnswers: 0,
+    improvedCorrectAnswers: 0,
+    pendingSuggestions: 0,
+    postSubmitted: 0,
+    rejectedSuggestions: 0,
+    totalAnswers: 0,
+    totalAvailableQuestions: 0,
+    totalQuizzes: 0,
+    totalUniqueQuestions: 0,
+    tournamentDone: 0,
+    uniqueCorrectAnswers: 0,
+    uniqueWrongAnswers: 0
+  }
   wrongAnswers: number | null=null;
   correctAnswers: number | null = null;
-
-
-
 
   suggestionChartData : Array<Object> = [];
   questionChartData : Array<Object> = [];
@@ -489,6 +501,10 @@ export default class DashboardHomeView extends Vue {
     this.beStudent = this.students.find(
             student => student.username == this.beStudent?.username
     );
+  }
+
+  test1(){
+    console.log(this.stats)
   }
 
   async onSavePost(post: Post) {
