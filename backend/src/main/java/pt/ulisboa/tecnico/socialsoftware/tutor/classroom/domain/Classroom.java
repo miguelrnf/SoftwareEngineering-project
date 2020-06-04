@@ -51,6 +51,8 @@ public class Classroom implements DomainEntity {
     }
 
     public Classroom(ClassroomDto classroomDto){
+
+
         checkInfo(classroomDto);
         this.type = Classroom.Type.valueOf(classroomDto.getType());
         this.title = classroomDto.getTitle();
@@ -66,6 +68,7 @@ public class Classroom implements DomainEntity {
         if (classroomDto.getType()==null || classroomDto.getType().trim().length() == 0){
             throw new TutorException(NO_TYPE);
         }
+
         if (!DateHandler.isValidDateFormat(classroomDto.getAvailableDate()))
             throw new TutorException(NO_DATE);
     }

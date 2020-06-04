@@ -62,7 +62,7 @@
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="showSuggestionDialog(item)"
+                          @click="showLectureDialog(item)"
                           data-cy="showLectureButton"
                   >visibility</v-icon
                   >
@@ -122,7 +122,7 @@
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="showSuggestionDialog(item)"
+                          @click="showLectureDialog(item)"
                           data-cy="showLectureButton"
                   >visibility</v-icon
                   >
@@ -182,7 +182,7 @@
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="showSuggestionDialog(item)"
+                          @click="showLectureDialog(item)"
                           data-cy="showLectureButton"
                   >visibility</v-icon
                   >
@@ -217,6 +217,14 @@
               :dialog="newOrEditDialog"
               v-on:save-lecture="onSaveLecture"
       />
+      <show-lecture-dialog
+              v-if="current && showDialog"
+              :dialog="showDialog"
+              :lecture="current"
+              :type="tabName"
+              :teacher="isTeacher()"
+              v-on:close-show-lecture-dialog="onCloseShowDialog"
+      />
 
 
     </v-card>
@@ -230,10 +238,12 @@ import Suggestion from '@/models/management/Suggestion';
 import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
   import Classroom from '@/models/management/Classroom';
   import RemoteServices from '@/services/RemoteServices';
+  import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
 
 @Component({
   components: {
     'edit-lecture-dialog': EditLectureDialog,
+    'show-lecture-dialog': ShowLectureDialog,
 
   }
 })
@@ -305,7 +315,6 @@ export default class ClassroomHomeView extends Vue {
 
   setTabName(str: string){
     this.tabName = str;
-    console.log(this.tabName);
   }
   getTabName(){
    return this.tabName;
@@ -342,6 +351,7 @@ export default class ClassroomHomeView extends Vue {
     this.current = new Classroom();
     this.newOrEditDialog = true;
   }
+
 
   async onSaveLecture(lecture: Classroom) {
 

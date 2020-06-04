@@ -9,51 +9,23 @@
 
   >
     <v-card>
-      <v-app-bar dense color="primary">
-        <v-toolbar-title class="white--text" v-if="type === 'New Lecture'">{{
-          editLecture && editLecture.id === null
-            ? 'New Lecture'
-            : 'Edit Lecture'
-        }}</v-toolbar-title>
-        <v-toolbar-title class="white--text" v-else-if="type === 'New Lab'">{{
-          editLecture && editLecture.id === null
-          ? 'New Lab'
-          : 'Edit Lab'
-          }}</v-toolbar-title>
-        <v-toolbar-title class="white--text" v-else>{{
-          editLecture && editLecture.id === null
-          ? 'New Project'
-          : 'Edit Project'
-          }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-app-bar>
+      <v-row>
+
+        <v-card-title color="primary" class="mb-5 table" >
+          <v-icon left>fas fa-plus</v-icon>
+          {{getDocumentTypeCaps()}}
+        </v-card-title>
+
+      </v-row>
       <v-card class="pb-12">
         <div class="pt-5"></div>
 
           <v-row>
           <v-col class="mx-5">
-            <v-textarea
 
-                    :label=getLectureLabel()
-                    v-model="editLecture.title"
-                    auto-grow
-                    outlined
-                    rows="1"
-                    row-height="15"
-
-            ></v-textarea>
           </v-col>
           <v-col class="mx-5">
-            <VueCtkDateTimePicker
 
-                    :label=getLectureDateLabel()
-                    id="availableDateInput"
-                    v-model="date"
-                    format="YYYY-MM-DDTHH:mm:ssZ"
-                    data-cy="availableDate"
-
-            >
-            </VueCtkDateTimePicker>
           </v-col>
 
           </v-row>
@@ -85,7 +57,7 @@
         >
         <v-btn
           color="blue darken-1"
-          @click="saveLecture"
+          @click="sav"
           data-cy="saveButton"
           >Save</v-btn
         >
@@ -132,14 +104,13 @@ Vue.use(ToggleButton);
   },
 
 })
-export default class EditLectureDialog extends Vue {
+export default class EditDocumentDialog extends Vue {
 
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Classroom, required: true }) readonly lecture!: Classroom;
+  @Prop({ type: Document, required: true }) readonly document!: Document;
   @Prop({ type: String, required: true }) readonly type!: String;
 
-  editLecture!: Classroom;
-  student: User | null = null;
+  editDocument!: Document;
   date!: string ;
 
   videoId : String = '';
@@ -149,32 +120,17 @@ export default class EditLectureDialog extends Vue {
 
 
   async created() {
-    this.editLecture = new Classroom(this.lecture);
-
-    this.student = await this.$store.getters.getUser;
+    this.editDocument = new Document();
     this.videoId = getIdFromURL('https://www.youtube.com/watch?v=KBMO_4Nj4HQ');
 
   }
 
 
-
-  getLectureType() {
-    if (this.type === 'New Lecture') {
-      return 'Lecture'
-    } else if (this.type === 'New Lab') {
-      return 'Lab'
+  getDocumentTypeCaps() {
+    if(this.type === 'New Document'){
+      return 'DOCUMENT'
     } else {
-      return 'Project'
-    }
-  }
-
-  getLectureDateLabel() {
-    if (this.type === 'New Lecture') {
-      return 'Date Of Class Of Type Lecture'
-    } else if (this.type === 'New Lab') {
-      return 'Date Of Class Of Type Lab'
-    } else {
-      return 'Date Of Class Of Type Project'
+      return 'VIDEO'
     }
   }
 
@@ -215,21 +171,16 @@ export default class EditLectureDialog extends Vue {
     }
   }
 
+
+
+
+
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
 
 
-  getLectureLabel() {
-    if (this.type === 'New Lecture') {
-      return 'Write Lecture Summary Here'
-    } else if (this.type === 'New Lab') {
-      return 'Write Lab Summary Here'
-    } else {
-      return 'Write Project Summary Here'
-    }
-  }
 
 
 }
