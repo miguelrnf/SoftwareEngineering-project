@@ -28,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
@@ -37,9 +38,12 @@ import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_UNABLE_EDIT
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
 
 @DataJpaTest
-class CreateTournamentServiceSpockTest extends Specification {
+class EditTournamentServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -47,11 +51,15 @@ class CreateTournamentServiceSpockTest extends Specification {
     static final USERNAME_2 = 'username2'
     static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
+    static final EDITED_TITLE = 'first edited tournament'
     static final NUMQUESTIONS = 2
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
     static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    static final EDITED_DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(3))
+    static final EDITED_DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(4))
     static final NAME = 'name'
     static id = 1
+    static tid = 1
 
     @Autowired
     UserRepository userRepository
@@ -76,6 +84,9 @@ class CreateTournamentServiceSpockTest extends Specification {
 
     @Autowired
     QuestionRepository questionRepository
+
+    @Autowired
+    TournamentRepository tournamentRepository
 
     @Shared
     def tournamentDto
@@ -127,7 +138,7 @@ class CreateTournamentServiceSpockTest extends Specification {
 
         given: "a tournamentDto"
         tournamentDto = new TournamentDto()
-        tournamentDto.setId(1)
+        tournamentDto.setId(tid)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW)
         tournamentDto.setConclusionDate(DATETOMORROW)
@@ -222,78 +233,80 @@ class CreateTournamentServiceSpockTest extends Specification {
         assessmentRepository.save(ass)
     }
 
-    def "student creates a tournament"() {
+    def "student edits a tournament"() {
        given:
        tournamentDto.setOwner(new UserDto(STUDENT))
        tournamentDto.setTitle(TITLE)
        assdto.setId(id++)
        tournamentDto.setAssessmentDto(assdto)
+       def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
        when:
-       def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+       tournamentDto.setTitle(EDITED_TITLE)
+       tournamentDto.setAvailableDate(EDITED_DATENOW)
+       tournamentDto.setConclusionDate(EDITED_DATETOMORROW)
+       def editedTournament = tournamentService.editTournament(STUDENT.getUsername() ,courseExecution.getId(), tournamentDto)
 
        then:"the return data are correct"
-       result.id != null
-       result.owner.getName() == 'name'
-       result.owner.getRole() == User.Role.STUDENT
-       result.title == TITLE
-       result.status == "CREATED"
+       tournamentRepository.count() == 1L
+       editedTournament.id != null
+       editedTournament.owner.getName() == 'name'
+       editedTournament.owner.getRole() == User.Role.STUDENT
+       editedTournament.title == EDITED_TITLE
+       editedTournament.owner == tournament.owner
+       editedTournament.status == "CREATED"
     }
 
-    def "teacher creates a tournament"() {
+    def "teacher edits a tournament"() {
         given:
         tournamentDto.setOwner(new UserDto(TEACHER))
         tournamentDto.setTitle(TITLE)
         assdto.setId(id++)
         tournamentDto.setAssessmentDto(assdto)
+        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         when:
-        def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentDto.setTitle(EDITED_TITLE)
+        tournamentDto.setAvailableDate(EDITED_DATENOW)
+        tournamentDto.setConclusionDate(EDITED_DATETOMORROW)
+        def editedTournament = tournamentService.editTournament(TEACHER.getUsername() ,courseExecution.getId(), tournamentDto)
 
         then:"the return data are correct"
-        result.id != null
-        result.owner.getName() == 'name'
-        result.owner.getRole() == User.Role.TEACHER
-        result.title == TITLE
-        result.status == "CREATED"
+        tournamentRepository.count() == 1L
+        editedTournament.id != null
+        editedTournament.owner.getName() == 'name'
+        editedTournament.owner.getRole() == User.Role.TEACHER
+        editedTournament.title == EDITED_TITLE
+        editedTournament.owner == tournament.owner
+        editedTournament.status == "CREATED"
     }
-
-    def "null user creates a tournament"() {
-        given: "a null user"
-        tournamentDto.setOwner(null)
-        tournamentDto.setTitle(TITLE)
-
-        when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then: "an exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_NOT_CONSISTENT
-    }
-
 
     @Unroll
     def "invalid arguments: user=#user | title=#title || errorMessage=#errorMessage "() {
         given:
-        tournamentDto.setOwner(new UserDto(user as User))
-        tournamentDto.setTitle(title)
+        tournamentDto.setOwner(new UserDto(STUDENT))
+        tournamentDto.setTitle(EDITED_TITLE)
         assdto.setId(id++)
         tournamentDto.setAssessmentDto(assdto)
-
+        tournamentDto.setId(tid++)
+        tournamentDto.setType(type)
+        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        tournamentService.editTournament(user.username, courseExecution.getId(), tournamentDto)
+        println(tournamentDto.dump())
 
         then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
         where:
-             user     | title || errorMessage
-             ADMIN    | TITLE || TOURNAMENT_PERMISSION
-         NLL_USERNAME | TITLE || TOURNAMENT_NOT_CONSISTENT
-            STUDENT   | null  || TOURNAMENT_NOT_CONSISTENT
-            STUDENT   | '  '  || TOURNAMENT_NOT_CONSISTENT
+             user     |      type     || errorMessage
+             ADMIN    |   "STANDARD"  || TOURNAMENT_UNABLE_EDIT
+         NLL_USERNAME |   "STANDARD"  || USERNAME_NOT_FOUND
+            TEACHER   |   "STANDARD"  || TOURNAMENT_UNABLE_EDIT
+            STUDENT   |  "EVALUATION" || TOURNAMENT_UNABLE_EDIT
+
     }
 
     @TestConfiguration

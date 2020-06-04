@@ -40,6 +40,17 @@ public class TournamentController {
         return tournamentservice.createTournament(executionId, tournamentDto);
     }
 
+    @PutMapping("/executions/{executionId}/tournaments/edit")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public TournamentDto editTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        return tournamentservice.editTournament(user.getUsername(), executionId, tournamentDto);
+    }
+
     @PutMapping("/tournament/{tournamentId}/opened/enroll")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS'))")
     public TournamentDto enrollStudent(Principal principal, @PathVariable int tournamentId){

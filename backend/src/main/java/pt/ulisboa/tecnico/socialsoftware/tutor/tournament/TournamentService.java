@@ -109,8 +109,6 @@ public class TournamentService {
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
-        tournamentDto.setType("STANDARD");
-
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
@@ -133,6 +131,25 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto editTournament(String username ,int executionId, TournamentDto tournamentDto) {
+        Tournament tournament = tournamentRepository.findById(tournamentDto.getId()).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentDto.getId()));
+        User u = findUsername(username);
+        if(tournament.getOwner() != u || tournament.getType() != Tournament.TournamentType.STANDARD || !tournament.getEnrolledStudents().isEmpty() ){
+            throw new TutorException(TOURNAMENT_UNABLE_EDIT);
+
+        }
+
+        this.removeTournament(tournament.getId());
+
+        return this.createTournament(executionId, tournamentDto);
+    }
+
+
 
     @Retryable(
             value = { SQLException.class },
