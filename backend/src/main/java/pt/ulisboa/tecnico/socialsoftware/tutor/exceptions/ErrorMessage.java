@@ -141,6 +141,8 @@ public enum ErrorMessage {
     CANT_REMOVE_POWER_UP("You cannot remove a power up"),
     ITEM_ALREADY_EXISTS("The item %s is already in the shop"),
     NON_EXISTING_ITEM_ID("The item with id %d does not exist in the shop"),
+    INVALID_THEME("The provided theme is not valid"),
+    INVALID_ITEM_TYPE("The item type %s does not exist"),
     NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop");
 
     public final String label;

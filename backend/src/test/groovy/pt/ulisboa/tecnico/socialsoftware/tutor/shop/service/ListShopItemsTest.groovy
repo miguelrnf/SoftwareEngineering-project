@@ -39,7 +39,7 @@ class ListShopItemsTest extends Specification {
     public static final String VALID_DESCRIPTION_1 = "We're no strangers to love"
     public static final String VALID_DESCRIPTION_2 = "You know the rules"
     public static final String VALID_DESCRIPTION_3 = "And so, do I"
-    public static final String VALID_TYPE_1 = ShopItem.Type.PRIMARY_COLOR.toString()
+    public static final String VALID_TYPE_1 = ShopItem.Type.THEME.toString()
     public static final String VALID_TYPE_2 = ShopItem.Type.POST_AWARD.toString()
     public static final String VALID_TYPE_3 = ShopItem.Type.POWER_UP.toString()
     public static final int VALID_PRICE_1 = 100
