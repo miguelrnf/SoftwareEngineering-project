@@ -21,6 +21,7 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
+import Classroom from "@/models/management/Classroom";
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -299,7 +300,84 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
   }
-//----------------------------------------------------
+//------------------------------------------------------------------
+
+
+//--------------------------classroom Remote services ------------------
+
+  static async createClassroom(params: Classroom): Promise<Classroom> {
+    return httpClient
+        .post(
+            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/create`,
+            params
+        )
+        .then(response => {
+          return new Classroom(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async editClassroom(params: Classroom): Promise<Classroom> {
+    return httpClient
+        .put(
+            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/edit`,
+            params
+        )
+        .then(response => {
+          return new Classroom(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async createDocument(params: Document): Promise<Classroom> {
+    return httpClient
+        .post(
+            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newDoc`,
+            params
+        )
+        .then(response => {
+          return new Classroom(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async editDocument(params: Document): Promise<Classroom> {
+    return httpClient
+        .put(
+            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/editDoc`,
+            params
+        )
+        .then(response => {
+          return new Classroom(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async getClassrooms(type: String): Promise<Classroom[]> {
+    return httpClient
+        .get(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/list/${type}`
+        )
+        .then(response => {
+          return response.data.map((classroom: any) => {
+            return new Classroom(classroom);
+          });
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+  //___________________________________________
+
+
   static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
       .put(
