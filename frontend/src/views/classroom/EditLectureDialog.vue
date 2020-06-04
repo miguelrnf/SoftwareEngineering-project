@@ -35,6 +35,7 @@
             <v-textarea
 
                     :label=getLectureLabel()
+                    v-model="editLecture.title"
                     auto-grow
                     outlined
                     rows="1"
@@ -84,7 +85,7 @@
         >
         <v-btn
           color="blue darken-1"
-          @click=""
+          @click="saveLecture"
           data-cy="saveButton"
           >Save</v-btn
         >
@@ -108,13 +109,13 @@ import ShowSuggestion from '@/views/ShowSuggestion.vue';
 import VueYouTubeEmbed, { getIdFromURL } from 'vue-youtube-embed';
 import LazyYoutubeVideo from 'vue-lazy-youtube-video'
 import 'vue-lazy-youtube-video/dist/style.css'
+import Classroom from '@/models/management/Classroom';
 
 
 Vue.use(ToggleButton);
 
 @Component({
   components: {
-    'show-suggestion': ShowSuggestion,
     LazyYoutubeVideo
 
   },
@@ -125,19 +126,6 @@ Vue.use(ToggleButton);
           url: "https://www.youtube.com/embed/KBMO_4Nj4HQ",
           previewImageSize: "sddefault"
         },
-        {
-          url: "https://www.youtube.com/embed/65MVwN_Kz1Q",
-          previewImageSize: "sddefault"
-        },
-        {
-          url: "https://www.youtube.com/embed/KbX1gYtPVYE",
-          previewImageSize: "sddefault",
-          aspectRatio: "1:1"
-        },
-        {
-          url: "https://www.youtube.com/embed/etKOc80-cw0",
-          previewImageSize: "sddefault"
-        }
 
       ]
     };
@@ -147,12 +135,12 @@ Vue.use(ToggleButton);
 export default class EditLectureDialog extends Vue {
 
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Suggestion, required: true }) readonly lecture!: Suggestion;
+  @Prop({ type: Classroom, required: true }) readonly lecture!: Classroom;
   @Prop({ type: String, required: true }) readonly type!: String;
 
-  editLecture!: Suggestion;
+  editLecture!: Classroom;
   student: User | null = null;
-  date: String='';
+  date: string='';
 
   videoId : String = '';
   videoBase : String = 'https://www.youtube.com/embed/';
@@ -161,7 +149,7 @@ export default class EditLectureDialog extends Vue {
 
 
   async created() {
-    this.editLecture = new Suggestion(this.lecture);
+    this.editLecture = new Classroom(this.lecture);
 
     this.student = await this.$store.getters.getUser;
     this.videoId = getIdFromURL('https://www.youtube.com/watch?v=KBMO_4Nj4HQ');
@@ -169,9 +157,7 @@ export default class EditLectureDialog extends Vue {
 
   }
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
+
 
   getLectureType() {
     if (this.type === 'New Lecture') {
@@ -192,6 +178,53 @@ export default class EditLectureDialog extends Vue {
       return 'Date Of Class Of Type Project'
     }
   }
+
+  async saveLecture() {
+    this.editLecture.availableDate = this.date;
+
+    if (this.editLecture && this.editLecture.id != null) {
+
+      try {
+        const result = await RemoteServices.editClassroom(
+                this.editLecture
+        );
+        this.$emit('save-lecture', result);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    } else if (this.editLecture) {
+      try {
+        if(this.editLecture.availableDate === '' || this.editLecture.availableDate === null){
+          await this.$store.dispatch('error', 'cona');
+        }
+
+        if (this.type === 'New Lecture') {
+          this.editLecture.type = 'LECTURE'
+        } else if (this.type === 'New Lab') {
+          this.editLecture.type = 'LAB'
+        } else {
+          this.editLecture.type = 'PROJECT'
+        }
+
+
+        this.editLecture.status='INACTIVE'
+        console.log(this.editLecture)
+
+        const result = await RemoteServices.createClassroom(
+                this.editLecture
+        );
+        this.$emit('save-lecture', result);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
+  }
+
+
 
   getLectureLabel() {
     if (this.type === 'New Lecture') {

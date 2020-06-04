@@ -308,7 +308,7 @@ export default class RemoteServices {
   static async createClassroom(params: Classroom): Promise<Classroom> {
     return httpClient
         .post(
-            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/create`,
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/create`,
             params
         )
         .then(response => {
@@ -320,9 +320,10 @@ export default class RemoteServices {
   }
 
   static async editClassroom(params: Classroom): Promise<Classroom> {
+    console.log(params)
     return httpClient
         .put(
-            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/edit`,
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/edit`,
             params
         )
         .then(response => {
@@ -336,7 +337,7 @@ export default class RemoteServices {
   static async createDocument(params: Document): Promise<Classroom> {
     return httpClient
         .post(
-            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newDoc`,
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newDoc`,
             params
         )
         .then(response => {
@@ -350,7 +351,7 @@ export default class RemoteServices {
   static async editDocument(params: Document): Promise<Classroom> {
     return httpClient
         .put(
-            `/course/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/editDoc`,
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/editDoc`,
             params
         )
         .then(response => {

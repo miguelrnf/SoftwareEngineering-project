@@ -67,7 +67,20 @@
                   >visibility</v-icon
                   >
                 </template>
-                <span>Show {{tabName}}</span>
+                <span>Show {{getLectureLabel()}}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          class="mr-2"
+                          v-on="on"
+                          @click="editSuggestion(item)"
+                          data-cy="editSuggButton"
+                  >edit</v-icon
+                  >
+                </template>
+                <span>Edit {{getLectureLabel()}}</span>
               </v-tooltip>
             </template>
 
@@ -78,7 +91,7 @@
           <v-data-table
                   :headers="headers"
                   :custom-filter="customFilter"
-                  :items="lectures"
+                  :items="lab"
                   :search="search"
                   multi-sort
                   :mobile-breakpoint="0"
@@ -114,7 +127,20 @@
                   >visibility</v-icon
                   >
                 </template>
-                <span>Show {{tabName}}</span>
+                <span>Show {{getLectureLabel()}}</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          class="mr-2"
+                          v-on="on"
+                          @click="editSuggestion(item)"
+                          data-cy="editSuggButton"
+                  >edit</v-icon
+                  >
+                </template>
+                <span>Edit {{getLectureLabel()}}</span>
               </v-tooltip>
             </template>
 
@@ -125,7 +151,7 @@
           <v-data-table
                   :headers="headers"
                   :custom-filter="customFilter"
-                  :items="lectures"
+                  :items="project"
                   :search="search"
                   multi-sort
                   :mobile-breakpoint="0"
@@ -161,8 +187,22 @@
                   >visibility</v-icon
                   >
                 </template>
-                <span>Show {{tabName}}</span>
+                <span>Show {{getLectureLabel()}}</span>
               </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          class="mr-2"
+                          v-on="on"
+                          @click="editSuggestion(item)"
+                          data-cy="editSuggButton"
+                  >edit</v-icon
+                  >
+                </template>
+                <span>Edit {{getLectureLabel()}}</span>
+              </v-tooltip>
+
             </template>
 
           </v-data-table>
@@ -184,10 +224,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import User from '@/models/user/User';
 import Suggestion from '@/models/management/Suggestion';
 import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
+  import Classroom from '@/models/management/Classroom';
+  import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -205,14 +247,14 @@ export default class ClassroomHomeView extends Vue {
   search: string = '';
 
 
-  lectures: Suggestion[] = [];//trocar por lecture
-  lab: Suggestion[] = [];//trocar por lab
-  project: Suggestion[] = [];//trocar por project
+  lectures: Classroom[] = [];//trocar por lecture
+  lab: Classroom[] = [];//trocar por lab
+  project: Classroom[] = [];//trocar por project
 
   newOrEditDialog: boolean = false;
 
 
-  current: Suggestion | null = null;
+  current: Classroom | null = null;
 
 
   showDialog: boolean = false;
@@ -223,18 +265,19 @@ export default class ClassroomHomeView extends Vue {
   headers: object = [
     {
       text: 'Class Date',
-      value: 'creationDate',
+      value: 'availableDate',
       align: 'center'
     },
 
     {
       text: 'Summary',
       align: 'center',
+      value: 'title',
       sortable: false
     },
 
 
-    { text: 'Visability', value: 'status', align: 'center' },
+    { text: 'Status', value: 'status', align: 'center' },
 
     {
       text: 'Actions',
@@ -245,10 +288,19 @@ export default class ClassroomHomeView extends Vue {
 
   ];
 
-
+  @Watch('newOrEditDialog')
+  closeError() {
+    if (!this.newOrEditDialog) {
+      this.current = null;
+    }
+  }
 
 
   async created() {
+    this.lectures = await RemoteServices.getClassrooms('LECTURE')
+    this.lab = await RemoteServices.getClassrooms('LAB')
+    this.project= await RemoteServices.getClassrooms('PROJECT')
+
   }
 
   setTabName(str: string){
@@ -263,8 +315,8 @@ export default class ClassroomHomeView extends Vue {
     return this.$store.getters.isTeacher;
   }
 
-  showLectureDialog(sugg: Suggestion) {
-    this.current = sugg;
+  showLectureDialog(lec: Classroom) {
+    this.current = lec;
     this.showDialog = true;
   }
 
@@ -272,25 +324,43 @@ export default class ClassroomHomeView extends Vue {
     this.showDialog = false;
   }
 
-  newLecture() {
-    this.current = new Suggestion();
+  getLectureLabel() {
+    if (this.tabName === 'New Lecture') {
+      return 'Lecture'
+    } else if (this.tabName === 'New Lab') {
+      return 'Lab'
+    } else {
+      return 'Project'
+    }
+  }
+  editSuggestion(lecture: Classroom) {
+    this.current = lecture;
     this.newOrEditDialog = true;
-    console.log(this.tabName)
   }
 
-  async onSaveLecture(sugg: Suggestion) {
+  newLecture() {
+    this.current = new Classroom();
+    this.newOrEditDialog = true;
+  }
+
+  async onSaveLecture(lecture: Classroom) {
+
     if(this.tabName === 'New Lecture'){
-      this.lectures.unshift(sugg);
+      this.lectures = this.lectures.filter(l => l.id != lecture.id);
+      this.lectures.unshift(lecture);
     }
     else if(this.tabName === 'New Lab'){
-      this.lab.unshift(sugg);
+      this.lab = this.lab.filter(l => l.id != lecture.id);
+      this.lab.unshift(lecture);
     }else{
-      this.project.unshift(sugg);
+      this.project = this.project.filter(p => p.id != lecture.id);
+      this.project.unshift(lecture);
     }
 
     this.newOrEditDialog = false;
     this.current = null;
   }
+
 
   customFilter(value: string, search: string, lecture: Suggestion) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard

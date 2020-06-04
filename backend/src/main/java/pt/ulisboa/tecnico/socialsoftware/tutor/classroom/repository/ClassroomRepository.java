@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
-    @Query(value = "SELECT * FROM classroom c WHERE c.course_execution_id = :courseExecutionId", nativeQuery = true)
+    @Query(value = "SELECT * FROM classrooms c WHERE c.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<Classroom> findClassrooms(int courseExecutionId);
 
 }
