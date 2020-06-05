@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "shop_items")
 public class ShopItem {
     public enum Type {
-        PRIMARY_COLOR, POST_AWARD, POWER_UP
+        THEME, POST_AWARD, POWER_UP
     }
 
     @Id
@@ -31,16 +31,20 @@ public class ShopItem {
     @Column(name = "item_color")
     private String color;
 
+    @Column(name = "item_content")
+    private String content;
+
     public ShopItem() {
     }
 
-    public ShopItem(String name, String type, int price, String description, String icon, String color) {
+    public ShopItem(String name, String type, int price, String description, String icon, String color, String content) {
         this.name = name;
         this.type = Type.valueOf(type);
         this.price = price;
         this.description = description;
         this.icon = icon;
         this.color = color;
+        this.content = content;
     }
 
     public Integer getId() {
@@ -97,6 +101,14 @@ public class ShopItem {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override

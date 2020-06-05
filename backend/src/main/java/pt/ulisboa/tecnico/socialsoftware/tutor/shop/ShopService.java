@@ -8,8 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemListDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.repository.ShopRepository;
@@ -45,8 +44,8 @@ public class ShopService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public ShopItemDto buyShopItem(User user, int shopItemId) {
         ShopItem item = checkIfShopItemExistsById(shopItemId);
-        checkIfUserHasEnoughAchandos(user, item.getPrice());
-        user.addItem(new UserItem(item, user));
+        if(user.getRole() != User.Role.ADMIN) checkIfUserHasEnoughAchandos(user, item.getPrice());
+        addItemToUser(user, item);
         return new ShopItemDto(item);
     }
 
@@ -60,7 +59,7 @@ public class ShopService {
         } catch (TutorException e) {
             if(checkIfItemIsPowerUp(shopItemDto.getType())) throw new TutorException(ErrorMessage.CANT_ADD_POWER_UP);
             ShopItem item = new ShopItem(shopItemDto.getName(), shopItemDto.getType(), shopItemDto.getPrice(),
-                    shopItemDto.getDescription(), shopItemDto.getIcon(), shopItemDto.getColor());
+                    shopItemDto.getDescription(), shopItemDto.getIcon(), shopItemDto.getColor(), shopItemDto.getContent());
             entityManager.persist(item);
             return new ShopItemDto(item);
         }
@@ -99,5 +98,15 @@ public class ShopService {
 
     private boolean checkIfItemIsPowerUp(String type) {
         return type.equals("POWER_UP");
+    }
+
+    private void addItemToUser(User user, ShopItem item) {
+        if(item.getType() == ShopItem.Type.THEME)
+            user.addItem(new ThemeItem(item, user));
+        else if(item.getType() == ShopItem.Type.POWER_UP)
+            user.addItem(new PowerUpItem(item, user));
+        else if(item.getType() == ShopItem.Type.POST_AWARD)
+            user.addItem(new PostAwardItem(item, user));
+        else throw new TutorException(ErrorMessage.INVALID_ITEM_TYPE);
     }
 }

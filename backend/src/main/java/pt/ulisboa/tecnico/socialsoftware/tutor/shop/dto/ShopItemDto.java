@@ -12,6 +12,7 @@ public class ShopItemDto implements Serializable {
     private String description;
     private String icon;
     private String color;
+    private String content;
 
     public ShopItemDto() {
     }
@@ -24,6 +25,7 @@ public class ShopItemDto implements Serializable {
         this.description = item.getDescription();
         this.icon = item.getIcon();
         this.color = item.getColor();
+        this.content = item.getContent();
     }
 
     public int getId() {
@@ -80,6 +82,14 @@ public class ShopItemDto implements Serializable {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override
