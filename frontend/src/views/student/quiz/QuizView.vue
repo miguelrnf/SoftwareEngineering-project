@@ -1,55 +1,68 @@
 <template style="height: 100%">
   <div
-    tabindex="0"
     class="quiz-container"
     @keydown.right="confirmAnswer"
     @keydown.left="decreaseOrder"
     v-if="!confirmed"
   >
-    <header>
-      <span
-        class="timer"
-        @click="hideTime = !hideTime"
-        v-if="statementQuiz && statementQuiz.timeToSubmission"
-      >
-        <i class="fas fa-clock"></i>
-        <span v-if="!hideTime">{{ submissionTimer }}</span>
-      </span>
-      <span
-        class="end-quiz"
-        @click="confirmationDialog = true"
-        data-cy="endQuizButton"
-        ><i class="fas fa-times" />End Quiz</span
-      >
-    </header>
+    <v-card height="6%" color="accent">
+      <v-row :justify="'space-between'">
+        <v-col md="auto" class="pa-3">
+          <span
+            class="timer"
+            @click="hideTime = !hideTime"
+            v-if="statementQuiz && statementQuiz.timeToSubmission"
+          >
+            <i class="fas fa-clock"></i>
+            <span v-if="!hideTime">{{ submissionTimer }}</span>
+          </span>
+        </v-col>
+        <v-col md="auto" class="pa-3 mr-2">
+          <v-card
+            class="white--text pa-3"
+            style="font-size: large; font-weight: bold"
+            color="accent darken-1"
+            @click="confirmationDialog = true"
+            data-cy="endQuizButton"
+          >
+            <v-icon color="white">fas fa-times</v-icon>
+            End Quiz
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-card>
 
-    <div class="question-navigation">
-      <div class="navigation-buttons">
-        <span
+    <v-card height="45px" class="question-navigation">
+      <v-row :justify="'center'" class="navigation-buttons">
+        <v-col
+          md="auto"
+          v-bind:class="'question-button'"
           v-for="index in +statementQuiz.questions.length"
-          v-bind:class="[
-            'question-button',
-            index === questionOrder + 1 ? 'current-question-button' : ''
-          ]"
           :key="index"
           @click="changeOrder(index - 1)"
         >
-          {{ index }}
-        </span>
-      </div>
-      <span
+          <v-card :color="index === questionOrder + 1 ? 'secondary' : 'accent'">
+            {{ index }}
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-icon
         class="left-button"
         @click="decreaseOrder"
+        color="secondary"
+        x-large
         v-if="questionOrder !== 0 && !statementQuiz.oneWay"
-        ><i class="fas fa-chevron-left"
-      /></span>
-      <span
+        >fas fa-chevron-left</v-icon
+      >
+      <v-icon
         class="right-button"
         @click="confirmAnswer"
+        color="secondary"
+        x-large
         v-if="questionOrder !== statementQuiz.questions.length - 1"
-        ><i class="fas fa-chevron-right"
-      /></span>
-    </div>
+        >fas fa-chevron-right</v-icon
+      >
+    </v-card>
     <question-component
       v-model="questionOrder"
       v-if="statementQuiz.answers[questionOrder]"
@@ -294,3 +307,4 @@ export default class QuizView extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped></style>

@@ -41,7 +41,7 @@
     <v-row justify="end">
       <v-chip
         class="mr-12 mb-n10 mt-2"
-        color="blue"
+        color="primary"
         text-color="white"
         @click="openPostsDialog"
         data-cy="checkPostsByQuizButton"

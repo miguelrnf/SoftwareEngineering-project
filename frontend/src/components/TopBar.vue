@@ -648,14 +648,18 @@ export default class TopBar extends Vue {
     } else {
       this.$vuetify.theme.dark = false;
       this.$vuetify.theme.themes.light.primary = '#1976D2';
-      this.$vuetify.theme.themes.light.accent = '#877078';
+      this.$vuetify.theme.themes.dark.primary = '#1976D2';
+
+      this.$vuetify.theme.themes.light.accent = '#828282';
+      this.$vuetify.theme.themes.dark.accent = '#828282';
+
       this.$vuetify.theme.themes.light.secondary = '#d8d8d8';
       this.$vuetify.theme.themes.light.info = '#2196F3';
       this.$vuetify.theme.themes.light.warning = '#FB8C00';
       this.$vuetify.theme.themes.light.error = '#FF5252';
       this.$vuetify.theme.themes.light.success = '#4CAF50';
-      this.$vuetify.theme.themes.dark.primary = '#1976D2';
-      this.$vuetify.theme.themes.dark.accent = '#877078';
+
+
       this.$vuetify.theme.themes.dark.secondary = '#d8d8d8';
       this.$vuetify.theme.themes.dark.info = '#2196F3';
       this.$vuetify.theme.themes.dark.warning = '#FB8C00';
