@@ -77,6 +77,10 @@ public class ClassroomService {
 
         Classroom classroom = classroomRepository.findById(classroomDto.getId()).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomDto.getId()));
 
+        if (classroom.getCourseExecution() != courseExecution)
+            throw new TutorException(COURSE_EXECUTION_MISMATCH);
+
+
         classroom.editClassroom(classroomDto);
 
         return new ClassroomDto(classroom);
@@ -159,6 +163,23 @@ public class ClassroomService {
         document.editDocument(documentDto);
 
         return new DocumentDto(document);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClassroomDto changeStatus(int courseExecutionId, ClassroomDto classroomDto){
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        Classroom classroom = classroomRepository.findById(classroomDto.getId()).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomDto.getId()));
+
+        if (classroom.getCourseExecution() != courseExecution)
+            throw new TutorException(COURSE_EXECUTION_MISMATCH);
+
+        classroom.setStatus(Classroom.Status.valueOf(classroomDto.getStatus()));
+
+        return new ClassroomDto(classroom);
     }
 
 

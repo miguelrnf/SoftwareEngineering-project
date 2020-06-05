@@ -43,7 +43,7 @@ public class ClassroomController {
 
     @PutMapping(value = "/courses/{courseExecutionId}/classroom/editDoc")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
-    public DocumentDto editClassroom(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
+    public DocumentDto editDocument(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
         return this.classroomService.editDocument(documentDto.getClassroomId(), documentDto);
     }
 
@@ -56,4 +56,9 @@ public class ClassroomController {
         return this.classroomService.getClassroomsByType(user.getRole(), courseExecutionId, type);
     }
 
+    @PutMapping(value = "/courses/{courseExecutionId}/classroom/changeStatus")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public ClassroomDto changeStatus(@PathVariable int courseExecutionId, @Valid @RequestBody ClassroomDto classroomDto) {
+        return this.classroomService.changeStatus(courseExecutionId, classroomDto);
+    }
 }

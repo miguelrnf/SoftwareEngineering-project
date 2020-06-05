@@ -109,8 +109,6 @@ public class Classroom implements DomainEntity {
         this.courseExecution = courseExecution;
     }
 
-
-
     public Integer getId() {
         return id;
     }
