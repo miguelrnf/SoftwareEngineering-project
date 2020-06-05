@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -155,6 +156,15 @@ public class Classroom implements DomainEntity {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public void remove(){
+        getDocuments().forEach(document -> document.setClassroom(null));
+        getQuizzes().forEach(quiz -> quiz.setClassroom(null));
+        getQuizzes().clear();
+        getCourseExecution().getClassrooms().remove(this);
+        setCourseExecution(null);
+    }
+
 
     @Override
     public void accept(Visitor visitor) {

@@ -97,6 +97,7 @@ public class ClassroomService {
                     .filter(classroom -> classroom.getType().name().equals(type))
                     .filter(classroom -> classroom.getStatus().equals(Classroom.Status.ACTIVE))
                     .map(classroom -> new ClassroomDto(classroom))
+                    .sorted((e1,e2) -> e2.getAvailableDate().compareTo(e2.getAvailableDate()))
                     .collect(Collectors.toList());
         }
 
@@ -104,7 +105,8 @@ public class ClassroomService {
                 return classroomRepository.findClassrooms(courseExecutionId).stream()
                     .filter(classroom -> classroom.getType().name().equals(type))
                     .map(classroom -> new ClassroomDto(classroom))
-                    .collect(Collectors.toList());
+                        .sorted((e1,e2) -> e2.getAvailableDate().compareTo(e2.getAvailableDate()))
+                        .collect(Collectors.toList());
         }
     }
 
@@ -182,17 +184,46 @@ public class ClassroomService {
         return new ClassroomDto(classroom);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClassroomDto removeClassroom(int courseExecutionId, int classroomId){
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
+
+        if (classroom.getCourseExecution() != courseExecution)
+            throw new TutorException(COURSE_EXECUTION_MISMATCH);
 
 
 
+        classroom.remove();
+
+        classroom.getDocuments().forEach(document -> documentRepository.delete(document));
+        classroom.getDocuments().clear();
+
+        classroomRepository.delete(classroom);
+
+        return new ClassroomDto(classroom);
+    }
 
 
+    public DocumentDto removeDocument(int courseExecutionId, int classroomId, int documentId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
+        if (classroom.getCourseExecution() != courseExecution)
+            throw new TutorException(COURSE_EXECUTION_MISMATCH);
 
+        Document document = documentRepository.findById(documentId).orElseThrow(() -> new TutorException(DOCUMENT_NOT_FOUND));
 
+        classroom.getDocuments().remove(this);
+        document.setClassroom(null);
 
+        documentRepository.delete(document);
 
-
-
+        return new DocumentDto(document);
+    }
 }

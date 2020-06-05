@@ -61,4 +61,17 @@ public class ClassroomController {
     public ClassroomDto changeStatus(@PathVariable int courseExecutionId, @Valid @RequestBody ClassroomDto classroomDto) {
         return this.classroomService.changeStatus(courseExecutionId, classroomDto);
     }
+
+    @DeleteMapping(value = "/courses/{courseExecutionId}/classroom/delete/{classroomId}")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public ClassroomDto deleteClassroom(@PathVariable int courseExecutionId, @PathVariable int classroomId) {
+        return this.classroomService.removeClassroom(courseExecutionId, classroomId);
+    }
+
+    @DeleteMapping(value = "/courses/{courseExecutionId}/classroom/deleteDoc/{classroomId}/{documentId}")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public DocumentDto deleteDocument(@PathVariable int courseExecutionId, @PathVariable int classroomId, @PathVariable int documentId) {
+        return this.classroomService.removeDocument(courseExecutionId, classroomId, documentId);
+    }
+
 }
