@@ -20,12 +20,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,7 +99,7 @@ public class ClassroomService {
                     .filter(classroom -> classroom.getType().name().equals(type))
                     .filter(classroom -> classroom.getStatus().equals(Classroom.Status.ACTIVE))
                     .map(classroom -> new ClassroomDto(classroom))
-                    .sorted((e1,e2) -> e2.getAvailableDate().compareTo(e2.getAvailableDate()))
+                    .sorted(Comparator.comparing(ClassroomDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                     .collect(Collectors.toList());
         }
 
@@ -105,7 +107,7 @@ public class ClassroomService {
                 return classroomRepository.findClassrooms(courseExecutionId).stream()
                     .filter(classroom -> classroom.getType().name().equals(type))
                     .map(classroom -> new ClassroomDto(classroom))
-                        .sorted((e1,e2) -> e2.getAvailableDate().compareTo(e2.getAvailableDate()))
+                        .sorted(Comparator.comparing(ClassroomDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                         .collect(Collectors.toList());
         }
     }
@@ -154,7 +156,6 @@ public class ClassroomService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public DocumentDto editDocument(int classroomId, DocumentDto documentDto){
-        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
         Document document = documentRepository.findById(documentDto.getId()).orElseThrow(() -> new TutorException(DOCUMENT_NOT_FOUND, documentDto.getId()));
 
