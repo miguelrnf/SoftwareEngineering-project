@@ -48,7 +48,7 @@ public class TournamentController {
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-        return tournamentservice.editTournament(user.getUsername(), executionId, tournamentDto);
+        return tournamentservice.editTournament(user.getUsername(), tournamentDto);
     }
 
     @PutMapping("/tournament/{tournamentId}/opened/enroll")

@@ -36,11 +36,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_UNABLE_EDIT
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND
 
 @DataJpaTest
 class EditTournamentServiceSpockTest extends Specification {
@@ -55,8 +52,6 @@ class EditTournamentServiceSpockTest extends Specification {
     static final NUMQUESTIONS = 2
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
     static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
-    static final EDITED_DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(3))
-    static final EDITED_DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(4))
     static final NAME = 'name'
     static id = 1
     static tid = 1
@@ -138,12 +133,13 @@ class EditTournamentServiceSpockTest extends Specification {
 
         given: "a tournamentDto"
         tournamentDto = new TournamentDto()
-        tournamentDto.setId(tid)
+        tournamentDto.setId(1)
         tournamentDto.setStatus(Tournament.TournamentStatus.CREATED.name())
         tournamentDto.setAvailableDate(DATENOW)
         tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
         tournamentDto.setType("STANDARD")
+        tournamentDto.setId(tid)
 
         and: "a user with the role teacher"
         TEACHER = new User()
@@ -238,14 +234,13 @@ class EditTournamentServiceSpockTest extends Specification {
        tournamentDto.setOwner(new UserDto(STUDENT))
        tournamentDto.setTitle(TITLE)
        assdto.setId(id++)
+       tournamentDto.setId(tid++)
        tournamentDto.setAssessmentDto(assdto)
        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
        when:
        tournamentDto.setTitle(EDITED_TITLE)
-       tournamentDto.setAvailableDate(EDITED_DATENOW)
-       tournamentDto.setConclusionDate(EDITED_DATETOMORROW)
-       def editedTournament = tournamentService.editTournament(STUDENT.getUsername() ,courseExecution.getId(), tournamentDto)
+       def editedTournament = tournamentService.editTournament(STUDENT.getUsername(), tournamentDto)
 
        then:"the return data are correct"
        tournamentRepository.count() == 1L
@@ -262,14 +257,13 @@ class EditTournamentServiceSpockTest extends Specification {
         tournamentDto.setOwner(new UserDto(TEACHER))
         tournamentDto.setTitle(TITLE)
         assdto.setId(id++)
+        tournamentDto.setId(tid++)
         tournamentDto.setAssessmentDto(assdto)
         def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         when:
         tournamentDto.setTitle(EDITED_TITLE)
-        tournamentDto.setAvailableDate(EDITED_DATENOW)
-        tournamentDto.setConclusionDate(EDITED_DATETOMORROW)
-        def editedTournament = tournamentService.editTournament(TEACHER.getUsername() ,courseExecution.getId(), tournamentDto)
+        def editedTournament = tournamentService.editTournament(TEACHER.getUsername(), tournamentDto)
 
         then:"the return data are correct"
         tournamentRepository.count() == 1L
@@ -288,13 +282,12 @@ class EditTournamentServiceSpockTest extends Specification {
         tournamentDto.setTitle(EDITED_TITLE)
         assdto.setId(id++)
         tournamentDto.setAssessmentDto(assdto)
-        tournamentDto.setId(tid++)
         tournamentDto.setType(type)
+        tournamentDto.setId(tid++)
         tournamentService.createTournament(courseExecution.getId(), tournamentDto)
 
         when:
-        tournamentService.editTournament(user.username, courseExecution.getId(), tournamentDto)
-        println(tournamentDto.dump())
+        tournamentService.editTournament(user.username, tournamentDto)
 
         then:
         def error = thrown(TutorException)
@@ -305,8 +298,6 @@ class EditTournamentServiceSpockTest extends Specification {
              ADMIN    |   "STANDARD"  || TOURNAMENT_UNABLE_EDIT
          NLL_USERNAME |   "STANDARD"  || USERNAME_NOT_FOUND
             TEACHER   |   "STANDARD"  || TOURNAMENT_UNABLE_EDIT
-            STUDENT   |  "EVALUATION" || TOURNAMENT_UNABLE_EDIT
-
     }
 
     @TestConfiguration

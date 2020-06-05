@@ -1,8 +1,14 @@
 <template>
-  <div class="container">
-    <v-card>
+  <v-dialog
+    width="auto"
+    :value="editDialog"
+    max-width="60%"
+    @input="$emit('close-show-edit-tournament-dialog', false)"
+    @keydown.esc="$emit('close-show-edit-tournament-dialog', false)"
+  >
+    <v-card class="test">
       <v-container>
-        <v-card-title class="justify-center">Create Tournament</v-card-title>
+        <v-card-title class="justify-center">Edit Tournament</v-card-title>
       </v-container>
       <v-card-text>
         <v-text-field
@@ -57,7 +63,7 @@
             <VueCtkDateTimePicker
               label="*Available Date"
               id="availableDateInput"
-              v-model="tournament.availableDate"
+              v-model="avaleDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
               :dark="isDark"
@@ -70,7 +76,7 @@
             <VueCtkDateTimePicker
               label="*Conclusion Date"
               id="conclusionDateInput"
-              v-model="tournament.conclusionDate"
+              v-model="concDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
               :dark="isDark"
@@ -82,20 +88,20 @@
       </v-container>
       <v-container>
         <v-btn
-          @click="createTournament"
+          @click="editTournament"
           depressed
           color="primary"
-          data-cy="createButton"
+          data-cy="editTournament"
         >
-          Create tournament
+          Edit Tournament
         </v-btn>
       </v-container>
     </v-card>
-  </div>
+  </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Assessment from '@/models/management/Assessment';
 import RemoteServices from '@/services/RemoteServices';
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
@@ -106,9 +112,11 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component
 export default class CreateTournamentView extends Vue {
-  tournament: Tournament = new Tournament();
+  @Prop({ type: Boolean, required: true }) editDialog!: boolean;
+  @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
   availableAssessments: Assessment[] = [];
-  ola: Boolean = true;
+  avaleDate: string = '';
+  concDate: string = '';
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -119,12 +127,12 @@ export default class CreateTournamentView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async createTournament() {
+  async editTournament() {
     try {
-      await RemoteServices.createNewTournament(this.tournament);
-      if (this.$store.getters.getUser.role === 'TEACHER')
-        await this.$router.push({ name: 'all-tournaments' });
-      else await this.$router.push({ name: 'own-Tournaments' });
+      this.tournament.availableDate = this.avaleDate;
+      this.tournament.conclusionDate = this.concDate;
+      await RemoteServices.editTournament(this.tournament);
+      this.$emit('close-show-edit-tournament-dialog');
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -139,6 +147,9 @@ export default class CreateTournamentView extends Vue {
 <style lang="scss" scoped>
 .message {
   font-weight: bold;
+}
+.test {
+  margin: 0;
 }
 
 .button-group {
