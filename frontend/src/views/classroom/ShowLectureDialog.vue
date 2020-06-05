@@ -257,7 +257,7 @@ export default class ShowLectureDialog extends Vue {
 
     .test {
         justify-content: center;
-        width: 30%;
+        width: 50%;
 
     }
 

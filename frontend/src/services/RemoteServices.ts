@@ -335,6 +335,21 @@ export default class RemoteServices {
         });
   }
 
+  static async changeClassroomStatus(params: Classroom): Promise<Classroom> {
+    console.log(params)
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/changeStatus`,
+        params
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async createDocument(params: Document): Promise<Document> {
     console.log(params);
     return httpClient
@@ -363,6 +378,32 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
   }
+  static async deleteClassroom(classroomId: number): Promise<Classroom> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/delete/${classroomId}`
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteDocument(classroomId: number,documentId: number): Promise<Document> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/delete/${classroomId}/${documentId}`
+      )
+      .then(response => {
+        return new Document(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
 
   static async getClassrooms(type: String): Promise<Classroom[]> {
     return httpClient

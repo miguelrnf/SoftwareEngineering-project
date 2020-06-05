@@ -70,7 +70,7 @@
                 </template>
                 <span>Show {{getLectureLabel()}}</span>
               </v-tooltip>
-              <v-tooltip bottom>
+              <v-tooltip bottom v-if="isTeacher()">
                 <template v-slot:activator="{ on }">
                   <v-icon
                           small
@@ -82,6 +82,33 @@
                   >
                 </template>
                 <span>Edit {{getLectureLabel()}}</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="isTeacher()">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          class="mr-2"
+                          v-on="on"
+                          @click="changeStatus(item)"
+
+                  >fas fa-sync-alt</v-icon
+                  >
+                </template>
+                <span>Change {{getLectureLabel() }} Status</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="isTeacher()">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          color="error"
+                          class="mr-2"
+                          v-on="on"
+                          @click="deleteClassroom(item)"
+
+                  >delete</v-icon
+                  >
+                </template>
+                <span>Delete {{getLectureLabel() }}</span>
               </v-tooltip>
             </template>
 
@@ -130,7 +157,7 @@
                 </template>
                 <span>Show {{getLectureLabel()}}</span>
               </v-tooltip>
-              <v-tooltip bottom>
+              <v-tooltip bottom v-if="isTeacher()">
                 <template v-slot:activator="{ on }">
                   <v-icon
                           small
@@ -142,6 +169,33 @@
                   >
                 </template>
                 <span>Edit {{getLectureLabel()}}</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="isTeacher()">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          class="mr-2"
+                          v-on="on"
+                          @click="changeStatus(item)"
+                          data-cy="editSuggButton"
+                  >fas fa-sync-alt</v-icon
+                  >
+                </template>
+                <span>Change {{getLectureLabel() }} Status</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="isTeacher()">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          color="error"
+                          class="mr-2"
+                          v-on="on"
+                          @click="deleteClassroom(item)"
+
+                  >delete</v-icon
+                  >
+                </template>
+                <span>Delete {{getLectureLabel() }}</span>
               </v-tooltip>
             </template>
 
@@ -190,7 +244,7 @@
                 </template>
                 <span>Show {{getLectureLabel()}}</span>
               </v-tooltip>
-              <v-tooltip bottom>
+              <v-tooltip bottom v-if="isTeacher()">
                 <template v-slot:activator="{ on }">
                   <v-icon
                           small
@@ -203,20 +257,34 @@
                 </template>
                 <span>Edit {{getLectureLabel()}}</span>
               </v-tooltip>
-              <v-tooltip bottom>
+
+              <v-tooltip bottom v-if="isTeacher()">
                 <template v-slot:activator="{ on }">
                   <v-icon
                           small
                           class="mr-2"
                           v-on="on"
-                          @click="editLecture(item)"
+                          @click="changeStatus(item)"
                           data-cy="editSuggButton"
+                  >fas fa-sync-alt</v-icon
+                  >
+                </template>
+                <span>Change {{getLectureLabel() }} Status</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="isTeacher()">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                          small
+                          color="error"
+                          class="mr-2"
+                          v-on="on"
+                          @click="deleteClassroom(item)"
+
                   >delete</v-icon
                   >
                 </template>
-                <span>Edit {{getLectureLabel()}}</span>
+                <span>Delete {{getLectureLabel() }}</span>
               </v-tooltip>
-
 
             </template>
 
@@ -356,6 +424,38 @@ export default class ClassroomHomeView extends Vue {
     this.showDialog = false;
   }
 
+  async deleteClassroom(lecture: Classroom) {
+    if (
+            lecture.id &&
+            confirm('Are you sure you want to delete this question?')
+    ) {
+      try {
+        await RemoteServices.deleteClassroom(lecture.id);
+        if (this.tabName === 'New Lecture') {
+
+          this.lectures = this.lectures.filter(
+                  l => l.id != lecture.id
+          );
+
+        } else if (this.tabName === 'New Lab') {
+
+          this.lab = this.lab.filter(
+                  l => l.id != lecture.id
+          );
+        } else {
+
+          this.project = this.project.filter(
+                  l => l.id != lecture.id
+          );
+        }
+
+
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
   getLectureLabel() {
     if (this.tabName === 'New Lecture') {
       return 'Lecture'
@@ -365,6 +465,30 @@ export default class ClassroomHomeView extends Vue {
       return 'Project'
     }
   }
+  async changeStatus(lecture: Classroom) {
+
+    this.current = lecture;
+    this.current.status = 'ACTIVE'
+    console.log(this.current)
+    this.current = await RemoteServices.changeClassroomStatus(this.current)
+
+    if(this.tabName === 'New Lecture'){
+      this.lectures = this.lectures.filter(l => l.id != lecture.id);
+      this.lectures.unshift(lecture);
+    }
+    else if(this.tabName === 'New Lab'){
+      this.lab = this.lab.filter(l => l.id != lecture.id);
+      this.lab.unshift(lecture);
+    }else{
+      this.project = this.project.filter(p => p.id != lecture.id);
+      this.project.unshift(lecture);
+    }
+
+    this.newOrEditDialog = false;
+    this.current = null;
+
+  }
+
   editLecture(lecture: Classroom) {
     this.current = lecture;
     this.newOrEditDialog = true;
