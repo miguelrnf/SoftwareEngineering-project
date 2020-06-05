@@ -106,7 +106,7 @@ export default class StudentsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       if (this.course) {
-        this.students = await RemoteServices.getCourseStudents(this.course);
+        this.students = await RemoteServices.getCourseStudents(this.course, false);
       }
     } catch (error) {
       await this.$store.dispatch('error', error);

@@ -31,7 +31,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="light-green lighten-4">
+          <v-col class="accent">
             <v-data-table
               :headers="topicHeaders"
               :custom-filter="topicFilter"
@@ -42,7 +42,7 @@
               :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
             >
               <template v-slot:top>
-                <h2>Currently selected</h2>
+                <v-card-title>Currently selected</v-card-title>
                 <v-autocomplete
                   v-model="currentTopicsSearch"
                   label="Search"
@@ -103,7 +103,7 @@
               </template>
             </v-data-table>
           </v-col>
-          <v-col class="red lighten-4">
+          <v-col class="error">
             <v-data-table
               :headers="topicHeaders"
               :custom-filter="topicFilter"
@@ -114,7 +114,7 @@
               :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
             >
               <template v-slot:top>
-                <h2>Available topics</h2>
+                <v-card-title>Available topics</v-card-title>
                 <v-autocomplete
                   v-model="allTopicsSearch"
                   label="Search"

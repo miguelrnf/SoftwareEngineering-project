@@ -14,12 +14,9 @@ const vuetify = new Vuetify({
   iconfont: 'fa',
   theme: {
     themes: {
-      dark: {
-        primary: 'blue',
-        secondary: '#b0bec5',
-        accent: '#8c9eff',
-        error: '#b71c1c'
-      }
+      light: {
+      },
+      dark: {}
     }
   }
 });

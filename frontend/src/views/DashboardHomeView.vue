@@ -114,6 +114,7 @@
       :dialog="tournamentDialog"
       :tournament="currentTournament"
       :student="beStudent"
+      :dashboard="true"
       v-on:close-show-tournament-dialog="onCloseDialog"
     />
     <v-card v-if="!isReal">
@@ -184,7 +185,8 @@ export default class DashboardHomeView extends Vue {
     else this.textLabel = 'Public';
 
     this.students = await RemoteServices.getCourseStudents(
-      this.$store.getters.getCurrentCourse
+      this.$store.getters.getCurrentCourse,
+      true
     );
     if (this.beStudent?.username != null) {
       if (!this.beStudent.dashboardPrivate || this.isOwnDashboard) {

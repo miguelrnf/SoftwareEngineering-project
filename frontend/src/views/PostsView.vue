@@ -44,7 +44,8 @@
             )
           "
           @click="showPostOpenDialog(item)"
-      /></template>
+        />
+      </template>
 
       <template v-slot:item.user="{ item }">
         <p v-html="convertMarkDown(item.question.user.username, null)"

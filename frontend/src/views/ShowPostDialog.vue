@@ -4,7 +4,7 @@
     :value="dialog"
     @input="$emit('close-show-post-dialog', false)"
     @keydown.esc="$emit('close-show-post-dialog', false)"
-    class="v-dialog"
+    class="post-dialog"
     max-width="90%"
   >
     <v-card>
@@ -161,9 +161,9 @@ export default class PostViewDialog extends Vue {
 }
 </script>
 <style>
-  .v-dialog {
-    position: absolute;
-    top: 50px;
-    left: 48px;
-  }
+.post-dialog {
+  position: absolute;
+  top: 50px;
+  left: 48px;
+}
 </style>

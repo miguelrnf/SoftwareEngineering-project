@@ -21,6 +21,7 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
+import { Student } from '@/models/management/Student';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -690,12 +691,16 @@ export default class RemoteServices {
     }
   }
 
-  static async getCourseStudents(course: Course) {
+  static async getCourseStudents(course: Course, user: Boolean) {
     return httpClient
       .get(`/executions/${course.courseExecutionId}/students`)
       .then(response => {
         return response.data.map((student: any) => {
-          return new User(student);
+          if (user) {
+            return new User(student);
+          } else {
+            return new Student(student);
+          }
         });
       })
       .catch(async error => {
