@@ -63,7 +63,7 @@
             <VueCtkDateTimePicker
               label="*Available Date"
               id="availableDateInput"
-              v-model="avaleDate"
+              v-model="tournament.availableDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
               :dark="isDark"
@@ -76,7 +76,7 @@
             <VueCtkDateTimePicker
               label="*Conclusion Date"
               id="conclusionDateInput"
-              v-model="concDate"
+              v-model="tournament.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
               :dark="isDark"
@@ -115,8 +115,7 @@ export default class CreateTournamentView extends Vue {
   @Prop({ type: Boolean, required: true }) editDialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
   availableAssessments: Assessment[] = [];
-  avaleDate: string = '';
-  concDate: string = '';
+
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -129,8 +128,6 @@ export default class CreateTournamentView extends Vue {
 
   async editTournament() {
     try {
-      this.tournament.availableDate = this.avaleDate;
-      this.tournament.conclusionDate = this.concDate;
       await RemoteServices.editTournament(this.tournament);
       this.$emit('close-show-edit-tournament-dialog');
     } catch (error) {

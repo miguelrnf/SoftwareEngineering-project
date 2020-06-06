@@ -122,21 +122,18 @@ Cypress.Commands.add('newQuestion', str => {
 
 Cypress.Commands.add(
   'createTournament',
-  (title, numbQuestions, isStudent, isEdit) => {
+  (title, numbQuestions, isStudentCreate) => {
     let year =
       '#availableDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
     let year2023 = '.flex-wrap > :nth-child(11)';
     let yearConc =
       '#conclusionDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
 
-    if (isStudent) {
+    if (isStudentCreate) {
       cy.contains('Tournament').click();
       cy.get('[data-cy="create"]').click();
     }
 
-    if (isEdit) {
-      cy.get('[data-cy="edit"]').click();
-    }
     cy.get('[data-cy="title"]').type(title);
     cy.get('[data-cy="AssessmentTitle"]')
       .contains('Third mini-test')
@@ -160,10 +157,15 @@ Cypress.Commands.add(
     cy.get(
       '#conclusionDateInput-wrapper > .datetimepicker > .datepicker > .datepicker-buttons-container > .validate'
     ).click();
-    if (isEdit) cy.get('[data-cy="editTournament"]').click();
-    else cy.get('[data-cy="createButton"]').click();
+    cy.get('[data-cy="createButton"]').click();
   }
 );
+
+Cypress.Commands.add('editTournament', title => {
+  cy.get('[data-cy="edit"]').click();
+  cy.get('[data-cy="title"]').type(title);
+  cy.get('[data-cy="editTournament"]').click();
+});
 
 Cypress.Commands.add('createInvalidTournament', (tile, numbQuestions) => {
   let year =
@@ -238,11 +240,11 @@ Cypress.Commands.add('signInSignOut', title => {
 Cypress.Commands.add('cancel', title => {
   cy.contains(title)
     .parent()
-    .find('[data-cy="cancel"]')
+    .get('[data-cy="cancel"]')
     .click();
 });
 
-Cypress.Commands.add('assertOwn', title => {
+Cypress.Commands.add('assertT', title => {
   cy.contains(title)
     .parent()
     .should('have.length', 1)
@@ -250,21 +252,6 @@ Cypress.Commands.add('assertOwn', title => {
     .should('have.length', 1);
 });
 
-Cypress.Commands.add('assertAny', title => {
-  cy.contains(title)
-    .parent()
-    .should('have.length', 1)
-    .parent()
-    .should('have.length', 1);
-});
-
-Cypress.Commands.add('assertAvailableEnrolled', title => {
-  cy.contains(title)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 1);
-});
 
 //##############################TOURNAMENTS FEATURE END##########################################
 

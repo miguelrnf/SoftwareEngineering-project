@@ -146,8 +146,10 @@ public class TournamentService {
         tournament.setAssessment(assessmentRepository.findById(tournamentDto.getAssessmentDto().getId()).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND)));
         tournament.setTitle(tournamentDto.getTitle());
         tournament.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-        tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
-        tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
+        if (DateHandler.isValidDateFormat(tournamentDto.getAvailableDate()))
+            tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        if (DateHandler.isValidDateFormat(tournamentDto.getConclusionDate()))
+            tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
         tournament.setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
 
         return new TournamentDto(tournament);

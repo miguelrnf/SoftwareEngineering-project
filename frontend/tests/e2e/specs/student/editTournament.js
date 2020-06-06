@@ -1,6 +1,6 @@
-describe('Teacher walkthrough', () => {
+describe('Student walkthrough', () => {
   beforeEach(() => {
-    cy.demoTeacherLogin();
+    cy.demoStudentLogin();
   });
 
   afterEach(() => {
@@ -9,8 +9,7 @@ describe('Teacher walkthrough', () => {
   });
 
   it('login and edit a Tournament', () => {
-    cy.getTeacherTournament();
-    cy.createTournament('Demo tournament', '30', false);
+    cy.createTournament('Demo tournament', '30', true);
     cy.editTournament('Edited');
     cy.assertT('Demo tournamentEdited');
     cy.deleteTournament('Demo tournamentEdited');

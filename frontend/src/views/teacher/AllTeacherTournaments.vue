@@ -212,18 +212,11 @@ export default class AllTeacherTournaments2 extends Vue {
   async openEditDialog(t: Tournament) {
     this.editDialog = true;
     this.currentTournament = t;
+    console.log(t.availableDate);
   }
 
   setTournamentStatus(newT: Tournament, t: Tournament) {
     t.status = newT.status;
-  }
-
-  showCancel(to: Tournament) {
-    if (this.$store.getters.getUser != null)
-      return (
-        to.status === 'CREATED' &&
-        to.owner.username === this.$store.getters.getUser.username
-      );
   }
 
   showButtons(t: Tournament) {
