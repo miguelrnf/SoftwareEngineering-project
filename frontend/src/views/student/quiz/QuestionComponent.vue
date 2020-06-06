@@ -35,22 +35,13 @@
         @click="selectOption(question.options[index].optionId)"
         v-bind:class="'option'"
       >
-        <v-card
-          class="square"
-          :color="
-            optionId === question.options[index].optionId
-              ? 'accent lighten-2'
-              : 'accent'
-          "
-        >
+        <v-card class="square" :color="color(optionId, index)">
           <span class="option-letter">{{ optionLetters[index] }}</span>
         </v-card>
         <v-card
           class="option-content"
           :color="
-            optionId === question.options[index].optionId
-              ? 'secondary lighten-2'
-              : 'secondary'
+            optionId === question.options[index].optionId ? 'secondary' : ''
           "
         >
           <div v-html="convertMarkDown(question.options[index].content)" />
@@ -89,6 +80,16 @@ export default class QuestionComponent extends Vue {
   @Emit()
   selectOption(optionId: number) {
     return optionId;
+  }
+
+  color(optionId: number, index: number): String {
+    if (optionId === this.question?.options[index]?.optionId) {
+      if (this.$vuetify.theme.dark) {
+        return 'accent lighten-2';
+      }
+      return 'accent darken-2';
+    }
+    return 'accent';
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

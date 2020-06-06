@@ -1,43 +1,38 @@
 <template>
-  <div class="quiz-container" v-if="statementManager.correctAnswers.length > 0">
-    <div class="question-navigation">
-      <div class="navigation-buttons">
-        <span
+  <v-card max-height="250%" min-height="100%" class="quiz-container overflow-x-hidden" v-if="statementManager.correctAnswers.length > 0">
+    <v-card height="45px" class="question-navigation">
+      <v-row :justify="'center'" class="navigation-buttons">
+        <v-col
+          md="auto"
           v-for="index in +statementManager.statementQuiz.questions.length"
-          v-bind:class="[
-            'question-button',
-            index === questionOrder + 1 ? 'current-question-button' : '',
-            index === questionOrder + 1 &&
-            statementManager.correctAnswers[index - 1].correctOptionId !==
-              statementManager.statementQuiz.answers[index - 1].optionId
-              ? 'incorrect-current'
-              : '',
-            statementManager.correctAnswers[index - 1].correctOptionId !==
-            statementManager.statementQuiz.answers[index - 1].optionId
-              ? 'incorrect'
-              : ''
-          ]"
+          v-bind:class="'question-button'"
           :key="index"
           @click="changeOrder(index - 1)"
         >
-          {{ index }}
-        </span>
-      </div>
-      <span
+          <v-card tile :color="color(index)">
+            {{ index }}
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-icon
         class="left-button"
         @click="decreaseOrder"
+        color="secondary"
+        x-large
         v-if="questionOrder !== 0"
-        ><i class="fas fa-chevron-left"
-      /></span>
-      <span
+        >fas fa-chevron-left</v-icon
+      >
+      <v-icon
         class="right-button"
         @click="increaseOrder"
+        color="secondary"
+        x-large
         v-if="
           questionOrder !== statementManager.statementQuiz.questions.length - 1
         "
-        ><i class="fas fa-chevron-right"
-      /></span>
-    </div>
+        >fas fa-chevron-right</v-icon
+      >
+    </v-card>
     <v-row justify="end">
       <v-chip
         class="mr-12 mb-n10 mt-2"
@@ -64,7 +59,7 @@
       v-on:close-posts-by-quiz-dialog="onCloseDialog"
     >
     </posts-by-quiz>
-  </div>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -104,6 +99,26 @@ export default class ResultsView extends Vue {
       );
       this.quizPosts = res.lists;
     }
+  }
+
+  color(index: number): String {
+    if (index === this.questionOrder + 1) {
+      if (
+        this.statementManager.correctAnswers[index - 1].correctOptionId !==
+        this.statementManager.statementQuiz?.answers[index - 1].optionId
+      ) {
+        return this.$vuetify.theme.dark ? 'error darken-4' : 'error lighten-2';
+      }
+      return this.$vuetify.theme.dark
+        ? 'success darken-4'
+        : 'success lighten-2';
+    } else if (
+      this.statementManager.correctAnswers[index - 1].correctOptionId !==
+      this.statementManager.statementQuiz?.answers[index - 1].optionId
+    ) {
+      return 'error darken-2';
+    }
+    return 'success darken-2';
   }
 
   increaseOrder(): void {

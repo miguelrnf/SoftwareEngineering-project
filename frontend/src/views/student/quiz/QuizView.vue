@@ -1,11 +1,11 @@
 <template style="height: 100%">
-  <div
+  <v-card
     class="quiz-container"
     @keydown.right="confirmAnswer"
     @keydown.left="decreaseOrder"
     v-if="!confirmed"
   >
-    <v-card height="6%" color="accent">
+    <v-card height="50px" color="accent">
       <v-row :justify="'space-between'">
         <v-col md="auto" class="pa-3">
           <span
@@ -17,13 +17,15 @@
             <span v-if="!hideTime">{{ submissionTimer }}</span>
           </span>
         </v-col>
-        <v-col md="auto" class="pa-3 mr-2">
+        <v-col md="auto" class="pa-0 mr-2">
           <v-card
+            tile
             class="white--text pa-3"
             style="font-size: large; font-weight: bold"
             color="accent darken-1"
             @click="confirmationDialog = true"
             data-cy="endQuizButton"
+            max-height="50px"
           >
             <v-icon color="white">fas fa-times</v-icon>
             End Quiz
@@ -41,7 +43,10 @@
           :key="index"
           @click="changeOrder(index - 1)"
         >
-          <v-card :color="index === questionOrder + 1 ? 'secondary' : 'accent'">
+          <v-card
+            tile
+            :color="index === questionOrder + 1 ? 'secondary' : 'accent'"
+          >
             {{ index }}
           </v-card>
         </v-col>
@@ -146,7 +151,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-card>
 
   <div class="container" v-else-if="statementQuiz.timeToResults">
     <v-card>
