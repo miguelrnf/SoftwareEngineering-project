@@ -468,8 +468,13 @@ export default class ClassroomHomeView extends Vue {
   async changeStatus(lecture: Classroom) {
 
     this.current = lecture;
-    this.current.status = 'ACTIVE'
-    console.log(this.current)
+    if( this.current.status == 'ACTIVE'){
+      this.current.status = 'INACTIVE'
+    }else {
+      this.current.status = 'ACTIVE'
+    }
+
+    console.log(this.current.status)
     this.current = await RemoteServices.changeClassroomStatus(this.current)
 
     if(this.tabName === 'New Lecture'){

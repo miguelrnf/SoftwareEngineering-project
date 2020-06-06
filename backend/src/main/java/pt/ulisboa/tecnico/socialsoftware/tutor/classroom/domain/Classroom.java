@@ -29,7 +29,7 @@ public class Classroom implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "classroom", fetch = FetchType.LAZY)
     private Set<Quiz> quizzes = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "classroom", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "classroom", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
 
     @Enumerated(EnumType.STRING)

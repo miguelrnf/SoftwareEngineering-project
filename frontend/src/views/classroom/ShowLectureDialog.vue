@@ -52,10 +52,10 @@
                         <v-list-item color="primary"
                         >
 
-                            <v-icon large color="primary">mdi-chevron-double-up</v-icon>
-                            <v-icon @click="editDocument(d)" color="primary">edit</v-icon>
-                            <v-icon  color="error">delete</v-icon>
-                            <v-icon large color="primary">mdi-chevron-double-down</v-icon>
+                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-up</v-icon>
+                            <v-icon v-if="teacher" @click="editDocument(d)" color="primary">edit</v-icon>
+                            <v-icon v-if="teacher" @click="deleteDocument(d)" color="error">delete</v-icon>
+                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-down</v-icon>
 
                         </v-list-item>
                     </v-list-group>
@@ -87,10 +87,10 @@
                             </v-container>
 
 
-                            <v-icon large color="primary">mdi-chevron-double-up</v-icon>
-                            <v-icon @click="editDocument(v)" color="primary">edit</v-icon>
-                            <v-icon  color="error">delete</v-icon>
-                            <v-icon large color="primary">mdi-chevron-double-down</v-icon>
+                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-up</v-icon>
+                            <v-icon v-if="teacher" @click="editDocument(v)" color="primary">edit</v-icon>
+                            <v-icon v-if="teacher" @click="deleteDocument(v)" color="error">delete</v-icon>
+                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-down</v-icon>
 
 
 
@@ -157,7 +157,7 @@ export default class ShowLectureDialog extends Vue {
 
   videos: Document[] = [];
   documents: Document[] = [];
-
+  lec!: Classroom
   newOrEditDialog: boolean = false;
   current: Document | null = null;
 
@@ -172,7 +172,8 @@ export default class ShowLectureDialog extends Vue {
     this.documents = this.lecture.documents.filter(d => d.type != 'VIDEO')
 
     this.videos = this.lecture.documents.filter(d => d.type != 'DOC')
-    console.log(this.videos);
+
+    this.lec = new Classroom(this.lecture);
 
   }
 
@@ -187,6 +188,31 @@ export default class ShowLectureDialog extends Vue {
       return 'Lab'
     } else {
       return 'Project'
+    }
+  }
+
+  async deleteDocument(document: Document) {
+    if (
+      document.id &&
+      confirm('Are you sure you want to delete this question?')
+    ) {
+      try {
+        await RemoteServices.deleteDocument(this.lec.id,document.id);
+
+        if(this.doctype == 'New Document'){
+          this.documents = this.documents.filter(
+            l => l.id != document.id
+          );
+
+        }else{
+          this.videos = this.videos.filter(
+            l => l.id != document.id
+          );
+        }
+
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
     }
   }
 

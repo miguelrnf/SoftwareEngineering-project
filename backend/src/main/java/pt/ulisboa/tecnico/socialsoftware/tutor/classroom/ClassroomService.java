@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.classroom;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -26,6 +27,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.print.Doc;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -215,16 +217,14 @@ public class ClassroomService {
 
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
-        if (classroom.getCourseExecution() != courseExecution)
-            throw new TutorException(COURSE_EXECUTION_MISMATCH);
-
         Document document = documentRepository.findById(documentId).orElseThrow(() -> new TutorException(DOCUMENT_NOT_FOUND));
 
-        classroom.getDocuments().remove(this);
+        DocumentDto d = new DocumentDto(document);
+        classroom.getDocuments().remove(document);
         document.setClassroom(null);
 
         documentRepository.delete(document);
 
-        return new DocumentDto(document);
+        return d ;
     }
 }
