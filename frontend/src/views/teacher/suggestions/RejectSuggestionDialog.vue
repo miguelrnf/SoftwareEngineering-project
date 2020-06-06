@@ -24,7 +24,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
+        <v-btn dark color="primary" @click="closeQuestionDialog"
           >Cancel</v-btn
         >
 

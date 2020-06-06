@@ -93,7 +93,7 @@
         <v-spacer />
         <v-btn
           dark
-          color="blue darken-1"
+          color="primary"
           @click="closeQuestionDialog"
           data-cy="closeButton"
           >close</v-btn

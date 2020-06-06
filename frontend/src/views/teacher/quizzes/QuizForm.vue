@@ -23,6 +23,8 @@
               id="availableDateInput"
               v-model="quiz.availableDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
+              :dark="isDark"
+              :color="$vuetify.theme.themes.dark.primary"
             ></VueCtkDateTimePicker>
           </v-col>
           <v-col v-if="quiz.timed">
@@ -31,6 +33,8 @@
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
+              :dark="isDark"
+              :color="$vuetify.theme.themes.dark.primary"
             ></VueCtkDateTimePicker>
           </v-col>
           <v-col v-if="quiz.timed">
@@ -39,6 +43,8 @@
               id="resultsDateInput"
               v-model="quiz.resultsDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
+              :dark="isDark"
+              :color="$vuetify.theme.themes.dark.primary"
             ></VueCtkDateTimePicker>
           </v-col>
         </v-row>
@@ -272,8 +278,8 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" @click="closeSetPosition">Close</v-btn>
-          <v-btn color="blue darken-1" @click="saveSetPosition">Save</v-btn>
+          <v-btn color="primary" @click="closeSetPosition">Close</v-btn>
+          <v-btn color="primary" @click="saveSetPosition">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -355,6 +361,10 @@ export default class QuizForm extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  get isDark(): boolean {
+    return this.$vuetify.theme.dark;
   }
 
   @Watch('quiz')

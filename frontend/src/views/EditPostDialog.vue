@@ -38,13 +38,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="$emit('close-edit-post-dialog')"
           data-cy="cancelButton"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="savePostEdit"
           data-cy="saveEditButton"
           >Save Edit</v-btn

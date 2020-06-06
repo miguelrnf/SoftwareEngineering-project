@@ -86,13 +86,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="$emit('close-add-question-dialog', false)"
           data-cy="cancel"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="saveSuggestion"
           data-cy="saveButton"
           >Save</v-btn

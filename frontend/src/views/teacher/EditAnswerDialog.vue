@@ -35,11 +35,11 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="$emit('close-edit-answer-dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="editAnswer">Save Edit</v-btn>
+        <v-btn color="primary" @click="editAnswer">Save Edit</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
