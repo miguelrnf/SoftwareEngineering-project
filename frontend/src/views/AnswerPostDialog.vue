@@ -38,7 +38,5 @@ export default class AnswerPostDialog extends Vue {
 <style>
 .box-part {
   border-radius: 10px;
-  border: 2px solid dimgrey;
-  background: white;
 }
 </style>
