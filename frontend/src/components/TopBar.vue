@@ -263,10 +263,11 @@
         </v-menu>
 
         <v-btn
-                to="/study/home"
-                v-if="isStudent && currentCourse"
-                text dark
-                data-cy="Study"
+          to="/study/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="Study"
         >
           Study
           <v-icon>fas fa-book-reader</v-icon>
@@ -491,7 +492,6 @@
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
 
-
           <v-list-item to="/posts/submit">
             <v-list-item-action>
               <v-icon>fas fa-plus</v-icon>
@@ -554,7 +554,7 @@
             <v-icon>fas fa-book-reader</v-icon>
           </v-list-item-action>
           <v-list-item-content class="mobileTitle">
-           Study
+            Study
           </v-list-item-content>
         </v-list-item>
 

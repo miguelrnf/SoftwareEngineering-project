@@ -165,7 +165,7 @@
 </template>
 
 <script lang="ts">
-  import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
@@ -178,10 +178,11 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
   }
 })
 export default class QuizView extends Vue {
-  @Prop({ type: StatementManager, required: false }) readonly statementManager1!: StatementManager;
+  @Prop({ type: StatementManager, required: false })
+  readonly statementManager1!: StatementManager;
   statementManager: StatementManager = StatementManager.getInstance;
   statementQuiz: StatementQuiz | null =
-          StatementManager.getInstance.statementQuiz;
+    StatementManager.getInstance.statementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   nextConfirmationDialog: boolean = false;
@@ -192,19 +193,18 @@ export default class QuizView extends Vue {
   resultsTimer: string = '';
 
   async created() {
-    if(this.statementManager1){
-      this.statementManager = this.statementManager1
-      this.statementQuiz = this.statementManager1.statementQuiz
-    }
-    else {
+    if (this.statementManager1) {
+      this.statementManager = this.statementManager1;
+      this.statementQuiz = this.statementManager1.statementQuiz;
+    } else {
       if (!this.statementQuiz?.id) {
-        await this.$router.push({path: '/student/create'});
+        await this.$router.push({ path: '/student/create' });
       } else {
         try {
           await RemoteServices.startQuiz(this.statementQuiz?.id);
         } catch (error) {
           await this.$store.dispatch('error', error);
-          await this.$router.push({path: '/student/available-quizzes'});
+          await this.$router.push({ path: '/student/available-quizzes' });
         }
       }
     }

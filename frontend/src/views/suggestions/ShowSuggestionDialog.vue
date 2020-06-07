@@ -26,7 +26,7 @@
               label
               :color="getColor2(suggestion.status)"
               dark
-              >
+            >
               <span class="white--text ">{{ suggestion.status }}</span></v-chip
             >
           </div>
@@ -64,7 +64,7 @@
             color="grey"
             text-color="white"
             dark
-            >
+          >
             <span class="white--text">{{ option.name }}</span>
           </v-chip>
         </v-row>

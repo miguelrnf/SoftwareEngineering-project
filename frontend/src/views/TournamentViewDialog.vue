@@ -67,9 +67,9 @@
         </div>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           v-if="prepareToResults(tournament)"
           class="btn"
@@ -147,4 +147,4 @@ export default class TournamentViewDialog extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

@@ -11,7 +11,7 @@
         {{ post.question.user.username }}
       </div>
     </div>
-    <v-divider inset class="mt-3"></v-divider>
+    <v-divider inset class="mt-3" />
     <div
       v-if="
         post.answer != null &&
@@ -101,4 +101,4 @@ export default class ShowPost extends Vue {
 }
 </script>
 
-<style></style>
+<style />

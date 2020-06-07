@@ -59,4 +59,4 @@ export default class PostsByQuizDialog extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

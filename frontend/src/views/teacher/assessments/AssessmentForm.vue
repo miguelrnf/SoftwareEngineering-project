@@ -13,10 +13,7 @@
       <v-container fluid>
         <v-row>
           <v-col>
-            <v-text-field
-              v-model="assessment.title"
-              label="Title"
-            />
+            <v-text-field v-model="assessment.title" label="Title" />
           </v-col>
 
           <v-col>

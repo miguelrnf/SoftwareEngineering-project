@@ -13,7 +13,7 @@
           post.question.question.title
         }}</v-toolbar-title>
         <v-spacer />
-        <post-status-buttons :post="post"></post-status-buttons>
+        <post-status-buttons :post="post" />
         <v-tooltip bottom v-if="isOwner(post)">
           <template v-slot:activator="{ on }">
             <v-icon color="white" small v-on="on" @click="editPost(post)"

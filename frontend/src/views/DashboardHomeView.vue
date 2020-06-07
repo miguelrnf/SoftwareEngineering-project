@@ -59,43 +59,35 @@
 
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <div>
-                <post-preview
-                  v-for="p in posts"
-                  class="mb-2"
-                  :key="p.id"
-                  :post="p"
-                  @click.native="showPostOpenDialog(p)"
-                />
-              </div>
-            </v-card-text>
+            <post-preview
+              v-for="p in posts"
+              class="my-4"
+              :key="p.id"
+              :post="p"
+              @click.native="showPostOpenDialog(p)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <suggestion-preview
-                v-for="s in suggestions"
-                class="mb-2"
-                :key="s.id"
-                :suggestion="s"
-                @click.native="showSuggOpenDialog(s)"
-              />
-            </v-card-text>
+            <suggestion-preview
+              v-for="s in suggestions"
+              class="my-4"
+              :key="s.id"
+              :suggestion="s"
+              @click.native="showSuggOpenDialog(s)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <tournament-preview
-                v-for="t in tournaments"
-                class="mb-2"
-                :key="t.id"
-                :tournament="t"
-                @click.native="showTournamentOpenDialog(t)"
-              />>
-            </v-card-text>
+            <tournament-preview
+              v-for="t in tournaments"
+              class="my-4"
+              :key="t.id"
+              :tournament="t"
+              @click.native="showTournamentOpenDialog(t)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
@@ -125,8 +117,8 @@
                   <v-list-item three-line>
                     <v-icon left large>assignment</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title style="font-size: large"
-                        >Total Unique Answered Questions:
+                      <v-list-item-title style="font-size: large">
+                        Total Unique Answered Questions:
                         <span>
                           {{ this.stats.totalUniqueQuestions }}
                         </span>
@@ -140,8 +132,8 @@
                   <v-list-item three-line>
                     <v-icon left large>assignment</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title style="font-size: large"
-                        >Total Quizzes Solved:
+                      <v-list-item-title style="font-size: large">
+                        Total Quizzes Solved:
                         <span>
                           {{ this.stats.totalQuizzes }}
                         </span>
@@ -151,7 +143,6 @@
                 </v-card>
               </v-col>
             </v-row>
-
             <v-row>
               <v-col>
                 <v-card
@@ -163,9 +154,9 @@
                       0
                   "
                 >
-                  <v-card-title style="justify-content: center"
-                    >SUGGESTIONS</v-card-title
-                  >
+                  <v-card-title style="justify-content: center">
+                    SUGGESTIONS
+                  </v-card-title>
                   <GChart
                     type="PieChart"
                     :data="suggestionChartData"
@@ -174,19 +165,19 @@
                   />
                 </v-card>
                 <v-card max-width="97%" v-else class="pb-10" height="255">
-                  <v-card-text class="pt-12"
-                    >NO SUGGESTIONS SUBMITTED</v-card-text
-                  >
-                  <v-icon class="pt-6" left x-large
-                    >fas fa-exclamation-triangle</v-icon
-                  >
+                  <v-card-text class="pt-12">
+                    NO SUGGESTIONS SUBMITTED
+                  </v-card-text>
+                  <v-icon class="pt-6" left x-large>
+                    fas fa-exclamation-triangle
+                  </v-icon>
                 </v-card>
               </v-col>
               <v-col>
                 <v-card max-width="97%">
-                  <v-card-title style="justify-content: center"
-                    >QUESTIONS</v-card-title
-                  >
+                  <v-card-title style="justify-content: center">
+                    QUESTIONS
+                  </v-card-title>
                   <GChart
                     type="PieChart"
                     :data="questionChartData"
@@ -201,8 +192,8 @@
                   v-if="this.correctAnswers !== 0 || this.wrongAnswers !== 0"
                 >
                   <v-card-title style="justify-content: center"
-                    >CORRECT ANSWERS</v-card-title
-                  >
+                    >CORRECT ANSWERS
+                  </v-card-title>
                   <GChart
                     type="PieChart"
                     :data="correctChartData"
@@ -210,12 +201,11 @@
                     @ready="getStats"
                   />
                 </v-card>
-
                 <v-card max-width="97%" v-else class="pb-10" height="255">
                   <v-card-text class="pt-12">NO ANSWERED QUESTIONS</v-card-text>
                   <v-icon class="pt-6" left x-large
-                    >fas fa-exclamation-triangle</v-icon
-                  >
+                    >fas fa-exclamation-triangle
+                  </v-icon>
                 </v-card>
               </v-col>
             </v-row>
@@ -225,8 +215,8 @@
                   <v-list-item three-line>
                     <v-icon left large>fas fa-trophy</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title style="font-size: large"
-                        >Total Tournaments Done:
+                      <v-list-item-title style="font-size: large">
+                        Total Tournaments Done:
                         <span>
                           {{ this.stats.tournamentDone }}
                         </span>
@@ -240,8 +230,8 @@
                   <v-list-item three-line>
                     <v-icon left large>fas fa-book</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title style="font-size: large"
-                        >Total Posts Submitted:
+                      <v-list-item-title style="font-size: large">
+                        Total Posts Submitted:
                         <span>
                           {{ this.stats.postSubmitted }}
                         </span>
@@ -250,7 +240,6 @@
                   </v-list-item>
                 </v-card>
               </v-col>
-              <v-col> </v-col>
             </v-row>
             <v-row>
               <v-col>
@@ -291,7 +280,6 @@
                   >
                 </v-card>
               </v-col>
-              <v-col></v-col>
             </v-row>
           </v-card>
         </v-tab-item>
@@ -547,4 +535,4 @@ export default class DashboardHomeView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

@@ -6,7 +6,7 @@
     <div class="headline text-left">
       <span v-html="convertMarkDown(suggestion.studentQuestion)" />
     </div>
-    <v-divider></v-divider>
+    <v-divider />
     <div class="mt-2 text-left">
       <span class="headline font-weight-black mr-10">
         {{ 'Options' }}
@@ -24,7 +24,7 @@
         </v-chip>
       </div>
     </div>
-    <v-divider class="mt-4"></v-divider>
+    <v-divider class="mt-4" />
     <div class="mt-2 text-left">
       <span class="headline font-weight-black mr-10">
         {{ 'Topics' }}
@@ -37,7 +37,8 @@
           color="grey"
           text-color="white"
           dark
-          ><span class="white--text">{{ option.name }}</span>
+        >
+          <span class="white--text">{{ option.name }}</span>
         </v-chip>
       </div>
     </div>
@@ -90,4 +91,4 @@ export default class ShowSuggestion extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped />
