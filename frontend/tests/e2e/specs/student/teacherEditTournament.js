@@ -10,9 +10,9 @@ describe('Teacher walkthrough', () => {
 
   it('login and edit a Tournament', () => {
     cy.getTeacherTournament();
-    cy.createTournament('Demo tournament', '30', false);
-    cy.editTournament('Edited');
-    cy.assertT('Demo tournamentEdited');
-    cy.deleteTournament('Demo tournamentEdited');
+    cy.createTournament('Demo tournament', '30', false, false);
+    cy.createTournament('Demo tournament Edited', '10', false, true);
+    cy.assertT('Demo tournament Edited');
+    cy.deleteTournament('Demo tournament Edited');
   });
 });

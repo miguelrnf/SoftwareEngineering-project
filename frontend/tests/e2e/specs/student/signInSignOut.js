@@ -9,9 +9,9 @@ describe('Student walkthrough', () => {
   });
 
   it('login and signIn in tournament 1', () => {
-    cy.createTournament('Demo tournament 1', '30');
+    cy.createTournament('Demo tournament 1', '30', true, false);
     cy.wait(100);
-    cy.createTournament('Demo tournament 2', '20');
+    cy.createTournament('Demo tournament 2', '20', true, false);
     cy.wait(100);
     cy.listAvailableTournaments();
 

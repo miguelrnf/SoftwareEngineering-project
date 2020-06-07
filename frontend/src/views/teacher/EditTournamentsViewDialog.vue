@@ -3,23 +3,19 @@
     width="auto"
     :value="editDialog"
     max-width="60%"
-    @input="$emit('close-show-edit-tournament-dialog', false)"
-    @keydown.esc="$emit('close-show-edit-tournament-dialog', false)"
+    @input="$emit('close-show-edit-tournament-dialog')"
+    @keydown.esc="$emit('close-show-edit-tournament-dialog')"
   >
     <v-card class="test">
       <v-container>
         <v-card-title class="justify-center">Edit Tournament</v-card-title>
       </v-container>
       <v-card-text>
-        <v-text-field
-          v-model="tournament.title"
-          label="*Title"
-          data-cy="title"
-        />
+        <v-text-field v-model="editedTitle" label="*Title" data-cy="title" />
       </v-card-text>
       <v-container>
         <p class="pl-0">Type</p>
-        <v-btn-toggle v-model="tournament.type" mandatory class="button-group">
+        <v-btn-toggle v-model="editedType" mandatory class="button-group">
           <v-btn text value="STANDARD">STANDARD</v-btn>
         </v-btn-toggle>
       </v-container>
@@ -27,7 +23,7 @@
         <p>Assessment</p>
         <v-btn-toggle
           v-if="availableAssessments.length > 0"
-          v-model="tournament.assessmentDto.id"
+          v-model="editedAssessmentDto.id"
           mandatory
           class="button-group"
         >
@@ -47,7 +43,7 @@
       <v-container>
         <p class="pl-0">Number of Questions</p>
         <v-btn-toggle
-          v-model="tournament.numberOfQuestions"
+          v-model="editedNumberOfQuestions"
           mandatory
           class="button-group"
         >
@@ -63,7 +59,7 @@
             <VueCtkDateTimePicker
               label="*Available Date"
               id="availableDateInput"
-              v-model="tournament.availableDate"
+              v-model="avalDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
               :dark="isDark"
@@ -76,7 +72,7 @@
             <VueCtkDateTimePicker
               label="*Conclusion Date"
               id="conclusionDateInput"
-              v-model="tournament.conclusionDate"
+              v-model="concDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
               :dark="isDark"
@@ -86,22 +82,41 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-container>
+
+      <v-card-actions>
+        <v-spacer />
         <v-btn
-          @click="editTournament"
+          color="primary"
+          @click="$emit('close-show-edit-tournament-dialog')"
+          data-cy="cancelButton"
+          >Close</v-btn
+        >
+        <v-btn
+          v-if="canSave"
+          @click="saveTournamentEdit"
           depressed
           color="primary"
           data-cy="editTournament"
         >
           Edit Tournament
         </v-btn>
-      </v-container>
+        <v-btn
+          v-else
+          @click="saveTournamentEdit"
+          depressed
+          color="primary"
+          data-cy="editTournament"
+          disabled
+        >
+          Edit Tournament
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Assessment from '@/models/management/Assessment';
 import RemoteServices from '@/services/RemoteServices';
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
@@ -112,9 +127,15 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component
 export default class CreateTournamentView extends Vue {
-  @Prop({ type: Boolean, required: true }) editDialog!: boolean;
+  @Model('editDialog', Boolean) editDialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
   availableAssessments: Assessment[] = [];
+  avalDate: string = '';
+  concDate: string = '';
+  editedTitle: string = '';
+  editedNumberOfQuestions: number = 0;
+  editedAssessmentDto: Assessment = new Assessment();
+  editedType: string = '';
 
   async created() {
     await this.$store.dispatch('loading');
@@ -126,17 +147,33 @@ export default class CreateTournamentView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async editTournament() {
-    try {
-      await RemoteServices.editTournament(this.tournament);
-      this.$emit('close-show-edit-tournament-dialog');
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+  get canSave(): boolean {
+    return (
+      !!this.editedTitle &&
+      !!this.avalDate &&
+      !!this.concDate &&
+      this.editedTitle.trim() != ''
+    );
   }
 
   get isDark(): boolean {
     return this.$vuetify.theme.dark;
+  }
+
+  async saveTournamentEdit() {
+    try {
+      let editedTournament = new Tournament(this.tournament);
+      editedTournament.title = this.editedTitle;
+      editedTournament.assessmentDto = this.editedAssessmentDto;
+      editedTournament.availableDate = this.avalDate;
+      editedTournament.conclusionDate = this.concDate;
+      editedTournament.type = this.editedType;
+      editedTournament.numberOfQuestions = this.editedNumberOfQuestions;
+      const result = await RemoteServices.editTournament(editedTournament);
+      this.$emit('save-tournament', result);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 </script>

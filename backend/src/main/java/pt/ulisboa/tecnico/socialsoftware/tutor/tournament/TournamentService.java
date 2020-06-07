@@ -143,13 +143,22 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_UNABLE_EDIT);
 
         }
+        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(tournament.getCourseExecution().getCourse().getId());
+
+        availableQuestions = filterByAssessment(availableQuestions, tournament);
+
+        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
+        }
+
         tournament.setAssessment(assessmentRepository.findById(tournamentDto.getAssessmentDto().getId()).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND)));
         tournament.setTitle(tournamentDto.getTitle());
         tournament.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-        if (DateHandler.isValidDateFormat(tournamentDto.getAvailableDate()))
-            tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
-        if (DateHandler.isValidDateFormat(tournamentDto.getConclusionDate()))
-            tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
+        tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
         tournament.setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
 
         return new TournamentDto(tournament);

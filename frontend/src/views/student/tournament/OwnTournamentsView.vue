@@ -75,19 +75,21 @@
     </v-data-table>
     <show-edit-tournament-dialog
       v-if="currentTournament"
-      :editDialog="editDialog"
+      v-model="editDialog"
       :tournament="currentTournament"
-      v-on:close-show-edit-tournament-dialog="onClosePopUp(currentTournament)"
+      v-on:save-tournament="onSaveTournamentEvent"
+      v-on:close-show-edit-tournament-dialog="editDialog = false"
     />
   </v-card>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import Image from '../../../models/management/Image';
 import { Tournament } from '@/models/management/Tournament';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDialog.vue';
+
 @Component({
   components: {
     'show-edit-tournament-dialog': CreateTournamentsViewDialog
@@ -97,7 +99,7 @@ export default class AvailableTournamentsView2 extends Vue {
   tournaments: Tournament[] = [];
   search: string = '';
   sign: string = '';
-  currentTournament: Tournament = new Tournament();
+  currentTournament: Tournament | null = null;
   editDialog: boolean = false;
   headers: object = [
     {
@@ -114,6 +116,14 @@ export default class AvailableTournamentsView2 extends Vue {
     { text: 'Status', value: 'status', align: 'left' },
     { text: 'Participants', value: 'enrolledStudents.length', align: 'left' }
   ];
+
+  @Watch('editDialog')
+  closeError() {
+    if (!this.editDialog) {
+      this.currentTournament = null;
+    }
+  }
+
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -142,12 +152,11 @@ export default class AvailableTournamentsView2 extends Vue {
     }
   }
 
-  onClosePopUp(t: Tournament) {
+  onSaveTournamentEvent(tour: Tournament) {
+    this.tournaments = this.tournaments.filter(t => t.id !== tour.id);
+    this.tournaments.unshift(tour);
     this.editDialog = false;
-    this.tournaments = this.tournaments.filter(
-      tournament => tournament.id != t.id
-    );
-    this.tournaments.unshift(t);
+    this.currentTournament = null;
   }
 
   async openEditDialog(t: Tournament) {
@@ -156,11 +165,13 @@ export default class AvailableTournamentsView2 extends Vue {
   }
 
   showButtons(t: Tournament) {
-    return (
-      t.enrolledStudents.length == 0 &&
-      t.status === 'CREATED' &&
-      t.owner.username === this.$store.getters.getUser.username
-    );
+    if (this.$store.getters.getUser != null) {
+      return (
+        t.enrolledStudents.length == 0 &&
+        t.status === 'CREATED' &&
+        t.owner.username === this.$store.getters.getUser.username
+      );
+    }
   }
 }
 </script>

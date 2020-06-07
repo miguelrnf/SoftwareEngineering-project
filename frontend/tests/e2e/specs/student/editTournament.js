@@ -9,9 +9,9 @@ describe('Student walkthrough', () => {
   });
 
   it('login and edit a Tournament', () => {
-    cy.createTournament('Demo tournament', '30', true);
-    cy.editTournament('Edited');
-    cy.assertT('Demo tournamentEdited');
-    cy.deleteTournament('Demo tournamentEdited');
+    cy.createTournament('Demo tournament', '30', true, false);
+    cy.createTournament('Demo tournament Edited', '10', true, true);
+    cy.assertT('Demo tournament Edited');
+    cy.deleteTournament('Demo tournament Edited');
   });
 });

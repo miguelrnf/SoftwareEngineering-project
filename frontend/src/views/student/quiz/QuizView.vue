@@ -256,7 +256,7 @@ export default class QuizView extends Vue {
       try {
         await RemoteServices.startQuiz(this.statementQuiz?.id);
         await this.getQuizType();
-        await this.disHint();
+        if (this.showPowerUps) await this.disHint();
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });
@@ -359,7 +359,7 @@ export default class QuizView extends Vue {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.questionOrder += 1;
-      this.disHint();
+      if (this.showPowerUps) this.disHint();
     }
     this.nextConfirmationDialog = false;
   }
@@ -368,7 +368,7 @@ export default class QuizView extends Vue {
     if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
       this.questionOrder -= 1;
-      this.disHint();
+      if (this.showPowerUps) this.disHint();
     }
   }
 

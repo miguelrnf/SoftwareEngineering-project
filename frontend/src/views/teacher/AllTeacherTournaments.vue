@@ -109,14 +109,15 @@
     />
     <show-edit-tournament-dialog
       v-if="currentTournament"
-      :editDialog="editDialog"
+      v-model="editDialog"
       :tournament="currentTournament"
-      v-on:close-show-edit-tournament-dialog="onClosePopUp(currentTournament)"
+      v-on:save-tournament="onSaveTournamentEvent"
+      v-on:close-show-edit-tournament-dialog="editDialog = false"
     />
   </v-card>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import Image from '../../models/management/Image';
 import { Tournament } from '@/models/management/Tournament';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
@@ -134,12 +135,12 @@ import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDial
     'show-quiz-answers-dialog': ShowQuizAnswersDialog
   }
 })
-export default class AllTeacherTournaments2 extends Vue {
+export default class AllTeacherTournaments extends Vue {
   tournaments: Tournament[] = [];
   tournamentDialog: boolean = false;
   editDialog: boolean = false;
   search: string = '';
-  currentTournament: Tournament = new Tournament();
+  currentTournament: Tournament | null = null;
   iscreated: boolean = false;
   quizAnswers: QuizAnswer[] = [];
   correctSequence: number[] = [];
@@ -154,6 +155,13 @@ export default class AllTeacherTournaments2 extends Vue {
     { text: 'Owner', value: 'owner.name', align: 'center' },
     { text: 'Type', value: 'type', align: 'center' }
   ];
+
+  @Watch('editDialog')
+  closeError() {
+    if (!this.editDialog) {
+      this.currentTournament = null;
+    }
+  }
 
   async created() {
     await this.$store.dispatch('loading');
@@ -201,18 +209,16 @@ export default class AllTeacherTournaments2 extends Vue {
     this.currentTournament = t;
   }
 
-  onClosePopUp(t: Tournament) {
-    this.editDialog = false;
-    this.tournaments = this.tournaments.filter(
-      tournament => tournament.id != t.id
-    );
-    this.tournaments.unshift(t);
-  }
-
-  async openEditDialog(t: Tournament) {
+  openEditDialog(t: Tournament) {
     this.editDialog = true;
     this.currentTournament = t;
-    console.log(t.availableDate);
+  }
+
+  onSaveTournamentEvent(tour: Tournament) {
+    this.tournaments = this.tournaments.filter(t => t.id !== tour.id);
+    this.tournaments.unshift(tour);
+    this.editDialog = false;
+    this.currentTournament = null;
   }
 
   setTournamentStatus(newT: Tournament, t: Tournament) {
@@ -220,11 +226,13 @@ export default class AllTeacherTournaments2 extends Vue {
   }
 
   showButtons(t: Tournament) {
-    return (
-      t.enrolledStudents.length == 0 &&
-      t.status === 'CREATED' &&
-      t.owner.username === this.$store.getters.getUser.username
-    );
+    if (this.$store.getters.getUser != null) {
+      return (
+        t.enrolledStudents.length == 0 &&
+        t.status === 'CREATED' &&
+        t.owner.username === this.$store.getters.getUser.username
+      );
+    }
   }
 
   showResults(t: Tournament) {

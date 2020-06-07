@@ -122,7 +122,7 @@ Cypress.Commands.add('newQuestion', str => {
 
 Cypress.Commands.add(
   'createTournament',
-  (title, numbQuestions, isStudentCreate) => {
+  (title, numbQuestions, isStudentCreate, isEdit) => {
     let year =
       '#availableDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
     let year2023 = '.flex-wrap > :nth-child(11)';
@@ -134,11 +134,15 @@ Cypress.Commands.add(
       cy.get('[data-cy="create"]').click();
     }
 
+    if (isEdit) {
+      cy.get('[data-cy="edit"]').click();
+    }
+
     cy.get('[data-cy="title"]').type(title);
     cy.get('[data-cy="AssessmentTitle"]')
       .contains('Third mini-test')
       .click();
-    cy.contains(numbQuestions).click();
+    cy.contains(numbQuestions).click({ force: true });
     cy.get('[data-cy=availableDate]').click();
     cy.get(year).click();
     cy.get(year2023).click();
@@ -157,15 +161,11 @@ Cypress.Commands.add(
     cy.get(
       '#conclusionDateInput-wrapper > .datetimepicker > .datepicker > .datepicker-buttons-container > .validate'
     ).click();
-    cy.get('[data-cy="createButton"]').click();
+    if (isEdit) {
+      cy.get('[data-cy="editTournament"]').click();
+    } else cy.get('[data-cy="createButton"]').click();
   }
 );
-
-Cypress.Commands.add('editTournament', title => {
-  cy.get('[data-cy="edit"]').click();
-  cy.get('[data-cy="title"]').type(title);
-  cy.get('[data-cy="editTournament"]').click();
-});
 
 Cypress.Commands.add('createInvalidTournament', (tile, numbQuestions) => {
   let year =
@@ -251,7 +251,6 @@ Cypress.Commands.add('assertT', title => {
     .children()
     .should('have.length', 1);
 });
-
 
 //##############################TOURNAMENTS FEATURE END##########################################
 
