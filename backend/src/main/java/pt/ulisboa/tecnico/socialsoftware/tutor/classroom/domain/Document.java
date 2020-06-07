@@ -39,6 +39,8 @@ public class Document implements DomainEntity {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
 
+    @Column(name = "pdf")
+    private byte[] pdf;
 
     public Document(){
     }
@@ -65,6 +67,14 @@ public class Document implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
 
+    }
+
+    public byte[] getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(byte[] pdf) {
+        this.pdf = pdf;
     }
 
     public String getUrl() {
@@ -129,6 +139,10 @@ public class Document implements DomainEntity {
         if (documentDto.getType().equals("DOC") && this.type==Type.DOC ){
 
             this.setContent(documentDto.getContent());
+
+            this.setPdf(documentDto.getPdf());
+
+            System.out.println(this.pdf);
 
         }
         else if (documentDto.getType().equals("VIDEO") && this.type==Type.VIDEO){

@@ -7,9 +7,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.ClassroomService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.YaDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 
@@ -35,11 +37,26 @@ public class ClassroomController {
         return this.classroomService.editClassroom(courseExecutionId, classroomDto);
     }
 
+    @PostMapping(value = "/courses/{courseExecutionId}/classroom/newFile/{documentId}")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public byte[] newFile(@PathVariable int courseExecutionId, @PathVariable int documentId, @Valid @RequestBody byte[] o) {
+
+        return this.classroomService.upload(courseExecutionId,documentId, java.util.Base64.getEncoder().encode(o) );
+    }
+
+    @GetMapping(value = "/courses/{courseExecutionId}/classroom/getFile/{documentId}")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public byte[] getFile(@PathVariable int courseExecutionId, @PathVariable int documentId) {
+        return this.classroomService.getFile(courseExecutionId,documentId);
+    }
+
     @PostMapping(value = "/courses/{courseExecutionId}/classroom/newDoc")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public DocumentDto newDocument(@PathVariable int courseExecutionId, @Valid @RequestBody DocumentDto documentDto) {
         return this.classroomService.addDocument(documentDto.getClassroomId(), documentDto);
     }
+
+
 
     @PutMapping(value = "/courses/{courseExecutionId}/classroom/editDoc")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")

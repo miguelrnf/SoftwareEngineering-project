@@ -8,6 +8,8 @@ export default class Document {
   image: Image | null = null;
   url: string = '';
   classroomId: number | null = null;
+  pdf: string | undefined;
+
 
   constructor(jsonObj?: Document) {
     if (jsonObj) {
@@ -18,6 +20,7 @@ export default class Document {
       this.image = jsonObj.image;
       this.url = jsonObj.url;
       this.classroomId = jsonObj.classroomId;
+      this.pdf = jsonObj.pdf;
     }
   }
 }

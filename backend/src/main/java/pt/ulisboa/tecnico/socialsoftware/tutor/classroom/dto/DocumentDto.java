@@ -13,6 +13,7 @@ public class DocumentDto implements Serializable {
     private ImageDto image;
     private String url;
     private Integer classroomId;
+    private byte[] pdf;
 
 
     public DocumentDto(){}
@@ -28,6 +29,14 @@ public class DocumentDto implements Serializable {
 
         if (document.getImage() != null)
             this.image = new ImageDto(document.getImage());
+    }
+
+    public byte[] getPdf() {
+        return pdf;
+    }
+
+    public void setPdf(byte[] pdf) {
+        this.pdf = pdf;
     }
 
     public Integer getClassroomId() {
@@ -85,6 +94,8 @@ public class DocumentDto implements Serializable {
     public void setimage(ImageDto imageDto) {
         this.image = imageDto;
     }
+
+
 
     @Override
     public String toString() {

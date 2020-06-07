@@ -46,6 +46,7 @@
                             </v-list-item-content>
 
 
+                            <v-btn @click="clickPdf(d)">downlod</v-btn>
 
                         </template>
 
@@ -248,6 +249,38 @@ export default class ShowLectureDialog extends Vue {
     return convertMarkDown(text, image);
   }
 
+    async clickPdf(response: Document) {
+      console.log(response)
+        const result = await RemoteServices.getDoc(response)
+            /*var fileURL = window.URL.createObjectURL(result);
+            var fileLink = document.createElement('a');
+
+            fileLink.href = fileURL;
+            fileLink.setAttribute('download', 'file.pdf');
+            document.body.appendChild(fileLink);
+
+            fileLink.click();*/
+
+        let binaryString = window.atob(result);
+
+        let binaryLen = binaryString.length;
+
+        let bytes = new Uint8Array(binaryLen);
+
+        for (let i = 0; i < binaryLen; i++) {
+            let ascii = binaryString.charCodeAt(i);
+            bytes[i] = ascii;
+        }
+
+        let blob = new Blob([bytes], {type: "application/octet-stream"});
+
+        let link = document.createElement('a');
+
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'demo.pdf';
+
+        link.click();
+    }
 
 }
 </script>

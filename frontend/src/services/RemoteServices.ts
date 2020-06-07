@@ -43,6 +43,7 @@ httpClient.interceptors.request.use(
   error => Promise.reject(error)
 );
 
+
 export default class RemoteServices {
   static async fenixLogin(code: string): Promise<AuthDto> {
     return httpClient
@@ -358,12 +359,69 @@ export default class RemoteServices {
             params
         )
         .then(response => {
+          console.log(response.data)
           return new Document(response.data);
         })
         .catch(async error => {
           throw Error(await this.errorMessage(error));
         });
   }
+
+
+  static async uploadDoc(formData: FormData, document: Document): Promise<Object> {
+    console.log(formData.get('photos'))
+    httpClient.defaults.headers.post['Content-Type'] = 'application/octet-stream';
+    console.log(httpClient.defaults.headers.post)
+    console.log(formData)
+    return httpClient
+        .post(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newFile/${document.id}`,
+            formData.get('photos')
+        )
+        .then(response => {
+          console.log(response.data)
+          return new Object(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async getDoc(document: Document): Promise<Object> {
+    httpClient.defaults.headers.post['Content-Type'] = 'application/octet-stream';
+
+    return httpClient
+        .get(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/getFile/${document.id}`,
+
+        )
+        .then(response => {
+          console.log(response.data)
+          return new Object(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async uploadDoc2(formData: FormData, document: Document) {
+    return axios({
+      method: 'post',
+      url: `http://localhost:8080/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newFile`,
+      data: document
+      //data: formData,
+      //headers: {'Content-Type': 'multipart/form-data' }
+    })
+        .then(function (response) {
+          //handle success
+          console.log(response);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response);
+        });
+  }
+
 
   static async editDocument(params: Document): Promise<Document> {
     return httpClient
@@ -419,6 +477,7 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
   }
+
   //___________________________________________
 
 

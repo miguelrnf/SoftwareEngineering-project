@@ -136,6 +136,30 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public byte[] upload(int executionId, int documentId, byte[] b){
+
+        Document document = documentRepository.findById(documentId).orElseThrow(() -> new TutorException(DOCUMENT_NOT_FOUND, documentId));
+
+        document.setPdf(b);
+
+        return document.getPdf();
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public byte[] getFile(int executionId, int documentId){
+
+        Document document = documentRepository.findById(documentId).orElseThrow(() -> new TutorException(DOCUMENT_NOT_FOUND, documentId));
+
+        return document.getPdf();
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ClassroomDto addQuiz(int classroomId, QuizDto quizDto){
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
@@ -227,4 +251,5 @@ public class ClassroomService {
 
         return new DocumentDto(document);
     }
+
 }
