@@ -53,7 +53,6 @@
             Correct key:
           </td>
           <div>
-            <td></td>
             <td
               v-for="(sequence, index) in correctSequence"
               :key="index"

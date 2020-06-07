@@ -369,8 +369,9 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
-            </v-list-item-content> </v-list-item
-          ><v-list-item to="/management/suggestions">
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/suggestions">
             <v-list-item-action>
               <v-icon>question_answer</v-icon>
             </v-list-item-action>
@@ -633,48 +634,7 @@ export default class TopBar extends Vue {
   }
 
   changeMode() {
-    if (!this.$vuetify.theme.dark) {
-      this.$vuetify.theme.dark = true;
-      this.$vuetify.theme.themes.light.primary = '#25302b';
-      this.$vuetify.theme.themes.dark.primary = '#25302b';
-
-      this.$vuetify.theme.themes.dark.accent = '#829ab1';
-      this.$vuetify.theme.themes.light.accent = '#829ab1';
-
-      this.$vuetify.theme.themes.dark.secondary = '#393e46';
-      this.$vuetify.theme.themes.light.secondary = '#393e46';
-
-      this.$vuetify.theme.themes.dark.info = '#4ecca3';
-      this.$vuetify.theme.themes.light.info = '#4ecca3';
-
-      this.$vuetify.theme.themes.dark.warning = '#102a43';
-      this.$vuetify.theme.themes.light.warning = '#102a43';
-
-      this.$vuetify.theme.themes.dark.error = '#ec625f';
-      this.$vuetify.theme.themes.light.error = '#ec625f';
-
-      this.$vuetify.theme.themes.light.success = '#cee397';
-      this.$vuetify.theme.themes.dark.success = '#cee397';
-    } else {
-      this.$vuetify.theme.dark = false;
-      this.$vuetify.theme.themes.light.primary = '#1976D2';
-      this.$vuetify.theme.themes.dark.primary = '#1976D2';
-
-      this.$vuetify.theme.themes.light.accent = '#828282';
-      this.$vuetify.theme.themes.dark.accent = '#828282';
-
-      this.$vuetify.theme.themes.light.secondary = '#d8d8d8';
-      this.$vuetify.theme.themes.light.info = '#2196F3';
-      this.$vuetify.theme.themes.light.warning = '#FB8C00';
-      this.$vuetify.theme.themes.light.error = '#FF5252';
-      this.$vuetify.theme.themes.light.success = '#4CAF50';
-
-      this.$vuetify.theme.themes.dark.secondary = '#d8d8d8';
-      this.$vuetify.theme.themes.dark.info = '#2196F3';
-      this.$vuetify.theme.themes.dark.warning = '#FB8C00';
-      this.$vuetify.theme.themes.dark.error = '#FF5252';
-      this.$vuetify.theme.themes.dark.success = '#4CAF50';
-    }
+    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
   }
 }
 </script>

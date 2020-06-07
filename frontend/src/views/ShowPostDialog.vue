@@ -69,7 +69,7 @@
         :typing-reply="typingReply"
         v-on:typing-comment="typingComment = !typingComment"
         v-on:typing-reply="typingReply = !typingReply"
-      ></show-comments>
+      />
       <v-card-actions>
         <v-spacer />
         <v-btn

@@ -17,7 +17,7 @@
             $emit('close-answer-post-dialog', false)
         "
         data-cy="typeAnswer"
-      ></v-textarea>
+      />
     </v-card>
   </v-dialog>
 </template>

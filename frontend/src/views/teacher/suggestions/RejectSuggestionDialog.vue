@@ -18,7 +18,7 @@
           v-model="suggestion.teacherExplanation"
           label="Content"
           data-cy="content"
-        ></v-textarea>
+        />
       </v-flex>
       <br />
 

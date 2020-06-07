@@ -16,7 +16,7 @@
             <v-text-field
               v-model="assessment.title"
               label="Title"
-            ></v-text-field>
+            />
           </v-col>
 
           <v-col>
@@ -27,7 +27,7 @@
               label="Order"
               :value="assessment.sequence"
               @change="assessment.sequence = Number($event)"
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -205,13 +205,13 @@
             >
               <span
                 v-html="convertMarkDown(question.content, question.image)"
-              ></span>
+              />
               <ul>
                 <li v-for="option in question.options" :key="option.number">
                   <span
                     v-html="convertMarkDown(option.content)"
                     v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-                  ></span>
+                  />
                 </li>
               </ul>
               <br />
@@ -220,7 +220,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn dark color="primary" @click="closeQuestionsDialog"
             >close</v-btn
           >
@@ -413,4 +413,4 @@ export default class AssessmentForm extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

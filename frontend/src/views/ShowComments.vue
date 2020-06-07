@@ -54,7 +54,7 @@
           data-cy="replyBox"
         ></v-textarea>
         <div v-for="child in c.children" :key="child.id" class="mb-5">
-          <v-divider></v-divider>
+          <v-divider />
           <div class="headline grey--text font-weight-bold text-left ml-3">
             {{ c.user.username.concat(' replied:') }}
           </div>
@@ -125,4 +125,4 @@ export default class ShowComments extends Vue {
 }
 </script>
 
-<style></style>
+<style />

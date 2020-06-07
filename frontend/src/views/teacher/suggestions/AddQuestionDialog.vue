@@ -27,7 +27,7 @@
                 label="Content"
                 outlined
                 data-cy="content"
-              ></v-textarea>
+              />
             </v-flex>
 
             <v-flex
@@ -47,7 +47,7 @@
                 rows="10"
                 v-model="currentSuggestion.options[index - 1].content"
                 :label="`Option ${index}`"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>

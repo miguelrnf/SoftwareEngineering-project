@@ -26,7 +26,7 @@
                   editAnswer() && $emit('close-edit-answer-dialog', false)
                 "
                 data-cy="editAnswerBox"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>

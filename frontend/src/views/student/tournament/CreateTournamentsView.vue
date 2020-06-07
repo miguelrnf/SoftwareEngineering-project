@@ -57,7 +57,7 @@
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
               :dark="isDark"
-              :color="$vuetify.theme.themes.light.primary"
+              :color="$vuetify.theme.currentTheme.primary"
             >
             </VueCtkDateTimePicker>
           </v-col>
@@ -70,7 +70,7 @@
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
               :dark="isDark"
-              :color="$vuetify.theme.themes.dark.primary"
+              :color="$vuetify.theme.currentTheme.primary"
             >
             </VueCtkDateTimePicker>
           </v-col>

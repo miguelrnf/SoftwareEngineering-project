@@ -24,8 +24,8 @@
               v-model="quiz.availableDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               :dark="isDark"
-              :color="$vuetify.theme.themes.dark.primary"
-            ></VueCtkDateTimePicker>
+              :color="$vuetify.theme.currentTheme.primary"
+            />
           </v-col>
           <v-col v-if="quiz.timed">
             <VueCtkDateTimePicker
@@ -34,8 +34,8 @@
               v-model="quiz.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               :dark="isDark"
-              :color="$vuetify.theme.themes.dark.primary"
-            ></VueCtkDateTimePicker>
+              :color="$vuetify.theme.currentTheme.primary"
+            />
           </v-col>
           <v-col v-if="quiz.timed">
             <VueCtkDateTimePicker
@@ -44,8 +44,8 @@
               v-model="quiz.resultsDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               :dark="isDark"
-              :color="$vuetify.theme.themes.dark.primary"
-            ></VueCtkDateTimePicker>
+              :color="$vuetify.theme.currentTheme.primary"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -277,7 +277,7 @@
           </v-text-field>
         </v-card-text>
         <v-card-actions>
-          <div class="flex-grow-1"></div>
+          <div class="flex-grow-1" />
           <v-btn color="primary" @click="closeSetPosition">Close</v-btn>
           <v-btn color="primary" @click="saveSetPosition">Save</v-btn>
         </v-card-actions>
@@ -541,4 +541,4 @@ export default class QuizForm extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

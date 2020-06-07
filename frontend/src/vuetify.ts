@@ -21,9 +21,21 @@ const vuetify = new Vuetify({
         info: '#2196F3',
         warning: '#FB8C00',
         error: '#FF5252',
-        success: '#4CAF50'
+        success: '#4CAF50',
+        background: '#ffffff',
+        font: '#000000'
       },
-      dark: {}
+      dark: {
+        primary: '#25302b',
+        accent: '#829ab1',
+        secondary: '#393e46',
+        info: '#4ecca3',
+        warning: '#102a43',
+        error: '#ec625f',
+        success: '#cee397',
+        background: '#1E1E1E',
+        font: '#ffffff'
+      }
     }
   }
 });

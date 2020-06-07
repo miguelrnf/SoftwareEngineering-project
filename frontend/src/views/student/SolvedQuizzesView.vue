@@ -56,7 +56,7 @@ import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
 @Component
 export default class AvailableQuizzesView extends Vue {
-  quizzes: StatementQuiz[] = [];
+  quizzes: SolvedQuiz[] = [];
   search: string = '';
   headers: object = [
     {

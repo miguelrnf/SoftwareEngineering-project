@@ -29,7 +29,7 @@
                   savePostEdit() && $emit('close-edit-post-dialog', false)
                 "
                 data-cy="dialogEditPost"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>
