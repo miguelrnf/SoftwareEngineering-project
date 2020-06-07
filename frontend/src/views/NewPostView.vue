@@ -27,7 +27,9 @@
 
         <div v-if="selectedQuestion !== null" class="ml-4 mt-n7 mb-4 mr-4">
           <v-card outlined>
-            <v-card-text class="text-left">{{pickQuestion(this.selectedQuestion).content}}</v-card-text>
+            <v-card-text class="text-left">{{
+              pickQuestion(this.selectedQuestion).content
+            }}</v-card-text>
           </v-card>
         </div>
 
@@ -40,7 +42,6 @@
               outlined
               counter="1024"
               v-model="message"
-              @input="checkConsistency"
               placeholder="type your question here"
               data-cy="typeQ"
             ></v-textarea>
@@ -71,7 +72,7 @@ import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
 import { PostQuestion } from '@/models/management/PostQuestion';
 @Component
-export default class PostPostView extends Vue {
+export default class NewPostView extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
   questions: Question[] = [];
   selectedQuestion: number | null = null;
@@ -91,13 +92,14 @@ export default class PostPostView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async checkConsistency() {
+  checkConsistency() {
     this.canSubmit = this.message.length <= this.maxlen;
     if (!this.canSubmit) {
       this.canSubmit = false;
       this.limit = 'Limit Exceeded: ' + this.message.length + '/' + this.maxlen;
     } else {
       this.limit = this.message.length + '/' + this.maxlen;
+
       if (this.selectedQuestion != null && this.message != '') {
         this.postQ.question = this.pickQuestion(this.selectedQuestion);
         this.postQ.studentQuestion = this.message;
@@ -112,11 +114,14 @@ export default class PostPostView extends Vue {
   }
 
   async submitPost() {
+
+    this.checkConsistency();
+
     if (this.canSubmit) {
       try {
-        await RemoteServices.submitPost(this.postQ);
-        await this.$router.push({ name: 'all-posts' });
-        this.$emit('save-post', false);
+        let p = await RemoteServices.submitPost(this.postQ);
+        //await this.$router.push({ name: 'all-posts' });
+        this.$emit('save-post', p);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

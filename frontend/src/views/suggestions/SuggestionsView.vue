@@ -96,28 +96,26 @@
           </template>
           <span>You Can't Edit an Approved Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isOwner(item)">
+        <v-tooltip bottom v-if="isOwner(item) && !item.isPrivate">
           <template v-slot:activator="{ on }">
             <v-icon
-              v-if="item.isPrivate === false"
               small
               class="mr-2"
               v-on="on"
-              @click="TogglePrivacy(item)"
+              @click="togglePrivacy(item)"
               data-cy="TogglePrivacytoPrivate"
               >mdi-lock-outline</v-icon
             >
           </template>
           <span>Change to Private</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isOwner(item)">
+        <v-tooltip bottom v-if="isOwner(item) && item.isPrivate">
           <template v-slot:activator="{ on }">
             <v-icon
-              v-if="item.isPrivate === true"
               small
               class="mr-2"
               v-on="on"
-              @click="TogglePrivacy(item)"
+              @click="togglePrivacy(item)"
               data-cy="TogglePrivacyToPublic"
               >mdi-lock-open-outline</v-icon
             >
@@ -496,14 +494,9 @@ export default class SuggestionsView extends Vue {
     }
   }
 
-  async TogglePrivacy(sugg: Suggestion) {
-    if (sugg && sugg.isPrivate) {
-      sugg.isPrivate = false;
-      await RemoteServices.updateSuggestion(sugg);
-    } else if (sugg && !sugg.isPrivate) {
-      sugg.isPrivate = true;
-      await RemoteServices.updateSuggestion(sugg);
-    }
+  async togglePrivacy(sugg: Suggestion) {
+    sugg.isPrivate = !sugg.isPrivate;
+    await RemoteServices.updateSuggestion(sugg);
   }
 
   onCloseShowRejectDialog() {

@@ -153,7 +153,7 @@
     <create-post
       v-if="createPost"
       :dialog="createPost"
-      v-on:save-post="onSavePost"
+      v-on:save-post="onCreatePost"
       v-on:close-new-post-dialog="onCloseDialog"
     />
   </v-card>
@@ -317,12 +317,21 @@ export default class PostsView extends Vue {
 
   redirectPost() {}
 
-  async onSavePost(post: Post) {
+  onSavePost(post: Post) {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.posts.unshift(post);
+    this.createPost = false;
     this.editPostDialog = false;
     this.editAnswerDialog = false;
     this.currentPost = null;
+  }
+
+  onCreatePost(postmalone: Post) {
+
+    this.posts.push(postmalone);
+    this.createPost = false;
+
+
   }
 
   isTeacher(): boolean {
