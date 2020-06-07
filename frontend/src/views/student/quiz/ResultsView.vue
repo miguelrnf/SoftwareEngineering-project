@@ -89,7 +89,7 @@ export default class ResultsView extends Vue {
 
   async created() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push({ name: 'create-quiz' });
+      await this.$router.push({ path: '/student/create' });
     } else if (this.statementManager.correctAnswers.length === 0) {
       await this.$store.dispatch('loading');
       setTimeout(() => {
