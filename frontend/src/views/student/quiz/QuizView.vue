@@ -1,6 +1,8 @@
 <template style="height: 100%">
   <v-card
-    class="quiz-container"
+    max-height="250%"
+    min-height="100%"
+    class="quiz-container overflow-x-hidden"
     @keydown.right="confirmAnswer"
     @keydown.left="decreaseOrder"
     v-if="!confirmed"

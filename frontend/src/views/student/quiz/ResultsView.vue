@@ -1,5 +1,10 @@
 <template>
-  <v-card max-height="250%" min-height="100%" class="quiz-container overflow-x-hidden" v-if="statementManager.correctAnswers.length > 0">
+  <v-card
+    max-height="250%"
+    min-height="100%"
+    class="quiz-container overflow-x-hidden"
+    v-if="statementManager.correctAnswers.length > 0"
+  >
     <v-card height="45px" class="question-navigation">
       <v-row :justify="'center'" class="navigation-buttons">
         <v-col
