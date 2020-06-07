@@ -91,10 +91,7 @@
           data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
-          color="primary"
-          @click="saveSuggestion"
-          data-cy="saveButton"
+        <v-btn color="primary" @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>

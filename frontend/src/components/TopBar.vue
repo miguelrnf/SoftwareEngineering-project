@@ -644,7 +644,6 @@ export default class TopBar extends Vue {
 
       this.$vuetify.theme.themes.light.success = '#cee397';
       this.$vuetify.theme.themes.dark.success = '#cee397';
-
     } else {
       this.$vuetify.theme.dark = false;
       this.$vuetify.theme.themes.light.primary = '#1976D2';
@@ -658,7 +657,6 @@ export default class TopBar extends Vue {
       this.$vuetify.theme.themes.light.warning = '#FB8C00';
       this.$vuetify.theme.themes.light.error = '#FF5252';
       this.$vuetify.theme.themes.light.success = '#4CAF50';
-
 
       this.$vuetify.theme.themes.dark.secondary = '#d8d8d8';
       this.$vuetify.theme.themes.dark.info = '#2196F3';

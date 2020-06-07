@@ -115,16 +115,10 @@
       </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="primary"
-          @click="$emit('dialog', false)"
-          data-cy="cancel"
+        <v-btn color="primary" @click="$emit('dialog', false)" data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
-          color="primary"
-          @click="saveSuggestion"
-          data-cy="saveButton"
+        <v-btn color="primary" @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>

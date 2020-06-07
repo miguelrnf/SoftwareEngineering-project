@@ -43,10 +43,7 @@
           data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn
-          color="primary"
-          @click="savePostEdit"
-          data-cy="saveEditButton"
+        <v-btn color="primary" @click="savePostEdit" data-cy="saveEditButton"
           >Save Edit</v-btn
         >
       </v-card-actions>

@@ -104,12 +104,12 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
-  import Suggestion from '@/models/management/Suggestion';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import Image from '@/models/management/Image';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Suggestion from '@/models/management/Suggestion';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Image from '@/models/management/Image';
 
-  @Component
+@Component
 export default class ShowSuggestionDialog extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
@@ -149,7 +149,6 @@ export default class ShowSuggestionDialog extends Vue {
     this.$emit('close-show-suggestion-dialog');
   }
 
-  created() {
-  }
+  created() {}
 }
 </script>

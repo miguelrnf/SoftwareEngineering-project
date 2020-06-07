@@ -133,34 +133,33 @@
           <span>Change to Question</span>
         </v-tooltip>
         <v-tooltip bottom>
-           <template v-slot:activator="{ on }">
-             <v-icon
-               small
-               class="mr-2"
-               v-on="on"
-               @click="deleteSuggestion(item)"
-               color="red"
-               >delete</v-icon
-             >
-           </template>
-           <span>Delete Suggestion</span>
-         </v-tooltip>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteSuggestion(item)"
+              color="red"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Suggestion</span>
+        </v-tooltip>
       </template>
       <template v-slot:item.checkMark="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-                    :color="getCheckMarkColor(item.checkMark)"
-                    small
-                    class="mr-2"
-                    v-on="on"
-
-            >fas fa-check</v-icon
+              :color="getCheckMarkColor(item.checkMark)"
+              small
+              class="mr-2"
+              v-on="on"
+              >fas fa-check</v-icon
             >
           </template>
           <span> {{ getCheckMarkTip(item.checkMark) }}</span>
         </v-tooltip>
-        </template>
+      </template>
     </v-data-table>
     <edit-suggestion-dialog
       v-if="currentSuggestion && editSuggestionDialog"
@@ -196,19 +195,19 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue, Watch } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import Image from '@/models/management/Image';
-  import Topic from '@/models/management/Topic';
-  import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
-  import Suggestion from '@/models/management/Suggestion';
-  import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
-  import ShowSuggestionDialog from '@/views/ShowSuggestionDialog.vue';
-  import AddQuestionDialog from '@/views/teacher/suggestions/AddQuestionDialog.vue';
-  import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestionDialog.vue';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Image from '@/models/management/Image';
+import Topic from '@/models/management/Topic';
+import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
+import Suggestion from '@/models/management/Suggestion';
+import EditSuggestionDialog from '@/views/suggestions/EditSuggestionDialog.vue';
+import ShowSuggestionDialog from '@/views/ShowSuggestionDialog.vue';
+import AddQuestionDialog from '@/views/teacher/suggestions/AddQuestionDialog.vue';
+import RejectSuggestionDialog from '@/views/teacher/suggestions/RejectSuggestionDialog.vue';
 
-  @Component({
+@Component({
   components: {
     'show-suggestion-dialog': ShowSuggestionDialog,
     'edit-suggestion-dialog': EditSuggestionDialog,
@@ -254,10 +253,9 @@ export default class SuggestionsView extends Vue {
     },
     {
       text: 'Seen',
-      value:'checkMark',
+      value: 'checkMark',
       align: 'center'
     }
-
   ];
 
   @Watch('editSuggestionDialog')
@@ -441,7 +439,7 @@ export default class SuggestionsView extends Vue {
       confirm('Are you sure you want to delete this question?')
     ) {
       try {
-        await RemoteServices.deleteSuggestion(suggestion.id);//delete suggestion criar
+        await RemoteServices.deleteSuggestion(suggestion.id); //delete suggestion criar
         this.suggestions = this.suggestions.filter(
           sugg => sugg.id != suggestion.id
         );

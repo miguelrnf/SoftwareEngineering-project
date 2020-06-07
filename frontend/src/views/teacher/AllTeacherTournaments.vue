@@ -189,7 +189,6 @@ export default class AllTeacherTournaments2 extends Vue {
     return t.status === 'CLOSED' && t.quiz.id;
   }
 
-
   async cancelTournament(t: Tournament) {
     let newT;
     if (confirm('Are you sure you want to cancel this tournament?')) {

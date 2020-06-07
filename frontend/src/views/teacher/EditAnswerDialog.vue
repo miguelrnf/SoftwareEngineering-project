@@ -34,9 +34,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="primary"
-          @click="$emit('close-edit-answer-dialog', false)"
+        <v-btn color="primary" @click="$emit('close-edit-answer-dialog', false)"
           >Cancel</v-btn
         >
         <v-btn color="primary" @click="editAnswer">Save Edit</v-btn>
