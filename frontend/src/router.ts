@@ -40,6 +40,7 @@ import StudyGeneralView from '@/views/StudyGeneralView.vue';
 import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 import ClassroomHomeView from '@/views/classroom/ClassroomHomeView.vue';
 import ClassroomGeneralView from '@/views/ClassroomGeneralView.vue';
+import StudentClassroomHomeView from '@/views/classroom/StudentClassroomHomeView.vue';
 
 Vue.use(Router);
 
@@ -319,7 +320,7 @@ let router = new Router({
     {
       path: '/classroom',
       name: 'classroom',
-      component: ClassroomGeneralView,
+      component: StudentClassroomHomeView,
       children: [
         {
           path: 'home',

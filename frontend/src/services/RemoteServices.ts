@@ -450,9 +450,10 @@ export default class RemoteServices {
   }
 
   static async deleteDocument(classroomId: number,documentId: number): Promise<Document> {
+
     return httpClient
       .delete(
-        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/delete/${classroomId}/${documentId}`
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/deleteDoc/${classroomId}/${documentId}`
       )
       .then(response => {
         return new Document(response.data);
