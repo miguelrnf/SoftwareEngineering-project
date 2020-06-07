@@ -150,12 +150,11 @@
       v-on:save-post="onSavePost"
       v-on:close-show-post-dialog="onCloseDialog"
     />
-    <post-post-dialog
-      v-if="currentPost"
+    <create-post
+      v-if="createPost"
       :dialog="createPost"
-      :post="currentPost"
       v-on:save-post="onSavePost"
-      v-on:close-show-post-dialog="onCloseDialog"
+      v-on:close-new-post-dialog="onCloseDialog"
     />
   </v-card>
 </template>
@@ -174,6 +173,7 @@ import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import PostPostView from '@/views/student/PostPostView.vue';
+import NewPostView from '@/views/NewPostView.vue';
 
 @Component({
   components: {
@@ -182,7 +182,7 @@ import PostPostView from '@/views/student/PostPostView.vue';
     'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons,
     'answer-post-dialog': AnswerPostDialog,
-    'create-post': PostPostView
+    'create-post': NewPostView
   }
 })
 export default class PostsView extends Vue {
@@ -294,7 +294,6 @@ export default class PostsView extends Vue {
   }
 
   newPost() {
-    this.currentPost = new Post();
     this.createPost = true;
   }
 

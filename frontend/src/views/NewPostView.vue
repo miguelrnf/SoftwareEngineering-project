@@ -1,51 +1,78 @@
 <template>
-  <div class="container">
-    <h2>Submit Post</h2>
-    <v-container class="submit-post">
-      <v-container fluid>
-        <v-autocomplete
-          v-model="selectedQuestion"
-          :items="questions"
-          item-text="title"
-          item-value="id"
-          label="Pick a question"
-          solo
-          data-cy="pickQ"
-        ></v-autocomplete>
+  <v-dialog
+    :value="dialog"
+    @input="$emit('close-new-post-dialog', false)"
+    @keydown.esc="$emit('close-new-post-dialog', false)"
+    max-width="75%"
+    max-height="80%"
+  >
+    <v-card>
+      <v-app-bar dense color="primary">
+        <v-toolbar-title class="white--text">{{
+          'Submit Post'
+        }}</v-toolbar-title></v-app-bar
+      >
+      <v-container grid-list-md fluid>
+        <v-card-text>
+          <v-autocomplete
+            v-model="selectedQuestion"
+            :items="questions"
+            item-text="title"
+            item-value="id"
+            label="Pick a question"
+            solo
+            data-cy="pickQ"
+          ></v-autocomplete>
+        </v-card-text>
+
+        <div v-if="selectedQuestion !== null" class="ml-4 mt-n7 mb-4 mr-4">
+          <v-card outlined>
+            <v-card-text class="text-left">{{pickQuestion(this.selectedQuestion).content}}</v-card-text>
+          </v-card>
+        </div>
+
+        <v-divider></v-divider>
+
+        <v-card-text>
+          <label class="text-area">
+            <v-textarea
+              no-resize
+              outlined
+              counter="1024"
+              v-model="message"
+              @input="checkConsistency"
+              placeholder="type your question here"
+              data-cy="typeQ"
+            ></v-textarea>
+          </label>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer />
+
+          <v-btn
+            color="primary"
+            text
+            @click="$emit('close-new-post-dialog', false)"
+            data-cy="cancel"
+            >Cancel</v-btn
+          ><v-btn color="green" text @click="submitPost" data-cy="submitButton">
+            Submit post
+          </v-btn>
+        </v-card-actions>
       </v-container>
-      <v-container fluid>
-        <label class="text-area">
-          <v-textarea
-            no-resize
-            v-model="message"
-            @input="checkConsistency"
-            placeholder="type your question here"
-            data-cy="typeQ"
-          ></v-textarea>
-        </label>
-        <p class="len">{{ limit }}</p>
-      </v-container>
-      <v-container>
-        <v-btn
-          @click="submitPost"
-          depressed
-          color="primary"
-          data-cy="submitButton"
-        >
-          Submit post
-        </v-btn>
-      </v-container>
-    </v-container>
-  </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
 import { PostQuestion } from '@/models/management/PostQuestion';
 @Component
 export default class PostPostView extends Vue {
+  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
   questions: Question[] = [];
   selectedQuestion: number | null = null;
   message: string = '';
@@ -53,6 +80,7 @@ export default class PostPostView extends Vue {
   limit: string = this.message.length + '/' + this.maxlen;
   canSubmit: boolean = false;
   postQ: PostQuestion = new PostQuestion();
+
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -62,6 +90,7 @@ export default class PostPostView extends Vue {
     }
     await this.$store.dispatch('clearLoading');
   }
+
   async checkConsistency() {
     this.canSubmit = this.message.length <= this.maxlen;
     if (!this.canSubmit) {
@@ -81,11 +110,13 @@ export default class PostPostView extends Vue {
     if (q != undefined) return q;
     else return null;
   }
+
   async submitPost() {
     if (this.canSubmit) {
       try {
         await RemoteServices.submitPost(this.postQ);
         await this.$router.push({ name: 'all-posts' });
+        this.$emit('save-post', false);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

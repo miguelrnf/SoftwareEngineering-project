@@ -8,7 +8,7 @@
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 69, 100, 420] }"
     >
       <template v-slot:top>
         <v-card-title>
