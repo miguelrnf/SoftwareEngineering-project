@@ -189,7 +189,7 @@ public class Tournament {
         if (availableDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
-        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || availableDate.isBefore(DateHandler.now()))) {
+        if (this.conclusionDate != null && (this.conclusionDate.isBefore(availableDate) || availableDate.isBefore(DateHandler.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }

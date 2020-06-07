@@ -109,8 +109,6 @@ public class TournamentService {
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
-        tournamentDto.setType("STANDARD");
-
         Tournament tournament = new Tournament(tournamentDto, user, assessment);
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
@@ -133,6 +131,40 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto editTournament(String username, TournamentDto tournamentDto) {
+        Tournament tournament = tournamentRepository.findById(tournamentDto.getId()).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentDto.getId()));
+        User u = findUsername(username);
+        if(tournament.getOwner() != u || tournament.getStatus() != Tournament.TournamentStatus.CREATED || !tournament.getEnrolledStudents().isEmpty() ){
+            throw new TutorException(TOURNAMENT_UNABLE_EDIT);
+
+        }
+        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(tournament.getCourseExecution().getCourse().getId());
+
+        availableQuestions = filterByAssessment(availableQuestions, tournament);
+
+        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
+        }
+
+        tournament.setAssessment(assessmentRepository.findById(tournamentDto.getAssessmentDto().getId()).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND)));
+        tournament.setTitle(tournamentDto.getTitle());
+        tournament.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+        tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
+        tournament.setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
+
+        return new TournamentDto(tournament);
+    }
+
+
 
     @Retryable(
             value = { SQLException.class },
