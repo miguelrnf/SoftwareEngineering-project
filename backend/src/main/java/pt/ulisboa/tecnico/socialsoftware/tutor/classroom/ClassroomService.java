@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Document;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.repository.ClassroomRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.repository.DocumentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -30,8 +32,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.print.Doc;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -52,6 +56,9 @@ public class ClassroomService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -115,6 +122,47 @@ public class ClassroomService {
         }
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<StatementQuizDto> getClassroomAvailableQuizzes(int userId, int executionId, int classroomId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        LocalDateTime now = DateHandler.now();
+
+        Set<Integer> studentQuizIds = user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
+                .map(QuizAnswer::getQuiz)
+                .map(Quiz::getId)
+                .collect(Collectors.toSet());
+
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
+
+        // create QuizAnswer for quizzes
+        classroom.getQuizzes().stream()
+                .filter(quiz -> !quiz.isQrCodeOnly())
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED) && !quiz.getType().equals(Quiz.QuizType.TOURNAMENT))
+                .filter(quiz -> quiz.getAvailableDate() == null || quiz.getAvailableDate().isBefore(now))
+                .filter(quiz -> !studentQuizIds.contains(quiz.getId()))
+                .forEach(quiz -> {
+                    if (quiz.getConclusionDate() == null || quiz.getConclusionDate().isAfter(now)) {
+                        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+                        quizAnswerRepository.save(quizAnswer);
+                    }
+                });
+
+        return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> !quizAnswer.isCompleted())
+                .filter(quizAnswer -> !quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
+                .filter(quizAnswer -> !quizAnswer.getQuiz().isOneWay() || quizAnswer.getCreationDate() == null)
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
+                .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || DateHandler.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate().isBefore(now))
+                .map(StatementQuizDto::new)
+                .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
+                .collect(Collectors.toList());
+    }
 
     @Retryable(
             value = { SQLException.class },
