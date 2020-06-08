@@ -26,12 +26,12 @@
                 <v-icon left>fas fa-play</v-icon>
                 VIDEOS
             </v-tab>
-            <v-tab @click="setTabName('New Video')">
+            <v-tab @click="setTabName('New Quiz')">
                 <v-icon left>ballot</v-icon>
                 QUIZZES
             </v-tab>
             <v-spacer></v-spacer>
-            <v-btn color="primary" class="mr-6" v-if="teacher" @click="newDocument">{{this.doctype}}</v-btn>
+            <v-btn color="primary" class="mr-6" v-if="teacher && this.doctype !== 'New Quiz'" @click="newDocument">{{this.doctype}}</v-btn>
             <v-tab-item>
                 <v-list >
                     <v-list-group
@@ -101,8 +101,95 @@
                 </v-list>
 
             </v-tab-item>
-            <v-tab-item>
+            <v-tab-item v-if="teacher" >
+                <v-data-table
 
+                        :headers="headers"
+                        :custom-filter="customFilter"
+                        :items="availableQuizzes"
+                        :search="search"
+                        multi-sort
+                        :mobile-breakpoint="0"
+                        :items-per-page="15"
+                        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+                >
+                    <template v-slot:top>
+                        <v-card-title>
+                            <v-spacer />
+                            <v-spacer />
+                            <v-text-field
+                                    v-model="search"
+                                    append-icon="search"
+                                    label="Search Quizzes"
+                                    class="mx-2"
+                                    data-cy="search"
+                            />
+
+
+
+                        </v-card-title>
+                    </template >
+
+                    <template v-slot:item.action="{ item }">
+
+                        <v-tooltip bottom v-if="teacher">
+                            <template v-slot:activator="{ on }">
+                                <v-icon
+                                        color="primary"
+                                        class="mr-2"
+                                        v-on="on"
+                                        @click="addQuiz(item)"
+
+                                >far fa-check-square</v-icon
+                                >
+                            </template>
+                            <span>Add Quiz</span>
+                        </v-tooltip>
+                    </template>
+
+                </v-data-table>
+
+            </v-tab-item>
+            <v-tab-item  >
+                <v-list three-line>
+                    <v-row>
+                        <v-col> <div class="col">Title</div></v-col>
+
+                        <v-col><div class="col">Available since</div></v-col>
+
+                    </v-row>
+
+
+                    <v-list-item-group
+                            class="test3"
+                    >
+                        <template v-for="(l, index) in selectedQuizzes">
+                            <v-list-item :key="l.title" class="test1" @click="showLectureDialog(l)">
+                                <template >
+                                    <v-list-item-content>
+                                        <v-row>
+                                            <v-col>
+                                                <v-list-item-title class="test" v-text=" l.title"></v-list-item-title>
+
+                                            </v-col>
+                                            <v-col>
+                                                <v-list-item-subtitle class="text--primary" v-text="l.availableDate"></v-list-item-subtitle>
+                                            </v-col>
+                                        </v-row>
+
+                                    </v-list-item-content>
+
+
+                                </template>
+                            </v-list-item>
+
+                            <v-divider
+                                    v-if="index + 1 < selectedQuizzes.length"
+                                    :key="index"
+                            ></v-divider>
+                        </template>
+                    </v-list-item-group>
+                </v-list>
 
             </v-tab-item>
 
@@ -138,6 +225,7 @@ import Classroom from '@/models/management/Classroom';
 import Document from '@/models/management/Document';
 import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
   import LazyYoutubeVideo from 'vue-lazy-youtube-video';
+  import StatementQuiz from '@/models/statement/StatementQuiz';
   import {Quiz} from "@/models/management/Quiz";
   import StatementQuiz from "@/models/statement/StatementQuiz";
 
@@ -154,16 +242,36 @@ export default class ShowLectureDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly teacher!: boolean;
 
 
-availableQuizzes: StatementQuiz[] | null=null;
+availableQuizzes : StatementQuiz[] | null=null;
 
   doctype: string = 'New Document';
 
   videos: Document[] = [];
   documents: Document[] = [];
   lec!: Classroom
+  selectedQuizzes : StatementQuiz[] | null = null;
+  search: string = '';
   newOrEditDialog: boolean = false;
   current: Document | null = null;
-
+  headers: object = [
+    {
+      text: 'Title',
+      align: 'center',
+      value: 'title',
+      sortable: false
+    },
+    {
+      text: 'Available Date',
+      value: 'availableDate',
+      align: 'center'
+    },
+    {
+      text: 'Add/Remove Quizz',
+      value: 'action',
+      align: 'center',
+      sortable: false
+    },
+  ];
   @Watch('newOrEditDialog')
   closeError() {
     if (!this.newOrEditDialog) {
@@ -177,6 +285,8 @@ availableQuizzes: StatementQuiz[] | null=null;
     this.videos = this.lecture.documents.filter(d => d.type != 'DOC')
 
     this.lec = new Classroom(this.lecture);
+    this.selectedQuizzes = this.lec.quizzes;
+
 
     this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
 
@@ -199,6 +309,7 @@ availableQuizzes: StatementQuiz[] | null=null;
       return 'Project'
     }
   }
+
 
   async deleteDocument(document: Document) {
     if (
@@ -224,7 +335,15 @@ availableQuizzes: StatementQuiz[] | null=null;
       }
     }
   }
-
+  customFilter(value: string, search: string, lecture: Classroom) {
+    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
+    return (
+      search != null &&
+      JSON.stringify(lecture)
+        .toLowerCase()
+        .indexOf(search.toLowerCase()) !== -1
+    );
+  }
   getLectureTypeCaps() {
     if (this.type === 'New Lecture') {
       return 'LECTURE'
@@ -325,6 +444,23 @@ availableQuizzes: StatementQuiz[] | null=null;
     .test {
         justify-content: center;
         width: 50%;
+
+    }
+
+    .test1{
+        border-color: #ffffff  ;
+        background-color: #FAF6F6  ;
+        border-left-style: solid;
+        border-right-style: solid;
+        border-top-style: solid;
+
+    }
+    .test2{
+        padding-right: 60px;
+
+    }
+    .test3{
+        background-color:#FAF6F6 ;
 
     }
 

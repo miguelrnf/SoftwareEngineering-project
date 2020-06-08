@@ -362,25 +362,18 @@ export default class ClassroomHomeView extends Vue {
       value: 'title',
       sortable: false
     },
-
     {
       text: 'Date',
       value: 'availableDate',
       align: 'center'
     },
-
-
-
-
     { text: 'Status', value: 'status', align: 'center' },
-
     {
       text: 'Actions',
       value: 'action',
       align: 'center',
       sortable: false
     },
-
   ];
 
   @Watch('newOrEditDialog')
@@ -524,7 +517,7 @@ export default class ClassroomHomeView extends Vue {
   }
 
 
-  customFilter(value: string, search: string, lecture: Suggestion) {
+  customFilter(value: string, search: string, lecture: Classroom) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
             search != null &&
