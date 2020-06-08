@@ -31,7 +31,8 @@
                 QUIZZES
             </v-tab>
             <v-spacer></v-spacer>
-            <v-btn color="primary" class="mr-6" v-if="teacher && this.doctype !== 'New Quiz'" @click="newDocument">{{this.doctype}}</v-btn>
+            <v-btn color="primary" class="mr-6" v-if="teacher && doctype !== 'New Quiz'" @click="newDocument">{{this.doctype}}</v-btn>
+            <v-btn color="primary" class="mr-6" v-if="teacher && doctype === 'New Quiz' " @click="newQuizSelection">{{this.doctype}}</v-btn>
             <v-tab-item>
                 <v-list >
                     <v-list-group
@@ -106,7 +107,7 @@
 
                         :headers="headers"
                         :custom-filter="customFilter"
-                        :items="availableQuizzes"
+                        :items="selectedQuizzes"
                         :search="search"
                         multi-sort
                         :mobile-breakpoint="0"
@@ -125,46 +126,30 @@
                                     data-cy="search"
                             />
 
-
-
                         </v-card-title>
                     </template >
-
-                    <template v-slot:item.action="{ item }">
-
-                        <v-tooltip bottom v-if="teacher">
-                            <template v-slot:activator="{ on }">
-                                <v-icon
-                                        color="primary"
-                                        class="mr-2"
-                                        v-on="on"
-                                        @click="addQuiz(item)"
-
-                                >far fa-check-square</v-icon
-                                >
-                            </template>
-                            <span>Add Quiz</span>
-                        </v-tooltip>
-                    </template>
 
                 </v-data-table>
 
             </v-tab-item>
-            <v-tab-item  >
+            <v-tab-item v-if="!teacher" >
                 <v-list three-line>
                     <v-row>
-                        <v-col> <div class="col">Title</div></v-col>
+                        <v-col>
+                            <div class="col">
+                                Title
+                            </div>
+                        </v-col>
 
-                        <v-col><div class="col">Available since</div></v-col>
-
+                        <v-col >
+                            <div class="col">Available since</div>
+                        </v-col>
                     </v-row>
-
-
                     <v-list-item-group
-                            class="test3"
+
                     >
                         <template v-for="(l, index) in selectedQuizzes">
-                            <v-list-item :key="l.title" class="test1" @click="showLectureDialog(l)">
+                            <v-list-item :key="l.title" class="test1" @click="startQuiz(l)" >
                                 <template >
                                     <v-list-item-content>
                                         <v-row>
@@ -191,6 +176,7 @@
                     </v-list-item-group>
                 </v-list>
 
+
             </v-tab-item>
 
         </v-tabs>
@@ -210,6 +196,13 @@
                 :lecture="this.lecture"
                 v-on:save-document="onSaveDocument"
         />
+        <edit-selected-quizzes-dialog
+                v-if="lec && selectQuizBoolean"
+                v-model="selectQuizBoolean"
+                :available-quizzes="availableQuizzes"
+                :lecture="this.lecture"
+                v-on:save-selected-quizzes="onSaveQuizzes"
+        />
     </v-card>
   </v-dialog>
 </template>
@@ -228,10 +221,13 @@ import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
   import StatementQuiz from '@/models/statement/StatementQuiz';
   import {Quiz} from "@/models/management/Quiz";
   import StatementQuiz from "@/models/statement/StatementQuiz";
+  import EditSelectedQuizzesDialog from '@/views/classroom/EditSelectedQuizzesDialog.vue';
+  import StatementManager from '@/models/statement/StatementManager';
 
 @Component({
   components: {
     'edit-document-dialog': EditDocumentDialog,
+    'edit-selected-quizzes-dialog': EditSelectedQuizzesDialog,
     LazyYoutubeVideo
   }
 })
@@ -246,11 +242,14 @@ availableQuizzes : StatementQuiz[] | null=null;
 
   doctype: string = 'New Document';
 
+  selectQuizBoolean: boolean = false;
   videos: Document[] = [];
   documents: Document[] = [];
   lec!: Classroom
   selectedQuizzes : StatementQuiz[] | null = null;
   search: string = '';
+  statementManager: StatementManager = StatementManager.getInstance;
+
   newOrEditDialog: boolean = false;
   current: Document | null = null;
   headers: object = [
@@ -265,12 +264,7 @@ availableQuizzes : StatementQuiz[] | null=null;
       value: 'availableDate',
       align: 'center'
     },
-    {
-      text: 'Add/Remove Quizz',
-      value: 'action',
-      align: 'center',
-      sortable: false
-    },
+
   ];
   @Watch('newOrEditDialog')
   closeError() {
@@ -280,6 +274,7 @@ availableQuizzes : StatementQuiz[] | null=null;
   }
 
   async created() {
+    this.statementManager.reset();
     this.documents = this.lecture.documents.filter(d => d.type != 'VIDEO')
 
     this.videos = this.lecture.documents.filter(d => d.type != 'DOC')
@@ -310,6 +305,14 @@ availableQuizzes : StatementQuiz[] | null=null;
     }
   }
 
+  async startQuiz(quiz: StatementQuiz) {
+    try {
+      this.statementManager.statementQuiz = quiz;
+      await this.$router.push({ path: '/student/quiz' });
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
 
   async deleteDocument(document: Document) {
     if (
@@ -365,21 +368,17 @@ availableQuizzes : StatementQuiz[] | null=null;
     this.newOrEditDialog = true;
   }
 
-  async onSaveDocument(doc: Document) {
-    console.log(this.documents)
+  newQuizSelection() {
+    this.selectQuizBoolean = true;
+  }
 
-    if(this.doctype === 'New Document'){
-      this.documents = this.documents.filter(d => d.id != doc.id);
-      this.documents.unshift(doc);
-    }
-    else{
-      this.videos = this.videos.filter(v => v.id != doc.id);
-      this.videos.unshift(doc);
-    }
+  async onSaveQuizzes(lecQuiz: Classroom) {
 
-    this.newOrEditDialog = false;
-    this.current = null;
-    console.log(this.documents)
+    this.selectedQuizzes = lecQuiz.quizzes;
+
+    this.selectQuizBoolean = false;
+
+
   }
 
   getLectureTypeIcon(){
