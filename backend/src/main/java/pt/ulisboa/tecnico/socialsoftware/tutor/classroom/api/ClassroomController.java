@@ -46,7 +46,7 @@ public class ClassroomController {
     }
 
     @GetMapping(value = "/courses/{courseExecutionId}/classroom/getFile/{documentId}")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public byte[] getFile(@PathVariable int courseExecutionId, @PathVariable int documentId) {
         return this.classroomService.getFile(courseExecutionId,documentId);
     }

@@ -19,7 +19,7 @@
       </v-row>
       <v-row>
 
-        <v-textarea v-if="type !== 'New Document'"
+        <v-textarea v-if="type === 'New Video'"
 
                 :label=getDocumentLabel()
                 v-model="editDocument.title"
@@ -43,7 +43,7 @@
 
       <v-row>
 
-        <v-textarea v-if="type !== 'New Document'"
+        <v-textarea v-if="type === 'New Video'"
 
                     label="Write Video Url Here"
                     v-model="editDocument.url"
@@ -112,11 +112,11 @@
 
 
 
-        <v-btn v-if="type !== 'New Document'" text color="primary" @click="previewVideo()">Preview</v-btn>
+        <v-btn v-if="type === 'New Video'" text color="primary" @click="previewVideo()">Preview</v-btn>
       </v-row>
         <v-container class="test" >
         <LazyYoutubeVideo
-                v-if="preview && type !== 'New Document'"
+                v-if="preview && type === 'New Video'"
                 :src="previewVideo()"
                 preview-image-size=sddefault
 
@@ -136,12 +136,19 @@
           data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
+        <v-btn v-if="type !== 'New Document'"
           color="primary"
           text
           @click="saveDocument"
           data-cy="saveButton"
           >Save</v-btn
+        >
+        <v-btn v-if="type === 'New Document'"
+               color="primary"
+               text
+               @click="savePdf"
+               data-cy="saveButton"
+        >Save</v-btn
         >
       </v-card-actions>
 
@@ -223,7 +230,7 @@ export default class EditDocumentDialog extends Vue {
     try {
       const result1 = await RemoteServices.createDocument(this.editDocument)
       const result = await RemoteServices.uploadDoc(formData, result1)
-console.log(result);
+      console.log(result);
 
       this.upload2(formData)
               .then(x => {
@@ -265,7 +272,7 @@ console.log(result);
   async created() {
     this.editDocument = new Document(this.document);
     this.videoId = getIdFromURL('https://www.youtube.com/watch?v=KBMO_4Nj4HQ');
-this.currentStatus = STATUS_INITIAL;
+    this.currentStatus = STATUS_INITIAL;
   }
 
 
@@ -317,6 +324,7 @@ this.currentStatus = STATUS_INITIAL;
   }
 
   async saveDocument() {
+
     this.editDocument.url = this.previewVideo();
 
     if (this.editDocument && this.editDocument.id != null) {
@@ -336,17 +344,26 @@ this.currentStatus = STATUS_INITIAL;
 
       this.editDocument.classroomId = this.lecture.id;
 
-      if (this.type === 'New Document') {
-        this.editDocument.type = 'DOC'
-      }
-      else {
-        this.editDocument.type = 'VIDEO'
-      }
+
       try {
+
+
+        if (this.type === 'New Document') {
+          this.editDocument.type = 'DOC'
+
+        }
+        else {
+          this.editDocument.type = 'VIDEO'
+
+        }
+
 
         const result = await RemoteServices.createDocument(
                 this.editDocument
         );
+
+
+
 
 
         this.$emit('save-document', result);
@@ -354,6 +371,11 @@ this.currentStatus = STATUS_INITIAL;
         await this.$store.dispatch('error', error);
       }
     }
+  }
+
+  savePdf(){
+    this.$emit('save-document', this.editDocument);
+
   }
 
 
