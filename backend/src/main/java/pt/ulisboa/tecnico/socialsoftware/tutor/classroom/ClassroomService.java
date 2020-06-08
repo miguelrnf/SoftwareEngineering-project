@@ -96,8 +96,8 @@ public class ClassroomService {
         classroom.editClassroom(classroomDto);
 
         if (classroomDto.getQuizzes().size()>0) {
-            List<StatementQuizDto> statementQuizDtoList = classroomDto.getQuizzes();
-            statementQuizDtoList.stream().map(statementQuizDto -> quizRepository.findById(statementQuizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()))).
+            List<Integer> statementQuizDtoList = classroomDto.getQuizzes();
+            statementQuizDtoList.stream().map(statementQuizDto -> quizRepository.findById(statementQuizDto).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto))).
                     forEach(quiz -> classroom.addQuiz(quiz));
         }
 
