@@ -74,6 +74,15 @@ public class ClassroomController {
         return this.classroomService.getClassroomsByType(user.getRole(), courseExecutionId, type);
     }
 
+    @GetMapping(value = "/courses/{courseExecutionId}/classroom/listQuizzes/{classroomId}")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public List<StatementQuizDto> listClassroomAvailableQuizzes(Principal principal, @PathVariable int courseExecutionId, @PathVariable int classroomId) {
+
+        User user = (User)((Authentication)principal).getPrincipal();
+
+        return this.classroomService.getClassroomAvailableQuizzes(user.getId(), courseExecutionId, classroomId);
+    }
+
     @PutMapping(value = "/courses/{courseExecutionId}/classroom/changeStatus")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public ClassroomDto changeStatus(@PathVariable int courseExecutionId, @Valid @RequestBody ClassroomDto classroomDto) {
