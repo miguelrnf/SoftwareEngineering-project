@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class ClassroomDto implements Serializable {
     private Integer id;
-    private List<QuizDto> quizzes = new ArrayList<>();
+    private List<StatementQuizDto> quizzes = new ArrayList<>();
     private List<DocumentDto> documents = new ArrayList<>();
     private String status;
     private String type;
@@ -29,7 +30,7 @@ public class ClassroomDto implements Serializable {
         this.status = classroom.getStatus().name();
         this.type = classroom.getType().name();
         this.documents = classroom.getDocuments() != null ? classroom.getDocuments().stream().map(DocumentDto::new).collect(Collectors.toList()) : null;
-        this.quizzes = classroom.getQuizzes().stream().map(quiz -> new QuizDto(quiz,true)).collect(Collectors.toList());
+        //this.quizzes = classroom.getQuizzes().stream().map(quiz -> new StatementQuizDto(quiz,true)).collect(Collectors.toList());
         this.courseExecution = classroom.getCourseExecution() != null ? classroom.getCourseExecution().getId() : null;
         if (classroom.getAvailableDate() != null)
             this.availableDate = DateHandler.toISOString(classroom.getAvailableDate());
@@ -67,11 +68,11 @@ public class ClassroomDto implements Serializable {
         this.id = id;
     }
 
-    public List<QuizDto> getQuizzes() {
+    public List<StatementQuizDto> getQuizzes() {
         return quizzes;
     }
 
-    public void setQuizzes(List<QuizDto> quizzes) {
+    public void setQuizzes(List<StatementQuizDto> quizzes) {
         this.quizzes = quizzes;
     }
 

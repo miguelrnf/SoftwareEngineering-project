@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Document;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
@@ -100,7 +101,7 @@ public class ClassroomService {
             return classroomRepository.findClassrooms(courseExecutionId).stream()
                     .filter(classroom -> classroom.getType().name().equals(type))
                     .filter(classroom -> classroom.getStatus().equals(Classroom.Status.ACTIVE))
-                    .map(classroom -> new ClassroomDto(classroom))
+                    .map(ClassroomDto::new)
                     .sorted(Comparator.comparing(ClassroomDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                     .collect(Collectors.toList());
         }
@@ -108,7 +109,7 @@ public class ClassroomService {
         else{
                 return classroomRepository.findClassrooms(courseExecutionId).stream()
                     .filter(classroom -> classroom.getType().name().equals(type))
-                    .map(classroom -> new ClassroomDto(classroom))
+                    .map(ClassroomDto::new)
                         .sorted(Comparator.comparing(ClassroomDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                         .collect(Collectors.toList());
         }
@@ -162,10 +163,10 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClassroomDto addQuiz(int classroomId, QuizDto quizDto){
+    public ClassroomDto addQuiz(int courseExecutionId, int classroomId, StatementQuizDto statementQuizDto){
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
 
-        Quiz quiz = quizRepository.findByKey(quizDto.getKey()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizDto.getKey()));
+        Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
 
         if(quiz.getCourseExecution() != classroom.getCourseExecution())
             throw new TutorException(COURSE_EXECUTION_MISMATCH);

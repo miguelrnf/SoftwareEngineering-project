@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.YaDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
@@ -91,4 +92,9 @@ public class ClassroomController {
         return this.classroomService.removeDocument(courseExecutionId, classroomId, documentId);
     }
 
+    @PutMapping(value = "/courses/{courseExecutionId}/classroom/{classroomId}/addQuiz")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public ClassroomDto addQuiz(@PathVariable int courseExecutionId, @PathVariable int classroomId, @Valid @RequestBody StatementQuizDto statementQuizDto) {
+        return this.classroomService.addQuiz(courseExecutionId, classroomId, statementQuizDto);
+    }
 }
