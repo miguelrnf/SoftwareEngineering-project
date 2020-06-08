@@ -212,6 +212,8 @@ import Document from '@/models/management/Document';
 import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
   import LazyYoutubeVideo from 'vue-lazy-youtube-video';
   import StatementQuiz from '@/models/statement/StatementQuiz';
+  import {Quiz} from "@/models/management/Quiz";
+  import StatementQuiz from "@/models/statement/StatementQuiz";
 
 @Component({
   components: {
@@ -226,7 +228,7 @@ export default class ShowLectureDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly teacher!: boolean;
 
 
-availableQuizzes : StatementQuiz[] | null =null;
+availableQuizzes : StatementQuiz[] | null=null;
 
   doctype: string = 'New Document';
 
@@ -269,8 +271,13 @@ availableQuizzes : StatementQuiz[] | null =null;
 
     this.lec = new Classroom(this.lecture);
 
+
     this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
 
+  }
+
+  async addQuiz(statementQuiz: StatementQuiz){
+      await RemoteServices.addQuiz(this.lec, statementQuiz)
   }
 
   closeLectureDialog() {

@@ -336,6 +336,21 @@ export default class RemoteServices {
         });
   }
 
+  static async addQuiz(params: Classroom, statementQuiz: StatementQuiz): Promise<Classroom> {
+    console.log(params)
+    return httpClient
+        .put(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/${params.id}/addQuiz`,
+            statementQuiz
+        )
+        .then(response => {
+          return new Classroom(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
   static async changeClassroomStatus(params: Classroom): Promise<Classroom> {
     console.log(params)
     return httpClient
