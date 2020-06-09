@@ -127,6 +127,7 @@ public class Classroom implements DomainEntity {
 
     public void addQuiz(Quiz q){
         this.quizzes.add(q);
+        q.setClassroom(this);
     }
 
     public Set<Document> getDocuments() {
