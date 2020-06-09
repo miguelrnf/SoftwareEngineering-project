@@ -130,7 +130,8 @@
                         </v-card-title>
                     </template >
 
-                    <!--<template v-slot:item.action="{ item }">
+                    <!--<v-card-actions>
+                    <template v-slot:item.action="{ item }">
                         <v-tooltip bottom >
                             <template v-slot:activator="{ on }">
                                 <v-icon
@@ -143,10 +144,11 @@
                                 >delete</v-icon
                                 >
                             </template>
-                            <span>Delete {{getLectureLabel() }}</span>
+                            <span>Delete</span>
                         </v-tooltip>
-                    </template >-->
+                    </template >
 
+                    </v-card-actions>-->
                 </v-data-table>
 
             </v-tab-item>
@@ -315,6 +317,8 @@ availableQuizzes : StatementQuiz[] | null=null;
 
   async removeQuiz(quizId: number){
       this.lec = await RemoteServices.deleteClassroomQuiz(this.lec.id, quizId)
+      this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
+
   }
 
 
@@ -456,7 +460,7 @@ availableQuizzes : StatementQuiz[] | null=null;
         let link = document.createElement('a');
 
         link.href = window.URL.createObjectURL(blob);
-        link.download = 'demo.' + response.extension;
+        link.download = response.title + "." + response.extension;
 
         link.click();
     }

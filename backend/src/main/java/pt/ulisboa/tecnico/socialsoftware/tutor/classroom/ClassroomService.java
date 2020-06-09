@@ -24,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -170,6 +171,23 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SolvedQuizDto> getSolvedClassroomQuizzes(int userId, int executionId, int classroomId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
+
+        return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> classroom.getQuizzes().contains(quizAnswer.getQuiz()))
+                .map(SolvedQuizDto::new)
+                .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public DocumentDto addDocument(int classroomId, DocumentDto documentDto){
 
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
@@ -306,6 +324,28 @@ public class ClassroomService {
         classroom.getQuizzes().remove(q);
 
         q.setClassroom(null);
+
+        return new ClassroomDto(classroom);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClassroomDto setEvaluation(int courseExecutionId, int classroomId, StatementQuizDto statementQuizDto){
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
+
+        if (classroom.getCourseExecution() != courseExecution)
+            throw new TutorException(COURSE_EXECUTION_MISMATCH);
+
+        Quiz q = quizRepository.findById(statementQuizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
+
+        if (classroom.getId() != q.getClassroom().getId())
+            throw new TutorException(CLASSROOM_NOT_FOUND);
+
+        q.setEvaluation(statementQuizDto.isEvaluation());
 
         return new ClassroomDto(classroom);
     }

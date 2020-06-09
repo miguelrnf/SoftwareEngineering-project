@@ -68,7 +68,6 @@
 
           <div id="app">
             <div class="container">
-              ...form...
 
               <form enctype="multipart/form-data" novalidate v-if="currentStatus===0 || currentStatus===1">
                 <h1>Upload images</h1>

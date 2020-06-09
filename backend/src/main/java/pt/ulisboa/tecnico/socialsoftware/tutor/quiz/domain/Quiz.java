@@ -93,7 +93,8 @@ public class Quiz implements DomainEntity {
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;
 
-
+    @Column(columnDefinition = "boolean default false")
+    private boolean evaluation = false;
 
     public Quiz() {}
 
@@ -118,13 +119,21 @@ public class Quiz implements DomainEntity {
         setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         setSeries(quizDto.getSeries());
         setVersion(quizDto.getVersion());
-
+        setEvaluation(quizDto.isEvaluation());
 
     }
 
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuiz(this);
+    }
+
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
     }
 
     public Integer getId() {

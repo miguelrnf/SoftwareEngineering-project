@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.YaDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -83,6 +84,15 @@ public class ClassroomController {
         return this.classroomService.getClassroomAvailableQuizzes(user.getId(), courseExecutionId, classroomId);
     }
 
+    @GetMapping(value = "/courses/{courseExecutionId}/classroom/listSolvedQuizzes/{classroomId}")
+    @PreAuthorize("( (hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public List<SolvedQuizDto> listClassroomSolvedQuizzes(Principal principal, @PathVariable int courseExecutionId, @PathVariable int classroomId) {
+
+        User user = (User)((Authentication)principal).getPrincipal();
+
+        return this.classroomService.getSolvedClassroomQuizzes(user.getId(), courseExecutionId, classroomId);
+    }
+
     @PutMapping(value = "/courses/{courseExecutionId}/classroom/changeStatus")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public ClassroomDto changeStatus(@PathVariable int courseExecutionId, @Valid @RequestBody ClassroomDto classroomDto) {
@@ -111,5 +121,11 @@ public class ClassroomController {
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
     public ClassroomDto deleteQuiz(@PathVariable int courseExecutionId, @PathVariable int classroomId, @PathVariable int quizId) {
         return this.classroomService.removeQuiz(courseExecutionId, classroomId, quizId);
+    }
+
+    @PutMapping(value = "/courses/{courseExecutionId}/classroom/{classroomId}/setEval")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public ClassroomDto deleteQuiz(@PathVariable int courseExecutionId, @PathVariable int classroomId, @Valid @RequestBody StatementQuizDto statementQuizDto) {
+        return this.classroomService.setEvaluation(courseExecutionId, classroomId, statementQuizDto);
     }
 }
