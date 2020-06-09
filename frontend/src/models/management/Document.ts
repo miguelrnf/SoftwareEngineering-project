@@ -5,10 +5,10 @@ export default class Document {
   type: string = '';
   title: string = '';
   content: string = '';
-  image: Image | null = null;
   url: string = '';
   classroomId: number | null = null;
   pdf: string | undefined;
+  extension: string = '';
 
 
   constructor(jsonObj?: Document) {
@@ -17,10 +17,10 @@ export default class Document {
       this.title = jsonObj.title;
       this.type = jsonObj.type;
       this.content = jsonObj.content;
-      this.image = jsonObj.image;
       this.url = jsonObj.url;
       this.classroomId = jsonObj.classroomId;
       this.pdf = jsonObj.pdf;
+      this.extension = jsonObj.extension
     }
   }
 }

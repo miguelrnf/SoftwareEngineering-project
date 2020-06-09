@@ -4,16 +4,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Document;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class DocumentDto implements Serializable {
     private Integer id;
     private String type;
     private String title;
     private String content;
-    private ImageDto image;
     private String url;
     private Integer classroomId;
     private byte[] pdf;
+    private String extension;
 
 
     public DocumentDto(){}
@@ -22,17 +23,24 @@ public class DocumentDto implements Serializable {
         this.id = document.getId();
         this.title = document.getTitle();
         this.type = document.getType().name();
-
+        this.extension = document.getExtension();
         this.content = document.getContent(); //
         this.classroomId = document.getClassroom().getId();
         this.url = document.getUrl(); //
 
-        if (document.getImage() != null)
-            this.image = new ImageDto(document.getImage());
+
     }
 
     public byte[] getPdf() {
         return pdf;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public void setPdf(byte[] pdf) {
@@ -87,15 +95,6 @@ public class DocumentDto implements Serializable {
         this.content = content;
     }
 
-    public ImageDto getimage() {
-        return image;
-    }
-
-    public void setimage(ImageDto imageDto) {
-        this.image = imageDto;
-    }
-
-
 
     @Override
     public String toString() {
@@ -104,9 +103,10 @@ public class DocumentDto implements Serializable {
                 ", type='" + type + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", image=" + image +
                 ", url='" + url + '\'' +
                 ", classroomId=" + classroomId +
+                ", pdf=" + Arrays.toString(pdf) +
+                ", extension='" + extension + '\'' +
                 '}';
     }
 }

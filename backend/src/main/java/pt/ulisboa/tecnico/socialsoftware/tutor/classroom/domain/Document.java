@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain;
 
+import groovy.lang.GString;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 
 import javax.persistence.*;
 
@@ -36,11 +36,11 @@ public class Document implements DomainEntity {
     @JoinColumn(name = "classroom_id")
     private Classroom classroom;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
-    private Image image;
-
     @Column(name = "pdf")
     private byte[] pdf;
+
+    @Column(name = "extension")
+    private String extension;
 
     public Document(){
     }
@@ -50,8 +50,6 @@ public class Document implements DomainEntity {
         this.type = Document.Type.valueOf(documentDto.getType());
         this.title = documentDto.getTitle();
 
-        if (documentDto.getimage() != null)
-            setImage(new Image(documentDto.getimage()));
     }
 
     public void checkInfo(DocumentDto documentDto){
@@ -67,6 +65,14 @@ public class Document implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
 
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     public byte[] getPdf() {
@@ -93,14 +99,7 @@ public class Document implements DomainEntity {
         this.content = content;
     }
 
-    public Image getImage() {
-        return image;
-    }
 
-    public void setImage(Image image) {
-        this.image = image;
-        image.setDocument(this);
-    }
 
     public Integer getId() {
         return id;
@@ -140,9 +139,7 @@ public class Document implements DomainEntity {
 
             this.setContent(documentDto.getContent());
 
-            this.setPdf(documentDto.getPdf());
-
-            System.out.println(this.pdf);
+            this.setExtension(documentDto.getExtension());
 
         }
         else if (documentDto.getType().equals("VIDEO") && this.type==Type.VIDEO){
@@ -162,7 +159,6 @@ public class Document implements DomainEntity {
                 ", content='" + content + '\'' +
                 ", url='" + url + '\'' +
                 ", classroom=" + classroom +
-                ", image=" + image +
                 '}';
     }
 }

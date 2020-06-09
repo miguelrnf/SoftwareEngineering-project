@@ -26,9 +26,7 @@ public class Image implements DomainEntity {
     @JoinColumn(name="question_id")
     private Question question;
 
-    @OneToOne
-    @JoinColumn(name="document_id")
-    private Document document;
+
 
     public Image() {}
 
@@ -82,11 +80,4 @@ public class Image implements DomainEntity {
                 '}';
     }
 
-    public Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
-    }
 }
