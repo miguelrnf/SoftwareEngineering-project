@@ -221,6 +221,11 @@ export default class EditDocumentDialog extends Vue {
     this.editDocument.classroomId = this.lecture.id
     this.editDocument.type = "DOC";
     console.log(formData.get(name))
+    const f: File = formData.get(name);
+    console.log(f.type)
+
+    this.editDocument.extension = f.type;
+
 
     /*const result = await RemoteServices.uploaddd(formData, this.editDocument);
     console.log(result)*/
@@ -228,6 +233,8 @@ export default class EditDocumentDialog extends Vue {
 
 
     try {
+      console.log(this.editDocument)
+
       const result1 = await RemoteServices.createDocument(this.editDocument)
       const result = await RemoteServices.uploadDoc(formData, result1)
       console.log(result);

@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import javax.persistence.*;
 
 
+import java.util.List;
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
@@ -137,9 +139,12 @@ public class Document implements DomainEntity {
 
         if (documentDto.getType().equals("DOC") && this.type==Type.DOC ){
 
+            String extensionComplete = documentDto.getExtension();
+            String[] parts = extensionComplete.split("/");
+
             this.setContent(documentDto.getContent());
 
-            this.setExtension(documentDto.getExtension());
+            this.setExtension(parts[1]);
 
         }
         else if (documentDto.getType().equals("VIDEO") && this.type==Type.VIDEO){

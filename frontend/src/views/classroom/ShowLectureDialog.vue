@@ -456,7 +456,7 @@ availableQuizzes : StatementQuiz[] | null=null;
         let link = document.createElement('a');
 
         link.href = window.URL.createObjectURL(blob);
-        link.download = 'demo.pdf';
+        link.download = 'demo.' + response.extension;
 
         link.click();
     }
