@@ -21,7 +21,6 @@
         <v-btn dark active-class="no-active" text tile to="/" v-else>
           {{ appName }}
         </v-btn>
-        <v-switch @change="changeMode" label="Dark"></v-switch>
       </v-toolbar-title>
 
       <v-spacer />
@@ -308,6 +307,10 @@
 
         <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
+        </v-btn>
+        <v-btn to="/themes" v-if="isLoggedIn" text dark>
+          Themes
+          <v-icon>fas fa-cogs</v-icon>
         </v-btn>
 
         <v-btn href="https://www.worldometers.info/coronavirus/" text dark>
@@ -631,10 +634,6 @@ export default class TopBar extends Vue {
   async logout() {
     await this.$store.dispatch('logout');
     await this.$router.push({ name: 'home' }).catch(() => {});
-  }
-
-  changeMode() {
-    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
   }
 }
 </script>
