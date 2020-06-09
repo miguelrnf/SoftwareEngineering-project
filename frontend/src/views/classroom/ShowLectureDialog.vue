@@ -113,6 +113,7 @@
                         :mobile-breakpoint="0"
                         :items-per-page="15"
                         :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+
                 >
                     <template v-slot:top>
                         <v-card-title>
@@ -128,6 +129,23 @@
 
                         </v-card-title>
                     </template >
+
+                    <!--<template v-slot:item.action="{ item }">
+                        <v-tooltip bottom >
+                            <template v-slot:activator="{ on }">
+                                <v-icon
+                                        small
+                                        color="error"
+                                        class="mr-2"
+                                        v-on="on"
+                                        @click="removeQuiz(item)"
+
+                                >delete</v-icon
+                                >
+                            </template>
+                            <span>Delete {{getLectureLabel() }}</span>
+                        </v-tooltip>
+                    </template >-->
 
                 </v-data-table>
 
@@ -220,7 +238,6 @@ import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
   import LazyYoutubeVideo from 'vue-lazy-youtube-video';
   import StatementQuiz from '@/models/statement/StatementQuiz';
   import {Quiz} from "@/models/management/Quiz";
-  import StatementQuiz from "@/models/statement/StatementQuiz";
   import EditSelectedQuizzesDialog from '@/views/classroom/EditSelectedQuizzesDialog.vue';
   import StatementManager from '@/models/statement/StatementManager';
 
@@ -264,6 +281,13 @@ availableQuizzes : StatementQuiz[] | null=null;
       value: 'availableDate',
       align: 'center'
     },
+      {
+          text: 'Actions',
+          value: 'action',
+          align: 'center',
+          sortable: false
+      },
+
 
   ];
   @Watch('newOrEditDialog')
@@ -280,16 +304,19 @@ availableQuizzes : StatementQuiz[] | null=null;
     this.videos = this.lecture.documents.filter(d => d.type != 'DOC')
 
     this.lec = new Classroom(this.lecture);
-    this.selectedQuizzes = this.lec.quizzes;
+      console.log(this.lec);
+
+      this.selectedQuizzes = await RemoteServices.getClassroomQuizzes(this.lec);
+      console.log(this.lec);
 
 
     this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
-
   }
 
-  async addQuiz(statementQuiz: StatementQuiz){
-      await RemoteServices.addQuiz(this.lec, statementQuiz)
+  async removeQuiz(quizId: number){
+      this.lec = await RemoteServices.deleteClassroomQuiz(this.lec.id, quizId)
   }
+
 
   closeLectureDialog() {
     this.$emit('close-show-lecture-dialog');
@@ -374,8 +401,8 @@ availableQuizzes : StatementQuiz[] | null=null;
 
   async onSaveQuizzes(lecQuiz: Classroom) {
 
-    this.selectedQuizzes = lecQuiz.quizzes;
-
+    this.selectedQuizzes = await RemoteServices.getClassroomQuizzes(this.lec);
+        console.log(this.selectedQuizzes);
     this.selectQuizBoolean = false;
 
 

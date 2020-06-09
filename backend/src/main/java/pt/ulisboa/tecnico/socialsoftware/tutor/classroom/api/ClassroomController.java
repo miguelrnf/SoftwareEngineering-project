@@ -101,9 +101,15 @@ public class ClassroomController {
         return this.classroomService.removeDocument(courseExecutionId, classroomId, documentId);
     }
 
-    @PutMapping(value = "/courses/{courseExecutionId}/classroom/{classroomId}/addQuiz")
+    @PutMapping(value = "/courses/{courseExecutionId}/classroom/addQuizzes")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
-    public ClassroomDto addQuiz(@PathVariable int courseExecutionId, @PathVariable int classroomId, @Valid @RequestBody StatementQuizDto statementQuizDto) {
-        return this.classroomService.addQuiz(courseExecutionId, classroomId, statementQuizDto);
+    public ClassroomDto addQuizzes(@PathVariable int courseExecutionId, @Valid @RequestBody ClassroomDto classroomDto) {
+        return this.classroomService.addQuizzes(courseExecutionId, classroomDto);
+    }
+
+    @DeleteMapping(value = "/courses/{courseExecutionId}/classroom/deleteQuiz/{classroomId}/{quizId}")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public ClassroomDto deleteQuiz(@PathVariable int courseExecutionId, @PathVariable int classroomId, @PathVariable int quizId) {
+        return this.classroomService.removeQuiz(courseExecutionId, classroomId, quizId);
     }
 }

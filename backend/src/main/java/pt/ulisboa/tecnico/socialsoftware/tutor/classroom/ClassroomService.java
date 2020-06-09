@@ -95,12 +95,6 @@ public class ClassroomService {
 
         classroom.editClassroom(classroomDto);
 
-        if (classroomDto.getQuizzes().size()>0) {
-            List<Integer> statementQuizDtoList = classroomDto.getQuizzes();
-            statementQuizDtoList.stream().map(statementQuizDto -> quizRepository.findById(statementQuizDto).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto))).
-                    forEach(quiz -> classroom.addQuiz(quiz));
-        }
-
 
         return new ClassroomDto(classroom);
     }
@@ -166,6 +160,7 @@ public class ClassroomService {
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || DateHandler.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate().isBefore(now))
+                .filter(quizAnswer -> classroom.getQuizzes().contains(quizAnswer.getQuiz()))
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
@@ -218,15 +213,17 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClassroomDto addQuiz(int courseExecutionId, int classroomId, StatementQuizDto statementQuizDto){
-        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
+    public ClassroomDto addQuizzes(int courseExecutionId, ClassroomDto classroomDto){
+        Classroom classroom = classroomRepository.findById(classroomDto.getId()).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomDto.getId()));
 
-        Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
 
-        if(quiz.getCourseExecution() != classroom.getCourseExecution())
-            throw new TutorException(COURSE_EXECUTION_MISMATCH);
+        if (classroomDto.getQuizzes().size()>0) {
+            List<Integer> quizzesList = classroomDto.getQuizzes();
+            quizzesList.stream().map(quizId -> quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId)))
+                    .filter(quiz -> quiz.getCourseExecution().getId()==courseExecutionId)
+                    .forEach(classroom::addQuiz);
+        }
 
-        classroom.addQuiz(quiz);
 
         return new ClassroomDto(classroom);
     }
@@ -291,6 +288,33 @@ public class ClassroomService {
     }
 
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ClassroomDto removeQuiz(int courseExecutionId, int classroomId, int quizId){
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
+
+        if (classroom.getCourseExecution() != courseExecution)
+            throw new TutorException(COURSE_EXECUTION_MISMATCH);
+
+        Quiz q = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+
+        classroom.getQuizzes().remove(q);
+
+        q.setClassroom(null);
+
+        return new ClassroomDto(classroom);
+    }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public DocumentDto removeDocument(int courseExecutionId, int classroomId, int documentId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
@@ -306,5 +330,9 @@ public class ClassroomService {
 
         return d ;
     }
+
+
+
+
 
 }

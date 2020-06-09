@@ -4,12 +4,12 @@ import {ISOtoString} from "@/services/ConvertDateService";
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
 export default class Classroom {
-    id: number | null = null;
+    id!: number ;
     title: string = '';
     type: string = '';
     status: string = '';
     documents: Document[] = [];
-    quizzes: StatementQuiz[] = [];
+    quizzes: number[] = [];
     availableDate!: string;
 
 
@@ -24,8 +24,7 @@ export default class Classroom {
             this.documents = jsonObj.documents.map(
                 (doc: Document) => new Document(doc));
 
-            this.quizzes = jsonObj.quizzes.map(
-                (quiz: StatementQuiz) => new StatementQuiz(quiz));
+            this.quizzes = jsonObj.quizzes;
 
             if (jsonObj.availableDate)
                 this.availableDate = ISOtoString(jsonObj.availableDate);

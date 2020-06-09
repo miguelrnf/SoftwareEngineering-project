@@ -118,7 +118,7 @@ export default class EditSelectedQuizzesDialog extends Vue {
   async saveQuizzesList() {
 
       try {
-        const result = await RemoteServices.editClassroom(
+        const result = await RemoteServices.addQuizzes(
                 this.lecture
         );
         this.$emit('save-selected-quizzes', result);
@@ -132,7 +132,13 @@ export default class EditSelectedQuizzesDialog extends Vue {
   async saveQuizzes() {
     if (this.lecture.id) {
       try {
-        this.lecture.quizzes = this.selectedQuizzes;
+        let list: number[] = [];
+        for (let i = 0; i < this.selectedQuizzes.length; i++) {
+          if(this.selectedQuizzes[i].id != null)
+            list.push(this.selectedQuizzes[i].id)
+        }
+        console.log(list)
+        this.lecture.quizzes = list;
 
       } catch (error) {
         await this.$store.dispatch('error', error);

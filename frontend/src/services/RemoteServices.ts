@@ -336,12 +336,12 @@ export default class RemoteServices {
         });
   }
 
-  static async addQuiz(params: Classroom, statementQuiz: StatementQuiz): Promise<Classroom> {
+  static async addQuizzes(params: Classroom): Promise<Classroom> {
     console.log(params)
     return httpClient
         .put(
-            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/${params.id}/addQuiz`,
-            statementQuiz
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/addQuizzes`,
+            params
         )
         .then(response => {
           return new Classroom(response.data);
@@ -464,6 +464,19 @@ export default class RemoteServices {
       });
   }
 
+  static async deleteClassroomQuiz(classroomId: number, quizId: number): Promise<Classroom> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/deleteQuiz/${classroomId}/${quizId}`
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async deleteDocument(classroomId: number,documentId: number): Promise<Document> {
 
     return httpClient
@@ -487,6 +500,21 @@ export default class RemoteServices {
         .then(response => {
           return response.data.map((classroom: any) => {
             return new Classroom(classroom);
+          });
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async getClassroomQuizzes(classroom: Classroom): Promise<StatementQuiz[]> {
+    return httpClient
+        .get(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/listQuizzes/${classroom.id}`
+        )
+        .then(response => {
+          return response.data.map((x: any) => {
+            return new StatementQuiz(x);
           });
         })
         .catch(async error => {
