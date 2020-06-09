@@ -134,34 +134,40 @@ export default class AvailableTournamentsView extends Vue {
     this.dialog = true;
     this.currentTournament = t;
     let s: Student;
+
     if (t.enrolledStudents.length == 0) {
       this.sign = 'Sign In';
-      return;
-    }
-    for (s of t.enrolledStudents) {
-      if (s.username == this.$store.getters.getUser.username) {
-        this.sign = 'Sign Out';
-      } else {
-        this.sign = 'Sign In';
+    } else {
+      for (s of t.enrolledStudents) {
+        if (s.username == this.$store.getters.getUser.username) {
+          this.sign = 'Sign Out';
+        } else {
+          this.sign = 'Sign In';
+        }
       }
+    }
+    console.log(t)
+    if (this.sign === 'Sign In' && t.type === 'ADVANCED') {
+      this.sign = t.cost + ' Achandos';
     }
   }
 
   async signButton(t: Tournament) {
-    if (this.sign == 'Sign In') {
-      await this.enrollTournament(t.id);
-      this.sign = 'Sign Out';
-    } else {
+    if (this.sign == 'Sign Out') {
       await this.unenrollTournament(t.id);
       this.sign = 'Sign In';
+    } else {
+      await this.enrollTournament(t.id);
+      this.sign = 'Sign Out';
     }
-    await this.$router.push({ name: 'enrolled-Tournaments' });
   }
 
   async enrollTournament(id: Number) {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.enrollTournament(id);
+      await this.$store.dispatch('updateScore');
+      await this.$router.push({ name: 'enrolled-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -172,6 +178,8 @@ export default class AvailableTournamentsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.unenrollTournament(id);
+      await this.$store.dispatch('updateScore');
+      await this.$router.push({ name: 'enrolled-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
