@@ -44,7 +44,6 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
 import { PostQuestion } from '@/models/management/PostQuestion';
-
 @Component
 export default class PostPostView extends Vue {
   questions: Question[] = [];
@@ -54,7 +53,6 @@ export default class PostPostView extends Vue {
   limit: string = this.message.length + '/' + this.maxlen;
   canSubmit: boolean = false;
   postQ: PostQuestion = new PostQuestion();
-
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -64,7 +62,6 @@ export default class PostPostView extends Vue {
     }
     await this.$store.dispatch('clearLoading');
   }
-
   async checkConsistency() {
     this.canSubmit = this.message.length <= this.maxlen;
     if (!this.canSubmit) {
@@ -79,13 +76,11 @@ export default class PostPostView extends Vue {
       }
     }
   }
-
   pickQuestion(id: number) {
     let q = this.questions.find(question => question.id == id);
     if (q != undefined) return q;
     else return null;
   }
-
   async submitPost() {
     if (this.canSubmit) {
       try {

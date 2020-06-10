@@ -11,9 +11,33 @@ public class StatsDto implements Serializable {
     private Integer uniqueCorrectAnswers = 0;
     private Integer uniqueWrongAnswers = 0;
     private Integer totalAvailableQuestions = 0;
+    private Integer approveSuggestions = 0 ;
+    private Integer rejectedSuggestions = 0 ;
+    private Integer pendingSuggestions = 0 ;
+    private Integer tournamentDone = 0;
+    private Integer postSubmitted = 0;
+
+
+
 
     public Integer getTotalQuizzes() {
         return totalQuizzes;
+    }
+
+    public Integer getTournamentDone() {
+        return tournamentDone;
+    }
+
+    public Integer getPostSubmitted() {
+        return postSubmitted;
+    }
+
+    public void setPostSubmitted(Integer postSubmitted) {
+        this.postSubmitted = postSubmitted;
+    }
+
+    public void setTournamentDone(Integer tournamentDone) {
+        this.tournamentDone = tournamentDone;
     }
 
     public void setTotalQuizzes(Integer totalQuizzes) {
@@ -74,6 +98,30 @@ public class StatsDto implements Serializable {
 
     public void setTotalAvailableQuestions(Integer totalAvailableQuestions) {
         this.totalAvailableQuestions = totalAvailableQuestions;
+    }
+
+    public Integer getApproveSuggestions() {
+        return approveSuggestions;
+    }
+
+    public void setApproveSuggestions(Integer approveSuggestions) {
+        this.approveSuggestions = approveSuggestions;
+    }
+
+    public Integer getRejectedSuggestions() {
+        return rejectedSuggestions;
+    }
+
+    public void setRejectedSuggestions(Integer rejectedSuggestions) {
+        this.rejectedSuggestions = rejectedSuggestions;
+    }
+
+    public Integer getPendingSuggestions() {
+        return pendingSuggestions;
+    }
+
+    public void setPendingSuggestions(Integer pendingSuggestions) {
+        this.pendingSuggestions = pendingSuggestions;
     }
 
     @Override

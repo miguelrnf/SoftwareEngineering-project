@@ -140,7 +140,11 @@ export default class PostStatusButtons extends Vue {
   }
 
   isOwner(post: Post): boolean {
-    return this.$store.getters.getUser.username === post.question.user.username;
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === post.question.user.username
+      );
+    } else return false;
   }
 
   getColor2(pStatus: boolean) {

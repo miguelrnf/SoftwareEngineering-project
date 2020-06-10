@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     :value="dialog"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
+    @input="$emit('close-add-question-dialog', false)"
+    @keydown.esc="$emit('close-add-question-dialog', false)"
     max-width="75%"
     max-height="80%"
   >
@@ -87,7 +87,7 @@
         <v-spacer />
         <v-btn
           color="blue darken-1"
-          @click="$emit('dialog', false)"
+          @click="$emit('close-add-question-dialog', false)"
           data-cy="cancel"
           >Cancel</v-btn
         >

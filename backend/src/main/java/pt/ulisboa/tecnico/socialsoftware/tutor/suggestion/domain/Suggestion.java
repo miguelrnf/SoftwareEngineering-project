@@ -51,6 +51,9 @@ public class Suggestion {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Column(name = "checkMark", columnDefinition = "boolean default false")
+    private Boolean checkMark;
+
     @Enumerated(EnumType.STRING)
     public Status status = Status.TOAPPROVE;
 
@@ -149,6 +152,7 @@ public class Suggestion {
         return teacherExplanation;
     }
 
+
     public void setTeacherExplanation(String teacherExplanation) {
         if (teacherExplanation.length() == 0 ){
             throw new TutorException(JUSTIFICATION_EMPTY);
@@ -197,6 +201,9 @@ public class Suggestion {
             this.options.add(option);
             option.setSuggestion(this);
         }
+
+        Collections.shuffle(this.options);
+
     }
 
     public Boolean getIsPrivate() {
@@ -205,6 +212,30 @@ public class Suggestion {
 
     public void setIsPrivate(Boolean isprivate) {
         this.isPrivate = isprivate;
+    }
+
+    public void remove(User.Role role) {
+        if(role.equals(User.Role.STUDENT)){
+            canRemove();
+        }
+
+
+        getTopicsList().forEach(topic -> topic.getSuggestions().remove(this));
+        getTopicsList().clear();
+        getOptions().forEach(option -> option.setSuggestion(null));
+        getOptions().clear();
+        getCourse().getSuggestions().remove(this);
+        courseExecution = null;
+
+    }
+
+    private void canRemove() {
+        if (this.getStatus().equals(Status.APPROVED)) {
+            throw new TutorException(SUGGESTION__REM_ALREADY_APP);
+        }
+        if (this.getStatus().equals(Status.QUESTION)) {
+            throw new TutorException(SUGGESTION__REM_ALREADY_QUESTION);
+        }
     }
 
     @Override
@@ -242,5 +273,13 @@ public class Suggestion {
                 ", isprivate=" + isPrivate +
                 ", title='" + title + '\'' +
                 '}';
+    }
+
+    public Boolean getCheckMark() {
+        return checkMark;
+    }
+
+    public void setCheckMark(Boolean checkMark) {
+        this.checkMark = checkMark;
     }
 }

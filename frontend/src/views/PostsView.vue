@@ -25,6 +25,15 @@
             @input="customFilter"
           />
           <v-spacer />
+
+          <v-btn
+            v-if="!isTeacher()"
+            color="primary"
+            dark
+            @click="newPost"
+            data-cy="createButton"
+            >New Post</v-btn
+          >
         </v-card-title>
       </template>
 
@@ -141,6 +150,12 @@
       v-on:save-post="onSavePost"
       v-on:close-show-post-dialog="onCloseDialog"
     />
+    <create-post
+      v-if="createPost"
+      :dialog="createPost"
+      v-on:save-post="onCreatePost"
+      v-on:close-new-post-dialog="onCloseDialog"
+    />
   </v-card>
 </template>
 
@@ -151,11 +166,14 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
-import PostViewDialog from '@/views/PostViewDialog.vue';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
 import EditPostDialog from './EditPostDialog.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
+import Suggestion from '@/models/management/Suggestion';
+import PostPostView from '@/views/student/PostPostView.vue';
+import NewPostView from '@/views/NewPostView.vue';
 
 @Component({
   components: {
@@ -163,7 +181,8 @@ import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
     'edit-post-dialog': EditPostDialog,
     'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons,
-    'answer-post-dialog': AnswerPostDialog
+    'answer-post-dialog': AnswerPostDialog,
+    'create-post': NewPostView
   }
 })
 export default class PostsView extends Vue {
@@ -175,6 +194,7 @@ export default class PostsView extends Vue {
   editPostDialog: boolean = false;
   editAnswerDialog: boolean = false;
   postDialog: boolean = false;
+  createPost: boolean = false;
   search: string = '';
   perPage: number = 5;
   page: number = 1;
@@ -270,6 +290,11 @@ export default class PostsView extends Vue {
     this.postDialog = false;
     this.editPostDialog = false;
     this.editAnswerDialog = false;
+    this.createPost = false;
+  }
+
+  newPost() {
+    this.createPost = true;
   }
 
   editPostOpenDialog(post: Post) {
@@ -283,17 +308,30 @@ export default class PostsView extends Vue {
   }
 
   isOwner(post: Post): boolean {
-    return this.$store.getters.getUser.username === post.question.user.username;
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === post.question.user.username
+      );
+    } else return false;
   }
 
   redirectPost() {}
 
-  async onSavePost(post: Post) {
+  onSavePost(post: Post) {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.posts.unshift(post);
+    this.createPost = false;
     this.editPostDialog = false;
     this.editAnswerDialog = false;
     this.currentPost = null;
+  }
+
+  onCreatePost(postmalone: Post) {
+
+    this.posts.push(postmalone);
+    this.createPost = false;
+
+
   }
 
   isTeacher(): boolean {

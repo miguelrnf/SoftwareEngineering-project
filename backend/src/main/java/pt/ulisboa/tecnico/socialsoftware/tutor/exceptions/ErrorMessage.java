@@ -48,6 +48,9 @@ public enum ErrorMessage {
 
     SUGGESTION_ALREADY_APP("The Suggestion was Already Approved"),
     SUGGESTION_ALREADY_REJ("The Suggestion was Already Rejected"),
+    SUGGESTION__REM_ALREADY_APP("Can't Remove - The Suggestion was Already Approved"),
+    SUGGESTION__REM_ALREADY_QUESTION("Can't Remove - The Suggestion is Already a Question"),
+
 
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
@@ -107,6 +110,7 @@ public enum ErrorMessage {
 
     USER_HAS_WRONG_ROLE("User has wrong role"),
     SUGGESTION_TOO_LONG("Suggestion is too long"),
+    NOARGUMENT("no argument"),
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),
@@ -131,8 +135,18 @@ public enum ErrorMessage {
     INVALID_COMMENT_SEARCH("No results available"),
     ALREADY_UPVOTED("You have already upvoted this post"),
     ALREADY_DOWNVOTED("You have already downvoted this post"),
-    COMMENT_NO_PARENT("The parent does not exist");
+    COMMENT_NO_PARENT("The parent does not exist"),
+    COMMENT_NO_PARENT("The parent does not exist"),
 
+    //shop errors
+    NOT_ENOUGH_ACHANDOS("You currently do not have enough achandos to buy this item"),
+    CANT_ADD_POWER_UP("The new item cannot be a power up"),
+    CANT_REMOVE_POWER_UP("You cannot remove a power up"),
+    ITEM_ALREADY_EXISTS("The item %s is already in the shop"),
+    NON_EXISTING_ITEM_ID("The item with id %d does not exist in the shop"),
+    INVALID_THEME("The provided theme is not valid"),
+    INVALID_ITEM_TYPE("The item type %s does not exist"),
+    NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop");
 
     public final String label;
 
