@@ -1,4 +1,6 @@
 import Course from '@/models/user/Course';
+import Post from '@/models/management/Post';
+import { PostComment } from '@/models/management/PostComment';
 
 interface CourseMap {
   [key: string]: Course[];
@@ -14,6 +16,8 @@ export default class User {
   dashboardPrivate: boolean = false;
   numberofsuggestions!: number;
   numberofsuggestionsapproved!: number;
+  postsUpvoted: Post[] | null = null;
+  postsDownvoted: Post[] | null = null;
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -30,6 +34,16 @@ export default class User {
           this.courses[name] = courses.map(course => new Course(course));
           this.coursesNumber += this.courses[name].length;
         }
+      }
+      if (jsonObj.postsUpvoted != null) {
+        this.postsUpvoted = jsonObj.postsUpvoted.map(
+          (postsUpvoted: Post) => new Post(postsUpvoted)
+        );
+      }
+      if (jsonObj.postsDownvoted != null) {
+        this.postsDownvoted = jsonObj.postsDownvoted.map(
+          (postsDownvoted: Post) => new Post(postsDownvoted)
+        );
       }
     }
   }

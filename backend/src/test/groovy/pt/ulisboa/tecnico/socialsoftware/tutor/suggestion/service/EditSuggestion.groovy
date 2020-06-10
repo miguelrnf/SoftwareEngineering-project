@@ -223,7 +223,6 @@ class EditSuggestion extends Specification {
 
 
         then: "add to repository"
-        println(suggestion.dump())
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)

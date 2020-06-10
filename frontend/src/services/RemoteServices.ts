@@ -1035,6 +1035,33 @@ export default class RemoteServices {
       });
   }
 
+  static async vote(id: number, vote: string): Promise<Post> {
+    return httpClient
+      .put(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/${vote}`
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateVotes(): Promise<User> {
+    return httpClient
+      .get(
+        '/users/update'
+      )
+      .then(response => {
+        return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';

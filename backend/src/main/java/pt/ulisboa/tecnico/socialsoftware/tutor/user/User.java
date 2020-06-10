@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -77,6 +78,12 @@ public class User implements UserDetails, DomainEntity {
 
     @Column(name = "is_dashboard_private", columnDefinition = "boolean default false")
     private Boolean isDashboardPrivate;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Post> postsUpvoted = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Post> postsDownvoted = new HashSet<>();
 
     public User() {
     }
@@ -391,6 +398,30 @@ public class User implements UserDetails, DomainEntity {
 
     public void setNumberOfCorrectStudentAnswers(Integer numberOfCorrectStudentAnswers) {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
+    }
+
+    public Set<Post> getPostsUpvoted() {
+        return postsUpvoted;
+    }
+
+    public void setPostUpvoted(Set<Post> postUpvoted) {
+        this.postsUpvoted = postUpvoted;
+    }
+
+    public Set<Post> getPostsDownvoted() {
+        return postsDownvoted;
+    }
+
+    public void setPostsDownvoted(Set<Post> postDownvoted) {
+        this.postsDownvoted = postDownvoted;
+    }
+
+    public void addUpvotedPosts(Post post) {
+        this.postsUpvoted.add(post);
+    }
+
+    public void addDownvotedPosts(Post post) {
+        this.postsDownvoted.add(post);
     }
 
     public void addTournament(Tournament tournament){

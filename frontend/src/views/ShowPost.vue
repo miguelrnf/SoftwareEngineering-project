@@ -40,6 +40,36 @@
       <div class="headline text-left">
         <span v-html="convertMarkDown(post.question.studentQuestion)" />
       </div>
+      <template>
+        <div class="text-right my-5">
+          <v-btn class="ma-2" @click="upvote()" icon>
+            <v-icon :color="getColorOfUpvotes()" class="mx-4" large left
+              >fas fa-chevron-up</v-icon
+            >
+            <span class="font-weight-bold subtitle-1" v-html="post.upvotes" />
+          </v-btn>
+          <v-btn class="ma-2" @click="downvote()" icon>
+            <v-icon class="mx-4" :color="getColorOfDownvotes()" large right
+              >fas fa-chevron-down</v-icon
+            >
+            <span class="font-weight-bold subtitle-1" v-html="post.downvotes" />
+          </v-btn>
+        </div>
+        <div>
+          <v-row justify="end">
+            <v-col cols="2">
+              <v-progress-linear
+                color="light-blue"
+                height="10"
+                :value="valueForProgress()"
+                striped
+                rounded
+              ></v-progress-linear>
+            </v-col>
+          </v-row>
+        </div>
+      </template>
+
       <div class="text-right">
         by
         <span v-html="convertMarkDown(post.question.user.username)" />
@@ -59,7 +89,6 @@
         <span v-html="convertMarkDown(post.answer.teacherAnswer)" />
       </p>
       <div class="text-right">
-        by
         <span v-html="convertMarkDown(post.answer.user.username)" />
       </div>
     </v-card-text>
@@ -98,6 +127,7 @@ import RemoteServices from '@/services/RemoteServices';
 })
 export default class ShowPost extends Vue {
   @Prop({ type: Post, required: true }) readonly post!: Post;
+  newPost: Post = new Post();
   editPostDialog: boolean = false;
   editAnswerDialog: boolean = false;
 
@@ -142,6 +172,67 @@ export default class ShowPost extends Vue {
     if (post.answer != null)
       return this.$store.getters.getUser.username === post.answer.user.username;
     else return false;
+  }
+
+  getColorOfUpvotes() {
+    if (this.$store.getters.getUser.postsUpvoted != null) {
+      for (
+        let i = 0;
+        i < this.$store.getters.getUser.postsUpvoted.length;
+        i++
+      ) {
+        if (this.$store.getters.getUser.postsUpvoted[i].id == this.post.id) {
+          return 'blue';
+        }
+      }
+    } else return 'grey';
+  }
+
+  getColorOfDownvotes() {
+    if (this.$store.getters.getUser.postsDownvoted != null) {
+      for (
+        let i = 0;
+        i < this.$store.getters.getUser.postsDownvoted.length;
+        i++
+      ) {
+        if (this.$store.getters.getUser.postsDownvoted[i].id == this.post.id) {
+          return 'blue';
+        }
+      }
+    } else return 'grey';
+  }
+
+  async updateVotes() {
+    await this.$store.dispatch('updateVotes');
+  }
+
+  async upvote() {
+    let post2;
+    post2 = await RemoteServices.vote(this.post.id, 'upvote');
+    this.post.upvotes = post2.upvotes;
+    this.post.downvotes = post2.downvotes;
+    await this.updateVotes();
+  }
+
+  async downvote() {
+    let post2;
+    post2 = await RemoteServices.vote(this.post.id, 'downvote');
+    this.post.upvotes = post2.upvotes;
+    this.post.downvotes = post2.downvotes;
+    await this.updateVotes();
+  }
+
+  valueForProgress() {
+    if (this.post.downvotes == 0 && this.post.upvotes != 0) {
+      return 100;
+    }
+    if (this.post.upvotes == 0) {
+      return 0;
+    } else {
+      let upvotes = this.post.upvotes;
+      let downvotes = this.post.downvotes;
+      return (upvotes / (upvotes + downvotes)) * 100;
+    }
   }
 
   changeAnswerPrivacy(post: Post) {

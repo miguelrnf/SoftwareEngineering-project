@@ -129,7 +129,10 @@ public enum ErrorMessage {
     INVALID_CREATION_DATE("The creation date is invalid"),
     INVALID_COMMENT("The comment you submitted is invalid"),
     INVALID_COMMENT_SEARCH("No results available"),
+    ALREADY_UPVOTED("You have already upvoted this post"),
+    ALREADY_DOWNVOTED("You have already downvoted this post"),
     COMMENT_NO_PARENT("The parent does not exist");
+
 
     public final String label;
 
