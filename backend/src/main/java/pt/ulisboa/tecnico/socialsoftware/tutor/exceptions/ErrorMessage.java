@@ -136,7 +136,6 @@ public enum ErrorMessage {
     ALREADY_UPVOTED("You have already upvoted this post"),
     ALREADY_DOWNVOTED("You have already downvoted this post"),
     COMMENT_NO_PARENT("The parent does not exist"),
-    COMMENT_NO_PARENT("The parent does not exist"),
 
     //shop errors
     NOT_ENOUGH_ACHANDOS("You currently do not have enough achandos to buy this item"),

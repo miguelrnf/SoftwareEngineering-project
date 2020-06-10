@@ -12,32 +12,43 @@
       </div>
     </div>
     <v-divider inset class="mt-3"></v-divider>
-    <div
+    <v-card-text>
       <template>
         <div class="text-right my-5">
           <v-btn class="ma-2" @click="upvote()" icon>
             <v-icon :color="getColorOfUpvotes()" class="mx-4" large left
               >fas fa-chevron-up</v-icon
             >
-            <span class="font-weight-bold subtitle-1" v-html="post.upvotes" />
+            <span
+              class="font-weight-bold subtitle-1"
+              v-html="post.upvotes - post.downvotes"
+            />
           </v-btn>
           <v-btn class="ma-2" @click="downvote()" icon>
             <v-icon class="mx-4" :color="getColorOfDownvotes()" large right
               >fas fa-chevron-down</v-icon
             >
-            <span class="font-weight-bold subtitle-1" v-html="post.downvotes" />
           </v-btn>
         </div>
         <div>
           <v-row justify="end">
             <v-col cols="2">
-              <v-progress-linear
-                color="light-blue"
-                height="10"
-                :value="valueForProgress()"
-                striped
-                rounded
-              ></v-progress-linear>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-progress-linear
+                    color="light-blue"
+                    height="10"
+                    :value="valueForProgress()"
+                    striped
+                    rounded
+                    v-on="on"
+                  ></v-progress-linear>
+                </template>
+                <span>
+                  {{ 'Up: ' + this.post.upvotes }}
+                  {{ ' Down: ' + this.post.downvotes }}
+                </span>
+              </v-tooltip>
             </v-col>
           </v-row>
         </div>
@@ -47,34 +58,34 @@
         by
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
+      <v-card-text
+        v-if="
+          post.answer != null &&
+            post.answer.teacherAnswer !== '' &&
+            (!post.answerPrivacy || isTeacher() || isOwner(post))
+        "
+        class="mt-3 ml-3"
+      >
+        <div class="headline grey--text font-weight-bold">{{ 'Answer:' }}</div>
+        <div class="ml-5 mt-3">{{ post.answer.teacherAnswer }}</div>
+        <div class="font-weight-light text-right mr-3">
+          {{ post.answer.user.username }}
+        </div>
+      </v-card-text>
+      <edit-post-dialog
+        v-model="editPostDialog"
+        :post="post"
+        v-on:save-post-edit="onSavePostEvent"
+        v-on:close-edit-post-dialog="onCloseEditPostDialog"
+      />
+      <edit-answer-dialog
+        v-if="post.answer"
+        v-model="editAnswerDialog"
+        :post="post"
+        v-on:save-post-edit-answer="onSavePostEvent"
+        v-on:close-edit-answer-dialog="onCloseEditAnswerDialog"
+      />
     </v-card-text>
-    <v-card-text
-      v-if="
-        post.answer != null &&
-          post.answer.teacherAnswer !== '' &&
-          (!post.answerPrivacy || isTeacher() || isOwner(post))
-      "
-      class="mt-3 ml-3"
-    >
-      <div class="headline grey--text font-weight-bold">{{ 'Answer:' }}</div>
-      <div class="ml-5 mt-3">{{ post.answer.teacherAnswer }}</div>
-      <div class="font-weight-light text-right mr-3">
-        {{ post.answer.user.username }}
-      </div>
-    </div>
-    <edit-post-dialog
-      v-model="editPostDialog"
-      :post="post"
-      v-on:save-post-edit="onSavePostEvent"
-      v-on:close-edit-post-dialog="onCloseEditPostDialog"
-    />
-    <edit-answer-dialog
-      v-if="post.answer"
-      v-model="editAnswerDialog"
-      :post="post"
-      v-on:save-post-edit-answer="onSavePostEvent"
-      v-on:close-edit-answer-dialog="onCloseEditAnswerDialog"
-    />
   </div>
 </template>
 
@@ -181,16 +192,14 @@ export default class ShowPost extends Vue {
   }
 
   async upvote() {
-    let post2;
-    post2 = await RemoteServices.vote(this.post.id, 'upvote');
+    let post2 = await RemoteServices.vote(this.post.id, 'upvote');
     this.post.upvotes = post2.upvotes;
     this.post.downvotes = post2.downvotes;
     await this.updateVotes();
   }
 
   async downvote() {
-    let post2;
-    post2 = await RemoteServices.vote(this.post.id, 'downvote');
+    let post2 = await RemoteServices.vote(this.post.id, 'downvote');
     this.post.upvotes = post2.upvotes;
     this.post.downvotes = post2.downvotes;
     await this.updateVotes();
@@ -207,12 +216,6 @@ export default class ShowPost extends Vue {
       let downvotes = this.post.downvotes;
       return (upvotes / (upvotes + downvotes)) * 100;
     }
-  }
-
-  changeAnswerPrivacy(post: Post) {
-    if (post.answerPrivacy != null && this.isOwnerAnswer(post))
-      post.answerPrivacy = !post.answerPrivacy;
-    RemoteServices.changeAnswerPrivacy(post.id);
   }
 }
 </script>

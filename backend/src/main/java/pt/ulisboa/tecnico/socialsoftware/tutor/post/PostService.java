@@ -335,14 +335,16 @@ public class PostService {
             user.getPostsUpvoted().remove(post);
             post.getUsersWhoUpvoted().remove(user);
         }
-        if (post.getUsersWhoDownvoted().contains(user)) {
+        else if (post.getUsersWhoDownvoted().contains(user)) {
             post.getUsersWhoDownvoted().remove(user);
             user.getPostsDownvoted().remove(post);
             user.addUpvotedPosts(post);
             post.upvote(user);
+        } else {
+            user.addUpvotedPosts(post);
+            post.upvote(user);
         }
-        user.addUpvotedPosts(post);
-        post.upvote(user);
+
     }
 
     private void downvotePost(Post post, User user) {
@@ -350,14 +352,15 @@ public class PostService {
             user.getPostsDownvoted().remove(post);
             post.getUsersWhoDownvoted().remove(user);
         }
-        if (post.getUsersWhoUpvoted().contains(user)) {
+        else if (post.getUsersWhoUpvoted().contains(user)) {
             post.getUsersWhoUpvoted().remove(user);
             user.getPostsUpvoted().remove(post);
             user.addDownvotedPosts(post);
             post.downvote(user);
+        } else {
+            user.addDownvotedPosts(post);
+            post.downvote(user);
         }
-        user.addDownvotedPosts(post);
-        post.downvote(user);
     }
 
 
