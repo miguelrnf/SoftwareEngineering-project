@@ -31,6 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT')) or hasRole('ROLE_TEACHER')")
     public User getUser(@PathVariable Integer userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
