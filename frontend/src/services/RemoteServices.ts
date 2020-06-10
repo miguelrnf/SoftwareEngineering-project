@@ -816,7 +816,18 @@ export default class RemoteServices {
       });
   }
 
-  static async updateScore(): Promise<User> {
+  static async updateCurrentTheme(themeName: string): Promise<User> {
+    return httpClient
+      .get(`/users/update/theme/${themeName}`)
+      .then(response => {
+        return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateUser(): Promise<User> {
     return httpClient
       .get('/users/update')
       .then(response => {

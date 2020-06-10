@@ -87,6 +87,8 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserItem> items = new HashSet<>();
 
+    private String currentTheme;
+
     public User() {
     }
 
@@ -109,6 +111,7 @@ public class User implements UserDetails, DomainEntity {
         this.isDashboardPrivate = false;
         this.numberOfSuggestions = 0;
         this.numberOfSuggestionsApproved = 0;
+        this.currentTheme = "Default Light";
     }
 
     public void incrementNumberOfSuggestions() {
@@ -152,6 +155,14 @@ public class User implements UserDetails, DomainEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCurrentTheme() {
+        return currentTheme;
+    }
+
+    public void setCurrentTheme(String currentTheme) {
+        this.currentTheme = currentTheme;
     }
 
     public Integer getKey() {

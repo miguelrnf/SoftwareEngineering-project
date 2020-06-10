@@ -22,9 +22,9 @@
       </v-text-field>
       <v-row no-gutters>
         <v-col cols="4" v-for="n in filteredThemes" :key="n.title">
-          <v-card outlined tile class="ma-3">
+          <v-card outlined :color="isCurrent(n)  ? 'primary' : ''" tile class="ma-3">
             <v-img
-              class="align-end"
+              class="ma-4"
               style="cursor: pointer"
               contain
               :src="n.image"
@@ -35,8 +35,8 @@
                 n.title
               }}</v-card-title>
               <v-spacer />
-              <v-btn @click="applyTheme(n)" color="primary">
-                Apply
+              <v-btn @click="applyTheme(n)" :color="isCurrent(n)  ? 'accent' : 'primary'">
+                {{ isCurrent(n) ? 'Applied' : 'Apply' }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -54,6 +54,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ThemePreviewDialog from '@/views/ThemePreviewDialog';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   components: {
@@ -125,6 +126,7 @@ export default class ThemeInventory extends Vue {
   ];
 
   async created() {
+    console.log(this.$store.getters.getUser);
     this.filteredThemes = this.testThemes;
   }
 
@@ -145,15 +147,21 @@ export default class ThemeInventory extends Vue {
     this.currentTheme = '';
   }
 
-  applyTheme(theme: any) {
+  async applyTheme(theme: any) {
+    await RemoteServices.updateCurrentTheme(theme.title);
+    await this.$store.dispatch('updateUser');
     this.$vuetify.theme.dark = theme.dark;
-    this.$vuetify.theme.currentTheme.primary = theme.color.primary;
-    this.$vuetify.theme.currentTheme.accent = theme.color.accent;
-    this.$vuetify.theme.currentTheme.secondary = theme.color.secondary;
-    this.$vuetify.theme.currentTheme.info = theme.color.info;
-    this.$vuetify.theme.currentTheme.warning = theme.color.warning;
-    this.$vuetify.theme.currentTheme.error = theme.color.error;
-    this.$vuetify.theme.currentTheme.success = theme.color.success;
+    this.$vuetify.theme.currentTheme.primary = theme.colors.primary;
+    this.$vuetify.theme.currentTheme.accent = theme.colors.accent;
+    this.$vuetify.theme.currentTheme.secondary = theme.colors.secondary;
+    this.$vuetify.theme.currentTheme.info = theme.colors.info;
+    this.$vuetify.theme.currentTheme.warning = theme.colors.warning;
+    this.$vuetify.theme.currentTheme.error = theme.colors.error;
+    this.$vuetify.theme.currentTheme.success = theme.colors.success;
+  }
+
+  isCurrent(n: any): boolean {
+    return n.title === this.$store.getters.getUser.currentTheme;
   }
 }
 </script>
