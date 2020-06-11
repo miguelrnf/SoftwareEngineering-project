@@ -16,7 +16,7 @@ import java.util.Set;
 @RestController
 public class PostController {
 
-    private PostService postService;
+    private final PostService postService;
 
     @Value("${figures.dir}")
     private String figuresDir;

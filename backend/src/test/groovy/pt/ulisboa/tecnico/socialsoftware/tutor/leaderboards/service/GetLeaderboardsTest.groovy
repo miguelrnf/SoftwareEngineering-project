@@ -60,15 +60,31 @@ class GetLeaderboardsTest extends Specification {
     def USER_3
 
     def setup() {
-        given: "three valid users"
+        given: "a course Repository"
         def courseExecution = new CourseExecution()
+        def ceSet = new HashSet()
+        ceSet.add(courseExecution)
+        courseExecutionRepository.save(courseExecution)
+
+        and: "three valid users"
         def user1 = new User(VALID_NAME_1, VALID_USERNAME_1, 1, User.Role.STUDENT)
         def user2 = new User(VALID_NAME_2, VALID_USERNAME_2, 2, User.Role.STUDENT)
         def user3 = new User(VALID_NAME_3, VALID_USERNAME_3, 3, User.Role.STUDENT)
 
-        user1.addTournament(new Tournament())
-        user1.addTournament(new Tournament())
-        user1.addTournament(new Tournament())
+        def t1 = new Tournament()
+        t1.setTitle('T1')
+        t1.setNumberOfQuestions(1)
+        def t2 = new Tournament()
+        t2.setTitle('T2')
+        t2.setNumberOfQuestions(2)
+        def t3 = new Tournament()
+        t3.setTitle('T3')
+        t3.setNumberOfQuestions(3)
+
+        user1.setCourseExecutions(ceSet)
+        user1.addTournament(t1)
+        user1.addTournament(t2)
+        user1.addTournament(t3)
         user1.addPostQuestion(new PostQuestion())
         user1.addPostQuestion(new PostQuestion())
         user1.addPostQuestion(new PostQuestion())
@@ -78,8 +94,9 @@ class GetLeaderboardsTest extends Specification {
         user1.addQuiz(new Quiz())
         user1.addQuiz(new Quiz())
 
-        user2.addTournament(new Tournament())
-        user2.addTournament(new Tournament())
+        user2.setCourseExecutions(ceSet)
+        user2.addTournament(t1)
+        user2.addTournament(t2)
         user2.addPostQuestion(new PostQuestion())
         user2.addPostQuestion(new PostQuestion())
         user2.addPostQuestion(new PostQuestion())
@@ -91,6 +108,7 @@ class GetLeaderboardsTest extends Specification {
         user2.addQuiz(new Quiz())
         user2.addQuiz(new Quiz())
 
+        user3.setCourseExecutions(ceSet)
         user3.addPostQuestion(new PostQuestion())
         user3.addPostQuestion(new PostQuestion())
         user3.addSuggestion(new Suggestion())
@@ -100,7 +118,6 @@ class GetLeaderboardsTest extends Specification {
         user3.changeScore(100)
 
         then: "add to repository"
-        courseExecutionRepository.save(courseExecution)
         userRepository.save(user1)
         userRepository.save(user2)
         userRepository.save(user3)
