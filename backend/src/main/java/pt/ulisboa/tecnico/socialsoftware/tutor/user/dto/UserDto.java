@@ -141,4 +141,6 @@ public class UserDto implements Serializable {
     public void setNumberofsuggestions(Integer numberofsuggestions) {
         this.numberofsuggestions = numberofsuggestions;
     }
+
+
 }

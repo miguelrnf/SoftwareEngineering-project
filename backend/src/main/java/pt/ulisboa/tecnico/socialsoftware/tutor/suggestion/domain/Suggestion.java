@@ -30,7 +30,7 @@ public class Suggestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique=true)
     private Integer key;
 
     @Column(name = "title")
