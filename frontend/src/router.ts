@@ -37,7 +37,7 @@ import PostGeneralView from '@/views/PostGeneralView.vue';
 import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 import ShopGeneralView from '@/views/ShopGeneralView.vue';
-import ShopHomeView from '@/views/ShopHomeView.vue';
+import ShopHomeView from '@/views/ShopCategoryView.vue';
 
 Vue.use(Router);
 
