@@ -5,146 +5,110 @@
     height="65%"
     max-height="95%"
     flat
+    v-scroll
   >
-    <v-div v-if="category === 'None'">
-      <v-app-bar dense color="primary" width="1216">
-        <v-toolbar-title class="white--text" >{{
-          'Pick an item Category'
-        }}</v-toolbar-title>
-      </v-app-bar>
-      <v-row width="1100" class="mb-15">
-          <v-div
-                  v-for="item in categories"
-                  :key="item.title"
-                  @click="defineCategory(item.title)"
-          >
-            <v-card color="primary" height="450" width="150" class="mt-5 mb-5 mr-10 ml-10">
-              <v-icon color="white">{{ item.icon }}</v-icon>
+    <v-row>
+      <v-col md="2" class="mr-n12 mt-n2">
+        <v-navigation-drawer absolute permanent dense color="primary">
+          <v-row class="white--text mt-5 ml-4 headline">
+            <v-icon color="white" class="mr-12">fas fa-align-justify</v-icon>
+            {{ 'Categories' }}
+          </v-row>
+          <v-divider class="mt-5 white"></v-divider>
+          <v-list>
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Search Product"
+              class="mx-2 mb-n5"
+              data-cy="search"
+              color="white"
+            />
+            <v-list-item
+              v-for="item in categories"
+              :key="item.title"
+              @click="defineCategory(item.title)"
+            >
+              <v-list-item-icon>
+                <v-icon color="white">{{ item.icon }}</v-icon>
+              </v-list-item-icon>
 
-            <v-card-title class="white--text">
-              {{ item.title }}
-            </v-card-title>
-            </v-card>
-          </v-div>
-      </v-row>
-      <v-divider width="95%"></v-divider>
-      <v-footer>
-        <v-row class="grey--text text-md-center">
-          <p class="text-md-center">
-          <v-icon color="grey" class="mr-12">fas fa-coins</v-icon>
-          {{ $store.getters.getUser.score + ' Achandos' }}
-          </p>
-        </v-row></v-footer
-      >
-    </v-div>
-    <v-div v-else>
-      <v-row>
-        <v-col md="3">
-          <v-navigation-drawer absolute permanent dense color="primary">
-            <v-row class="white--text mt-5 ml-4 headline">
-              <v-icon color="white" class="mr-12">fas fa-align-justify</v-icon>
-              {{ 'Categories' }}
+              <v-list-item-content class="white--text">
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <template v-slot:append>
+            <v-row class="white--text pa-5 ml-0">
+              <v-icon color="white" class="mr-12">fas fa-coins</v-icon>
+              {{ $store.getters.getUser.score + ' Achandos' }}
             </v-row>
-            <v-divider class="mt-5 white"></v-divider>
-            <v-list>
-              <v-text-field
-                v-model="search"
-                append-icon="search"
-                label="Search Product"
-                class="mx-2 mb-n5"
-                data-cy="search"
-                color="white"
-              />
-              <v-list-item
-                v-for="item in categories"
-                :key="item.title"
-                @click="defineCategory(item.title)"
-              >
-                <v-list-item-icon>
-                  <v-icon color="white">{{ item.icon }}</v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content class="white--text">
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-            <template v-slot:append>
-              <v-row class="white--text pa-5 ml-0">
-                <v-icon color="white" class="mr-12">fas fa-coins</v-icon>
-                {{ $store.getters.getUser.score + ' Achandos' }}
+          </template>
+        </v-navigation-drawer>
+      </v-col>
+      <v-col md="10" class="ml-6">
+        <v-content>
+          <v-container fluid>
+            <div v-if="category === 'All' || category === 'None'">
+              <v-row>
+                <v-col
+                  cols="3"
+                  md="4"
+                  v-for="item in items"
+                  :custom-filter="customFilter"
+                  :key="item.name"
+                >
+                  <v-card outlined tile height="237px" width="600px">
+                    <v-icon x-large class="mt-12 mb-12">{{ item.icon }}</v-icon>
+                    <v-divider class="mt-10 mb-n2"></v-divider>
+                    <v-card-actions>
+                      <v-card-title class="pa-0" style="font-size: large">{{
+                        item.name
+                      }}</v-card-title>
+                      <v-spacer />
+                      <v-card-subtitle>{{
+                        item.price + ' Achandos'
+                      }}</v-card-subtitle>
+                      <v-btn @click="applyTheme(n)" color="primary">
+                        Buy
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
               </v-row>
-            </template>
-          </v-navigation-drawer>
-        </v-col>
-        <v-col md="9">
-          <v-content>
-            <v-container fluid>
-              <div v-if="category === 'All'">
-                <v-row>
-                  <v-col
-                          cols="2"
-
-                          md="6"
-                    v-for="item in items"
-                    :custom-filter="customFilter"
-                    :key="item.name"
-                  >
-                    <v-card outlined tile height="237px" width="415px">
-                      <v-icon x-large class="mt-12 mb-12">{{
-                        item.icon
-                      }}</v-icon>
-<v-divider class="mt-10 mb-n2"></v-divider>
-                      <v-card-actions>
-                        <v-card-title class="pa-0" style="font-size: large">{{
-                          item.name
+            </div>
+            <div v-else>
+              <v-row>
+                <v-col
+                  cols="3"
+                  md="4"
+                  v-for="item in categoryItems"
+                  :custom-filter="customFilter"
+                  :key="item.name"
+                >
+                  <v-card outlined tile height="237px" width="600px">
+                    <v-icon x-large class="mt-12 mb-12">{{ item.icon }}</v-icon>
+                    <v-divider class="mt-10 mb-n2"></v-divider>
+                    <v-card-actions>
+                      <v-card-title class="pa-0" style="font-size: large">{{
+                        item.name
                         }}</v-card-title>
-                        <v-spacer/>
-                        <v-card-subtitle>{{
-                          item.price + ' Achandos'
+                      <v-spacer />
+                      <v-card-subtitle>{{
+                        item.price + ' Achandos'
                         }}</v-card-subtitle>
-                        <v-btn @click="applyTheme(n)" color="primary">
-                          Buy
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </div>
-              <div v-else>
-                <v-row>
-                  <v-col
-                    cols="2"
-                    md="6"
-                    v-for="item in categoryItems"
-                    :custom-filter="customFilter"
-                    :key="item.name"
-                  >
-                    <v-card outlined tile height="237px" width="415px">
-                      <v-icon x-large class="mt-12 mb-12">{{
-                        item.icon
-                      }}</v-icon>
-                      <v-card-actions class="mt-10">
-                        <v-card-title class="pa-0" style="font-size: large">{{
-                          item.name
-                        }}</v-card-title>
-                        <v-spacer />
-                        <v-card-subtitle>{{
-                          item.price + ' Achandos'
-                        }}</v-card-subtitle>
-                        <v-btn @click="applyTheme(n)" color="primary">
-                          Buy
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </div>
-            </v-container>
-          </v-content>
-        </v-col>
-      </v-row>
-    </v-div>
+                      <v-btn @click="applyTheme(n)" color="primary">
+                        Buy
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </div>
+          </v-container>
+        </v-content>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -153,6 +117,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import Suggestion from '@/models/management/Suggestion';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import showitemdialog from '@/views/showitemdialog.vue';
 
 @Component
 export default class ShopHomeView extends Vue {
