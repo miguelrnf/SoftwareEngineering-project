@@ -103,9 +103,11 @@ public class TournamentService {
 
         User user = findUsername(tournamentDto.getOwner().getUsername());
 
-        if(user.getRole() == User.Role.ADMIN){
+        if(user.getRole() == User.Role.ADMIN)
             throw new TutorException(TOURNAMENT_PERMISSION);
-        }
+
+        if(user.getRole() == User.Role.STUDENT && (tournamentDto.getType().equals("EVALUATION") || tournamentDto.getType().equals("ADVANCED")))
+            throw new TutorException(TOURNAMENT_PERMISSION);
 
         Assessment assessment = checkAssessment(tournamentDto.getAssessmentDto(), courseExecution);
 
@@ -358,15 +360,17 @@ public class TournamentService {
         if(this.checkStatus(tournament) != Tournament.TournamentStatus.CREATED)
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
 
-        if(tournament.getEnrolledStudents().contains(user) || user.getTournaments().contains(tournament)){
+        if(tournament.getEnrolledStudents().contains(user) || user.getTournaments().contains(tournament))
             throw new TutorException(USER_ALREADY_ENROLLED, user.getUsername());
-        }
 
-        if(!user.getCourseExecutions().contains(tournament.getCourseExecution())){
+        if(!user.getCourseExecutions().contains(tournament.getCourseExecution()))
             throw new TutorException(TOURNAMENT_NOT_AVAILABLE);
-        }
 
+        if(tournament.getCost() > user.getScore())
+            throw new TutorException(TOURNAMENT_NOT_ENOUGH_POINTS);
 
+        //enroll and pay the cost
+        user.changeScore(-tournament.getCost());
         tournament.enrollStudent(user);
         user.addTournament(tournament);
 
@@ -387,6 +391,8 @@ public class TournamentService {
         if(!tournament.getEnrolledStudents().contains(user))
             throw new TutorException(UNABLE_TO_UNROLL, user.getUsername());
 
+        //refund for tournament
+        user.changeScore(tournament.getCost());
         tournament.getEnrolledStudents().remove(user);
         user.getTournaments().remove(tournament);
 
