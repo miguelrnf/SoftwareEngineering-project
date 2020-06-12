@@ -11,7 +11,7 @@ export default class StudentStats {
   approveSuggestions!: number;
   rejectedSuggestions!: number;
   pendingSuggestions!: number;
-  tournamentDone!:number;
+  tournamentDone!: number;
   postSubmitted!:number;
 
 
