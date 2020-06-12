@@ -22,6 +22,8 @@ import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
 import { Student } from '@/models/management/Student';
+import { Theme } from '@/models/management/Theme';
+import { ShopItem } from '@/models/management/ShopItem';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -1046,6 +1048,17 @@ export default class RemoteServices {
       )
       .then(response => {
         return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createShopTheme(theme: ShopItem) {
+    return httpClient
+      .post('shop/add', theme)
+      .then(response => {
+        return new ShopItem(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

@@ -38,6 +38,7 @@ import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 import StudyGeneralView from '@/views/StudyGeneralView.vue';
 import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 import ThemeInventory from '@/views/ThemeInventory.vue';
+import CreateShopItem from '@/views/admin/CreateShopItem.vue';
 
 Vue.use(Router);
 
@@ -354,6 +355,15 @@ let router = new Router({
       meta: {
         title: process.env.VUE_APP_NAME + ' - Themes',
         requiredAuth: 'Student'
+      }
+    },
+    {
+      path: '/shopConfig',
+      name: 'shop-config',
+      component: CreateShopItem,
+      meta: {
+        title: process.env.VUE_APP_NAME + ' - Create Item',
+        requiredAuth: 'Admin'
       }
     },
     {

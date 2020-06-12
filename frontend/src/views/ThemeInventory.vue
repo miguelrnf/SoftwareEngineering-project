@@ -23,7 +23,7 @@
       <v-row no-gutters>
         <v-col cols="4" v-for="n in filteredThemes" :key="n.title">
           <v-card outlined :color="isCurrent(n)  ? 'primary' : ''" tile class="ma-3">
-            <v-img
+            <v-card
               class="ma-4"
               style="cursor: pointer"
               contain
@@ -78,8 +78,7 @@ export default class ThemeInventory extends Vue {
         warning: '#FB8C00',
         error: '#FF5252',
         success: '#4CAF50'
-      },
-      image: 'https://imgur.com/H2VUg7T.png'
+      }
     },
     {
       title: 'Default Dark',
@@ -92,8 +91,7 @@ export default class ThemeInventory extends Vue {
         warning: '#102a43',
         error: '#ec625f',
         success: '#cee397'
-      },
-      image: 'https://imgur.com/ypuL0jJ.png'
+      }
     },
     {
       title: 'Test Light',
@@ -106,8 +104,7 @@ export default class ThemeInventory extends Vue {
         warning: '#FB8C00',
         error: '#FF5252',
         success: '#4CAF50'
-      },
-      image: 'https://imgur.com/H2VUg7T.png'
+      }
     },
     {
       title: 'Test Dark',
@@ -120,8 +117,7 @@ export default class ThemeInventory extends Vue {
         warning: '#102a43',
         error: '#ec625f',
         success: '#cee397'
-      },
-      image: 'https://imgur.com/ypuL0jJ.png'
+      }
     }
   ];
 

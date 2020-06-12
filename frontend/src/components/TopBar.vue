@@ -283,6 +283,15 @@
           <v-icon>fas fa-star</v-icon>
         </v-btn>
 
+        <v-btn to="/themes" v-if="isStudent && currentCourse" text dark>
+          Themes
+          <v-icon>fas fa-cogs</v-icon>
+        </v-btn>
+        <v-btn to="/shopConfig" v-if="isAdmin" text dark>
+          Shop
+          <v-icon>fas fa-cogs</v-icon>
+        </v-btn>
+
         <v-btn
           v-if="isLoggedIn && moreThanOneCourse"
           to="/courses"
@@ -308,10 +317,7 @@
         <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
-        <v-btn to="/themes" v-if="isLoggedIn" text dark>
-          Themes
-          <v-icon>fas fa-cogs</v-icon>
-        </v-btn>
+
 
         <v-btn href="https://www.worldometers.info/coronavirus/" text dark>
           #STAYHOME
