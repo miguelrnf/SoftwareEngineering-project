@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <h2>Create Tournament</h2>
-    <v-container class="create-buttons">
+    <v-card>
+      <v-container>
+        <v-card-title class="justify-center">Create Tournament</v-card-title>
+      </v-container>
       <v-card-text>
         <v-text-field
           v-model="tournament.title"
@@ -111,6 +113,8 @@
               v-model="tournament.availableDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
+              :dark="isDark"
+              :color="$vuetify.theme.themes.light.primary"
             >
             </VueCtkDateTimePicker>
           </v-col>
@@ -122,6 +126,8 @@
               v-model="tournament.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
+              :dark="isDark"
+              :color="$vuetify.theme.themes.light.primary"
             >
             </VueCtkDateTimePicker>
           </v-col>
@@ -137,7 +143,7 @@
           Create tournament
         </v-btn>
       </v-container>
-    </v-container>
+    </v-card>
   </div>
 </template>
 
@@ -155,6 +161,7 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 export default class CreateTournamentView extends Vue {
   tournament: Tournament = new Tournament();
   availableAssessments: Assessment[] = [];
+  ola: Boolean = true;
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -179,19 +186,14 @@ export default class CreateTournamentView extends Vue {
   calculatePrize() {
     this.tournament.prize =
       (this.tournament.cost * 2) / this.tournament.numberOfQuestions;
+      
+  get isDark(): boolean {
+    return this.$vuetify.theme.dark;
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.create-buttons {
-  width: 80% !important;
-  background-color: white;
-  border-width: 10px;
-  border-style: solid;
-  border-color: #818181;
-}
-
 .message {
   font-weight: bold;
 }

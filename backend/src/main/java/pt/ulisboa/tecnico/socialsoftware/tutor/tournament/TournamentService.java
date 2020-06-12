@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -18,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -135,6 +133,40 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto editTournament(String username, TournamentDto tournamentDto) {
+        Tournament tournament = tournamentRepository.findById(tournamentDto.getId()).orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentDto.getId()));
+        User u = findUsername(username);
+        if(tournament.getOwner() != u || tournament.getStatus() != Tournament.TournamentStatus.CREATED || !tournament.getEnrolledStudents().isEmpty() ){
+            throw new TutorException(TOURNAMENT_UNABLE_EDIT);
+
+        }
+        if(tournamentDto.getTitle() == null || tournamentDto.getTitle().isBlank())
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT,  "Title");
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(tournament.getCourseExecution().getCourse().getId());
+
+        availableQuestions = filterByAssessment(availableQuestions, tournament);
+
+        if (availableQuestions.size() < tournament.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
+        }
+
+        tournament.setAssessment(assessmentRepository.findById(tournamentDto.getAssessmentDto().getId()).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND)));
+        tournament.setTitle(tournamentDto.getTitle());
+        tournament.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+        tournament.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getAvailableDate()));
+        tournament.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getConclusionDate()));
+        tournament.setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
+
+        return new TournamentDto(tournament);
+    }
+
+
 
     @Retryable(
             value = { SQLException.class },
@@ -489,6 +521,7 @@ public class TournamentService {
                 });
 
         tournament.getQuiz().setType("TOURNAMENT");
+        tournament.getQuiz().setOneWay(true);
         tournament.getQuiz().setAvailableDate(tournament.getAvailableDate());
         tournament.getQuiz().setConclusionDate(tournament.getConclusionDate());
         tournament.getQuiz().setResultsDate(tournament.getConclusionDate());
@@ -597,7 +630,5 @@ public class TournamentService {
 
         return q.get(0).getHint();
     }
-
-
 
 }

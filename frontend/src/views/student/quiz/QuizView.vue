@@ -42,9 +42,36 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn class="mx-9 my-3" outlined large fab color="primary" v-on="on">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="on"
+            @click.stop="getHint"
+            :disabled="usedHint || disableHint"
+          >
             <v-icon class="pa-0">far fa-lightbulb</v-icon>
           </v-btn>
+
+          <v-dialog v-model="dialog" max-width="290">
+            <v-card>
+              <v-card-title class="headline">Hint</v-card-title>
+
+              <v-card-text>
+                {{ hint }}
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn color="green darken-1" text @click="dialog = false">
+                  Close
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </template>
         <span>Hint</span>
       </v-tooltip>
@@ -215,8 +242,12 @@ export default class QuizView extends Vue {
   resultsTimer: string = '';
   fiftyFifty: boolean = false;
   rightAns: boolean = false;
+  usedHint: boolean = false;
   show: boolean = true;
   showPowerUps: boolean = false;
+  hint: string = '';
+  disableHint: boolean = false;
+  dialog: boolean = false;
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -225,6 +256,7 @@ export default class QuizView extends Vue {
       try {
         await RemoteServices.startQuiz(this.statementQuiz?.id);
         await this.getQuizType();
+        if (this.showPowerUps) await this.disHint();
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });
@@ -235,7 +267,9 @@ export default class QuizView extends Vue {
   async getQuizType() {
     if (this.statementQuiz != null) {
       try {
-        this.showPowerUps = await RemoteServices.getQuizType(this.statementQuiz);
+        this.showPowerUps = await RemoteServices.getQuizType(
+          this.statementQuiz
+        );
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });
@@ -281,10 +315,51 @@ export default class QuizView extends Vue {
     }
   }
 
+  async disHint() {
+    let hint;
+    let question;
+    if (this.usedHint) {
+      return;
+    }
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        hint = await RemoteServices.getHint(question, this.statementQuiz.id);
+        console.log(hint);
+      }
+      this.disableHint = hint === '';
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async getHint() {
+    let question;
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        this.hint = await RemoteServices.getHint(
+          question,
+          this.statementQuiz.id
+        );
+
+        this.dialog = true;
+      }
+      this.usedHint = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
   increaseOrder(): void {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.questionOrder += 1;
+      if (this.showPowerUps) this.disHint();
     }
     this.nextConfirmationDialog = false;
   }
@@ -293,6 +368,7 @@ export default class QuizView extends Vue {
     if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
       this.questionOrder -= 1;
+      if (this.showPowerUps) this.disHint();
     }
   }
 

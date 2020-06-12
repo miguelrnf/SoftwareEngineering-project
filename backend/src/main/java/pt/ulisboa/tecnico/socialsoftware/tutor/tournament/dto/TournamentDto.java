@@ -201,6 +201,7 @@ public class TournamentDto implements Serializable {
                 ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
                 ", statementQuiz=" + quiz +
+                ", type=" + type +
                 '}';
     }
 

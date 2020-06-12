@@ -132,6 +132,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setAvailableDate(DATENOW)
         tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
+        tournamentDto.setType("STANDARD")
 
         and: "a user with the role teacher"
         TEACHER = new User()

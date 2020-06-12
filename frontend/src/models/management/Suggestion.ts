@@ -5,6 +5,7 @@ import Option from '@/models/management/Option';
 export default class Suggestion {
   id: number | null = null;
   title: string = '';
+  hint: string = '';
   status: string = 'TOAPPROVE';
   creationDate!: string | null;
   teacherExplanation: string = '';
@@ -19,6 +20,7 @@ export default class Suggestion {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.title = jsonObj.title;
+      this.hint = jsonObj.hint;
       this.status = jsonObj.status;
       this.creationDate = jsonObj.creationDate;
       this.teacherExplanation = jsonObj.teacherExplanation;

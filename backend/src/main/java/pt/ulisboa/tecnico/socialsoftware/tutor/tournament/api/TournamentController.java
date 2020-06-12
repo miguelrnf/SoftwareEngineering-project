@@ -6,7 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
@@ -39,6 +38,17 @@ public class TournamentController {
         }
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
+    }
+
+    @PutMapping("/executions/{executionId}/tournaments/edit")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public TournamentDto editTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        return tournamentservice.editTournament(user.getUsername(), tournamentDto);
     }
 
     @PutMapping("/tournament/{tournamentId}/opened/enroll")
@@ -131,7 +141,7 @@ public class TournamentController {
         return tournamentservice.rigthAnswer(statementQuestionDto, quizId);
     }
 
-    @GetMapping("/tournaments/getHint/{quizId}")
+    @PutMapping("/tournaments/getHint/{quizId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public String getHint(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
 

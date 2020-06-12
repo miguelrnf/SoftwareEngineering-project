@@ -103,7 +103,7 @@ import Image from '@/models/management/Image';
 export default class TournamentViewDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
-  @Prop({ type: User, required: true }) readonly student!: User;
+  @Prop({ type: User, required: false }) readonly student!: User;
 
   async showResults(tournament: Tournament) {
     if (this.student?.username != null) {

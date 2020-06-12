@@ -504,6 +504,20 @@ export default class RemoteServices {
       });
   }
 
+  static async editTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .put(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/edit`,
+        tournament
+      )
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getSolvedQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
       .get(
@@ -945,6 +959,23 @@ export default class RemoteServices {
       )
       .then(response => {
         return new StatementQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getHint(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<string> {
+    return httpClient
+      .put(
+        `tournaments/getHint/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return response.data as string;
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
