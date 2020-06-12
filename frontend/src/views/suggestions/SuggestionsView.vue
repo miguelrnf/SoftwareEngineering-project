@@ -8,7 +8,7 @@
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 69, 100, 420] }"
     >
       <template v-slot:top>
         <v-card-title>
@@ -72,17 +72,58 @@
         <v-tooltip bottom v-if="isOwner(item)">
           <template v-slot:activator="{ on }">
             <v-icon
+              v-if="item.status !== 'APPROVED'"
               small
               class="mr-2"
               v-on="on"
               @click="editSuggestion(item)"
               data-cy="editSuggButton"
-              >edit</v-icon
+              >mdi-pencil</v-icon
             >
           </template>
           <span>Edit Suggestion</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isOwner(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              v-if="item.status === 'APPROVED'"
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editSuggestion(item)"
+              data-cy="editSuggButton"
+              >mdi-pencil-off</v-icon
+            >
+          </template>
+          <span>You Can't Edit an Approved Suggestion</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isOwner(item) && !item.isPrivate">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="togglePrivacy(item)"
+              data-cy="TogglePrivacytoPrivate"
+              >mdi-lock-outline</v-icon
+            >
+          </template>
+          <span>Change to Private</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isOwner(item) && item.isPrivate">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="togglePrivacy(item)"
+              data-cy="TogglePrivacyToPublic"
+              >mdi-lock-open-outline</v-icon
+            >
+          </template>
+          <span>Change to Public</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="!isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
               small
@@ -97,6 +138,20 @@
         <v-tooltip bottom v-if="isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
+              v-if="item.status === 'APPROVED'"
+              small
+              class="mr-2"
+              v-on="on"
+              @click="duplicateSuggestion(item)"
+              >cached</v-icon
+            >
+          </template>
+          <span>Duplicate Suggestion</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isTeacher()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              v-if="item.status !== 'APPROVED'"
               small
               class="mr-2"
               v-on="on"
@@ -110,6 +165,7 @@
         <v-tooltip bottom v-if="isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
+              v-if="item.status === 'TOAPPROVE'"
               small
               class="mr-2"
               v-on="on"
@@ -123,6 +179,21 @@
         <v-tooltip bottom v-if="isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
+              v-if="item.status === 'REJECTED'"
+              small
+              class="mr-2"
+              v-on="on"
+              @click="RejectSuggestion(item)"
+              data-cy="changejustification"
+              >mdi-pencil</v-icon
+            >
+          </template>
+          <span>Change Justification</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isTeacher()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              v-if="item.status === 'APPROVED'"
               small
               class="mr-2"
               v-on="on"
@@ -174,6 +245,7 @@
       v-if="currentSuggestion && questionDialog"
       :dialog="questionDialog"
       :suggestion="currentSuggestion"
+      v-on:reject-suggestion="RejectSuggestion"
       v-on:close-show-suggestion-dialog="onCloseShowSuggestionDialog"
     />
     <add-question-dialog
@@ -228,7 +300,7 @@ export default class SuggestionsView extends Vue {
   rejectSuggDialogue: boolean = false;
 
   headers: object = [
-    { text: 'Suggestion', value: 'studentQuestion', align: 'left' },
+    { text: 'Suggestion', value: 'title', align: 'left' },
     {
       text: 'Topics',
       value: '_topicsList',
@@ -334,11 +406,6 @@ export default class SuggestionsView extends Vue {
     this.editSuggestionDialog = true;
   }
 
-  editSuggestion(sugg: Suggestion) {
-    this.currentSuggestion = sugg;
-    this.editSuggestionDialog = true;
-  }
-
   duplicateSuggestion(sugg: Suggestion) {
     this.currentSuggestion = new Suggestion(sugg);
     this.currentSuggestion.id = null;
@@ -389,13 +456,20 @@ export default class SuggestionsView extends Vue {
     this.addQuestionDialog = true;
   }
 
-  async ApproveSuggestion(sugg: Suggestion) {
-    if (sugg && sugg.status == 'REJECTED') {
+  async editSuggestion(sugg: Suggestion) {
+    if (sugg && sugg.status == 'APPROVED') {
       await this.$store.dispatch(
         'error',
-        'You can not approve a rejected suggestion before the students edits it'
+        'You can not edit an approved suggestion'
       );
-    } else if (sugg && sugg.status == 'APPROVED') {
+    } else {
+      this.currentSuggestion = sugg;
+      this.editSuggestionDialog = true;
+    }
+  }
+
+  async ApproveSuggestion(sugg: Suggestion) {
+    if (sugg && sugg.status == 'APPROVED') {
       await this.$store.dispatch(
         'error',
         'You can not approve a suggestion twice'
@@ -411,12 +485,7 @@ export default class SuggestionsView extends Vue {
       this.currentSuggestion = sugg;
     }
 
-    if (sugg && sugg.status == 'REJECTED') {
-      await this.$store.dispatch(
-        'error',
-        'You can not reject a question twice'
-      );
-    } else if (sugg && sugg.status == 'APPROVED') {
+    if (sugg && sugg.status == 'APPROVED') {
       await this.$store.dispatch(
         'error',
         'You can not reject an approved suggestion'
@@ -424,6 +493,11 @@ export default class SuggestionsView extends Vue {
     } else {
       this.rejectSuggDialogue = true;
     }
+  }
+
+  async togglePrivacy(sugg: Suggestion) {
+    sugg.isPrivate = !sugg.isPrivate;
+    await RemoteServices.updateSuggestion(sugg);
   }
 
   onCloseShowRejectDialog() {

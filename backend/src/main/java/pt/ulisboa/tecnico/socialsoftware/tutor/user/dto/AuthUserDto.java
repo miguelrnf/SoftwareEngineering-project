@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -21,6 +22,8 @@ public class AuthUserDto implements Serializable {
     private Integer numberofsuggestionsapproved;
     private Map<String, List<CourseDto>> courses;
     private boolean isDashboardPrivate = false;
+    private List<PostDto> postsUpvoted;
+    private List<PostDto> postsDownvoted;
 
     public AuthUserDto(User user) {
         this.name = user.getName();
@@ -43,6 +46,10 @@ public class AuthUserDto implements Serializable {
             user.setCurrentTheme("Default Light");
         }
         this.currentTheme = user.getCurrentTheme();
+        this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
+                .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
+        this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
+                .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -141,5 +148,21 @@ public class AuthUserDto implements Serializable {
 
     public void setNumberofsuggestionsapproved(Integer numberofsuggestionsapproved) {
         this.numberofsuggestionsapproved = numberofsuggestionsapproved;
+    }
+
+    public List<PostDto> getPostsUpvoted() {
+        return postsUpvoted;
+    }
+
+    public void setPostsUpvoted(List<PostDto> postsUpvoted) {
+        this.postsUpvoted = postsUpvoted;
+    }
+
+    public List<PostDto> getPostsDownvoted() {
+        return postsDownvoted;
+    }
+
+    public void setPostsDownvoted(List<PostDto> postsDownvoted) {
+        this.postsDownvoted = postsDownvoted;
     }
 }

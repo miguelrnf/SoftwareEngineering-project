@@ -109,7 +109,6 @@ public class SuggestionService {
         Suggestion suggestion = checkIfSuggestionExists(suggestionDto.getId());
 
         if(!suggestion.getStatus().equals(Suggestion.Status.TOAPPROVE)) {
-            if (suggestion.getStatus().equals(Suggestion.Status.REJECTED)) throw new TutorException(SUGGESTION_ALREADY_REJ);
             if (suggestion.getStatus().equals(Suggestion.Status.APPROVED)) throw new TutorException(SUGGESTION_ALREADY_APP);
         }
 

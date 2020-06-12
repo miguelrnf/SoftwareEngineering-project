@@ -1,10 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserDto implements Serializable {
     private Integer id;
@@ -17,6 +24,8 @@ public class UserDto implements Serializable {
     private Integer numberofsuggestions;
     private Integer numberofsuggestionsapproved;
     private String currentTheme;
+    private List<PostDto> postsUpvoted;
+    private List<PostDto> postsDownvoted;
 
 
 
@@ -43,6 +52,10 @@ public class UserDto implements Serializable {
             user.setCurrentTheme("Default Light");
         }
         this.currentTheme = user.getCurrentTheme();
+        this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
+                .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
+        this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
+                .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
     }
 
     public UserDto() {
@@ -112,6 +125,22 @@ public class UserDto implements Serializable {
         isDashboardPrivate = dashboardPrivate;
     }
 
+    public List<PostDto> getPostsUpvoted() {
+        return postsUpvoted;
+    }
+
+    public void setPostsUpvoted(List<PostDto> postsUpvoted) {
+        this.postsUpvoted = postsUpvoted;
+    }
+
+    public List<PostDto> getPostsDownvoted() {
+        return postsDownvoted;
+    }
+
+    public void setPostsDownvoted(List<PostDto> postsDownvoted) {
+        this.postsDownvoted = postsDownvoted;
+    }
+
     @Override
     public String toString() {
         return "UserDto{" +
@@ -119,7 +148,13 @@ public class UserDto implements Serializable {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", role=" + role +
-                ", creationDate=" + creationDate +
+                ", score=" + score +
+                ", creationDate='" + creationDate + '\'' +
+                ", isDashboardPrivate=" + isDashboardPrivate +
+                ", numberofsuggestions=" + numberofsuggestions +
+                ", numberofsuggestionsapproved=" + numberofsuggestionsapproved +
+                ", postsUpvoted=" + postsUpvoted.size() +
+                ", postsDownvoted=" + postsDownvoted.size() +
                 '}';
     }
 

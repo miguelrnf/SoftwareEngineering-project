@@ -16,6 +16,8 @@ public class PostDto implements Serializable {
     private Boolean discussStatus;
     private Boolean postPrivacy;
     private Boolean answerPrivacy;
+    private Integer upvotes;
+    private Integer downvotes;
 
     public PostDto() {
     }
@@ -31,6 +33,8 @@ public class PostDto implements Serializable {
         this.discussStatus = p.getDiscussStatus();
         this.postPrivacy = p.getPostPrivacy();
         this.answerPrivacy = p.getAnswerPrivacy();
+        this.upvotes = p.getUsersWhoUpvoted().size();
+        this.downvotes = p.getUsersWhoDownvoted().size();
     }
 
     //Honestly? Im just too lazy to change the tests
@@ -115,6 +119,22 @@ public class PostDto implements Serializable {
 
     public void setAnswerPrivacy(Boolean answerPrivacy) {
         this.answerPrivacy = answerPrivacy;
+    }
+
+    public Integer getUpvotes() {
+        return upvotes;
+    }
+
+    public void setUpvotes(Integer upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    public Integer getDownvotes() {
+        return downvotes;
+    }
+
+    public void setDownvotes(Integer downvotes) {
+        this.downvotes = downvotes;
     }
 
     @Override

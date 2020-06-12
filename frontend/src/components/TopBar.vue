@@ -242,14 +242,6 @@
                 <v-list-item-title>Posts</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/posts/submit">
-              <v-list-item-action>
-                <v-icon>fas fa-plus</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Submit Post</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
             <v-list-item to="/student/suggestions">
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
@@ -501,12 +493,6 @@
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
 
-          <v-list-item to="/posts/submit">
-            <v-list-item-action>
-              <v-icon>fas fa-plus</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Submit Post</v-list-item-content>
-          </v-list-item>
         </v-list-group>
 
         <v-list-group
