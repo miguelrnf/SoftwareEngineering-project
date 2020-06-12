@@ -202,7 +202,7 @@ export default class CreateShopItem extends Vue {
     }
   }
 
-  swatchClick(index: number, change: String) {
+  swatchClick(index: number, change: string) {
     this.selected = index;
     this.color = change;
   }

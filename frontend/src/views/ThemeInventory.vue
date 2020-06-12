@@ -21,21 +21,54 @@
       >
       </v-text-field>
       <v-row no-gutters>
-        <v-col cols="4" v-for="n in filteredThemes" :key="n.title">
-          <v-card outlined :color="isCurrent(n)  ? 'primary' : ''" tile class="ma-3">
-            <v-card
-              class="ma-4"
-              style="cursor: pointer"
-              contain
-              :src="n.image"
-              @click="openDialog(n.image)"
-            />
+        <v-col cols="4" v-for="n in filteredThemes" :key="n.name">
+          <v-card
+            outlined
+            :color="isCurrent(n) ? 'primary' : ''"
+            tile
+            class="ma-3"
+          >
+            <v-card :light="!n.dark" :dark="n.dark" tile class="ma-1 pa-1">
+              <v-chip :light="!n.dark" :color="n.primary" small :dark="n.dark"
+                >Primary</v-chip
+              >
+              <v-chip
+                :light="!n.dark"
+                :color="n.secondary"
+                small
+                :dark="n.dark"
+              >
+                Secondary
+              </v-chip>
+              <v-chip :light="!n.dark" :color="n.accent" small :dark="n.dark"
+                >Accent</v-chip
+              >
+              <v-chip :light="!n.dark" :color="n.info" small :dark="n.dark"
+                >Info</v-chip
+              >
+              <v-chip :light="!n.dark" :color="n.warning" small :dark="n.dark"
+                >Warning</v-chip
+              >
+              <v-chip :light="!n.dark" :color="n.error" small :dark="n.dark"
+                >Error</v-chip
+              >
+              <v-chip :light="!n.dark" :color="n.success" small :dark="n.dark"
+                >Success</v-chip
+              >
+              <v-icon style="cursor: pointer" @click="openDialog(n)">
+                search
+              </v-icon>
+            </v-card>
+
             <v-card-actions>
               <v-card-title class="pa-0" style="font-size: x-large">{{
-                n.title
+                n.name
               }}</v-card-title>
               <v-spacer />
-              <v-btn @click="applyTheme(n)" :color="isCurrent(n)  ? 'accent' : 'primary'">
+              <v-btn
+                @click="applyTheme(n)"
+                :color="isCurrent(n) ? 'accent' : 'primary'"
+              >
                 {{ isCurrent(n) ? 'Applied' : 'Apply' }}
               </v-btn>
             </v-card-actions>
@@ -44,9 +77,9 @@
       </v-row>
     </v-card>
     <theme-preview
-      :url="currentTheme"
+      :theme="currentTheme"
       :dialog="themeDialog"
-      v-on:close-show-theme-dialog="closeDialog"
+      v-on:close-show-theme-dialog="themeDialog = false"
     />
   </div>
 </template>
@@ -55,6 +88,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import ThemePreviewDialog from '@/views/ThemePreviewDialog';
 import RemoteServices from '@/services/RemoteServices';
+import { Theme } from '@/models/management/Theme';
 
 @Component({
   components: {
@@ -63,101 +97,87 @@ import RemoteServices from '@/services/RemoteServices';
 })
 export default class ThemeInventory extends Vue {
   themeDialog: boolean = false;
-  currentTheme: String = '';
+  currentTheme: Theme | null = null;
   search: string = '';
-  filteredThemes: any[] = [];
-  testThemes = [
-    {
-      title: 'Default Light',
-      dark: false,
-      colors: {
-        primary: '#1976D2',
-        accent: '#828282',
-        secondary: '#d8d8d8',
-        info: '#2196F3',
-        warning: '#FB8C00',
-        error: '#FF5252',
-        success: '#4CAF50'
-      }
-    },
-    {
-      title: 'Default Dark',
-      dark: true,
-      colors: {
-        primary: '#25302b',
-        accent: '#829ab1',
-        secondary: '#393e46',
-        info: '#4ecca3',
-        warning: '#102a43',
-        error: '#ec625f',
-        success: '#cee397'
-      }
-    },
-    {
-      title: 'Test Light',
-      dark: false,
-      colors: {
-        primary: '#1976D2',
-        accent: '#828282',
-        secondary: '#d8d8d8',
-        info: '#2196F3',
-        warning: '#FB8C00',
-        error: '#FF5252',
-        success: '#4CAF50'
-      }
-    },
-    {
-      title: 'Test Dark',
-      dark: true,
-      colors: {
-        primary: '#25302b',
-        accent: '#829ab1',
-        secondary: '#393e46',
-        info: '#4ecca3',
-        warning: '#102a43',
-        error: '#ec625f',
-        success: '#cee397'
-      }
-    }
-  ];
+  filteredThemes: Theme[] = [];
+  testThemes: Theme[] = [];
 
   async created() {
-    console.log(this.$store.getters.getUser);
     this.filteredThemes = this.testThemes;
+
+    this.testThemes[0] = new Theme();
+    this.testThemes[1] = new Theme();
+    this.testThemes[2] = new Theme();
+    this.testThemes[3] = new Theme();
+
+    this.testThemes[0].name = 'Default Light';
+    this.testThemes[0].dark = false;
+    this.testThemes[0].primary = '#1976D2';
+    this.testThemes[0].accent = '#828282';
+    this.testThemes[0].secondary = '#d8d8d8';
+    this.testThemes[0].info = '#2196F3';
+    this.testThemes[0].warning = '#FB8C00';
+    this.testThemes[0].error = '#FF5252';
+    this.testThemes[0].success = '#4CAF50';
+
+    this.testThemes[1].name = 'Default Dark';
+    this.testThemes[1].dark = true;
+    this.testThemes[1].primary = '#25302b';
+    this.testThemes[1].accent = '#829ab1';
+    this.testThemes[1].secondary = '#393e46';
+    this.testThemes[1].info = '#4ecca3';
+    this.testThemes[1].warning = '#102a43';
+    this.testThemes[1].error = '#ec625f';
+    this.testThemes[1].success = '#cee397';
+
+    this.testThemes[2].name = 'Test Light';
+    this.testThemes[2].dark = false;
+    this.testThemes[2].primary = '#1976D2';
+    this.testThemes[2].accent = '#828282';
+    this.testThemes[2].secondary = '#d8d8d8';
+    this.testThemes[2].info = '#2196F3';
+    this.testThemes[2].warning = '#FB8C00';
+    this.testThemes[2].error = '#FF5252';
+    this.testThemes[2].success = '#4CAF50';
+
+    this.testThemes[3].name = 'Test Dark';
+    this.testThemes[3].dark = true;
+    this.testThemes[3].primary = '#25302b';
+    this.testThemes[3].accent = '#829ab1';
+    this.testThemes[3].secondary = '#393e46';
+    this.testThemes[3].info = '#4ecca3';
+    this.testThemes[3].warning = '#102a43';
+    this.testThemes[3].error = '#ec625f';
+    this.testThemes[3].success = '#cee397';
+    this.currentTheme = this.testThemes[0];
   }
 
   filterThemes() {
-    console.log(this.search);
     this.filteredThemes = this.testThemes.filter(t =>
-      t.title.includes(this.search)
+      t.name.includes(this.search)
     );
   }
 
-  openDialog(image: string) {
+  openDialog(theme: Theme) {
     this.themeDialog = true;
-    this.currentTheme = image;
+    this.currentTheme = theme;
   }
 
-  closeDialog() {
-    this.themeDialog = false;
-    this.currentTheme = '';
-  }
-
-  async applyTheme(theme: any) {
-    await RemoteServices.updateCurrentTheme(theme.title);
+  async applyTheme(theme: Theme) {
+    await RemoteServices.updateCurrentTheme(theme.name);
     await this.$store.dispatch('updateUser');
     this.$vuetify.theme.dark = theme.dark;
-    this.$vuetify.theme.currentTheme.primary = theme.colors.primary;
-    this.$vuetify.theme.currentTheme.accent = theme.colors.accent;
-    this.$vuetify.theme.currentTheme.secondary = theme.colors.secondary;
-    this.$vuetify.theme.currentTheme.info = theme.colors.info;
-    this.$vuetify.theme.currentTheme.warning = theme.colors.warning;
-    this.$vuetify.theme.currentTheme.error = theme.colors.error;
-    this.$vuetify.theme.currentTheme.success = theme.colors.success;
+    this.$vuetify.theme.currentTheme.primary = theme.primary;
+    this.$vuetify.theme.currentTheme.accent = theme.accent;
+    this.$vuetify.theme.currentTheme.secondary = theme.secondary;
+    this.$vuetify.theme.currentTheme.info = theme.info;
+    this.$vuetify.theme.currentTheme.warning = theme.warning;
+    this.$vuetify.theme.currentTheme.error = theme.error;
+    this.$vuetify.theme.currentTheme.success = theme.success;
   }
 
-  isCurrent(n: any): boolean {
-    return n.title === this.$store.getters.getUser.currentTheme;
+  isCurrent(theme: Theme): boolean {
+    return theme.name === this.$store.getters.getUser.currentTheme;
   }
 }
 </script>

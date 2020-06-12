@@ -292,7 +292,7 @@ export default class QuizView extends Vue {
   }
 
   async concludeQuiz() {
-    await this.$store.dispatch('loading');score
+    await this.$store.dispatch('loading');
     try {
       this.calculateTime();
       this.confirmed = true;
