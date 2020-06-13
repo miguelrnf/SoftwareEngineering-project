@@ -1,6 +1,6 @@
 <template>
   <v-card class="table">
-    <v-card-title style="font-size: xx-large">Own Tournaments</v-card-title>
+    <v-card-title style="font-size: xx-large">All Tournaments</v-card-title>
     <v-data-table
       :headers="headers"
       :items="tournaments"

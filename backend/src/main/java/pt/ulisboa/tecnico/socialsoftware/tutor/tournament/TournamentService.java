@@ -101,6 +101,10 @@ public class TournamentService {
         if(tournamentDto.getNumberOfQuestions() == null || tournamentDto.getNumberOfQuestions() < 1)
             throw new TutorException(NOT_ENOUGH_QUESTIONS_TOURNAMENT);
 
+        if(tournamentDto.getOwner().getRole() == User.Role.STUDENT){
+            tournamentDto.setType("STANDARD");
+        }
+
         User user = findUsername(tournamentDto.getOwner().getUsername());
 
         if(user.getRole() == User.Role.ADMIN)

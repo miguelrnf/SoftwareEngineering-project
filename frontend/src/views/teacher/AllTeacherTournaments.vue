@@ -63,7 +63,7 @@
           </template>
           <span>Cancel the tournament</span>
         </v-tooltip>
-        
+
         <v-tooltip bottom v-if="showResults(item)">
           <template v-slot:activator="{ on }">
             <v-icon large class="mr-2" v-on="on" @click="showQuizAnswers(item)"
@@ -127,8 +127,7 @@ import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog
 import RemoteServices from '@/services/RemoteServices';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
-import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDialog.vue';
-
+import CreateTournamentsViewDialog from '@/views/student/tournament/EditTournamentsViewDialog.vue';
 
 @Component({
   components: {
@@ -150,7 +149,6 @@ export default class AllTeacherTournaments2 extends Vue {
   timeToSubmission: number = 0;
 
   headers: object = [
-
     { text: 'Actions', value: 'action', align: 'left', sortable: false },
     { text: 'Title', value: 'title', align: 'center' },
     { text: 'Status', value: 'status', align: 'center' },
@@ -162,7 +160,7 @@ export default class AllTeacherTournaments2 extends Vue {
   @Watch('editDialog')
   closeError() {
     if (!this.editDialog) {
-      this.currentTournament = null;
+      this.currentTournament = new Tournament();
     }
   }
 
@@ -221,7 +219,7 @@ export default class AllTeacherTournaments2 extends Vue {
     this.tournaments = this.tournaments.filter(t => t.id !== tour.id);
     this.tournaments.unshift(tour);
     this.editDialog = false;
-    this.currentTournament = null;
+    this.currentTournament = new Tournament();
   }
 
   setTournamentStatus(newT: Tournament, t: Tournament) {

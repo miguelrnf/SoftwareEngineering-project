@@ -48,13 +48,11 @@
           <v-btn text value="40">40</v-btn>
         </v-btn-toggle>
       </v-container>
-      <v-container>
+      <v-container v-if="$store.getters.isTeacher">
         <p class="pl-0">Type</p>
         <v-btn-toggle v-model="tournament.type" mandatory class="button-group">
           <v-btn text value="STANDARD">STANDARD</v-btn>
-          <v-btn v-if="$store.getters.isTeacher" text value="ADVANCED"
-            >ADVANCED</v-btn
-          >
+          <v-btn text value="ADVANCED">ADVANCED</v-btn>
         </v-btn-toggle>
       </v-container>
       <v-container v-if="tournament.type === 'ADVANCED'">
@@ -188,7 +186,8 @@ export default class CreateTournamentView extends Vue {
   calculatePrize() {
     this.tournament.prize =
       (this.tournament.cost * 2) / this.tournament.numberOfQuestions;
-      
+  }
+
   get isDark(): boolean {
     return this.$vuetify.theme.dark;
   }

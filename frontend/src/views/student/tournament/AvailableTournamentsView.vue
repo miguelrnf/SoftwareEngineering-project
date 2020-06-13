@@ -66,6 +66,9 @@
       <template v-slot:item.conclusionDate="{ item }">
         <p>{{ item.conclusionDate }}</p>
       </template>
+      <template v-slot:item.type="{ item }">
+        <p>{{ item.type }}</p>
+      </template>
       <template v-slot:item.numberOfQuestions="{ item }">
         <p>{{ item.numberOfQuestions }}</p>
       </template>
@@ -125,6 +128,7 @@ export default class AvailableTournamentsView2 extends Vue {
     { text: 'Title', value: 'title', align: 'left' },
     { text: 'Starts', value: 'availableDate', align: 'left' },
     { text: 'Ends', value: 'conclusionDate', align: 'left' },
+    { text: 'Type', value: 'type', align: 'left' },
     { text: 'Questions', value: 'numberOfQuestions', align: 'left' }
   ];
 
@@ -154,10 +158,10 @@ export default class AvailableTournamentsView2 extends Vue {
     } else {
       this.sign = 'Sign In';
     }
-     if (this.sign === 'Sign In' && t.type === 'ADVANCED') {
+    if (this.sign === 'Sign In' && t.type === 'ADVANCED') {
       this.sign = t.cost + ' Achandos';
     }
-  } 
+  }
 
   isEnrolled(t: Tournament): Boolean {
     let s: Student;

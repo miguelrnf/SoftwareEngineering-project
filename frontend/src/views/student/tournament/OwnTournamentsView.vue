@@ -49,7 +49,6 @@
           </template>
           <span>Cancel the tournament</span>
         </v-tooltip>
-
       </template>
       <template v-slot:item.title="{ item }">
         <p v-html="convertMarkDown(item.title, null)" />
@@ -90,7 +89,7 @@ import { Tournament } from '@/models/management/Tournament';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import RemoteServices from '@/services/RemoteServices';
 
-import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDialog.vue';
+import CreateTournamentsViewDialog from '@/views/student/tournament/EditTournamentsViewDialog.vue';
 
 @Component({
   components: {
@@ -140,7 +139,6 @@ export default class AvailableTournamentsView2 extends Vue {
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
-
 
   async setTournamentStatus(newT: Tournament, t: Tournament) {
     t.status = newT.status;

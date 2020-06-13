@@ -64,6 +64,9 @@
       <template v-slot:item.conclusionDate="{ item }">
         <p>{{ item.conclusionDate }}</p>
       </template>
+      <template v-slot:item.type="{ item }">
+        <p v-html="convertMarkDown(item.type, null)" />
+      </template>
       <template v-slot:item.numberOfQuestions="{ item }">
         <p>{{ item.numberOfQuestions }}</p>
       </template>
@@ -109,6 +112,7 @@ export default class AvailableTournamentsView2 extends Vue {
     { text: 'Title', value: 'title', align: 'left' },
     { text: 'Starts', value: 'availableDate', align: 'left' },
     { text: 'Ends', value: 'conclusionDate', align: 'left' },
+    { text: 'Type', value: 'type', align: 'left' },
     { text: 'Questions', value: 'numberOfQuestions', align: 'left' },
     { text: 'Status', value: 'status', align: 'left' },
     { text: 'Assessment', value: 'assessmentDto.title', align: 'left' }

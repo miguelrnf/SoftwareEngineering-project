@@ -49,12 +49,12 @@
           Close
         </v-btn>
         <div v-if="suggestion.status === 'TOAPPROVE' && isTeacher()">
-        <v-btn color="red" text @click="RejectSuggestion">
-          Reject
-        </v-btn>
-        <v-btn color="green" text @click="ApproveSuggestion">
-          Approve
-        </v-btn>
+          <v-btn color="red" text @click="RejectSuggestion">
+            Reject
+          </v-btn>
+          <v-btn color="green" text @click="ApproveSuggestion">
+            Approve
+          </v-btn>
         </div>
       </v-card-actions>
     </v-card>

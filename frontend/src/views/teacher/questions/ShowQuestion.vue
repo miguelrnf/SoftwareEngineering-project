@@ -12,10 +12,7 @@
         <span v-else v-html="convertMarkDown(option.content)" />
       </li>
     </ul>
-    <span
-      v-if="question.hint"
-      v-html="convertMarkDown('Hint: ' + question.hint)"
-    />
+    <span v-if="showHint" v-html="convertMarkDown('Hint: ' + question.hint)" />
     <span v-else v-html="convertMarkDown('Hint: No hint was given')" />
     <br />
   </div>
@@ -33,6 +30,10 @@ export default class ShowQuestion extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+  get showHint(): Boolean {
+    if (this.question.hint == null) return false;
+    else return this.question.hint.trim() !== '';
   }
 }
 </script>

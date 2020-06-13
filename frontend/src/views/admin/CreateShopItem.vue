@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <v-card :dark="dark">
+    <v-card :dark="dark" light="!dark">
       <v-container>
         <p>Create Item</p>
         <v-btn-toggle v-model="toggle" mandatory class="button-group">

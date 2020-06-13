@@ -14,12 +14,6 @@
         <v-text-field v-model="editedTitle" label="*Title" data-cy="title" />
       </v-card-text>
       <v-container>
-        <p class="pl-0">Type</p>
-        <v-btn-toggle v-model="editedType" mandatory class="button-group">
-          <v-btn text value="STANDARD">STANDARD</v-btn>
-        </v-btn-toggle>
-      </v-container>
-      <v-container>
         <p>Assessment</p>
         <v-btn-toggle
           v-if="availableAssessments.length > 0"
@@ -51,6 +45,13 @@
           <v-btn text value="20">20</v-btn>
           <v-btn text value="30">30</v-btn>
           <v-btn text value="40">40</v-btn>
+        </v-btn-toggle>
+      </v-container>
+      <v-container v-if="$store.getters.isTeacher">
+        <p class="pl-0">Type</p>
+        <v-btn-toggle v-model="tournament.type" mandatory class="button-group">
+          <v-btn text disabled value="STANDARD">STANDARD</v-btn>
+          <v-btn text disabled value="ADVANCED">ADVANCED</v-btn>
         </v-btn-toggle>
       </v-container>
       <v-container fluid>
@@ -167,7 +168,7 @@ export default class CreateTournamentView extends Vue {
       editedTournament.assessmentDto = this.editedAssessmentDto;
       editedTournament.availableDate = this.avalDate;
       editedTournament.conclusionDate = this.concDate;
-      editedTournament.type = this.editedType;
+      editedTournament.type = this.tournament.type;
       editedTournament.numberOfQuestions = this.editedNumberOfQuestions;
       const result = await RemoteServices.editTournament(editedTournament);
       this.$emit('save-tournament', result);

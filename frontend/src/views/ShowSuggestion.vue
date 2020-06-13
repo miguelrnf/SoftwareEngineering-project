@@ -42,6 +42,18 @@
         </v-chip>
       </div>
     </div>
+    <v-divider class="mt-4" />
+    <p class="headline font-weight-black text-left mt-3">
+      <span v-html="convertMarkDown('Hint')" />
+    </p>
+    <div class="headline text-left">
+      <span
+        v-if="suggestion.hint || suggestion.hint.trim() !== ''"
+        v-html="convertMarkDown(suggestion.hint)"
+      />
+      <span v-else v-html="convertMarkDown('No hint was given')" />
+    </div>
+    <v-divider class="mt-4" />
     <div class="text-right mb-n5">
       <span
         v-html="
