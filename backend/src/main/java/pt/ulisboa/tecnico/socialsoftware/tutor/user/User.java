@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import jdk.jshell.SourceCodeAnalysis;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,9 +9,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
@@ -72,11 +76,23 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Suggestion> suggestions = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    private Set<Quiz> quizzes = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private Set<PostQuestion> postQuestions = new HashSet<>();
 
     @Column(name = "is_dashboard_private", columnDefinition = "boolean default false")
     private Boolean isDashboardPrivate;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Post> postsUpvoted = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Post> postsDownvoted = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<UserItem> items = new HashSet<>();
 
     public User() {
     }
@@ -255,6 +271,22 @@ public class User implements UserDetails, DomainEntity {
         this.isDashboardPrivate = !this.isDashboardPrivate;
     }
 
+    public Set<UserItem> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<UserItem> items) {
+        this.items = items;
+    }
+
+    public void addItem(UserItem item) {
+        this.items.add(item);
+    }
+
+    public void removeItem(UserItem item) {
+        this.items.remove(item);
+    }
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
@@ -391,6 +423,30 @@ public class User implements UserDetails, DomainEntity {
 
     public void setNumberOfCorrectStudentAnswers(Integer numberOfCorrectStudentAnswers) {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
+    }
+
+    public Set<Post> getPostsUpvoted() {
+        return postsUpvoted;
+    }
+
+    public void setPostUpvoted(Set<Post> postUpvoted) {
+        this.postsUpvoted = postUpvoted;
+    }
+
+    public Set<Post> getPostsDownvoted() {
+        return postsDownvoted;
+    }
+
+    public void setPostsDownvoted(Set<Post> postDownvoted) {
+        this.postsDownvoted = postDownvoted;
+    }
+
+    public void addUpvotedPosts(Post post) {
+        this.postsUpvoted.add(post);
+    }
+
+    public void addDownvotedPosts(Post post) {
+        this.postsDownvoted.add(post);
     }
 
     public void addTournament(Tournament tournament){
@@ -531,6 +587,36 @@ public class User implements UserDetails, DomainEntity {
 
         return result;
     }
+
+    public int getNumberApprovedSuggestions(){
+         return  (int) suggestions.stream().filter(x -> x.getStatus().equals(Suggestion.Status.APPROVED)).count();
+    }
+
+    public int getNumberToApproveSuggestions(){
+        return  (int) suggestions.stream().filter(x -> x.getStatus().equals(Suggestion.Status.TOAPPROVE)).count();
+    }
+
+    public int getNumberRejectedSuggestions(){
+        return  (int) suggestions.stream().filter(x -> x.getStatus().equals(Suggestion.Status.REJECTED)).count();
+    }
+
+    public int getNumberTournamentsDone(){
+        return  tournaments.size();
+    }
+
+    public int getNumberPostsSubmitted(){
+        return  postQuestions.size();
+    }
+
+    public Set<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(Set<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
+
+    public void addQuiz(Quiz q){quizzes.add(q);}
 
     @Override
     public String toString() {

@@ -57,6 +57,9 @@ export default new Vuex.Store({
     },
     score(state, user: User) {
       state.user = user;
+    },
+    votes(state, user: User) {
+      state.user = user;
     }
   },
   actions: {
@@ -120,6 +123,10 @@ export default new Vuex.Store({
     },
     currentCourse({ commit }, currentCourse) {
       commit('currentCourse', currentCourse);
+    },
+    async updateVotes({ commit }) {
+      const user = await RemoteServices.updateVotes();
+      commit('votes', user);
     }
   },
   getters: {

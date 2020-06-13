@@ -25,9 +25,6 @@ import CreateTournamentsView from '@/views/student/tournament/CreateTournamentsV
 import PostsView from '@/views/PostsView.vue';
 import PostPostView from '@/views/student/PostPostView.vue';
 import DashboardHomeView from '@/views/DashboardHomeView.vue';
-
-import TeacherSuggView from './views/teacher/Suggestions/SuggestionView.vue';
-
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
@@ -35,11 +32,12 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import SuggestionsView from '@/views/suggestions/SuggestionsView.vue';
-
 import EnrolledTournamentsView from '@/views/student/tournament/EnrolledTournamentsView.vue';
 import PostGeneralView from '@/views/PostGeneralView.vue';
 import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
+import StudyGeneralView from '@/views/StudyGeneralView.vue';
+import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 
 Vue.use(Router);
 
@@ -88,9 +86,9 @@ let router = new Router({
         {
           path: 'suggestions',
           name: 'suggestions-management',
-          component: TeacherSuggView,
+          component: SuggestionsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Suggestions',
+            title: process.env.VUE_APP_NAME + ' - suggestions',
             requiredAuth: 'Teacher'
           }
         },
@@ -246,20 +244,11 @@ let router = new Router({
           }
         },
         {
-          path: 'stats',
-          name: 'stats',
-          component: StatsView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - Stats',
-            requiredAuth: 'Student'
-          }
-        },
-        {
           path: 'suggestions',
           name: 'suggestions',
           component: SuggestionsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Suggestions',
+            title: process.env.VUE_APP_NAME + ' - suggestions',
             requiredAuth: 'Student'
           }
         },
@@ -311,6 +300,23 @@ let router = new Router({
           props: { isOwnDashboard: true, isReal: true },
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Post',
+            requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/study',
+      name: 'study',
+      component: StudyGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'study-home',
+          component: StudyHomeView,
+          props: { isOwnDashboard: true, isReal: true },
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Study',
             requiredAuth: 'Student'
           }
         }

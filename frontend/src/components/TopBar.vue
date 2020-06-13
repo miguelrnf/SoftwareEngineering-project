@@ -242,14 +242,6 @@
                 <v-list-item-title>Posts</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/posts/submit">
-              <v-list-item-action>
-                <v-icon>fas fa-plus</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Submit Post</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
             <v-list-item to="/student/suggestions">
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
@@ -261,9 +253,14 @@
           </v-list>
         </v-menu>
 
-        <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
-          Stats
-          <v-icon>fas fa-user</v-icon>
+        <v-btn
+                to="/study/home"
+                v-if="isStudent && currentCourse"
+                text dark
+                data-cy="Study"
+        >
+          Study
+          <v-icon>fas fa-book-reader</v-icon>
         </v-btn>
 
         <v-btn
@@ -483,20 +480,6 @@
             </v-list-item-action>
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
-
-          <v-list-item to="/student/stats">
-            <v-list-item-action>
-              <v-icon>fas fa-user</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Stats</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item to="/posts/submit">
-            <v-list-item-action>
-              <v-icon>fas fa-plus</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Submit Post</v-list-item-content>
-          </v-list-item>
         </v-list-group>
 
         <v-list-group
@@ -540,9 +523,21 @@
         </v-list-group>
 
         <v-list-item to="/dashboard/home" v-if="isStudent && currentCourse">
-          <v-icon>
-            fas fa-star
-          </v-icon>
+          <v-list-item-action>
+            <v-icon>fas fa-star</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+            Dashboard
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/study/home" v-if="isStudent && currentCourse">
+          <v-list-item-action>
+            <v-icon>fas fa-book-reader</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+           Study
+          </v-list-item-content>
         </v-list-item>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">

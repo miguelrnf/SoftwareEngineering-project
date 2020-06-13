@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto submitPost(PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
+    public PostDto submitPost(PostQuestionDto postQuestionDto) {
         User user = checkIfUserExistsByUsername(postQuestionDto.getUser().getUsername());
 
         checkIfUserHasRoleStudent(user);
@@ -312,6 +313,56 @@ public class PostService {
         post.changeAnswerPrivacy();
         return new PostDto(post);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public PostDto vote(Integer id, User u, String vote) {
+        Post post = checkIfPostExists(null, id);
+        User user = checkIfUserExistsByUsername(u.getUsername());
+        if (vote.equals("upvote")) {
+            upvotePost(post, user);
+        }
+        if (vote.equals("downvote")) {
+            downvotePost(post, user);
+        }
+        return new PostDto(post);
+    }
+
+    private void upvotePost(Post post, User user) {
+        if (post.getUsersWhoUpvoted().contains(user)) {
+            user.getPostsUpvoted().remove(post);
+            post.getUsersWhoUpvoted().remove(user);
+        }
+        else if (post.getUsersWhoDownvoted().contains(user)) {
+            post.getUsersWhoDownvoted().remove(user);
+            user.getPostsDownvoted().remove(post);
+            user.addUpvotedPosts(post);
+            post.upvote(user);
+        } else {
+            user.addUpvotedPosts(post);
+            post.upvote(user);
+        }
+
+    }
+
+    private void downvotePost(Post post, User user) {
+        if (post.getUsersWhoDownvoted().contains(user)) {
+            user.getPostsDownvoted().remove(post);
+            post.getUsersWhoDownvoted().remove(user);
+        }
+        else if (post.getUsersWhoUpvoted().contains(user)) {
+            post.getUsersWhoUpvoted().remove(user);
+            user.getPostsUpvoted().remove(post);
+            user.addDownvotedPosts(post);
+            post.downvote(user);
+        } else {
+            user.addDownvotedPosts(post);
+            post.downvote(user);
+        }
+    }
+
 
     private PostComment checkIfCommentParentExists(PostCommentDto dto) {
         if(dto.getKey() != null) {

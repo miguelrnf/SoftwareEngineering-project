@@ -61,7 +61,7 @@ public class Question implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
-    @ManyToMany(mappedBy = "questions")
+    @ManyToMany(mappedBy = "questions", fetch = FetchType.LAZY)
     private final Set<Topic> topics = new HashSet<>();
 
     @ManyToOne
