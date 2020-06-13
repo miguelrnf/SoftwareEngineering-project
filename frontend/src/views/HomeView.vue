@@ -92,6 +92,7 @@ export default class HomeView extends Vue {
     await this.$store.dispatch('loading');
     try {
       await this.$store.dispatch('demoStudentLogin');
+      //todo get all themes and apply current
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

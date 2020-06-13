@@ -35,7 +35,8 @@
         <p
           v-html="convertMarkDown(item.studentQuestion, null)"
           @click="showSuggestionDialog(item)"
-      /></template>
+        />
+      </template>
       <template v-slot:item._topicsList="{ item }">
         <v-chip v-for="tag in item.topicsList" :key="tag.name" class="ma-1">
           {{ tag.name }}

@@ -8,6 +8,8 @@
         <v-text-field
           v-model="tournament.title"
           label="*Title"
+          counter
+          maxlength="150"
           data-cy="title"
         />
       </v-card-text>
@@ -114,7 +116,7 @@
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="availableDate"
               :dark="isDark"
-              :color="$vuetify.theme.themes.light.primary"
+              :color="$vuetify.theme.currentTheme.primary"
             >
             </VueCtkDateTimePicker>
           </v-col>
@@ -127,7 +129,7 @@
               format="YYYY-MM-DDTHH:mm:ssZ"
               data-cy="conclusionDate"
               :dark="isDark"
-              :color="$vuetify.theme.themes.light.primary"
+              :color="$vuetify.theme.currentTheme.primary"
             >
             </VueCtkDateTimePicker>
           </v-col>

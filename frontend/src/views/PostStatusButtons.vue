@@ -179,4 +179,4 @@ export default class PostStatusButtons extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

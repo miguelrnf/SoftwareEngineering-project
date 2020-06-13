@@ -37,7 +37,7 @@
           </template>
           <span>Details</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="showButtons(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               v-if="showButtons(item)"
@@ -50,10 +50,9 @@
           </template>
           <span>Edit</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="showButtons(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              v-if="showButtons(item)"
               class="btn"
               color="red"
               v-on="on"
@@ -64,6 +63,7 @@
           </template>
           <span>Cancel the tournament</span>
         </v-tooltip>
+        
         <v-tooltip bottom v-if="showResults(item)">
           <template v-slot:activator="{ on }">
             <v-icon large class="mr-2" v-on="on" @click="showQuizAnswers(item)"
@@ -118,6 +118,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
+
 import Image from '../../models/management/Image';
 import { Tournament } from '@/models/management/Tournament';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
@@ -128,6 +129,7 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDialog.vue';
 
+
 @Component({
   components: {
     'show-tournament-dialog': TournamentViewDialog,
@@ -135,12 +137,12 @@ import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDial
     'show-quiz-answers-dialog': ShowQuizAnswersDialog
   }
 })
-export default class AllTeacherTournaments extends Vue {
+export default class AllTeacherTournaments2 extends Vue {
   tournaments: Tournament[] = [];
   tournamentDialog: boolean = false;
   editDialog: boolean = false;
   search: string = '';
-  currentTournament: Tournament | null = null;
+  currentTournament: Tournament = new Tournament();
   iscreated: boolean = false;
   quizAnswers: QuizAnswer[] = [];
   correctSequence: number[] = [];
@@ -148,7 +150,8 @@ export default class AllTeacherTournaments extends Vue {
   timeToSubmission: number = 0;
 
   headers: object = [
-    { text: 'Actions', value: 'action', align: 'center', sortable: false },
+
+    { text: 'Actions', value: 'action', align: 'left', sortable: false },
     { text: 'Title', value: 'title', align: 'center' },
     { text: 'Status', value: 'status', align: 'center' },
     { text: 'Participants', value: 'enrolledStudents.length', align: 'center' },

@@ -220,4 +220,4 @@ export default class ShowPost extends Vue {
 }
 </script>
 
-<style></style>
+<style />

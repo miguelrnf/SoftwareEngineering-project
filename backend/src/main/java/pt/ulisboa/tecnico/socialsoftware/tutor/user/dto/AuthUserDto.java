@@ -17,6 +17,7 @@ public class AuthUserDto implements Serializable {
     private String username;
     private User.Role role;
     private Integer score;
+    private String currentTheme;
     private Integer numberofsuggestions;
     private Integer numberofsuggestionsapproved;
     private Map<String, List<CourseDto>> courses;
@@ -40,6 +41,11 @@ public class AuthUserDto implements Serializable {
             this.score = user.getScore();
         this.numberofsuggestions = user.getNumberOfSuggestions();
         this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
+
+        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
+            user.setCurrentTheme("Default Light");
+        }
+        this.currentTheme = user.getCurrentTheme();
         this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
         this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
@@ -85,6 +91,14 @@ public class AuthUserDto implements Serializable {
 
     public void setScore(Integer score) {
         this.score = score;
+    }
+
+    public String getCurrentTheme() {
+        return currentTheme;
+    }
+
+    public void setCurrentTheme(String currentTheme) {
+        this.currentTheme = currentTheme;
     }
 
     public User.Role getRole() {

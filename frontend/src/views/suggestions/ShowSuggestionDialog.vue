@@ -26,7 +26,8 @@
               label
               :color="getColor2(suggestion.status)"
               dark
-              ><span class="white--text ">{{ suggestion.status }}</span></v-chip
+            >
+              <span class="white--text ">{{ suggestion.status }}</span></v-chip
             >
           </div>
         </v-row>
@@ -63,7 +64,8 @@
             color="grey"
             text-color="white"
             dark
-            ><span class="white--text">{{ option.name }}</span>
+          >
+            <span class="white--text">{{ option.name }}</span>
           </v-chip>
         </v-row>
         <div class="text-right">
@@ -93,7 +95,7 @@
         <v-spacer />
         <v-btn
           dark
-          color="blue darken-1"
+          color="primary"
           @click="closeQuestionDialog"
           data-cy="closeButton"
           >close</v-btn
@@ -104,12 +106,12 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
-  import Suggestion from '@/models/management/Suggestion';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import Image from '@/models/management/Image';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Suggestion from '@/models/management/Suggestion';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Image from '@/models/management/Image';
 
-  @Component
+@Component
 export default class ShowSuggestionDialog extends Vue {
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;

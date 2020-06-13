@@ -20,7 +20,6 @@
           />
         </v-card-title>
       </template>
-
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -50,6 +49,7 @@
           </template>
           <span>Cancel the tournament</span>
         </v-tooltip>
+
       </template>
       <template v-slot:item.title="{ item }">
         <p v-html="convertMarkDown(item.title, null)" />
@@ -84,10 +84,12 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
+
 import Image from '../../../models/management/Image';
 import { Tournament } from '@/models/management/Tournament';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import RemoteServices from '@/services/RemoteServices';
+
 import CreateTournamentsViewDialog from '@/views/teacher/EditTournamentsViewDialog.vue';
 
 @Component({
@@ -101,6 +103,7 @@ export default class AvailableTournamentsView2 extends Vue {
   sign: string = '';
   currentTournament: Tournament | null = null;
   editDialog: boolean = false;
+
   headers: object = [
     {
       text: 'Actions',
@@ -133,9 +136,12 @@ export default class AvailableTournamentsView2 extends Vue {
     }
     await this.$store.dispatch('clearLoading');
   }
+
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
+
+
   async setTournamentStatus(newT: Tournament, t: Tournament) {
     t.status = newT.status;
   }

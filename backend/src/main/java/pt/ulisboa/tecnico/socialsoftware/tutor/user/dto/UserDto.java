@@ -23,6 +23,7 @@ public class UserDto implements Serializable {
     private Boolean isDashboardPrivate;
     private Integer numberofsuggestions;
     private Integer numberofsuggestionsapproved;
+    private String currentTheme;
     private List<PostDto> postsUpvoted;
     private List<PostDto> postsDownvoted;
 
@@ -45,6 +46,11 @@ public class UserDto implements Serializable {
 
         this.numberofsuggestions = user.getNumberOfSuggestions();
         this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
+
+        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
+            user.setCurrentTheme("Default Light");
+        }
+        this.currentTheme = user.getCurrentTheme();
         this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
         this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
@@ -60,6 +66,14 @@ public class UserDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCurrentTheme() {
+        return currentTheme;
+    }
+
+    public void setCurrentTheme(String currentTheme) {
+        this.currentTheme = currentTheme;
     }
 
     public String getUsername() {

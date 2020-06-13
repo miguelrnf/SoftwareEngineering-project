@@ -9,17 +9,17 @@ describe('Administration walkthrough', () => {
   });
 
   it('Quick Approve a Suggestion', () => {
-     cy.demoTeacherLoginSuggestion();
+    cy.demoTeacherLoginSuggestion();
     cy.QuickApproveSuggestion('SUGESTAO');
   });
 
   it('Quick Reject a Suggestion', () => {
-   cy.demoTeacherLoginSuggestion();
+    cy.demoTeacherLoginSuggestion();
     cy.QuickRejectSuggestion('SUGESTAO');
   });
 
   it('Show a Suggestion and reject', () => {
-   cy.demoTeacherLoginSuggestion();
+    cy.demoTeacherLoginSuggestion();
     cy.ShowSuggestion('SUGESTAO');
     cy.RejectSuggestion();
     cy.CloseSuggestion();
@@ -52,6 +52,5 @@ describe('Administration walkthrough', () => {
     cy.demoStudentLoginSuggestion();
     cy.wait(3000);
     cy.contains('Logout').click();
-
   });
 });

@@ -36,7 +36,7 @@
               </v-col>
             </v-row>
           </v-card>
-          <v-card color="grey lighten-2">
+          <v-card color="secondary">
             <v-row>
               <v-col v-if="n === 1 && k === 1">
                 {{ tournament.availableDate }}
@@ -67,9 +67,9 @@
         </div>
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           v-if="prepareToResults(tournament)"
           class="btn"
@@ -77,6 +77,15 @@
           @click="showResults(tournament)"
         >
           Results
+        </v-btn>
+        <v-btn
+          color="primary"
+          text
+          v-if="sign !== undefined"
+          @click="$emit('sign-in')"
+          data-cy="sign"
+        >
+          {{ sign }}
         </v-btn>
         <v-btn
           dark
@@ -104,24 +113,31 @@ export default class TournamentViewDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
   @Prop({ type: User, required: false }) readonly student!: User;
+  @Prop({ type: Boolean, required: true }) readonly dashboard!: boolean;
+  @Prop({ type: String, required: false }) readonly sign!: '';
 
   async showResults(tournament: Tournament) {
-    if (this.student?.username != null) {
-      let t = await RemoteServices.getTournament(
-        tournament.id,
-        this.student.username
-      );
-      let statementManager: StatementManager = StatementManager.getInstance;
+    if (this.dashboard) {
+      if (this.student?.username != null) {
+        let t = await RemoteServices.getTournament(
+          tournament.id,
+          this.student.username
+        );
+        let statementManager: StatementManager = StatementManager.getInstance;
 
-      statementManager.correctAnswers = t.solved.correctAnswers;
-      statementManager.statementQuiz = t.solved.statementQuiz;
-      await this.$router.push({ name: 'quiz-results' });
+        statementManager.correctAnswers = t.solved.correctAnswers;
+        statementManager.statementQuiz = t.solved.statementQuiz;
+        await this.$router.push({ name: 'quiz-results' });
+      }
     }
   }
 
   prepareToResults(t: Tournament): boolean {
     return (
-      t.completed && t.quiz?.timeToResults != null && t.quiz?.timeToResults <= 0
+      t.completed &&
+      t.quiz?.timeToResults != null &&
+      t.quiz?.timeToResults <= 0 &&
+      this.dashboard
     );
   }
 
@@ -131,4 +147,4 @@ export default class TournamentViewDialog extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

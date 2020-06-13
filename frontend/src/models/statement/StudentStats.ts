@@ -11,9 +11,8 @@ export default class StudentStats {
   approveSuggestions!: number;
   rejectedSuggestions!: number;
   pendingSuggestions!: number;
-  tournamentDone!:number;
-  postSubmitted!:number;
-
+  tournamentDone!: number;
+  postSubmitted!: number;
 
   constructor(jsonObj?: StudentStats) {
     if (jsonObj) {
