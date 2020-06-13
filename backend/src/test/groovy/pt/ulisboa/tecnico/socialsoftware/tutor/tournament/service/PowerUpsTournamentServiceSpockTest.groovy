@@ -5,26 +5,26 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementOptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
@@ -33,25 +33,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_NOT_CONSISTENT
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_PERMISSION
 
 @DataJpaTest
-class CreateTournamentServiceSpockTest extends Specification {
+class PowerUpsTournamentServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     static final USERNAME_1 = 'username1'
-    static final USERNAME_2 = 'username2'
-    static final USERNAME_3 = 'username3'
     static final TITLE = 'first tournament'
-    static final NUMQUESTIONS = 2
+    static final NUMQUESTIONS = 1
     static final DATENOW = DateHandler.toISOString(DateHandler.now().plusDays(1))
     static final DATETOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(2))
     static final NAME = 'name'
-    static id = 1
+    static final CONTENT = 'SOMETHING GOOD'
+    static int tempId = 1
 
     @Autowired
     UserRepository userRepository
@@ -77,6 +72,12 @@ class CreateTournamentServiceSpockTest extends Specification {
     @Autowired
     QuestionRepository questionRepository
 
+    @Autowired
+    OptionRepository optionRepository
+
+    @Autowired
+    QuizRepository quizRepository
+
     @Shared
     def tournamentDto
 
@@ -87,16 +88,7 @@ class CreateTournamentServiceSpockTest extends Specification {
     def courseExecution
 
     @Shared
-    def TEACHER
-
-    @Shared
-    def ADMIN
-
-    @Shared
     def STUDENT
-
-    @Shared
-    def NLL_USERNAME
 
     @Shared
     def assdto
@@ -117,11 +109,44 @@ class CreateTournamentServiceSpockTest extends Specification {
     def topicConjunction
 
     @Shared
+    def statementQuestionOne
+
+    @Shared
+    def quiz
+
+    @Shared
+    def statementOption1
+
+    @Shared
+    def statementOption2
+
+    @Shared
+    def statementOption3
+
+    @Shared
+    def statementOption4
+
+    @Shared
+    def questionAnswer
+
+    @Shared
+    def quizQuestion
+
+
+    @Shared
     def questionOne
 
     @Shared
-    def questionTwo
+    def option1
 
+    @Shared
+    def option2
+
+    @Shared
+    def option3
+
+    @Shared
+    def option4
 
     def setupSpec() {
 
@@ -133,26 +158,12 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
         tournamentDto.setType("STANDARD")
-
-        and: "a user with the role teacher"
-        TEACHER = new User()
-        TEACHER.setRole(User.Role.TEACHER)
-        TEACHER.setUsername(USERNAME_2)
-
-        and: "a user with the role admin"
-        ADMIN = new User()
-        ADMIN.setRole(User.Role.ADMIN)
-        ADMIN.setUsername(USERNAME_3)
+        tournamentDto.setTitle(TITLE)
 
         and: "a user with the role student"
         STUDENT = new User()
         STUDENT.setRole(User.Role.STUDENT)
         STUDENT.setUsername(USERNAME_1)
-
-        and: "a user with the null username"
-        NLL_USERNAME = new User()
-        NLL_USERNAME.setRole(User.Role.STUDENT)
-        NLL_USERNAME.setUsername(null)
     }
 
     def setup() {
@@ -171,7 +182,6 @@ class CreateTournamentServiceSpockTest extends Specification {
         and: " a valid assessments"
         assdto = new AssessmentDto()
         assdto.setTitle(TITLE)
-        assdto.setId(id)
         assdto.setStatus(Assessment.Status.AVAILABLE.name())
         assdto.setTopicConjunctionsFromUnit(topicConjunctionDto)
         topic = new Topic(course, topicDto)
@@ -191,121 +201,130 @@ class CreateTournamentServiceSpockTest extends Specification {
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         questionOne.addTopic(topic)
+        questionOne.setHint("Teste_1234")
 
-        questionTwo = new Question()
-        questionTwo.setKey(2)
-        questionTwo.setContent("Question Content")
-        questionTwo.setTitle("Question Title")
-        questionTwo.setStatus(Question.Status.AVAILABLE)
-        questionTwo.setCourse(course)
-        questionTwo.addTopic(topic)
+        and:
+        quizQuestion = new QuizQuestion()
+        quizQuestion.setQuestion(questionOne)
 
+        and:
+        questionAnswer = new QuestionAnswer()
+        questionAnswer.setQuizQuestion(quizQuestion)
+
+        and:
+        statementQuestionOne = new StatementQuestionDto(questionAnswer)
+
+        and:
+        quiz = new Quiz()
+        quiz.addQuizQuestion(quizQuestion)
+        quiz.setCourseExecution(courseExecution)
+
+
+        and:
+        option1 = new Option()
+        option1.setContent(CONTENT)
+        option1.setCorrect(false)
+        option1.setSequence(0)
+        option1.setQuestion(questionOne)
+        option2 = new Option()
+        option2.setContent(CONTENT)
+        option2.setCorrect(true)
+        option2.setSequence(0)
+        option2.setQuestion(questionOne)
+        option3 = new Option()
+        option3.setContent(CONTENT)
+        option3.setCorrect(false)
+        option3.setSequence(0)
+        option3.setQuestion(questionOne)
+        option4 = new Option()
+        option4.setContent(CONTENT)
+        option4.setCorrect(false)
+        option4.setSequence(0)
+        option4.setQuestion(questionOne)
+        def options = new ArrayList<OptionDto>()
+        options.add(new OptionDto(option1))
+        options.add(new OptionDto(option2))
+        options.add(new OptionDto(option3))
+        options.add(new OptionDto(option4))
+        questionOne.setOptions(options)
+        optionRepository.save(option1)
+        optionRepository.save(option2)
+        optionRepository.save(option3)
+        optionRepository.save(option4)
+
+        and:
+        statementOption1 = new StatementOptionDto(option1)
+        statementOption2 = new StatementOptionDto(option2)
+        statementOption3 = new StatementOptionDto(option3)
+        statementOption4 = new StatementOptionDto(option4)
+        def statementOptionList = new ArrayList<StatementOptionDto>()
+        statementOptionList.add(statementOption1)
+        statementOptionList.add(statementOption2)
+        statementOptionList.add(statementOption3)
+        statementOptionList.add(statementOption4)
+        statementQuestionOne.setOptions(statementOptionList)
 
         and: "a user with the role student"
         def userS = new User('name', USERNAME_1, 1, User.Role.STUDENT)
 
-        def userT = new User('name', USERNAME_2, 2, User.Role.TEACHER)
-
-        def userA = new User('name', USERNAME_3, 3, User.Role.ADMIN)
-
+        courseExecution.addUser(userS)
+        userS.addCourse(courseExecution)
 
         then:"add to repository"
         questionRepository.save(questionOne)
-        questionRepository.save(questionTwo)
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
-        userRepository.save(userT)
-        userRepository.save(userA)
         topicRepository.save(topic)
         topicConjunctionRepository.save(topicConjunction)
         assessmentRepository.save(ass)
+        quizRepository.save(quiz)
     }
 
-    def "student creates a tournament"() {
-       given:
-       tournamentDto.setOwner(new UserDto(STUDENT))
-       tournamentDto.setTitle(TITLE)
-       assdto.setId(id++)
-       tournamentDto.setAssessmentDto(assdto)
-
-       when:
-       def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-       then:"the return data are correct"
-       result.id != null
-       result.owner.getName() == 'name'
-       result.owner.getRole() == User.Role.STUDENT
-       result.title == TITLE
-       result.status == "CREATED"
-    }
-
-    @Unroll
-    def "teacher creates a tournament"() {
+    def "power Up Fifty Fifty"() {
         given:
-        tournamentDto.setOwner(new UserDto(TEACHER))
-        tournamentDto.setTitle(TITLE)
-        assdto.setId(id++)
+        assdto.setId(tempId++)
+        tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setAssessmentDto(assdto)
-        tournamentDto.setType(type)
-        tournamentDto.setCost(100)
-        tournamentDto.setPrize(20)
+        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        quiz.setTournament(new Tournament(tournament,  STUDENT, ass))
 
         when:
-        def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-        println(result.dump())
+        def result = tournamentService.removeTwoOptions(statementQuestionOne, quiz.getId())
 
         then:"the return data are correct"
-        result.id != null
-        result.owner.getName() == 'name'
-        result.owner.getRole() == User.Role.TEACHER
-        result.title == TITLE
-        result.status == "CREATED"
-        result.cost == cost
-        result.prize == prize
-
-        where:
-        type        || cost | prize
-        "ADVANCED"  || 100  | 20
-        "STANDARD"  || 0    | 2
+        result.getOptions().size() == 2
     }
 
-    def "null user creates a tournament"() {
-        given: "a null user"
-        tournamentDto.setOwner(null)
-        tournamentDto.setTitle(TITLE)
-
-        when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-
-        then: "an exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_NOT_CONSISTENT
-    }
-
-
-    @Unroll
-    def "invalid arguments: user=#user | title=#title || errorMessage=#errorMessage "() {
+    def "power Up Right Option"() {
         given:
-        tournamentDto.setOwner(new UserDto(user as User))
-        tournamentDto.setTitle(title)
-        assdto.setId(id++)
+        assdto.setId(tempId++)
+        tournamentDto.setOwner(new UserDto(STUDENT))
         tournamentDto.setAssessmentDto(assdto)
-
+        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        quiz.setTournament(new Tournament(tournament,  STUDENT, ass))
 
         when:
-        tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        def result = tournamentService.rigthAnswer(statementQuestionOne, quiz.getId())
 
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == errorMessage
+        then:"the return data are correct"
+        result.getOptions().size() == 1
+        result.getOptions().get(0).getOptionId() == option2.getId()
+    }
 
-        where:
-             user     | title || errorMessage
-             ADMIN    | TITLE || TOURNAMENT_PERMISSION
-         NLL_USERNAME | TITLE || TOURNAMENT_NOT_CONSISTENT
-            STUDENT   | null  || TOURNAMENT_NOT_CONSISTENT
-            STUDENT   | '  '  || TOURNAMENT_NOT_CONSISTENT
+    def "power Up hint"() {
+        given:
+        assdto.setId(tempId++)
+        tournamentDto.setOwner(new UserDto(STUDENT))
+        tournamentDto.setAssessmentDto(assdto)
+        def tournament = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        quiz.setTournament(new Tournament(tournament,  STUDENT, ass))
+
+        when:
+        def result = tournamentService.getHint(statementQuestionOne, quiz.getId())
+
+        then:"the return data are correct"
+        result.equals(questionOne.getHint())
     }
 
     @TestConfiguration

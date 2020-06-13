@@ -28,7 +28,6 @@ public class UserDto implements Serializable {
     private List<PostDto> postsDownvoted;
 
 
-
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();

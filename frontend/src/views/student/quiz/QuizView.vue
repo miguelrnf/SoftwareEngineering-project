@@ -35,7 +35,79 @@
         </v-col>
       </v-row>
     </v-card>
+    <v-card>
+    <div class="power-up" v-if="this.showPowerUps">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="on"
+            @click="removeTwoOptions"
+            :disabled="fiftyFifty"
+          >
+            <span class="fifty">50:50</span>
+          </v-btn>
+        </template>
+        <span>Eliminate two answers</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="on"
+            @click.stop="getHint"
+            :disabled="usedHint || disableHint"
+          >
+            <v-icon class="pa-0">far fa-lightbulb</v-icon>
+          </v-btn>
 
+          <v-dialog v-model="dialog" max-width="290">
+            <v-card>
+              <v-card-title class="headline">Hint</v-card-title>
+
+              <v-card-text>
+                {{ hint }}
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn color="green darken-1" text @click="dialog = false">
+                  Close
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+        <span>Hint</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="mx-9 my-3"
+            outlined
+            large
+            fab
+            color="primary"
+            v-on="on"
+            @click="rigthAnswer"
+            :disabled="rightAns"
+          >
+            <v-icon class="pa-0">fas fa-check</v-icon>
+          </v-btn>
+        </template>
+        <span>Get Correct answer</span>
+      </v-tooltip>
+    </div>
+    </v-card>
     <v-card height="45px" class="question-navigation">
       <v-row :justify="'center'" class="navigation-buttons">
         <v-col
@@ -77,6 +149,7 @@
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
       :backsies="!statementQuiz.oneWay"
+      :quiz-id="statementQuiz.id"
       @increase-order="confirmAnswer"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"
@@ -182,7 +255,7 @@ export default class QuizView extends Vue {
   readonly statementManager1!: StatementManager;
   statementManager: StatementManager = StatementManager.getInstance;
   statementQuiz: StatementQuiz | null =
-    StatementManager.getInstance.statementQuiz;
+  StatementManager.getInstance.statementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   nextConfirmationDialog: boolean = false;
@@ -191,6 +264,14 @@ export default class QuizView extends Vue {
   hideTime: boolean = false;
   submissionTimer: string = '';
   resultsTimer: string = '';
+  fiftyFifty: boolean = false;
+  rightAns: boolean = false;
+  usedHint: boolean = false;
+  show: boolean = true;
+  showPowerUps: boolean = false;
+  hint: string = '';
+  disableHint: boolean = false;
+  dialog: boolean = false;
 
   async created() {
     if (this.statementManager1) {
@@ -202,6 +283,8 @@ export default class QuizView extends Vue {
       } else {
         try {
           await RemoteServices.startQuiz(this.statementQuiz?.id);
+          await this.getQuizType();
+          if (this.showPowerUps) await this.disHint();
         } catch (error) {
           await this.$store.dispatch('error', error);
           await this.$router.push({ path: '/student/available-quizzes' });
@@ -210,10 +293,102 @@ export default class QuizView extends Vue {
     }
   }
 
+  async getQuizType() {
+    if (this.statementQuiz != null) {
+      try {
+        this.showPowerUps = await RemoteServices.getQuizType(
+          this.statementQuiz
+        );
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        await this.$router.push({ name: 'available-quizzes' });
+      }
+    }
+  }
+
+  async removeTwoOptions() {
+    let question;
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        this.statementQuiz.questions[
+          this.questionOrder
+        ] = await RemoteServices.removeTwoOptions(
+          question,
+          this.statementQuiz.id
+        );
+        this.fiftyFifty = true;
+        this.show = false;
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async rigthAnswer() {
+    let question;
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        this.statementQuiz.questions[
+          this.questionOrder
+        ] = await RemoteServices.rigthAnswer(question, this.statementQuiz.id);
+        this.rightAns = true;
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async disHint() {
+    let hint;
+    let question;
+    if (this.usedHint) {
+      return;
+    }
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        hint = await RemoteServices.getHint(question, this.statementQuiz.id);
+        console.log(hint);
+      }
+      this.disableHint = hint === '';
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async getHint() {
+    let question;
+    if (this.statementQuiz != null && this.questionOrder != null) {
+      question = this.statementQuiz.questions[this.questionOrder];
+    }
+    try {
+      if (question != null && this.statementQuiz?.id != null) {
+        this.hint = await RemoteServices.getHint(
+          question,
+          this.statementQuiz.id
+        );
+
+        this.dialog = true;
+      }
+      this.usedHint = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
   increaseOrder(): void {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.questionOrder += 1;
+      if (this.showPowerUps) this.disHint();
     }
     this.nextConfirmationDialog = false;
   }
@@ -222,6 +397,7 @@ export default class QuizView extends Vue {
     if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
       this.questionOrder -= 1;
+      if (this.showPowerUps) this.disHint();
     }
   }
 
@@ -321,4 +497,10 @@ export default class QuizView extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.fifty {
+  font-weight: bold;
+  font-size: large;
+}
+</style>
+

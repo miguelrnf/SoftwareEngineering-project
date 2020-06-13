@@ -256,6 +256,8 @@ public class SuggestionService {
         question.setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         question.setCourse(course);
         question.addOptions(questionDto.getOptions(),suggestion.getOptions());
+        if(suggestionDto.getHint() != null)
+            question.setHint(suggestion.getHint());
 
         suggestion.setStatus(Suggestion.Status.QUESTION);
 

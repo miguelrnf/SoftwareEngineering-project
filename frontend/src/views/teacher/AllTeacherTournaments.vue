@@ -37,6 +37,33 @@
           </template>
           <span>Details</span>
         </v-tooltip>
+        <v-tooltip bottom v-if="showButtons(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              v-if="showButtons(item)"
+              data-cy="edit"
+              class="mr-2"
+              v-on="on"
+              @click="openEditDialog(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="showButtons(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="btn"
+              color="red"
+              v-on="on"
+              @click="cancelTournament(item)"
+              data-cy="cancel"
+              >fas fa-ban</v-icon
+            >
+          </template>
+          <span>Cancel the tournament</span>
+        </v-tooltip>
+
         <v-tooltip bottom v-if="showResults(item)">
           <template v-slot:activator="{ on }">
             <v-icon large class="mr-2" v-on="on" @click="showQuizAnswers(item)"
@@ -45,21 +72,13 @@
           </template>
           <span>View Results</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="showCancel(item)">
-          <v-btn
-            class="btn"
-            color="primary"
-            @click="cancelTournament(item)"
-            data-cy="cancel"
-          >
-            Cancel
-          </v-btn>
-          <span>Cancel the tournament</span>
-        </v-tooltip>
       </template>
 
       <template v-slot:item.title="{ item }">
         <p v-html="convertMarkDown(item.title, null)" />
+        <p v-show="false" data-cy="id">
+          <span id="num"> {{ item.id }} </span>
+        </p>
       </template>
       <template v-slot:item.status="{ item }">
         <p v-html="convertMarkDown(item.status, null)" />
@@ -88,10 +107,18 @@
       :dashboard="false"
       v-on:close-show-tournament-dialog="tournamentDialog = false"
     />
+    <show-edit-tournament-dialog
+      v-if="currentTournament"
+      v-model="editDialog"
+      :tournament="currentTournament"
+      v-on:save-tournament="onSaveTournamentEvent"
+      v-on:close-show-edit-tournament-dialog="editDialog = false"
+    />
   </v-card>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+
 import Image from '../../models/management/Image';
 import { Tournament } from '@/models/management/Tournament';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
@@ -100,16 +127,19 @@ import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog
 import RemoteServices from '@/services/RemoteServices';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
+import CreateTournamentsViewDialog from '@/views/student/tournament/EditTournamentsViewDialog.vue';
 
 @Component({
   components: {
     'show-tournament-dialog': TournamentViewDialog,
+    'show-edit-tournament-dialog': CreateTournamentsViewDialog,
     'show-quiz-answers-dialog': ShowQuizAnswersDialog
   }
 })
 export default class AllTeacherTournaments2 extends Vue {
   tournaments: Tournament[] = [];
   tournamentDialog: boolean = false;
+  editDialog: boolean = false;
   search: string = '';
   currentTournament: Tournament = new Tournament();
   iscreated: boolean = false;
@@ -126,6 +156,13 @@ export default class AllTeacherTournaments2 extends Vue {
     { text: 'Owner', value: 'owner.name', align: 'center' },
     { text: 'Type', value: 'type', align: 'center' }
   ];
+
+  @Watch('editDialog')
+  closeError() {
+    if (!this.editDialog) {
+      this.currentTournament = new Tournament();
+    }
+  }
 
   async created() {
     await this.$store.dispatch('loading');
@@ -173,16 +210,30 @@ export default class AllTeacherTournaments2 extends Vue {
     this.currentTournament = t;
   }
 
+  openEditDialog(t: Tournament) {
+    this.editDialog = true;
+    this.currentTournament = t;
+  }
+
+  onSaveTournamentEvent(tour: Tournament) {
+    this.tournaments = this.tournaments.filter(t => t.id !== tour.id);
+    this.tournaments.unshift(tour);
+    this.editDialog = false;
+    this.currentTournament = new Tournament();
+  }
+
   setTournamentStatus(newT: Tournament, t: Tournament) {
     t.status = newT.status;
   }
 
-  showCancel(to: Tournament) {
-    if (this.$store.getters.getUser != null)
+  showButtons(t: Tournament) {
+    if (this.$store.getters.getUser != null) {
       return (
-        to.status === 'CREATED' &&
-        to.owner.username === this.$store.getters.getUser.username
+        t.enrolledStudents.length == 0 &&
+        t.status === 'CREATED' &&
+        t.owner.username === this.$store.getters.getUser.username
       );
+    }
   }
 
   showResults(t: Tournament) {

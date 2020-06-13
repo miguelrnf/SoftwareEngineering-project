@@ -28,6 +28,10 @@ public class Tournament {
         CREATED, OPEN, CLOSED, CANCELED
     }
 
+    public enum TournamentType {
+        STANDARD, EVALUATION, TEAM, ADVANCED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -49,6 +53,15 @@ public class Tournament {
 
     @Enumerated(EnumType.STRING)
     private TournamentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private TournamentType type;
+
+    @Column(name = "cost")
+    private Integer cost;
+
+    @Column(name = "prize")
+    private Integer prize;
 
     @ManyToOne
     @JoinColumn(name = "assessment_id")
@@ -81,6 +94,20 @@ public class Tournament {
         this.owner = user;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         this.assessment = assessment;
+        setType(Tournament.TournamentType.valueOf(tournamentDto.getType()));
+        setCostAndPrize(tournamentDto.getCost(), tournamentDto.getPrize(), this.type);
+    }
+
+    public TournamentType getType() {
+        return type;
+    }
+
+    public void setType(TournamentType type) {
+        this.type = type;
+    }
+
+    public TournamentStatus getStatus() {
+        return status;
     }
 
     public Integer getId() {
@@ -89,10 +116,6 @@ public class Tournament {
 
     public String getTitle() {
         return title;
-    }
-
-    public TournamentStatus getStatus() {
-        return status;
     }
 
     public User getOwner() {
@@ -113,6 +136,22 @@ public class Tournament {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getCost() {
+        return cost;
+    }
+
+    public void setCost(Integer cost) {
+        this.cost = cost;
+    }
+
+    public Integer getPrize() {
+        return prize;
+    }
+
+    public void setPrize(Integer prize) {
+        this.prize = prize;
     }
 
     public void setTitle(String title) {
@@ -151,6 +190,16 @@ public class Tournament {
         this.creationDate = creationDate;
     }
 
+    public void setCostAndPrize(Integer cost, Integer prize, TournamentType type) {
+        if (type == TournamentType.ADVANCED){
+            this.cost = cost;
+            this.prize = prize;
+        } else if (type == TournamentType.STANDARD){
+            this.cost = 0;
+            this.prize = 2;
+        }
+    }
+
     public LocalDateTime getAvailableDate() {
         return availableDate;
     }
@@ -173,7 +222,7 @@ public class Tournament {
         if (availableDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
-        if (this.conclusionDate != null && (conclusionDate.isBefore(availableDate) || availableDate.isBefore(DateHandler.now()))) {
+        if (this.conclusionDate != null && (this.conclusionDate.isBefore(availableDate) || availableDate.isBefore(DateHandler.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }

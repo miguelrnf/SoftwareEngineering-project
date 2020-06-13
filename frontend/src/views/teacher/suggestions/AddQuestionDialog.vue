@@ -29,7 +29,15 @@
                 data-cy="content"
               />
             </v-flex>
-
+            <v-flex xs24 sm12 md12>
+              <v-textarea
+                outlined
+                rows="1"
+                auto-grow
+                v-model="currentSuggestion.hint"
+                label="Hint (Optional)"
+              ></v-textarea>
+            </v-flex>
             <v-flex
               xs24
               sm12

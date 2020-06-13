@@ -86,9 +86,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ThemePreviewDialog from '@/views/ThemePreviewDialog';
 import RemoteServices from '@/services/RemoteServices';
 import { Theme } from '@/models/management/Theme';
+import ThemePreviewDialog from './ThemePreviewDialog.vue';
 
 @Component({
   components: {

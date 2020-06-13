@@ -21,6 +21,7 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
+import StatementQuestion from '@/models/statement/StatementQuestion';
 import { Student } from '@/models/management/Student';
 import { Theme } from '@/models/management/Theme';
 import { ShopItem } from '@/models/management/ShopItem';
@@ -96,6 +97,17 @@ export default class RemoteServices {
       )
       .then(response => {
         return new StudentStats(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuizType(statementQuiz: StatementQuiz): Promise<boolean> {
+    return httpClient
+      .get(`/quizzes/${statementQuiz.id}/type`)
+      .then(response => {
+        return response.data as boolean;
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -600,6 +612,20 @@ export default class RemoteServices {
       });
   }
 
+  static async editTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .put(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/edit`,
+        tournament
+      )
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getSolvedQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
       .get(
@@ -1022,6 +1048,57 @@ export default class RemoteServices {
       )
       .then(response => {
         return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async removeTwoOptions(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .put(
+        `tournaments/fiftyFifty/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return new StatementQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rigthAnswer(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .put(
+        `tournaments/rigthAnswer/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return new StatementQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getHint(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<string> {
+    return httpClient
+      .put(
+        `tournaments/getHint/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return response.data as string;
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

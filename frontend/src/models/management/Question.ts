@@ -6,6 +6,7 @@ import { ISOtoString } from '@/services/ConvertDateService';
 export default class Question {
   id: number | null = null;
   title: string = '';
+  hint: string = '';
   status: string = 'AVAILABLE';
   numberOfAnswers!: number;
   numberOfGeneratedQuizzes!: number;
@@ -24,6 +25,7 @@ export default class Question {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.title = jsonObj.title;
+      this.hint = jsonObj.hint;
       this.status = jsonObj.status;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.numberOfGeneratedQuizzes = jsonObj.numberOfGeneratedQuizzes;
