@@ -55,6 +55,8 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfSuggestions;
     private Integer numberOfSuggestionsApproved;
 
+    private Integer grade;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -91,6 +93,7 @@ public class User implements UserDetails, DomainEntity {
         this.key = key;
         this.role = role;
         this.score = 0;
+        this.grade = 0;
         this.creationDate = DateHandler.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfInClassQuizzes = 0;
@@ -104,6 +107,14 @@ public class User implements UserDetails, DomainEntity {
         this.isDashboardPrivate = false;
         this.numberOfSuggestions = 0;
         this.numberOfSuggestionsApproved = 0;
+    }
+
+    public Integer getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
     }
 
     public void incrementNumberOfSuggestions() {

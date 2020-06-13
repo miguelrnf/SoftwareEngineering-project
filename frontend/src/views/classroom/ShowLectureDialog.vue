@@ -130,25 +130,57 @@
                         </v-card-title>
                     </template >
 
-                    <!--<v-card-actions>
                     <template v-slot:item.action="{ item }">
-                        <v-tooltip bottom >
+
+                        <v-tooltip bottom>
                             <template v-slot:activator="{ on }">
                                 <v-icon
                                         small
-                                        color="error"
                                         class="mr-2"
                                         v-on="on"
-                                        @click="removeQuiz(item)"
+                                        color="red"
+                                        @click="removeQuiz(item.id)"
 
                                 >delete</v-icon
                                 >
                             </template>
-                            <span>Delete</span>
+                            <span>Delete Quiz</span>
                         </v-tooltip>
-                    </template >
 
-                    </v-card-actions>-->
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-icon
+                                        small
+                                        class="mr-2"
+                                        v-on="on"
+                                        color="primary"
+                                        @click="setEvaluation(item, true)"
+
+                                >fas fa-check</v-icon
+                                >
+                            </template>
+                            <span>Set Quiz to Evaluation</span>
+                        </v-tooltip>
+
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on }">
+                                <v-icon
+                                        small
+                                        class="mr-2"
+                                        v-on="on"
+                                        color="primary"
+
+                                        @click="setEvaluation(item,false)"
+
+                                >fas fa-cross</v-icon
+                                >
+                            </template>
+                            <span>Unset Quiz to Evaluation</span>
+                        </v-tooltip>
+
+                    </template>
+
+
                 </v-data-table>
 
             </v-tab-item>
@@ -369,6 +401,15 @@ availableQuizzes : StatementQuiz[] | null=null;
       }
     }
   }
+
+
+    async setEvaluation(q: StatementQuiz,bool: boolean){
+
+      q.evaluation = bool;
+      console.log(q)
+      await RemoteServices.setEvaluation(this.lec,q)
+
+    }
   customFilter(value: string, search: string, lecture: Classroom) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (

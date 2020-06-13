@@ -23,6 +23,8 @@ import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
 import Classroom from "@/models/management/Classroom";
 import Document from '@/models/management/Document';
+import EvalSettings from "@/models/management/EvalSettings";
+import {Student} from "@/models/management/Student";
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -367,11 +369,9 @@ export default class RemoteServices {
   }
 
   static async setEvaluation(params: Classroom, quiz: StatementQuiz): Promise<Classroom> {
-    console.log(params)
     return httpClient
       .put(
-        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/${params.id}/setEval`,
-        quiz
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/${params.id}/${quiz.id}/${quiz.evaluation}`,
       )
       .then(response => {
         return new Classroom(response.data);
@@ -382,7 +382,6 @@ export default class RemoteServices {
   }
 
   static async createDocument(params: Document): Promise<Document> {
-    console.log(params);
     return httpClient
         .post(
             `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newDoc`,
@@ -461,6 +460,32 @@ export default class RemoteServices {
         )
         .then(response => {
           return new Document(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+  static async changeEvalSettings(params: EvalSettings): Promise<EvalSettings> {
+    return httpClient
+        .put(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/evalSettings`,
+            params
+        )
+        .then(response => {
+          return new EvalSettings(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+
+  }static async getEvalSettings(): Promise<EvalSettings> {
+    return httpClient
+        .get(
+            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/getEvalSettings`,
+        )
+        .then(response => {
+          return new EvalSettings(response.data);
         })
         .catch(async error => {
           throw Error(await this.errorMessage(error));
@@ -552,6 +577,23 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
   }
+
+  static async getEvalStudents(): Promise<Student[]> {
+    return httpClient
+        .get(
+            `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/eval`
+        )
+        .then(response => {
+          return response.data.map((x: any) => {
+            return new Student(x);
+          });
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
+
+
 
   //___________________________________________
 

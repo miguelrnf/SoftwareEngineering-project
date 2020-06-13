@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.YaDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.EvalSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -123,9 +124,21 @@ public class ClassroomController {
         return this.classroomService.removeQuiz(courseExecutionId, classroomId, quizId);
     }
 
-    @PutMapping(value = "/courses/{courseExecutionId}/classroom/{classroomId}/setEval")
+    @PutMapping(value = "/courses/{courseExecutionId}/classroom/{classroomId}/{quizId}/{eval}")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
-    public ClassroomDto deleteQuiz(@PathVariable int courseExecutionId, @PathVariable int classroomId, @Valid @RequestBody StatementQuizDto statementQuizDto) {
-        return this.classroomService.setEvaluation(courseExecutionId, classroomId, statementQuizDto);
+    public ClassroomDto setEval(@PathVariable int courseExecutionId, @PathVariable int classroomId, @PathVariable int quizId, @PathVariable boolean eval) {
+        return this.classroomService.setEvaluation(courseExecutionId, classroomId, quizId, eval);
+    }
+
+    @PutMapping(value = "/courses/{courseExecutionId}/classroom/evalSettings")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public EvalSettingsDto setEvalSettings(@PathVariable int courseExecutionId, @Valid @RequestBody EvalSettingsDto evalSettingsDto) {
+        return this.classroomService.changeEvalSettings(courseExecutionId, evalSettingsDto);
+    }
+
+    @GetMapping(value = "/courses/{courseExecutionId}/classroom/getEvalSettings")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS'))")
+    public EvalSettingsDto getEvalSettings(@PathVariable int courseExecutionId) {
+        return this.classroomService.getEvalSettings(courseExecutionId);
     }
 }

@@ -5,13 +5,15 @@
       width="95%"
 
     >
+
+
       <v-row>
       <v-card-title color="primary" class="mb-5">
         <v-icon left>fas fa-chalkboard-teacher</v-icon>
         CLASSROOM
       </v-card-title>
       </v-row>
-      <v-tabs >
+      <v-tabs>
         <v-tab @click="setTabName('New Lecture')">
           <v-icon left>fab fa-leanpub</v-icon>
           Lectures
@@ -24,8 +26,20 @@
           <v-icon left>fab fa-git-alt</v-icon>
           Project
         </v-tab>
+
+        <v-tab  @click="setTabName('Evaluation Settings')">
+          <v-icon left>fas fa-graduation-cap</v-icon>
+          Evaluation
+        </v-tab>
+
         <v-spacer></v-spacer>
-        <v-btn color="primary" class="mr-6" v-if="isTeacher()" @click="newLecture">{{tabName}}</v-btn>
+
+        <v-btn color="primary" class="mr-6" v-if="isTeacher() && tabName!=='Evaluation Settings'" @click="newLecture">{{tabName}}</v-btn>
+
+        <v-btn color="primary" class="mr-6" v-if="isTeacher() && tabName==='Evaluation Settings'" @click="showEditEvalDialog">{{tabName}}</v-btn>
+
+
+
 
         <v-tab-item class="pb-10">
           <v-data-table
@@ -280,8 +294,7 @@
                           v-on="on"
                           @click="deleteClassroom(item)"
 
-                  >delete</v-icon
-                  >
+                  >delete</v-icon>
                 </template>
                 <span>Delete {{getLectureLabel() }}</span>
               </v-tooltip>
@@ -291,6 +304,40 @@
           </v-data-table>
 
         </v-tab-item>
+
+        <v-tab-item>
+
+          <v-data-table
+                  :headers="headersStudent"
+                  :custom-filter="customFilter"
+                  :items="students"
+                  :search="search"
+                  multi-sort
+                  :mobile-breakpoint="0"
+                  :items-per-page="15"
+                  :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          >
+            <template v-slot:top>
+              <v-card-title>
+                <v-spacer />
+                <v-spacer />
+                <v-text-field
+                        v-model="search"
+                        append-icon="search"
+                        label="Search Students"
+                        class="mx-2"
+                        data-cy="search"
+                />
+
+
+
+              </v-card-title>
+            </template >
+
+          </v-data-table>
+
+        </v-tab-item>
+
       </v-tabs>
       <edit-lecture-dialog
               v-if="current && newOrEditDialog"
@@ -299,6 +346,11 @@
               :type="tabName"
               :dialog="newOrEditDialog"
               v-on:save-lecture="onSaveLecture"
+      />
+      <edit-eval-settings
+              v-if="editEvalDialog"
+              :dialog="editEvalDialog"
+              v-on:close-edit-lecture-dialog="onCloseEditDialog"
       />
       <show-lecture-dialog
               v-if="current && showDialog"
@@ -322,11 +374,14 @@ import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
   import Classroom from '@/models/management/Classroom';
   import RemoteServices from '@/services/RemoteServices';
   import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
+  import EditEvalSettingsDialog from '@/views/classroom/EditEvalSettingsDialog.vue';
+  import {Student} from "@/models/management/Student";
 
 @Component({
   components: {
     'edit-lecture-dialog': EditLectureDialog,
     'show-lecture-dialog': ShowLectureDialog,
+    'edit-eval-settings': EditEvalSettingsDialog,
 
   }
 })
@@ -336,13 +391,13 @@ export default class ClassroomHomeView extends Vue {
   readonly student!: User;
 
   tabName: string = 'New Lecture';
-  students: User[] = [];
   search: string = '';
 
 
   lectures: Classroom[] = [];//trocar por lecture
   lab: Classroom[] = [];//trocar por lab
   project: Classroom[] = [];//trocar por project
+  students: Student[] = [];
 
   newOrEditDialog: boolean = false;
 
@@ -351,6 +406,8 @@ export default class ClassroomHomeView extends Vue {
 
 
   showDialog: boolean = false;
+
+  editEvalDialog: boolean = false;
 
 
 
@@ -376,6 +433,20 @@ export default class ClassroomHomeView extends Vue {
     },
   ];
 
+  headersStudent: object = [
+    {
+      text: 'Name',
+      align: 'center',
+      value: 'name',
+      sortable: false
+    },
+    {
+      text: 'Final mark',
+      value: 'score',
+      align: 'center'
+    },
+  ];
+
   @Watch('newOrEditDialog')
   closeError() {
     if (!this.newOrEditDialog) {
@@ -388,15 +459,18 @@ export default class ClassroomHomeView extends Vue {
     this.lectures = await RemoteServices.getClassrooms('LECTURE')
     this.lab = await RemoteServices.getClassrooms('LAB')
     this.project= await RemoteServices.getClassrooms('PROJECT')
+    this.students = await RemoteServices.getEvalStudents();
     console.log(this.lectures)
     console.log(this.lab)
     console.log(this.project)
+    console.log(this.students)
 
   }
 
   setTabName(str: string){
     this.tabName = str;
   }
+
   getTabName(){
    return this.tabName;
   }
@@ -408,6 +482,14 @@ export default class ClassroomHomeView extends Vue {
   showLectureDialog(lec: Classroom) {
     this.current = lec;
     this.showDialog = true;
+  }
+
+  showEditEvalDialog(){
+    this.editEvalDialog = true;
+  }
+
+  async onCloseEditDialog() {
+    this.editEvalDialog = false;
   }
 
   async onCloseShowDialog() {

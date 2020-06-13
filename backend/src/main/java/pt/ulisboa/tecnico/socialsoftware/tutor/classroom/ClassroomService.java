@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.repository.DocumentRepo
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.EvalSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
 
@@ -34,9 +35,7 @@ import javax.persistence.PersistenceContext;
 import javax.print.Doc;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -332,7 +331,7 @@ public class ClassroomService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ClassroomDto setEvaluation(int courseExecutionId, int classroomId, StatementQuizDto statementQuizDto){
+    public ClassroomDto setEvaluation(int courseExecutionId, int classroomId, int quizId, boolean eval){
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() -> new TutorException(CLASSROOM_NOT_FOUND, classroomId));
@@ -340,12 +339,12 @@ public class ClassroomService {
         if (classroom.getCourseExecution() != courseExecution)
             throw new TutorException(COURSE_EXECUTION_MISMATCH);
 
-        Quiz q = quizRepository.findById(statementQuizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
+        Quiz q = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         if (classroom.getId() != q.getClassroom().getId())
             throw new TutorException(CLASSROOM_NOT_FOUND);
 
-        q.setEvaluation(statementQuizDto.isEvaluation());
+        q.setEvaluation(eval);
 
         return new ClassroomDto(classroom);
     }
@@ -372,7 +371,46 @@ public class ClassroomService {
     }
 
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public EvalSettingsDto changeEvalSettings(int courseExecutionId, EvalSettingsDto evalSettingsDto){
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
+        if(evalSettingsDto.getSuggWeight()+evalSettingsDto.getQuizWeight()+evalSettingsDto.getTournamentWeight()!=100)
+            throw new TutorException(BAD_SETTINGS_VALUES);
+
+        courseExecution.setQuizWeight(evalSettingsDto.getQuizWeight());
+        courseExecution.setTournamentWeight(evalSettingsDto.getTournamentWeight());
+        courseExecution.setSuggWeight(evalSettingsDto.getSuggWeight());
+
+        List<Integer> list=new ArrayList<>(Arrays.asList(5, 10, 20,100));
+
+        if(!list.contains(evalSettingsDto.getScale()))
+            throw new TutorException(BAD_SETTINGS_SCALE);
+
+        courseExecution.setScale(evalSettingsDto.getScale());
+
+        return new EvalSettingsDto(courseExecution.getScale(),courseExecution.getQuizWeight(),courseExecution.getTournamentWeight(),courseExecution.getSuggWeight());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public EvalSettingsDto getEvalSettings(int courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        if(courseExecution.getScale()==null){
+            courseExecution.setScale(20);
+            courseExecution.setQuizWeight(80);
+            courseExecution.setTournamentWeight(10);
+            courseExecution.setSuggWeight(10);
+        }
+
+        return new EvalSettingsDto(courseExecution.getScale(),courseExecution.getQuizWeight(),courseExecution.getTournamentWeight(),courseExecution.getSuggWeight());
+    }
 
 
 }
