@@ -14,6 +14,8 @@ export default class User {
   dashboardPrivate: boolean = false;
   numberofsuggestions!: number;
   numberofsuggestionsapproved!: number;
+  grade!: number;
+
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -31,6 +33,8 @@ export default class User {
           this.coursesNumber += this.courses[name].length;
         }
       }
+      this.grade = jsonObj.grade;
+
     }
   }
 }

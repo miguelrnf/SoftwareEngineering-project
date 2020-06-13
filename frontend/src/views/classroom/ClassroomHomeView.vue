@@ -442,7 +442,7 @@ export default class ClassroomHomeView extends Vue {
     },
     {
       text: 'Final mark',
-      value: 'score',
+      value: 'grade',
       align: 'center'
     },
   ];
