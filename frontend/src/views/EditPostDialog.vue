@@ -29,7 +29,7 @@
                   savePostEdit() && $emit('close-edit-post-dialog', false)
                 "
                 data-cy="dialogEditPost"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>
@@ -38,15 +38,12 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="$emit('close-edit-post-dialog')"
           data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn
-          color="blue darken-1"
-          @click="savePostEdit"
-          data-cy="saveEditButton"
+        <v-btn color="primary" @click="savePostEdit" data-cy="saveEditButton"
           >Save Edit</v-btn
         >
       </v-card-actions>

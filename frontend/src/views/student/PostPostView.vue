@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <h2>Submit Post</h2>
-    <v-container class="submit-post">
+    <v-card>
+      <v-container>
+        <v-card-title class="justify-center">Submit Post</v-card-title>
+      </v-container>
       <v-container fluid>
         <v-autocomplete
           v-model="selectedQuestion"
@@ -35,7 +37,7 @@
           Submit post
         </v-btn>
       </v-container>
-    </v-container>
+    </v-card>
   </div>
 </template>
 
@@ -95,13 +97,6 @@ export default class PostPostView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.submit-post {
-  width: 80% !important;
-  background-color: white;
-  border-width: 10px;
-  border-style: solid;
-  border-color: #818181;
-}
 .text-area {
   width: 100%;
 }

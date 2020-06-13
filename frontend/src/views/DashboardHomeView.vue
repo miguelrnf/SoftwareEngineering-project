@@ -1,24 +1,24 @@
 <template>
-  <div >
+  <div>
     <v-card
       class="table"
       width="95%"
       v-if="isReal && (!this.beStudent.dashboardPrivate || this.isOwnDashboard)"
     >
       <v-row>
-      <v-card-title color="primary">
-        <v-icon left>fas fa-star</v-icon>
-        Dashboard
-      </v-card-title>
-      <v-switch
-              class="mt-6 ml-7 "
-              v-if="isOwnDashboard"
-              v-model="beStudent.dashboardPrivate"
-              :label="`${textLabel}`"
-              color="red"
-              @change="changePrivacy()"
-      />
-      <v-spacer/>
+        <v-card-title color="primary">
+          <v-icon left>fas fa-star</v-icon>
+          Dashboard
+        </v-card-title>
+        <v-switch
+          class="mt-6 ml-7 "
+          v-if="isOwnDashboard"
+          v-model="beStudent.dashboardPrivate"
+          :label="`${textLabel}`"
+          color="red"
+          @change="changePrivacy()"
+        />
+        <v-spacer />
         <v-autocomplete
           v-if="isOwnDashboard"
           v-model="searchedStudent"
@@ -38,7 +38,6 @@
           </v-card-subtitle>
         </v-col>
       </v-row>
-
 
       <v-tabs>
         <v-tab>
@@ -60,58 +59,53 @@
 
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-                <div>
-                  <post-preview
-                    v-for="p in posts"
-                    class="mb-2"
-                    :key="p.id"
-                    :post="p"
-                    @click.native="showPostOpenDialog(p)"
-                  ></post-preview>
-                </div>
-            </v-card-text>
+            <post-preview
+              v-for="p in posts"
+              class="my-4"
+              :key="p.id"
+              :post="p"
+              @click.native="showPostOpenDialog(p)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <suggestion-preview
-                v-for="s in suggestions"
-                class="mb-2"
-                :key="s.id"
-                :suggestion="s"
-                @click.native="showSuggOpenDialog(s)"
-              ></suggestion-preview>
-            </v-card-text>
+            <suggestion-preview
+              v-for="s in suggestions"
+              class="my-4"
+              :key="s.id"
+              :suggestion="s"
+              @click.native="showSuggOpenDialog(s)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <tournament-preview
-                v-for="t in tournaments"
-                class="mb-2"
-                :key="t.id"
-                :tournament="t"
-                @click.native="showTournamentOpenDialog(t)"
-              >
-              </tournament-preview>
-            </v-card-text>
+            <tournament-preview
+              v-for="t in tournaments"
+              class="my-4"
+              :key="t.id"
+              :tournament="t"
+              @click.native="showTournamentOpenDialog(t)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-row class="mt-3" >
+            <v-row class="mt-3">
               <v-col>
                 <v-card>
                   <v-list-item three-line>
-                    <v-icon left x-large>question_answer</v-icon>
+                    <v-icon left large>question_answer</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title
-                        class="headline mb-1">Total Suggestions Submitted:
+                      <v-list-item-title style="font-size: large"
+                        >Total Suggestions Submitted:
                         <span>
-                          {{this.stats.approveSuggestions + this.stats.rejectedSuggestions + this.stats.pendingSuggestions}}
+                          {{
+                            this.stats.approveSuggestions +
+                              this.stats.rejectedSuggestions +
+                              this.stats.pendingSuggestions
+                          }}
                         </span>
                       </v-list-item-title>
                     </v-list-item-content>
@@ -121,12 +115,12 @@
               <v-col>
                 <v-card>
                   <v-list-item three-line>
-                    <v-icon left x-large>assignment</v-icon>
+                    <v-icon left large>assignment</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title
-                        class="headline mb-1">Total Unique Answered Questions:
+                      <v-list-item-title style="font-size: large">
+                        Total Unique Answered Questions:
                         <span>
-                          {{this.stats.totalUniqueQuestions}}
+                          {{ this.stats.totalUniqueQuestions }}
                         </span>
                       </v-list-item-title>
                     </v-list-item-content>
@@ -136,12 +130,12 @@
               <v-col>
                 <v-card>
                   <v-list-item three-line>
-                    <v-icon left x-large>assignment</v-icon>
+                    <v-icon left large>assignment</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title
-                              class="headline mb-1">Total Quizzes Solved:
+                      <v-list-item-title style="font-size: large">
+                        Total Quizzes Solved:
                         <span>
-                          {{this.stats.totalQuizzes}}
+                          {{ this.stats.totalQuizzes }}
                         </span>
                       </v-list-item-title>
                     </v-list-item-content>
@@ -149,64 +143,82 @@
                 </v-card>
               </v-col>
             </v-row>
-
-            <v-row >
+            <v-row>
               <v-col>
-                <v-card max-width="97%"  v-if=" this.stats.approveSuggestions + this.stats.rejectedSuggestions + this.stats.pendingSuggestions !== 0">
-                  <v-card-text>SUGGESTIONS</v-card-text>
+                <v-card
+                  max-width="97%"
+                  v-if="
+                    this.stats.approveSuggestions +
+                      this.stats.rejectedSuggestions +
+                      this.stats.pendingSuggestions !==
+                      0
+                  "
+                >
+                  <v-card-title style="justify-content: center">
+                    SUGGESTIONS
+                  </v-card-title>
                   <GChart
-                          type="PieChart"
-                          :data="suggestionChartData"
-                          :options="chartOptions"
-                          @ready="getStats"
+                    type="PieChart"
+                    :data="suggestionChartData"
+                    :options="chartOptions"
+                    @ready="getStats"
                   />
                 </v-card>
-                <v-card max-width="97%"  v-else class="pb-10" height="255" >
-                  <v-card-text class="pt-12">NO SUGGESTIONS SUBMITTED</v-card-text>
-                  <v-icon class="pt-6" left x-large>fas fa-exclamation-triangle</v-icon>
-
+                <v-card max-width="97%" v-else class="pb-10" height="255">
+                  <v-card-text class="pt-12">
+                    NO SUGGESTIONS SUBMITTED
+                  </v-card-text>
+                  <v-icon class="pt-6" left x-large>
+                    fas fa-exclamation-triangle
+                  </v-icon>
                 </v-card>
               </v-col>
               <v-col>
-                <v-card max-width="97%" >
-                  <v-card-text>QUESTIONS</v-card-text>
+                <v-card max-width="97%">
+                  <v-card-title style="justify-content: center">
+                    QUESTIONS
+                  </v-card-title>
                   <GChart
-
-                          type="PieChart"
-                          :data="questionChartData"
-                          :options="chartOptions"
-                          @ready="getStats"
+                    type="PieChart"
+                    :data="questionChartData"
+                    :options="chartOptions"
+                    @ready="getStats"
                   />
                 </v-card>
               </v-col>
               <v-col>
-                <v-card max-width="97%" v-if=" this.correctAnswers !== 0 || this.wrongAnswers !== 0">
-                  <v-card-text>CORRECT ANSWERS</v-card-text>
+                <v-card
+                  max-width="97%"
+                  v-if="this.correctAnswers !== 0 || this.wrongAnswers !== 0"
+                >
+                  <v-card-title style="justify-content: center"
+                    >CORRECT ANSWERS
+                  </v-card-title>
                   <GChart
-                          type="PieChart"
-                          :data="correctChartData"
-                          :options="chartOptions"
-                          @ready="getStats"
+                    type="PieChart"
+                    :data="correctChartData"
+                    :options="chartOptions"
+                    @ready="getStats"
                   />
                 </v-card>
-
-                <v-card max-width="97%"  v-else class="pb-10" height="255" >
+                <v-card max-width="97%" v-else class="pb-10" height="255">
                   <v-card-text class="pt-12">NO ANSWERED QUESTIONS</v-card-text>
-                  <v-icon class="pt-6" left x-large>fas fa-exclamation-triangle</v-icon>
-
+                  <v-icon class="pt-6" left x-large
+                    >fas fa-exclamation-triangle
+                  </v-icon>
                 </v-card>
               </v-col>
             </v-row>
-            <v-row class="mt-3" >
+            <v-row class="mt-3">
               <v-col>
                 <v-card>
                   <v-list-item three-line>
-                    <v-icon left x-large>fas fa-trophy</v-icon>
+                    <v-icon left large>fas fa-trophy</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title
-                              class="headline mb-1">Total Tournaments Done:
+                      <v-list-item-title style="font-size: large">
+                        Total Tournaments Done:
                         <span>
-                          {{this.stats.tournamentDone}}
+                          {{ this.stats.tournamentDone }}
                         </span>
                       </v-list-item-title>
                     </v-list-item-content>
@@ -216,58 +228,59 @@
               <v-col>
                 <v-card>
                   <v-list-item three-line>
-                    <v-icon left x-large>fas fa-book</v-icon>
+                    <v-icon left large>fas fa-book</v-icon>
                     <v-list-item-content>
-                      <v-list-item-title
-                              class="headline mb-1">Total Posts Submitted:
+                      <v-list-item-title style="font-size: large">
+                        Total Posts Submitted:
                         <span>
-                          {{this.stats.postSubmitted}}
+                          {{ this.stats.postSubmitted }}
                         </span>
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-card>
               </v-col>
-              <v-col>
-
-              </v-col>
             </v-row>
-            <v-row >
+            <v-row>
               <v-col>
                 <v-card max-width="97%" v-if="this.stats.tournamentDone !== 0">
-                  <v-card-text>TOURNAMENTS</v-card-text>
+                  <v-card-title style="justify-content: center"
+                    >TOURNAMENTS</v-card-title
+                  >
                   <GChart
-                          type="PieChart"
-                          :data="tournamentChartData"
-                          :options="chartOptions"
-                          @ready="getStats"
+                    type="PieChart"
+                    :data="tournamentChartData"
+                    :options="chartOptions"
+                    @ready="getStats"
                   />
                 </v-card>
-                <v-card max-width="97%"  v-else class="pb-10" height="255">
+                <v-card max-width="97%" v-else class="pb-10" height="255">
                   <v-card-text class="pt-12">NO TOURNAMENTS DONE</v-card-text>
-                  <v-icon class="pt-6" left x-large>fas fa-exclamation-triangle</v-icon>
+                  <v-icon class="pt-6" left x-large
+                    >fas fa-exclamation-triangle</v-icon
+                  >
                 </v-card>
               </v-col>
               <v-col>
-                <v-card max-width="97%" v-if="this.stats.postSubmitted !==0">
-                  <v-card-text>POSTS</v-card-text>
+                <v-card max-width="97%" v-if="this.stats.postSubmitted !== 0">
+                  <v-card-title style="justify-content: center">
+                    POSTS
+                  </v-card-title>
                   <GChart
-
-                          type="PieChart"
-                          :data="postChartData"
-                          :options="chartOptions"
-                          @ready="getStats"
+                    type="PieChart"
+                    :data="postChartData"
+                    :options="chartOptions"
+                    @ready="getStats"
                   />
                 </v-card>
-                <v-card max-width="97%"  v-else class="pb-10 " height="255">
+                <v-card max-width="97%" v-else class="pb-10 " height="255">
                   <v-card-text class="pt-12">NO POSTS SUBMITTED</v-card-text>
-                  <v-icon class="pt-6" x-large>fas fa-exclamation-triangle</v-icon>
+                  <v-icon class="pt-6" x-large
+                    >fas fa-exclamation-triangle</v-icon
+                  >
                 </v-card>
-
               </v-col>
-              <v-col></v-col>
             </v-row>
-
           </v-card>
         </v-tab-item>
       </v-tabs>
@@ -278,7 +291,7 @@
       :student="selectedStudent"
       :is-own-dashboard="false"
       v-on:close-dashboard-dialog="onCloseDialog"
-    ></student-dashboard>
+    />
     <show-post-dialog
       v-if="currentPost"
       :dialog="postDialog"
@@ -297,6 +310,7 @@
       :dialog="tournamentDialog"
       :tournament="currentTournament"
       :student="beStudent"
+      :dashboard="true"
       v-on:close-show-tournament-dialog="onCloseDialog"
     />
     <v-card v-if="!isReal">
@@ -322,7 +336,7 @@ import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import User from '@/models/user/User';
 import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
 import SuggsPreview from '@/views/SuggsPreview.vue';
-import { GChart } from "vue-google-charts";
+import { GChart } from 'vue-google-charts';
 import StudentStats from '@/models/statement/StudentStats';
 
 @Component({
@@ -362,31 +376,31 @@ export default class DashboardHomeView extends Vue {
   beStudent: User | undefined = undefined;
   textLabel: string = '';
   stats: StudentStats | null = null;
-  wrongAnswers: number | null=null;
+  wrongAnswers: number | null = null;
   correctAnswers: number | null = null;
 
-
-
-
-  suggestionChartData : Array<Object> = [];
-  questionChartData : Array<Object> = [];
-  correctChartData : Array<Object> = [];
-  postChartData : Array<Object> = [];
-  tournamentChartData : Array<Object> = [];
+  suggestionChartData: Array<Object> = [];
+  questionChartData: Array<Object> = [];
+  correctChartData: Array<Object> = [];
+  postChartData: Array<Object> = [];
+  tournamentChartData: Array<Object> = [];
 
   chartOptions = {
     pieHole: 0.7,
-    colors:['red','#1877d3','#F4D50E'],
-    pieSliceText:'none',
-
+    colors: ['red', this.$vuetify.theme.currentTheme.info, '#F4D50E'],
+    pieSliceText: 'none',
+    backgroundColor: this.$vuetify.theme.currentTheme.background,
+    pieSliceBorderColor: this.$vuetify.theme.currentTheme.background,
+    legend: {
+      textStyle: {
+        color: this.$vuetify.theme.currentTheme.font,
+        fontSize: '14'
+      }
+    },
+    tooltip: { textStyle: { fontSize: '14' } }
   };
 
-
-
-
   async created() {
-
-
     if (this.student == null) this.beStudent = this.$store.getters.getUser;
     else this.beStudent = this.student;
 
@@ -394,7 +408,8 @@ export default class DashboardHomeView extends Vue {
     else this.textLabel = 'Public';
 
     this.students = await RemoteServices.getCourseStudents(
-      this.$store.getters.getCurrentCourse
+      this.$store.getters.getCurrentCourse,
+      true
     );
     if (this.beStudent?.username != null) {
       if (!this.beStudent.dashboardPrivate || this.isOwnDashboard) {
@@ -414,54 +429,59 @@ export default class DashboardHomeView extends Vue {
           this.suggestions = ss._suggslist;
         }
       }
-
-
     }
     this.stats = await RemoteServices.getUserStats();
 
     this.getStats();
-
   }
 
-  async getStats(){
-
-
+  async getStats() {
     this.suggestionChartData = [
       ['Title', 'Number'],
       ['Number Of Rejected Suggestions', this.stats?.rejectedSuggestions],
       ['Number Of Approved Suggestions', this.stats?.approveSuggestions],
-      ['Number Of Pending Suggestions', this.stats?.pendingSuggestions],
-
+      ['Number Of Pending Suggestions', this.stats?.pendingSuggestions]
     ];
 
     this.questionChartData = [
       ['Title', 'Number'],
-      ['Total Unique Not Answered Question', this.stats?.totalAvailableQuestions - this.stats?.totalUniqueQuestions ],
-      ['Total Unique Answered Question', this.stats?.totalUniqueQuestions],
+      [
+        'Total Unique Not Answered Question',
+        this.stats?.totalAvailableQuestions - this.stats?.totalUniqueQuestions
+      ],
+      ['Total Unique Answered Question', this.stats?.totalUniqueQuestions]
     ];
 
-    this.wrongAnswers = this.stats?.totalAnswers - (this.stats?.correctAnswers * this.stats?.totalAnswers)/100;
-    this.correctAnswers =  (this.stats?.correctAnswers * this.stats?.totalAnswers)/100;
-
+    this.wrongAnswers =
+      this.stats?.totalAnswers -
+      (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100;
+    this.correctAnswers =
+      (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100;
 
     this.correctChartData = [
       ['Title', 'Number'],
-      ['Total Wrong Answers', this.stats?.totalAnswers - (this.stats?.correctAnswers * this.stats?.totalAnswers)/100],
-      ['Total Correct Answers', (this.stats?.correctAnswers * this.stats?.totalAnswers)/100],
+      [
+        'Total Wrong Answers',
+        this.stats?.totalAnswers -
+          (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100
+      ],
+      [
+        'Total Correct Answers',
+        (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100
+      ]
     ];
 
     this.postChartData = [
       ['Title', 'Number'],
       ['Upvoted Posts', 7],
-      ['Downvoted Posts', 5],
+      ['Downvoted Posts', 5]
     ];
 
     this.tournamentChartData = [
       ['Title', 'Number'],
       ['Won Tournaments', 10],
-      ['Lost Tournaments', 15],
+      ['Lost Tournaments', 15]
     ];
-
   }
 
   async changePrivacy() {
@@ -487,7 +507,7 @@ export default class DashboardHomeView extends Vue {
     this.currentSuggestion = sugg;
     this.suggestionDialog = true;
     this.beStudent = this.students.find(
-            student => student.username == this.beStudent?.username
+      student => student.username == this.beStudent?.username
     );
   }
 
@@ -512,8 +532,7 @@ export default class DashboardHomeView extends Vue {
     else this.selectedStudent = null;
     this.dashboardDialog = true;
   }
-
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

@@ -254,10 +254,11 @@
         </v-menu>
 
         <v-btn
-                to="/study/home"
-                v-if="isStudent && currentCourse"
-                text dark
-                data-cy="Study"
+          to="/study/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="Study"
         >
           Study
           <v-icon>fas fa-book-reader</v-icon>
@@ -272,6 +273,15 @@
         >
           Dashboard
           <v-icon>fas fa-star</v-icon>
+        </v-btn>
+
+        <v-btn to="/themes" v-if="isStudent && currentCourse" text dark>
+          Themes
+          <v-icon>fas fa-cogs</v-icon>
+        </v-btn>
+        <v-btn to="/shopConfig" v-if="isAdmin" text dark>
+          Shop
+          <v-icon>fas fa-cogs</v-icon>
         </v-btn>
 
         <v-btn
@@ -299,6 +309,7 @@
         <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
+
 
         <v-btn href="https://www.worldometers.info/coronavirus/" text dark>
           #STAYHOME
@@ -360,8 +371,9 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
-            </v-list-item-content> </v-list-item
-          ><v-list-item to="/management/suggestions">
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/suggestions">
             <v-list-item-action>
               <v-icon>question_answer</v-icon>
             </v-list-item-action>
@@ -480,6 +492,7 @@
             </v-list-item-action>
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
+
         </v-list-group>
 
         <v-list-group
@@ -536,7 +549,7 @@
             <v-icon>fas fa-book-reader</v-icon>
           </v-list-item-action>
           <v-list-item-content class="mobileTitle">
-           Study
+            Study
           </v-list-item-content>
         </v-list-item>
 

@@ -55,7 +55,7 @@ export default new Vuex.Store({
     currentCourse(state, currentCourse: Course) {
       state.currentCourse = currentCourse;
     },
-    score(state, user: User) {
+    user(state, user: User) {
       state.user = user;
     },
     votes(state, user: User) {
@@ -107,11 +107,9 @@ export default new Vuex.Store({
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },
-    async updateScore({ commit }) {
-      const user = await RemoteServices.updateScore();
-      commit('score', user);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
+    async updateUser({ commit }) {
+      const user = await RemoteServices.updateUser();
+      commit('user', user);
     },
     logout({ commit }) {
       return new Promise(resolve => {

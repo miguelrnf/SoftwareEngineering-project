@@ -13,6 +13,7 @@ export default class User {
   courses: CourseMap = {};
   coursesNumber: number = 0;
   score!: number;
+  currentTheme!: string;
   dashboardPrivate: boolean = false;
   numberofsuggestions!: number;
   numberofsuggestionsapproved!: number;
@@ -25,6 +26,7 @@ export default class User {
       this.username = jsonObj.username;
       this.role = jsonObj.role;
       this.score = jsonObj.score;
+      this.currentTheme = jsonObj.currentTheme;
       this.dashboardPrivate = jsonObj.dashboardPrivate;
       this.numberofsuggestions = jsonObj.numberofsuggestions;
       this.numberofsuggestionsapproved = jsonObj.numberofsuggestionsapproved;

@@ -17,7 +17,7 @@
             $emit('close-answer-post-dialog', false)
         "
         data-cy="typeAnswer"
-      ></v-textarea>
+      />
     </v-card>
   </v-dialog>
 </template>
@@ -38,7 +38,5 @@ export default class AnswerPostDialog extends Vue {
 <style>
 .box-part {
   border-radius: 10px;
-  border: 2px solid dimgrey;
-  background: white;
 }
 </style>

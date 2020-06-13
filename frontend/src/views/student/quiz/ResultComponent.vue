@@ -23,7 +23,7 @@
       <div
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"
-      ></div>
+      />
       <div @click="increaseOrder" class="square">
         <i
           v-if="questionOrder !== questionNumber - 1"

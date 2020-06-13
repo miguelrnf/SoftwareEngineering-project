@@ -59,9 +59,16 @@ public class UserController {
 
     @GetMapping("/users/update")
     @PreAuthorize("(hasRole('ROLE_STUDENT'))")
-    public UserDto updateLoggedUser(Principal principal) {
+    public UserDto getLoggedUser(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return userService.updateLoggedUser(user.getId());
+        return userService.getLoggedUser(user.getId());
+    }
+
+    @GetMapping("/users/update/theme/{themeName}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public UserDto updateCurrentTheme(Principal principal, @PathVariable String themeName) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.updateCurrentTheme(user.getId(), themeName);
     }
 
 

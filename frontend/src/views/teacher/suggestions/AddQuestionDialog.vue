@@ -27,7 +27,7 @@
                 label="Content"
                 outlined
                 data-cy="content"
-              ></v-textarea>
+              />
             </v-flex>
 
             <v-flex
@@ -47,7 +47,7 @@
                 rows="10"
                 v-model="currentSuggestion.options[index - 1].content"
                 :label="`Option ${index}`"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>
@@ -86,15 +86,12 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="$emit('close-add-question-dialog', false)"
           data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
-          color="blue darken-1"
-          @click="saveSuggestion"
-          data-cy="saveButton"
+        <v-btn color="primary" @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>

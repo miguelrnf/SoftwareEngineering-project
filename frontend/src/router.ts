@@ -7,7 +7,7 @@ import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
-import StudentsView from '@/views/student/StudentView.vue';
+import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
@@ -16,7 +16,6 @@ import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';
 import ResultsView from '@/views/student/quiz/ResultsView.vue';
-import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 import AvailableTournamentsView from '@/views/student/tournament/AvailableTournamentsView.vue';
 import OwnTournamentsView from '@/views/student/tournament/OwnTournamentsView.vue';
@@ -38,6 +37,8 @@ import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 import StudyGeneralView from '@/views/StudyGeneralView.vue';
 import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
+import ThemeInventory from '@/views/ThemeInventory.vue';
+import CreateShopItem from '@/views/admin/CreateShopItem.vue';
 
 Vue.use(Router);
 
@@ -346,6 +347,24 @@ let router = new Router({
           }
         }
       ]
+    },
+    {
+      path: '/themes',
+      name: 'themes',
+      component: ThemeInventory,
+      meta: {
+        title: process.env.VUE_APP_NAME + ' - Themes',
+        requiredAuth: 'Student'
+      }
+    },
+    {
+      path: '/shopConfig',
+      name: 'shop-config',
+      component: CreateShopItem,
+      meta: {
+        title: process.env.VUE_APP_NAME + ' - Create Item',
+        requiredAuth: 'Admin'
+      }
     },
     {
       path: '**',

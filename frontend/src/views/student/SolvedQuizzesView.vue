@@ -1,45 +1,83 @@
 <template>
-  <div class="container">
-    <h2>Solved Quizzes</h2>
-    <ul>
-      <li class="list-header ">
-        <div class="col">Title</div>
-        <div class="col">Solved Date</div>
-        <div class="col">Score</div>
-        <div class="col last-col"></div>
-      </li>
-      <li
-        class="list-row"
-        v-for="quiz in quizzes"
-        :key="quiz.quizAnswerId"
-        @click="showResults(quiz)"
-      >
-        <div class="col">
-          {{ quiz.statementQuiz.title }}
-        </div>
-        <div class="col">
-          {{ quiz.answerDate }}
-        </div>
-        <div class="col">
-          {{ calculateScore(quiz) }}
-        </div>
-        <div class="col last-col">
-          <i class="fas fa-chevron-circle-right" />
-        </div>
-      </li>
-    </ul>
-  </div>
+  <v-card class="table">
+    <v-data-table
+      :headers="headers"
+      :items="quizzes"
+      :search="search"
+      :sort-by="['creationDate']"
+      sort-desc
+      :mobile-breakpoint="0"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      style="cursor: pointer"
+      @click:row="showResults"
+    >
+      <template v-slot:top>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
+          />
+        </v-card-title>
+      </template>
+
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon large class="mr-2" v-on="on" @click="showResults(item)"
+              >fas fa-chevron-circle-right</v-icon
+            >
+          </template>
+          <span>Show Results</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:item.title="{ item }">
+        <p>
+          {{ item.title }}
+        </p>
+      </template>
+
+      <template v-slot:item.score="{ item }">
+        <p>{{ calculateScore(item) }}</p>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import SolvedQuiz from '@/models/statement/SolvedQuiz';
+import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementManager from '@/models/statement/StatementManager';
+import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
 @Component
 export default class AvailableQuizzesView extends Vue {
   quizzes: SolvedQuiz[] = [];
+  search: string = '';
+  headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '50px',
+      sortable: false
+    },
+    { text: 'Title', value: 'statementQuiz.title', align: 'left' },
+    {
+      text: 'Solved Date',
+      value: 'answerDate',
+      align: 'left'
+    },
+    {
+      text: 'Score',
+      value: 'score',
+      align: 'left'
+    }
+  ];
 
   async created() {
     await this.$store.dispatch('loading');
@@ -74,61 +112,11 @@ export default class AvailableQuizzesView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-.container {
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 10px;
-  padding-right: 10px;
-
-  h2 {
-    font-size: 26px;
-    margin: 20px 0;
-    text-align: center;
-    small {
-      font-size: 0.5em;
-    }
-  }
-
-  ul {
-    overflow: hidden;
-    padding: 0 5px;
-
-    li {
-      border-radius: 3px;
-      padding: 15px 10px;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .list-header {
-      background-color: #1976d2;
-      color: white;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      text-align: center;
-    }
-
-    .col {
-      width: 25%;
-    }
-
-    .last-col {
-      max-width: 50px !important;
-    }
-
-    .list-row {
-      background-color: #ffffff;
-      cursor: pointer;
-      box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .list-row:hover {
-      background-color: #c8c8c8;
-    }
-  }
+<style lang="scss">
+.qrcode {
+  width: 80vw !important;
+  height: 80vw !important;
+  max-width: 80vh !important;
+  max-height: 80vh !important;
 }
 </style>
