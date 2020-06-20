@@ -62,8 +62,6 @@ public class LeaderboardsService {
         // List<Post> mostUpvoted = posts.stream()
         //        .sorted(Comparator.comparingInt(Post::getUpvotes)).limit(10).collect(Collectors.toList());
 
-        System.out.println(mostApprovedSuggestions);
-
         return new LeaderboardsDto(bestScores, mostApprovedSuggestions, mostPosts,
                 mostQuizzesSolved, mostTournamentsParticipated);
     }

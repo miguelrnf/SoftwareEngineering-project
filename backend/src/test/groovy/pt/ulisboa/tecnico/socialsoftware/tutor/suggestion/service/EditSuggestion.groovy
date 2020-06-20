@@ -223,7 +223,6 @@ class EditSuggestion extends Specification {
 
 
         then: "add to repository"
-        println(suggestion.dump())
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
@@ -300,7 +299,7 @@ class EditSuggestion extends Specification {
 
 /*    @Unroll
     def "edit a suggestion with invalid fields"() {
-        println(topicRepository.findAll().dump())
+
 
         when:
         def sug = new SuggestionDto()

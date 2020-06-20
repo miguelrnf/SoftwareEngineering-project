@@ -222,7 +222,6 @@ class PostCommentTest extends Specification {
     @Unroll
     def "valid comment submission"() {
         when:
-        println(comment.getPost().dump())
         def result = postService.postComment(new PostCommentDto(comment, false))
 
         then:
