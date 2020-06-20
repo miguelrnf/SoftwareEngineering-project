@@ -4,7 +4,7 @@
     :value="dialog"
     @input="$emit('close-show-post-dialog', false)"
     @keydown.esc="$emit('close-show-post-dialog', false)"
-    class="v-dialog"
+    class="post-dialog"
     max-width="90%"
   >
     <v-card>
@@ -97,16 +97,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import Post from '@/models/management/Post';
-import ShowPost from '@/views/ShowPost.vue';
-import AnswerPost from '@/views/AnswerPostDialog.vue';
-import { PostAnswer } from '@/models/management/PostAnswer';
-import RemoteServices from '@/services/RemoteServices';
-import ShowComments from '@/views/ShowComments.vue';
-import PostStatusButtons from '@/views/PostStatusButtons.vue';
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import Post from '@/models/management/Post';
+  import ShowPost from '@/views/ShowPost.vue';
+  import AnswerPost from '@/views/AnswerPostDialog.vue';
+  import { PostAnswer } from '@/models/management/PostAnswer';
+  import RemoteServices from '@/services/RemoteServices';
+  import ShowComments from '@/views/ShowComments.vue';
+  import PostStatusButtons from '@/views/PostStatusButtons.vue';
 
-@Component({
+  @Component({
   components: {
     'show-post': ShowPost,
     'answer-post': AnswerPost,
@@ -161,9 +161,8 @@ export default class PostViewDialog extends Vue {
 }
 </script>
 <style>
-  .v-dialog {
-    position: absolute;
-    top: 50px;
-    left: 48px;
-  }
+.post-dialog {
+  position: absolute;
+  top: 50px;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <v-card flat>
-    <v-row>
+    <v-row class="d-inline-flex">
       <v-col>
         <v-card
           v-if="
@@ -87,11 +87,11 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row class="d-inline-flex">
       <v-col>
         <v-card v-if="this.stats.tournamentDone !== 0">
           <v-chip label color="white" class="mt-3">
-            <v-icon color="grey darken-1">assignment</v-icon>
+            <v-icon color="grey darken-1">fas fa-trophy</v-icon>
             <v-card-text class="headline"
               >{{ 'Total tournaments done: ' + this.stats.tournamentDone }}
             </v-card-text>
@@ -113,7 +113,7 @@
           <v-chip label color="white" class="mt-3">
             <v-icon color="grey darken-1">fas fa-book</v-icon>
             <v-card-text class="headline"
-              >{{ 'Posts submitted: ' + this.stats.postSubmitted }}
+              >{{ 'Total posts submitted: ' + this.stats.postSubmitted }}
             </v-card-text>
           </v-chip>
           <GChart
@@ -123,7 +123,7 @@
             @ready="getStats"
           />
         </v-card>
-        <v-card v-else class="pb-10 " height="255">
+        <v-card v-else class="pb-10 " height="100%">
           <v-card-text class="pt-12">NO POSTS SUBMITTED</v-card-text>
           <v-icon class="pt-6" x-large>fas fa-exclamation-triangle</v-icon>
         </v-card>
@@ -162,7 +162,6 @@ export default class DashboardStatsView extends Vue {
 
   async created() {
     this.stats = await RemoteServices.getUserStats();
-    this.getStats();
   }
 
   async getStats() {

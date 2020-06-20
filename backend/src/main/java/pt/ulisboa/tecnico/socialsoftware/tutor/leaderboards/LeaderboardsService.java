@@ -40,27 +40,29 @@ public class LeaderboardsService {
         int limit = 5;
 
         List<UserDto> bestScores = users.stream()
-                .sorted(Comparator.comparingInt(User::getScore))
+                .sorted(Comparator.comparingInt(User::getScore).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostApprovedSuggestions = users.stream()
-                .sorted(Comparator.comparingInt(User::getNumberApprovedSuggestions))
+                .sorted(Comparator.comparingInt(User::getNumberApprovedSuggestions).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostPosts = users.stream()
-                .sorted(Comparator.comparingInt((User u) -> u.getPostQuestions().size()))
+                .sorted(Comparator.comparingInt((User u) -> u.getPostQuestions().size()).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostQuizzesSolved = users.stream()
-                .sorted(Comparator.comparingInt((User u) -> u.getQuizzes().size()))
+                .sorted(Comparator.comparingInt((User u) -> u.getQuizzes().size()).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostTournamentsParticipated = users.stream()
-                .sorted(Comparator.comparingInt((User u) -> u.getTournaments().size()))
+                .sorted(Comparator.comparingInt((User u) -> u.getTournaments().size()).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         // List<Post> mostUpvoted = posts.stream()
         //        .sorted(Comparator.comparingInt(Post::getUpvotes)).limit(10).collect(Collectors.toList());
+
+        System.out.println(mostApprovedSuggestions);
 
         return new LeaderboardsDto(bestScores, mostApprovedSuggestions, mostPosts,
                 mostQuizzesSolved, mostTournamentsParticipated);

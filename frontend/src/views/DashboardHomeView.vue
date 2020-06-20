@@ -51,9 +51,13 @@
           <v-icon left>fas fa-trophy</v-icon>
           Tournaments
         </v-tab>
-        <v-tab>
+        <v-tab v-if="isOwnDashboard">
           <v-icon left>fas fa-user</v-icon>
           Stats
+        </v-tab>
+        <v-tab v-if="isOwnDashboard">
+          <v-icon left>fas fa-medal</v-icon>
+          Leaderboards
         </v-tab>
         <v-tab-item class="pb-10">
           <v-card flat>
@@ -98,7 +102,10 @@
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
-          <dashhboard-stats-view />
+          <dashboard-stats-view />
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <dashboard-leaderboards-view />
         </v-tab-item>
       </v-tabs>
     </v-card>
@@ -153,6 +160,7 @@
   import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
   import SuggsPreview from '@/views/SuggsPreview.vue';
   import DashboardStatsView from '@/views/DashboardStatsView.vue';
+  import DashboardLeaderboardsView from '@/views/DashboardLeaderboardsView.vue';
 
   @Component({
   components: {
@@ -163,7 +171,8 @@
     'student-dashboard': StudentDashboardView,
     'show-suggestion-dialog': SuggViewDialog,
     'suggestion-preview': SuggsPreview,
-    'dashhboard-stats-view': DashboardStatsView
+    'dashboard-stats-view': DashboardStatsView,
+    'dashboard-leaderboards-view': DashboardLeaderboardsView
   }
 })
 export default class DashboardHomeView extends Vue {

@@ -133,25 +133,25 @@ class GetLeaderboardsTest extends Specification {
 
         then:
         // Leaderboards are in reverse order
-        result.getBestScores().get(0) == USER_1
+        result.getBestScores().get(0) == USER_2
         result.getBestScores().get(1) == USER_3
-        result.getBestScores().get(2) == USER_2
+        result.getBestScores().get(2) == USER_1
 
         result.getMostApprovedSuggestions().get(0) == USER_1
         result.getMostApprovedSuggestions().get(1) == USER_2
         result.getMostApprovedSuggestions().get(2) == USER_3
 
-        result.getMostPosts().get(0) == USER_3
+        result.getMostPosts().get(0) == USER_2
         result.getMostPosts().get(1) == USER_1
-        result.getMostPosts().get(2) == USER_2
+        result.getMostPosts().get(2) == USER_3
 
-        result.getMostQuizzesSolved().get(0) == USER_3
+        result.getMostQuizzesSolved().get(0) == USER_1
         result.getMostQuizzesSolved().get(1) == USER_2
-        result.getMostQuizzesSolved().get(2) == USER_1
+        result.getMostQuizzesSolved().get(2) == USER_3
 
-        result.getMostTournamentsParticipated().get(0) == USER_3
+        result.getMostTournamentsParticipated().get(0) == USER_1
         result.getMostTournamentsParticipated().get(1) == USER_2
-        result.getMostTournamentsParticipated().get(2) == USER_1
+        result.getMostTournamentsParticipated().get(2) == USER_3
     }
 
     @TestConfiguration

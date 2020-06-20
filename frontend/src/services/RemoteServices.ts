@@ -21,6 +21,7 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
+import { Leaderboards } from '@/models/management/Leaderboards';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -1130,6 +1131,19 @@ export default class RemoteServices {
       )
       .then(response => {
         return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getLeaderboards(): Promise<Leaderboards> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/leaderboards`
+      )
+      .then(response => {
+        return new Leaderboards(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
