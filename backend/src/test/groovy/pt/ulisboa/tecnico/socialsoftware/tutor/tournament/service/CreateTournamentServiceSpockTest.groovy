@@ -132,6 +132,7 @@ class CreateTournamentServiceSpockTest extends Specification {
         tournamentDto.setAvailableDate(DATENOW)
         tournamentDto.setConclusionDate(DATETOMORROW)
         tournamentDto.setNumberOfQuestions(NUMQUESTIONS)
+        tournamentDto.setType("STANDARD")
 
         and: "a user with the role teacher"
         TEACHER = new User()
@@ -239,15 +240,20 @@ class CreateTournamentServiceSpockTest extends Specification {
        result.status == "CREATED"
     }
 
+    @Unroll
     def "teacher creates a tournament"() {
         given:
         tournamentDto.setOwner(new UserDto(TEACHER))
         tournamentDto.setTitle(TITLE)
         assdto.setId(id++)
         tournamentDto.setAssessmentDto(assdto)
+        tournamentDto.setType(type)
+        tournamentDto.setCost(100)
+        tournamentDto.setPrize(20)
 
         when:
         def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
+        println(result.dump())
 
         then:"the return data are correct"
         result.id != null
@@ -255,6 +261,13 @@ class CreateTournamentServiceSpockTest extends Specification {
         result.owner.getRole() == User.Role.TEACHER
         result.title == TITLE
         result.status == "CREATED"
+        result.cost == cost
+        result.prize == prize
+
+        where:
+        type        || cost | prize
+        "ADVANCED"  || 100  | 20
+        "STANDARD"  || 0    | 2
     }
 
     def "null user creates a tournament"() {

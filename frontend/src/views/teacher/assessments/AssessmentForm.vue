@@ -13,10 +13,7 @@
       <v-container fluid>
         <v-row>
           <v-col>
-            <v-text-field
-              v-model="assessment.title"
-              label="Title"
-            ></v-text-field>
+            <v-text-field v-model="assessment.title" label="Title" />
           </v-col>
 
           <v-col>
@@ -27,11 +24,11 @@
               label="Order"
               :value="assessment.sequence"
               @change="assessment.sequence = Number($event)"
-            ></v-text-field>
+            />
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="light-green lighten-4">
+          <v-col class="accent">
             <v-data-table
               :headers="topicHeaders"
               :custom-filter="topicFilter"
@@ -42,7 +39,7 @@
               :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
             >
               <template v-slot:top>
-                <h2>Currently selected</h2>
+                <v-card-title>Currently selected</v-card-title>
                 <v-autocomplete
                   v-model="currentTopicsSearch"
                   label="Search"
@@ -103,7 +100,7 @@
               </template>
             </v-data-table>
           </v-col>
-          <v-col class="red lighten-4">
+          <v-col class="error">
             <v-data-table
               :headers="topicHeaders"
               :custom-filter="topicFilter"
@@ -114,7 +111,7 @@
               :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
             >
               <template v-slot:top>
-                <h2>Available topics</h2>
+                <v-card-title>Available topics</v-card-title>
                 <v-autocomplete
                   v-model="allTopicsSearch"
                   label="Search"
@@ -205,13 +202,13 @@
             >
               <span
                 v-html="convertMarkDown(question.content, question.image)"
-              ></span>
+              />
               <ul>
                 <li v-for="option in question.options" :key="option.number">
                   <span
                     v-html="convertMarkDown(option.content)"
                     v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-                  ></span>
+                  />
                 </li>
               </ul>
               <br />
@@ -220,7 +217,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn dark color="primary" @click="closeQuestionsDialog"
             >close</v-btn
           >
@@ -413,4 +410,4 @@ export default class AssessmentForm extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

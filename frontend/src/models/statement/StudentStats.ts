@@ -14,7 +14,6 @@ export default class StudentStats {
   tournamentDone!: number;
   postSubmitted!:number;
 
-
   constructor(jsonObj?: StudentStats) {
     if (jsonObj) {
       this.totalQuizzes = jsonObj.totalQuizzes;

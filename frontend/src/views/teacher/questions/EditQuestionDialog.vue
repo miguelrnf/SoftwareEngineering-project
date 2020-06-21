@@ -24,6 +24,13 @@
           rows="10"
           v-model="editQuestion.content"
           label="Question"
+        />
+        <v-textarea
+          outlined
+          rows="1"
+          auto-grow
+          v-model="editQuestion.hint"
+          label="Hint (Optional)"
         ></v-textarea>
         <div v-for="index in editQuestion.options.length" :key="index">
           <v-switch
@@ -36,16 +43,14 @@
             rows="10"
             v-model="editQuestion.options[index - 1].content"
             :label="`Option ${index}`"
-          ></v-textarea>
+          />
         </div>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('dialog', false)"
-          >Cancel</v-btn
-        >
-        <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
+        <v-btn color="primary" @click="$emit('dialog', false)">Cancel</v-btn>
+        <v-btn color="primary" @click="saveQuestion">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

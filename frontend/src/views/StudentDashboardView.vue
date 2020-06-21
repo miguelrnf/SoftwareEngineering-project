@@ -5,23 +5,18 @@
     @keydown.esc="$emit('close-dashboard-dialog', false)"
   >
     <v-card class="py-4">
-
       <dashboard-home
         class="mt-10"
         :student="student"
         :is-own-dashboard="false"
         :isReal="isReal"
       >
-
       </dashboard-home>
       <v-row justify="end" class="px-12">
-      <v-btn color="primary"
-             @click="closeDashboardSearchDialog"
-      >
-        Close
-      </v-btn>
+        <v-btn color="primary" @click="closeDashboardSearchDialog">
+          Close
+        </v-btn>
       </v-row>
-
     </v-card>
   </v-dialog>
 </template>

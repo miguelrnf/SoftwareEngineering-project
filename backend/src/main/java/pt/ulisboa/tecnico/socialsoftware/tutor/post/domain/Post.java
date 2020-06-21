@@ -1,9 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
+import org.hibernate.mapping.Map;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(
@@ -41,6 +43,12 @@ public class Post {
     @Column(name = "answer_is_private", columnDefinition = "boolean default false")
     private Boolean answerPrivacy;
 
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<User> usersWhoUpvoted = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<User> usersWhoDownvoted = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private Set<PostComment> comments = new HashSet<>();
 
@@ -57,12 +65,14 @@ public class Post {
         this.answerPrivacy = false;
     }
 
+
     public Post(PostQuestion question) {
         this.question = question;
         this.postStatus = true;
         this.discussStatus = false;
         this.postPrivacy = false;
         this.answerPrivacy = false;
+
     }
 
     public Integer getId() {
@@ -153,6 +163,22 @@ public class Post {
         this.answerPrivacy = answerPrivacy;
     }
 
+    public Set<User> getUsersWhoUpvoted() {
+        return usersWhoUpvoted;
+    }
+
+    public void setUsersWhoUpvoted(Set<User> usersWhoUpvoted) {
+        this.usersWhoUpvoted = usersWhoUpvoted;
+    }
+
+    public Set<User> getUsersWhoDownvoted() {
+        return usersWhoDownvoted;
+    }
+
+    public void setUsersWhoDownvoted(Set<User> usersWhoDownvoted) {
+        this.usersWhoDownvoted = usersWhoDownvoted;
+    }
+
     public void remove() {
         this.question.remove();
         if(this.comments != null)
@@ -172,17 +198,20 @@ public class Post {
         this.answerPrivacy = !this.answerPrivacy;
     }
 
+    public void upvote(User u) {
+        this.usersWhoUpvoted.add(u);
+    }
+
+    public void downvote(User u) {
+        this.usersWhoDownvoted.add(u);
+    }
+
+
     @Override
     public String toString() {
         return "Post{" +
-                "id=" + id +
-                ", key=" + key +
-                ", question=" + question +
-                ", answer=" + answer +
-                ", postStatus=" + postStatus +
-                ", discussStatus=" + discussStatus +
-                ", creationDate=" + creationDate +
-                ", comments=" + comments +
+                "usersWhoUpvoted=" + usersWhoUpvoted +
+                ", usersWhoDownvoted=" + usersWhoDownvoted +
                 '}';
     }
 }

@@ -26,8 +26,7 @@ public class PostController {
     }
 
     @GetMapping("executions/{executionId}/posts/{postId}")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
-            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto viewPost(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         return postService.viewPost(postId);
     }
@@ -146,5 +145,19 @@ public class PostController {
     public PostDto changeAnswerPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return postService.changeAnswerPrivacy(postId, user);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/upvote")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto upvote(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.vote(postId, user, "upvote");
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/downvote")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto downvote(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.vote(postId, user, "downvote");
     }
 }

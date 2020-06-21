@@ -10,7 +10,7 @@
       v-model="comment"
       @keydown.enter.exact="submitComment"
       data-cy="commentBox"
-    ></v-textarea>
+    />
     <div class="text-left ml-3 mt-3" v-if="comments.length === 0">
       {{
         "Currently there's no comments on this post. Be the first one by pressing the comment button."
@@ -26,7 +26,7 @@
         <div class="headline grey--text font-weight-bold text-left ml-3">
           {{ c.user.username.concat(' wrote:') }}
         </div>
-        <v-divider inset class="mt-3"></v-divider>
+        <v-divider inset class="mt-3" />
         <div class="text-left ml-5 mt-3">
           {{ c.comment }}
         </div>
@@ -52,13 +52,13 @@
           v-model="comment"
           @keydown.enter.exact="submitComment"
           data-cy="replyBox"
-        ></v-textarea>
+        />
         <div v-for="child in c.children" :key="child.id" class="mb-5">
-          <v-divider></v-divider>
+          <v-divider />
           <div class="headline grey--text font-weight-bold text-left ml-3">
             {{ c.user.username.concat(' replied:') }}
           </div>
-          <v-divider inset class="mt-3"></v-divider>
+          <v-divider inset class="mt-3" />
           <div class="text-left ml-5 mt-3">
             {{ child.comment }}
           </div>
@@ -125,4 +125,4 @@ export default class ShowComments extends Vue {
 }
 </script>
 
-<style></style>
+<style />

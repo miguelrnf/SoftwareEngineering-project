@@ -31,6 +31,9 @@ public class ThemeItem extends UserItem {
     @Column(name = "theme_error")
     private String error;
 
+    @Column(name = "theme_dark")
+    private Boolean dark;
+
     public ThemeItem() {
     }
 
@@ -46,14 +49,23 @@ public class ThemeItem extends UserItem {
     @Override
     protected void checkContentConsistency(String content) {
         String[] colors = content.split(",");
-        if(colors.length != 7) throw new TutorException(ErrorMessage.INVALID_THEME);
-        this.success = colors[0];
-        this.secondary = colors[1];
-        this.accent = colors[2];
-        this.info = colors[3];
-        this.warning = colors[4];
-        this.primary = colors[5];
-        this.error = colors[6];
+        if(colors.length != 8) throw new TutorException(ErrorMessage.INVALID_THEME);
+        this.dark = colors[0].equals("true");
+        this.success = colors[1];
+        this.secondary = colors[2];
+        this.accent = colors[3];
+        this.info = colors[4];
+        this.warning = colors[5];
+        this.primary = colors[6];
+        this.error = colors[7];
+    }
+
+    public Boolean getDark() {
+        return dark;
+    }
+
+    public void setDark(Boolean dark) {
+        this.dark = dark;
     }
 
     public String getSuccess() {
@@ -124,6 +136,7 @@ public class ThemeItem extends UserItem {
                 ", user=" + this.getUser() +
                 "}\n" +
                 "ThemeItem{" +
+                "dark ='" + dark + '\'' +
                 "success='" + success + '\'' +
                 ", secondary='" + secondary + '\'' +
                 ", accent='" + accent + '\'' +

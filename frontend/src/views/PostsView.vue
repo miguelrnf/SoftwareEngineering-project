@@ -53,11 +53,12 @@
             )
           "
           @click="showPostOpenDialog(item)"
-      /></template>
+        />
+      </template>
 
       <template v-slot:item.user="{ item }">
-        <p v-html="convertMarkDown(item.question.user.username, null)"
-      /></template>
+        <p v-html="convertMarkDown(item.question.user.username, null)" />
+      </template>
 
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -123,10 +124,7 @@
         </v-tooltip>
       </template>
       <template v-slot:item.status="{ item }">
-        <post-status-buttons
-          :post="item"
-          data-cy="StatusButtons"
-        ></post-status-buttons>
+        <post-status-buttons :post="item" data-cy="StatusButtons" />
       </template>
     </v-data-table>
     <edit-post-dialog

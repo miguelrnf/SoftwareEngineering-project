@@ -32,7 +32,9 @@
           v-for="questionAnswer in item.questionAnswers"
           :key="questionAnswer.question.id"
           v-bind:class="[
-            questionAnswer.option.correct ? 'green' : 'red darken-4'
+            questionAnswer.option.correct
+              ? 'success darken-3'
+              : 'error darken-2'
           ]"
           style="border: 0"
         >
@@ -51,7 +53,6 @@
             Correct key:
           </td>
           <div>
-            <td></td>
             <td
               v-for="(sequence, index) in correctSequence"
               :key="index"

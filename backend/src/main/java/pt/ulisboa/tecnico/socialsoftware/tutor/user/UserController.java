@@ -31,6 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT')) or hasRole('ROLE_TEACHER')")
     public User getUser(@PathVariable Integer userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -58,9 +59,16 @@ public class UserController {
 
     @GetMapping("/users/update")
     @PreAuthorize("(hasRole('ROLE_STUDENT'))")
-    public UserDto updateLoggedUser(Principal principal) {
+    public UserDto getLoggedUser(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return userService.updateLoggedUser(user.getId());
+        return userService.getLoggedUser(user.getId());
+    }
+
+    @GetMapping("/users/update/theme/{themeName}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public UserDto updateCurrentTheme(Principal principal, @PathVariable String themeName) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.updateCurrentTheme(user.getId(), themeName);
     }
 
 

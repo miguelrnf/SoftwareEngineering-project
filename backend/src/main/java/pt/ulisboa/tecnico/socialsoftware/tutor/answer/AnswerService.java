@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -73,11 +74,14 @@ public class AnswerService {
         return new QuizAnswerDto(quizAnswer);
     }
 
-    private int calculatePoints(boolean correct, int points){
-        if(correct)
-            points +=2;
-        else
-            points --;
+    private int calculatePoints(boolean correct, int points, Tournament t){
+        if (t.getType() == Tournament.TournamentType.EVALUATION || t.getType() == Tournament.TournamentType.ADVANCED){
+            if(correct)
+                points += t.getPrize();
+            else
+                points -= t.getPrize()/2;
+        }
+
 
         return points;
     }
@@ -96,10 +100,11 @@ public class AnswerService {
         }
 
         //Calculating and adding points to user
-        if (quizAnswer.getQuiz().getTournament() != null && (quizAnswer.getQuiz().getTournament().getOwner().getRole() == User.Role.TEACHER && !quizAnswer.isCompleted())){
+        if (quizAnswer.getQuiz().getTournament() != null && !quizAnswer.isCompleted()){
+            Tournament t = quizAnswer.getQuiz().getTournament();
             quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
                 if (questionAnswer.getOption() != null)
-                    points.set(calculatePoints(questionAnswer.getOption().getCorrect(), points.get()));
+                    points.set(calculatePoints(questionAnswer.getOption().getCorrect(), points.get(), t));
             });
             user.changeScore(points.get());
         }

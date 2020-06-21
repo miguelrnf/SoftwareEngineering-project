@@ -28,6 +28,7 @@ public class QuestionDto implements Serializable {
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
+    private String hint;
 
     public QuestionDto() {
     }
@@ -37,6 +38,7 @@ public class QuestionDto implements Serializable {
         this.key = question.getKey();
         this.title = question.getTitle();
         this.content = question.getContent();
+        this.hint = question.getHint();
         this.difficulty = question.getDifficulty();
         this.numberOfAnswers = question.getNumberOfAnswers();
         this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
@@ -55,6 +57,14 @@ public class QuestionDto implements Serializable {
 
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     public Integer getId() {

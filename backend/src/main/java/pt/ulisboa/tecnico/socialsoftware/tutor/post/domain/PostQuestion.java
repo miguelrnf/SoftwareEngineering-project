@@ -132,7 +132,7 @@ public class PostQuestion {
                 ", post_id=" + post.getId() +
                 ", post_key=" + post.getKey() +
                 ", question_id=" + question.getId() +
-                ", user=" + user +
+                ", user_id=" + user.getId() +
                 ", studentQuestion='" + studentQuestion + '\'' +
                 ", creationDate=" + creationDate +
                 ", isEdited=" + isEdited +

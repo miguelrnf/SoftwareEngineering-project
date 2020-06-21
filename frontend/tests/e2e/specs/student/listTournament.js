@@ -6,8 +6,8 @@ describe('Student walkthrough', () => {
 
   it('list available tournaments', () => {
     cy.demoStudentLogin();
-    cy.createTournament('Demo tournament 1', '30', true);
-    cy.createTournament('Demo tournament 2', '20', true);
+    cy.createTournament('Demo tournament 1', '30', true, false);
+    cy.createTournament('Demo tournament 2', '20', true, false);
     cy.listAvailableTournaments();
 
     cy.assertAvailableEnrolled('Demo tournament 1');
@@ -19,8 +19,8 @@ describe('Student walkthrough', () => {
 
   it('list enrolled tournaments', () => {
     cy.demoStudentLogin();
-    cy.createTournament('Demo tournament 1', '30', true);
-    cy.createTournament('Demo tournament 2', '20', true);
+    cy.createTournament('Demo tournament 1', '30', true, false);
+    cy.createTournament('Demo tournament 2', '20', true, false);
 
     cy.listEnrolledTournaments();
 
@@ -31,8 +31,8 @@ describe('Student walkthrough', () => {
 
   it('list own tournaments', () => {
     cy.demoStudentLogin();
-    cy.createTournament('Demo tournament 1', '30', true);
-    cy.createTournament('Demo tournament 2', '20', true);
+    cy.createTournament('Demo tournament 1', '30', true, false);
+    cy.createTournament('Demo tournament 2', '20', true, false);
 
     cy.listOwnTournaments();
 
@@ -45,8 +45,8 @@ describe('Student walkthrough', () => {
 
   it('list all tournaments', () => {
     cy.demoStudentLogin();
-    cy.createTournament('Demo tournament 1', '30', true);
-    cy.createTournament('Demo tournament 2', '20', true);
+    cy.createTournament('Demo tournament 1', '30', true, false);
+    cy.createTournament('Demo tournament 2', '20', true, false);
 
     cy.get('.v-app-bar > .v-toolbar__content').click('bottomLeft');
     cy.contains('Logout').click();

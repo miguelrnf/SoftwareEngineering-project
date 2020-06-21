@@ -58,6 +58,21 @@
                 <v-divider></v-divider>
               </v-flex>
               <v-flex xs24 sm12 md12>
+                <v-textarea
+                  no-resize
+                  outline
+                  auto-grow
+                  autofocus
+                  counter="1024"
+                  rows="4"
+                  v-model="editSuggestion.hint"
+                  label="Hint (Optional)"
+                  outlined
+                  data-cy="content"
+                ></v-textarea>
+                <v-divider></v-divider>
+              </v-flex>
+              <v-flex xs24 sm12 md12>
                 <v-row>
                   <v-icon color="green" class="px-3"
                     >mdi-check-circle-outline</v-icon
@@ -139,14 +154,10 @@
       </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="primary"
-          text
-          @click="$emit('dialog', false)"
-          data-cy="cancel"
+        <v-btn color="primary" @click="$emit('dialog', false)" data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn color="green" text @click="saveSuggestion" data-cy="saveButton"
+        <v-btn color="primary" @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>

@@ -20,12 +20,13 @@
           v-model="suggestion.teacherExplanation"
           label="Write a brief explanation for the student to understand why his suggestion was rejected"
           data-cy="content"
-        ></v-textarea>
+        />
       </v-flex>
       <br />
 
       <v-card-actions>
         <v-spacer />
+
         <v-btn color="primary" text @click="closeQuestionDialog"
           >Cancel</v-btn
         >

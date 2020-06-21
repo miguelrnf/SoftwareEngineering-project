@@ -84,7 +84,7 @@
                     v-for="item in quizzes"
                     :key="item.statementQuiz.id"
                   >
-                    <template v-slot:default="{ active }">
+                    <template v-slot:default="{ active, toggle }">
                       <v-list-item-content @click="show(item)">
                         <v-list-item-title
                           v-text="item.statementQuiz.title"
@@ -174,14 +174,14 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
-  import Topic from '@/models/management/Topic';
-  import RemoteServices from '@/services/RemoteServices';
-  import ShowSummaryDialog from '@/views/student/study/ShowSummaryDialog.vue';
-  import StatementManager from '@/models/statement/StatementManager';
-  import SolvedQuiz from '@/models/statement/SolvedQuiz';
+import { Component, Vue } from 'vue-property-decorator';
+import Topic from '@/models/management/Topic';
+import RemoteServices from '@/services/RemoteServices';
+import ShowSummaryDialog from '@/views/student/study/ShowSummaryDialog.vue';
+import StatementManager from '@/models/statement/StatementManager';
+import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
-  @Component({
+@Component({
   components: {
     'show-summary-dialog': ShowSummaryDialog
   }

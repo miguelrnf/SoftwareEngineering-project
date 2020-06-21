@@ -1,4 +1,6 @@
 import Course from '@/models/user/Course';
+import Post from '@/models/management/Post';
+import { PostComment } from '@/models/management/PostComment';
 
 interface CourseMap {
   [key: string]: Course[];
@@ -11,12 +13,15 @@ export default class User {
   courses: CourseMap = {};
   coursesNumber: number = 0;
   score!: number;
+  currentTheme!: string;
   dashboardPrivate: boolean = false;
   numberofsuggestions!: number;
   numberofsuggestionsapproved!: number;
   numberOfQuizzesSolved!: number;
   numberOfPostsSubmitted!: number;
   numberOfPTournamentsParticipated!: number;
+  postsUpvoted: Post[] | null = null;
+  postsDownvoted: Post[] | null = null;
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -24,6 +29,7 @@ export default class User {
       this.username = jsonObj.username;
       this.role = jsonObj.role;
       this.score = jsonObj.score;
+      this.currentTheme = jsonObj.currentTheme;
       this.dashboardPrivate = jsonObj.dashboardPrivate;
       this.numberofsuggestions = jsonObj.numberofsuggestions;
       this.numberofsuggestionsapproved = jsonObj.numberofsuggestionsapproved;
@@ -36,6 +42,16 @@ export default class User {
           this.courses[name] = courses.map(course => new Course(course));
           this.coursesNumber += this.courses[name].length;
         }
+      }
+      if (jsonObj.postsUpvoted != null) {
+        this.postsUpvoted = jsonObj.postsUpvoted.map(
+          (postsUpvoted: Post) => new Post(postsUpvoted)
+        );
+      }
+      if (jsonObj.postsDownvoted != null) {
+        this.postsDownvoted = jsonObj.postsDownvoted.map(
+          (postsDownvoted: Post) => new Post(postsDownvoted)
+        );
       }
     }
   }

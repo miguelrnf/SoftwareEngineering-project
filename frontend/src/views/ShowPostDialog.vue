@@ -13,7 +13,7 @@
           post.question.question.title
         }}</v-toolbar-title>
         <v-spacer />
-        <post-status-buttons :post="post"></post-status-buttons>
+        <post-status-buttons :post="post" />
         <v-tooltip bottom v-if="isOwner(post)">
           <template v-slot:activator="{ on }">
             <v-icon color="white" small v-on="on" @click="editPost(post)"
@@ -69,13 +69,13 @@
         :typing-reply="typingReply"
         v-on:typing-comment="typingComment = !typingComment"
         v-on:typing-reply="typingReply = !typingReply"
-      ></show-comments>
+      />
       <v-card-actions>
         <v-spacer />
         <v-btn
           v-if="post.answer == null && this.$store.getters.isTeacher"
           dark
-          color="blue darken-1"
+          color="bprimary"
           @click="acceptAnswer = true"
           data-cy="answerPostButton"
           >answer</v-btn

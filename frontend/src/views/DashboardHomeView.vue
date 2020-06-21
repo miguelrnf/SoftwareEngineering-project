@@ -76,29 +76,24 @@
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <suggestion-preview
-                v-for="s in suggestions"
-                class="mb-2"
-                :key="s.id"
-                :suggestion="s"
-                @click.native="showSuggOpenDialog(s)"
-              ></suggestion-preview>
-            </v-card-text>
+            <suggestion-preview
+              v-for="s in suggestions"
+              class="my-4"
+              :key="s.id"
+              :suggestion="s"
+              @click.native="showSuggOpenDialog(s)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <v-card-text>
-              <tournament-preview
-                v-for="t in tournaments"
-                class="mb-2"
-                :key="t.id"
-                :tournament="t"
-                @click.native="showTournamentOpenDialog(t)"
-              >
-              </tournament-preview>
-            </v-card-text>
+            <tournament-preview
+              v-for="t in tournaments"
+              class="my-4"
+              :key="t.id"
+              :tournament="t"
+              @click.native="showTournamentOpenDialog(t)"
+            />
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
@@ -115,7 +110,7 @@
       :student="selectedStudent"
       :is-own-dashboard="false"
       v-on:close-dashboard-dialog="onCloseDialog"
-    ></student-dashboard>
+    />
     <show-post-dialog
       v-if="currentPost"
       :dialog="postDialog"
@@ -134,6 +129,7 @@
       :dialog="tournamentDialog"
       :tournament="currentTournament"
       :student="beStudent"
+      :dashboard="true"
       v-on:close-show-tournament-dialog="onCloseDialog"
     />
     <v-card v-if="!isReal">
@@ -209,7 +205,8 @@ export default class DashboardHomeView extends Vue {
     else this.textLabel = 'Public';
 
     this.students = await RemoteServices.getCourseStudents(
-      this.$store.getters.getCurrentCourse
+      this.$store.getters.getCurrentCourse,
+      true
     );
     if (this.beStudent?.username != null) {
       if (!this.beStudent.dashboardPrivate || this.isOwnDashboard) {
@@ -283,4 +280,4 @@ export default class DashboardHomeView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />
