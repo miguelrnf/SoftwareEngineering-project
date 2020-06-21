@@ -46,6 +46,7 @@ public class ShopService {
         ShopItem item = checkIfShopItemExistsById(shopItemId);
         if(user.getRole() != User.Role.ADMIN) checkIfUserHasEnoughAchandos(user, item.getPrice());
         addItemToUser(user, item);
+      
         return new ShopItemDto(item);
     }
 

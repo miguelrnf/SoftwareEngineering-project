@@ -283,6 +283,17 @@
         </v-btn>
 
         <v-btn
+          to="/shop/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="Shop"
+        >
+          Shop
+          <v-icon>fas fa-shopping-cart</v-icon>
+        </v-btn>
+
+        <v-btn
           v-if="isLoggedIn && moreThanOneCourse"
           to="/courses"
           active-class="no-active"
@@ -540,20 +551,20 @@
 
         <v-list-item to="/dashboard/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
-            <v-icon>fas fa-star</v-icon>
+            <v-icon>
+              fas fa-star
+            </v-icon>
           </v-list-item-action>
-          <v-list-item-content class="mobileTitle">
-            Dashboard
-          </v-list-item-content>
+          <v-list-item-content>Dashboard</v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/study/home" v-if="isStudent && currentCourse">
+        <v-list-item to="/shop/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
-            <v-icon>fas fa-book-reader</v-icon>
+            <v-icon>
+              fas fa-shopping-cart
+            </v-icon>
           </v-list-item-action>
-          <v-list-item-content class="mobileTitle">
-           Study
-          </v-list-item-content>
+          <v-list-item-content>Shop</v-list-item-content>
         </v-list-item>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
