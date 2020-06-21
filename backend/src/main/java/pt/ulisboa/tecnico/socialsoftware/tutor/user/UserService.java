@@ -151,9 +151,19 @@ public class UserService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public UserDto updateLoggedUser(int userId) {
+    public UserDto getLoggedUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
+        return new UserDto(user);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public UserDto updateCurrentTheme(int userId, String theme) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        user.setCurrentTheme(theme);
         return new UserDto(user);
     }
 }

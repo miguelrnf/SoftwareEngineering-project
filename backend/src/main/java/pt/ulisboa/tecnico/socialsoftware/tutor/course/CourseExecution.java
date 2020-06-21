@@ -49,7 +49,6 @@ public class CourseExecution implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Tournament> tournaments = new HashSet<>();
 
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Suggestion> suggestions = new HashSet<>();
 

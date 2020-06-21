@@ -36,6 +36,7 @@
             <v-layout column wrap>
               <v-flex xs24 sm12 md8>
                 <v-text-field
+                  no-resize
                   v-model="editSuggestion.title"
                   label="Title"
                   data-cy="titleTextArea"
@@ -43,38 +44,76 @@
               </v-flex>
               <v-flex xs24 sm12 md12>
                 <v-textarea
+                  no-resize
                   outline
-                  rows="10"
+                  auto-grow
+                  autofocus
+                  counter="1024"
+                  rows="4"
                   v-model="editSuggestion.studentQuestion"
-                  label="Content"
+                  label="Suggestion Content"
                   outlined
                   data-cy="content"
                 ></v-textarea>
+                <v-divider></v-divider>
               </v-flex>
-              <v-flex
-                xs24
-                sm12
-                md12
-                v-for="index in editSuggestion.options.length"
-                :key="index"
-              >
-                <v-switch
-                  v-model="editSuggestion.options[index - 1].correct"
-                  class="ma-4"
-                  label="Correct"
-                  data-cy="correctToggleButton"
-                />
+              <v-flex xs24 sm12 md12>
                 <v-textarea
+                  no-resize
                   outline
-                  rows="10"
-                  v-model="editSuggestion.options[index - 1].content"
-                  :label="`Option ${index}`"
-                  data-cy="optionTextArea"
+                  auto-grow
+                  autofocus
+                  counter="1024"
+                  rows="4"
+                  v-model="editSuggestion.hint"
+                  label="Hint (Optional)"
+                  outlined
+                  data-cy="content"
                 ></v-textarea>
+                <v-divider></v-divider>
+              </v-flex>
+              <v-flex xs24 sm12 md12>
+                <v-row>
+                  <v-icon color="green" class="px-3"
+                    >mdi-check-circle-outline</v-icon
+                  >
+
+                  <v-textarea
+                    no-resize
+                    outline
+                    single-line
+                    rows="1"
+                    v-model="editSuggestion.options[0].content"
+                    color="green"
+                    :label="`Correct Option`"
+                    data-cy="optionTextArea"
+                  ></v-textarea>
+                </v-row>
+
+                <v-row
+                  v-for="index in editSuggestion.options.length - 1"
+                  :key="index"
+                >
+                  <v-icon color="red" class="px-3"
+                    >mdi-close-circle-outline</v-icon
+                  >
+
+                  <v-textarea
+                    no-resize
+                    outline
+                    single-line
+                    rows="1"
+                    v-model="editSuggestion.options[index].content"
+                    color="red"
+                    :label="`Option ${index + 1}`"
+                    data-cy="optionTextArea"
+                  ></v-textarea>
+                </v-row>
               </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
+        <v-divider></v-divider>
         <v-card-text>
           <v-autocomplete
             v-model="questionTopics"
@@ -115,16 +154,10 @@
       </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="blue darken-1"
-          @click="$emit('dialog', false)"
-          data-cy="cancel"
+        <v-btn color="primary" @click="$emit('dialog', false)" data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
-          color="blue darken-1"
-          @click="saveSuggestion"
-          data-cy="saveButton"
+        <v-btn color="primary" @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>
@@ -164,6 +197,7 @@ export default class EditSuggestionDialog extends Vue {
 
   async created() {
     this.editSuggestion = new Suggestion(this.suggestion);
+    this.editSuggestion.options[0].correct = true;
     this.student = await this.$store.getters.getUser;
   }
 

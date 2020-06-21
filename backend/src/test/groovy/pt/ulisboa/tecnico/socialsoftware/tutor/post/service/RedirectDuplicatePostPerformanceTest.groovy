@@ -56,7 +56,7 @@ class RedirectDuplicatePostPerformanceTest extends Specification {
         userRepository.save(user2)
 
         and: "valid posts not answered to be redirected"
-        for(int i = 1; i <= 3000; i++) {
+        for(int i = 1; i <= 1; i++) {
             def postQuestion1 = new PostQuestion()
             postQuestion1.setQuestion(question)
             postQuestion1.setUser(user2)

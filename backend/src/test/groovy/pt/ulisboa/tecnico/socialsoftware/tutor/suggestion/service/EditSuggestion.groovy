@@ -10,8 +10,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -223,7 +223,6 @@ class EditSuggestion extends Specification {
 
 
         then: "add to repository"
-        println(suggestion.dump())
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
@@ -300,7 +299,7 @@ class EditSuggestion extends Specification {
 
 /*    @Unroll
     def "edit a suggestion with invalid fields"() {
-        println(topicRepository.findAll().dump())
+
 
         when:
         def sug = new SuggestionDto()

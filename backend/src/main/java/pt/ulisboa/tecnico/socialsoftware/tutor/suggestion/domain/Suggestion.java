@@ -30,11 +30,14 @@ public class Suggestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique=true)
     private Integer key;
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "hint")
+    private String hint;
 
     @Column(name = "student_question")
     private String studentQuestion;
@@ -78,6 +81,7 @@ public class Suggestion {
         this.studentQuestion = suggestionDto.getStudentQuestion();
         this.teacherExplanation = "";
         this.isPrivate = false;
+        this.hint = suggestionDto.getHint();
 
         String str = suggestionDto.getCreationDate();
         if( str != null){
@@ -107,6 +111,14 @@ public class Suggestion {
         if (suggestionDto.getStudentQuestion().trim().length() > 500 ){
             throw new TutorException(SUGGESTION_TOO_LONG);
         }
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     public Set<Topic> getTopicsList() {
@@ -201,6 +213,9 @@ public class Suggestion {
             this.options.add(option);
             option.setSuggestion(this);
         }
+
+        Collections.shuffle(this.options);
+
     }
 
     public Boolean getIsPrivate() {

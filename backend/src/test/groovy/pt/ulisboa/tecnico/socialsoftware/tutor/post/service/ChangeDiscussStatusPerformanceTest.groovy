@@ -66,7 +66,7 @@ class ChangeDiscussStatusPerformanceTest extends Specification {
         userRepository.save(user2)
 
         and: "valid posts"
-        for(int i = 1; i <= 3000; i++) {
+        for(int i = 1; i <= 1; i++) {
             def postQuestion1 = new PostQuestion()
             def postAnswer1 = new PostAnswer()
             postAnswer1.setUser(user2)

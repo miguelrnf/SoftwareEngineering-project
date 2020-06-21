@@ -89,7 +89,7 @@
       <v-card v-if="assessment">
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{ assessment.title }}</v-toolbar-title>
-          <div class="flex-grow-1"></div>
+          <div class="flex-grow-1" />
           <v-toolbar-items>
             <v-btn dark color="primary" @click="closeAssessment">Close</v-btn>
           </v-toolbar-items>

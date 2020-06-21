@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <h2>Submit Post</h2>
-    <v-container class="submit-post">
+    <v-card>
+      <v-container>
+        <v-card-title class="justify-center">Submit Post</v-card-title>
+      </v-container>
       <v-container fluid>
         <v-autocomplete
           v-model="selectedQuestion"
@@ -35,7 +37,7 @@
           Submit post
         </v-btn>
       </v-container>
-    </v-container>
+    </v-card>
   </div>
 </template>
 
@@ -54,7 +56,6 @@ export default class PostPostView extends Vue {
   limit: string = this.message.length + '/' + this.maxlen;
   canSubmit: boolean = false;
   postQ: PostQuestion = new PostQuestion();
-
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -64,7 +65,6 @@ export default class PostPostView extends Vue {
     }
     await this.$store.dispatch('clearLoading');
   }
-
   async checkConsistency() {
     this.canSubmit = this.message.length <= this.maxlen;
     if (!this.canSubmit) {
@@ -79,13 +79,11 @@ export default class PostPostView extends Vue {
       }
     }
   }
-
   pickQuestion(id: number) {
     let q = this.questions.find(question => question.id == id);
     if (q != undefined) return q;
     else return null;
   }
-
   async submitPost() {
     if (this.canSubmit) {
       try {
@@ -100,13 +98,6 @@ export default class PostPostView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.submit-post {
-  width: 80% !important;
-  background-color: white;
-  border-width: 10px;
-  border-style: solid;
-  border-color: #818181;
-}
 .text-area {
   width: 100%;
 }

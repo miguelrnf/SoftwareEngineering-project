@@ -242,14 +242,6 @@
                 <v-list-item-title>Posts</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/posts/submit">
-              <v-list-item-action>
-                <v-icon>fas fa-plus</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Submit Post</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
             <v-list-item to="/student/suggestions">
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
@@ -262,10 +254,11 @@
         </v-menu>
 
         <v-btn
-                to="/study/home"
-                v-if="isStudent && currentCourse"
-                text dark
-                data-cy="Study"
+          to="/study/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="Study"
         >
           Study
           <v-icon>fas fa-book-reader</v-icon>
@@ -280,6 +273,15 @@
         >
           Dashboard
           <v-icon>fas fa-star</v-icon>
+        </v-btn>
+
+        <v-btn to="/themes" v-if="isStudent && currentCourse" text dark>
+          Themes
+          <v-icon>fas fa-cogs</v-icon>
+        </v-btn>
+        <v-btn to="/shopConfig" v-if="isAdmin" text dark>
+          Shop
+          <v-icon>fas fa-cogs</v-icon>
         </v-btn>
 
         <v-btn
@@ -499,14 +501,6 @@
             </v-list-item-action>
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
-
-
-          <v-list-item to="/posts/submit">
-            <v-list-item-action>
-              <v-icon>fas fa-plus</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Submit Post</v-list-item-content>
-          </v-list-item>
         </v-list-group>
 
         <v-list-group
@@ -551,20 +545,29 @@
 
         <v-list-item to="/dashboard/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
-            <v-icon>
-              fas fa-star
-            </v-icon>
+            <v-icon>fas fa-star</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Dashboard</v-list-item-content>
+          <v-list-item-content class="mobileTitle">
+            Dashboard
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/study/home" v-if="isStudent && currentCourse">
+          <v-list-item-action>
+            <v-icon>fas fa-book-reader</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+            Study
+          </v-list-item-content>
         </v-list-item>
 
         <v-list-item to="/shop/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
-            <v-icon>
-              fas fa-shopping-cart
-            </v-icon>
+            <v-icon>fas fa-shopping-cart</v-icon>
           </v-list-item-action>
-          <v-list-item-content>Shop</v-list-item-content>
+          <v-list-item-content class="mobileTitle">
+            Shop
+          </v-list-item-content>
         </v-list-item>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">

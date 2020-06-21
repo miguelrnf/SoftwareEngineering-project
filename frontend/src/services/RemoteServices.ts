@@ -21,6 +21,10 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
 import User from '@/models/user/User';
 import ListByUsernameDto from '@/models/management/ListByUsernameDto';
+import StatementQuestion from '@/models/statement/StatementQuestion';
+import { Student } from '@/models/management/Student';
+import { ShopItem } from '@/models/management/ShopItem';
+import { Leaderboards } from '@/models/management/Leaderboards';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -93,6 +97,17 @@ export default class RemoteServices {
       )
       .then(response => {
         return new StudentStats(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuizType(statementQuiz: StatementQuiz): Promise<boolean> {
+    return httpClient
+      .get(`/quizzes/${statementQuiz.id}/type`)
+      .then(response => {
+        return response.data as boolean;
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -232,74 +247,80 @@ export default class RemoteServices {
 
   static getTopicQuestions(topicName: String): Promise<Question[]> {
     return httpClient
-        .get(
-            `/courses/${Store.getters.getCurrentCourse.courseId}/study/getTopicQuestions/${topicName}`,
-        )
-        .then(response => {
-          return response.data.map((question: any) => {
-            return new Question(question);
-          });
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/study/getTopicQuestions/${topicName}`
+      )
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async getSuggestTopicQuiz(): Promise<string> {
     return httpClient
-        .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getSuggestedTopic`, {
-        })
-        .then(response => {
-          return response.data as string;
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getSuggestedTopic`,
+        {}
+      )
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async getMyOwnTopicQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
-        .get(
-            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getMyOwnQuizzes`
-        )
-        .then(response => {
-          return response.data.map((solvedQuiz: any) => {
-            return new SolvedQuiz(solvedQuiz);
-          });
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getMyOwnQuizzes`
+      )
+      .then(response => {
+        return response.data.map((solvedQuiz: any) => {
+          return new SolvedQuiz(solvedQuiz);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async getAvailableTopics(): Promise<Topic[]> {
     return httpClient
-        .get(`/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getAvailableTopics`)
-        .then(response => {
-          return response.data.map((topic: any) => {
-            return new Topic(topic);
-          });
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/getAvailableTopics`
+      )
+      .then(response => {
+        return response.data.map((topic: any) => {
+          return new Topic(topic);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
-
-  static async generateTopicStatementQuiz(params: object, topicName: String): Promise<StatementQuiz> {
+  static async generateTopicStatementQuiz(
+    params: object,
+    topicName: String
+  ): Promise<StatementQuiz> {
     return httpClient
-        .post(
-            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/newTopicQuiz/${topicName}`,
-            params
-        )
-        .then(response => {
-          return new StatementQuiz(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/study/newTopicQuiz/${topicName}`,
+        params
+      )
+      .then(response => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
-//----------------------------------------------------
+  //----------------------------------------------------
   static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
       .put(
@@ -316,30 +337,30 @@ export default class RemoteServices {
 
   static approveSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
-        .put(
-            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`,
-            sugg
-        )
-        .then(response => {
-          return new Suggestion(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/approve`,
+        sugg
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static setCheckMark(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
-        .put(
-            `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/setCheckMark`,
-            sugg
-        )
-        .then(response => {
-          return new Suggestion(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/suggestions/setCheckMark`,
+        sugg
+      )
+      .then(response => {
+        return new Suggestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async deleteQuestion(questionId: number) {
@@ -409,7 +430,6 @@ export default class RemoteServices {
       });
   }
 
-
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
       .get(
@@ -438,7 +458,6 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-
 
   static async getOpenedTournaments(): Promise<Tournament[]> {
     return httpClient
@@ -583,6 +602,20 @@ export default class RemoteServices {
     return httpClient
       .post(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments`,
+        tournament
+      )
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async editTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .put(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/edit`,
         tournament
       )
       .then(response => {
@@ -764,12 +797,16 @@ export default class RemoteServices {
     }
   }
 
-  static async getCourseStudents(course: Course) {
+  static async getCourseStudents(course: Course, user: Boolean) {
     return httpClient
       .get(`/executions/${course.courseExecutionId}/students`)
       .then(response => {
         return response.data.map((student: any) => {
-          return new User(student);
+          if (user) {
+            return new User(student);
+          } else {
+            return new Student(student);
+          }
         });
       })
       .catch(async error => {
@@ -807,7 +844,18 @@ export default class RemoteServices {
       });
   }
 
-  static async updateScore(): Promise<User> {
+  static async updateCurrentTheme(themeName: string): Promise<User> {
+    return httpClient
+      .get(`/users/update/theme/${themeName}`)
+      .then(response => {
+        return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateUser(): Promise<User> {
     return httpClient
       .get('/users/update')
       .then(response => {
@@ -1006,6 +1054,57 @@ export default class RemoteServices {
       });
   }
 
+  static async removeTwoOptions(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .put(
+        `tournaments/fiftyFifty/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return new StatementQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rigthAnswer(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .put(
+        `tournaments/rigthAnswer/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return new StatementQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getHint(
+    statementQuestion: StatementQuestion,
+    quizId: Number
+  ): Promise<string> {
+    return httpClient
+      .put(
+        `tournaments/getHint/${quizId}`,
+        statementQuestion as StatementQuestion
+      )
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async changeDiscussStatus(id: number): Promise<Post> {
     return httpClient
       .put(
@@ -1026,6 +1125,17 @@ export default class RemoteServices {
       )
       .then(response => {
         return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createShopTheme(theme: ShopItem) {
+    return httpClient
+      .post('shop/add', theme)
+      .then(response => {
+        return new ShopItem(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -1130,6 +1240,43 @@ export default class RemoteServices {
       )
       .then(response => {
         return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getLeaderboards(): Promise<Leaderboards> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/leaderboards`
+      )
+      .then(response => {
+        return new Leaderboards(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async vote(id: number, vote: string): Promise<Post> {
+    return httpClient
+      .put(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/${vote}`
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateVotes(): Promise<User> {
+    return httpClient
+      .get('/users/update')
+      .then(response => {
+        return new User(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

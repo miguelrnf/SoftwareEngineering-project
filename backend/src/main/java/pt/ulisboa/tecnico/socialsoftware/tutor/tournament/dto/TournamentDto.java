@@ -27,6 +27,9 @@ public class TournamentDto implements Serializable {
     private StatementQuizDto quiz;
     private SolvedQuizDto solved;
     private boolean isCompleted = false;
+    private String type;
+    private Integer cost;
+    private Integer prize;
 
     public TournamentDto(){
     }
@@ -39,6 +42,9 @@ public class TournamentDto implements Serializable {
 
         if (tournament.getStatus() != null)
             this.status = tournament.getStatus().name();
+
+        if (tournament.getType() != null)
+            this.type = tournament.getType().name();
 
         this.owner = new UserDto(tournament.getOwner());
 
@@ -53,6 +59,32 @@ public class TournamentDto implements Serializable {
         this.assessmentDto = new AssessmentDto(tournament.getAssessment());
         this.enrolledStudents = tournament.getEnrolledStudents().stream().map(UserDto::new).collect(Collectors.toList());
         this.quiz = new StatementQuizDto();
+        this.cost = tournament.getCost();
+        this.prize = tournament.getPrize();
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getCost() {
+        return cost;
+    }
+
+    public void setCost(Integer cost) {
+        this.cost = cost;
+    }
+
+    public Integer getPrize() {
+        return prize;
+    }
+
+    public void setPrize(Integer prize) {
+        this.prize = prize;
     }
 
     public Integer getId() {
@@ -169,6 +201,7 @@ public class TournamentDto implements Serializable {
                 ", status='" + status + '\'' +
                 ", enrolledStudents=" + enrolledStudents +
                 ", statementQuiz=" + quiz +
+                ", type=" + type +
                 '}';
     }
 

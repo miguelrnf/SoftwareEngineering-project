@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
@@ -27,6 +26,7 @@ public class SuggestionDto implements Serializable{
     private List<OptionDto> options = new ArrayList<>();
     private Boolean isPrivate = false;
     private String title;
+    private String hint;
     private Boolean checkMark = false;
 
     public SuggestionDto(){
@@ -42,6 +42,7 @@ public class SuggestionDto implements Serializable{
         this.studentQuestion =suggestion.getStudentQuestion();
         this.status =suggestion.getStatus().name();
         this.isPrivate = suggestion.getIsPrivate();
+        this.hint = suggestion.getHint();
         this.checkMark = suggestion.getCheckMark();
 
         if (suggestion.getCreationDate() != null)
@@ -53,6 +54,13 @@ public class SuggestionDto implements Serializable{
 
     }
 
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
 
     public Integer getId() {
         return id;

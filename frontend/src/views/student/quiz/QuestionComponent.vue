@@ -1,44 +1,53 @@
 <template>
   <div class="question-container" v-if="question && question.options">
     <div class="question">
-      <span
+      <v-card
         v-if="backsies"
         class="square"
+        color="accent darken-2"
         @click="decreaseOrder"
         @mouseover="hover = true"
         @mouseleave="hover = false"
       >
-        <i v-if="hover && questionOrder !== 0" class="fas fa-chevron-left" />
+        <v-icon color="secondary" x-large v-if="hover && questionOrder !== 0"
+          >fas fa-chevron-left</v-icon
+        >
         <span v-else>{{ questionOrder + 1 }}</span>
-      </span>
-      <div
-        class="question-content"
-        v-html="convertMarkDown(question.content, question.image)"
-      ></div>
-      <div class="square" @click="increaseOrder">
-        <i
+      </v-card>
+      <v-card class="question-content" color="secondary">
+        <div v-html="convertMarkDown(question.content, question.image)" />
+      </v-card>
+      <v-card class="square" color="accent darken-2" @click="increaseOrder">
+        <v-icon
+          color="secondary"
+          x-large
           v-if="questionOrder !== questionNumber - 1"
-          class="fas fa-chevron-right"
-        />
-      </div>
+        >
+          fas fa-chevron-right
+        </v-icon>
+      </v-card>
     </div>
-    <ul class="option-list">
-      <li
+    <div class="option-list">
+      <v-row
+        class="ma-0"
         v-for="(n, index) in question.options.length"
         :key="index"
-        v-bind:class="[
-          'option',
-          optionId === question.options[index].optionId ? 'selected' : ''
-        ]"
         @click="selectOption(question.options[index].optionId)"
+        v-bind:class="'option'"
       >
-        <span class="option-letter">{{ optionLetters[index] }}</span>
-        <span
+        <v-card class="square" :color="color(optionId, index)">
+          <span class="option-letter">{{ optionLetters[index] }}</span>
+        </v-card>
+        <v-card
           class="option-content"
-          v-html="convertMarkDown(question.options[index].content)"
-        />
-      </li>
-    </ul>
+          :color="
+            optionId === question.options[index].optionId ? 'secondary' : ''
+          "
+        >
+          <div v-html="convertMarkDown(question.options[index].content)" />
+        </v-card>
+      </v-row>
+    </div>
   </div>
 </template>
 
@@ -51,8 +60,9 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 @Component
 export default class QuestionComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
+  @Prop(StatementQuestion) question!: StatementQuestion;
   @Prop(Number) optionId: number | undefined;
+  @Prop(Number) quizId!: number;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
@@ -73,10 +83,20 @@ export default class QuestionComponent extends Vue {
     return optionId;
   }
 
+  color(optionId: number, index: number): String {
+    if (optionId === this.question?.options[index]?.optionId) {
+      if (this.$vuetify.theme.dark) {
+        return 'accent lighten-2';
+      }
+      return 'accent darken-2';
+    }
+    return 'accent';
+  }
+
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 }
 </script>
 
-<style lang="scss" scoped />
+<style lang="scss" scoped></style>

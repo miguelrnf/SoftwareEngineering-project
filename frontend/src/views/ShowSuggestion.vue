@@ -6,10 +6,10 @@
     <div class="headline text-left">
       <span v-html="convertMarkDown(suggestion.studentQuestion)" />
     </div>
-    <v-divider></v-divider>
+    <v-divider />
     <div class="mt-2 text-left">
       <span class="headline font-weight-black mr-10">
-        {{ 'Options' }}
+        {{ 'Options:' }}
       </span>
       <div class="mt-3">
         <v-chip
@@ -24,10 +24,10 @@
         </v-chip>
       </div>
     </div>
-    <v-divider class="mt-4"></v-divider>
+    <v-divider class="mt-4" />
     <div class="mt-2 text-left">
       <span class="headline font-weight-black mr-10">
-        {{ 'Topics' }}
+        {{ 'Topics:' }}
       </span>
       <div class="mt-3">
         <v-chip
@@ -37,10 +37,23 @@
           color="grey"
           text-color="white"
           dark
-          ><span class="white--text">{{ option.name }}</span>
+        >
+          <span class="white--text">{{ option.name }}</span>
         </v-chip>
       </div>
     </div>
+    <v-divider class="mt-4" />
+    <p class="headline font-weight-black text-left mt-3">
+      <span v-html="convertMarkDown('Hint')" />
+    </p>
+    <div class="headline text-left">
+      <span
+        v-if="suggestion.hint || suggestion.hint.trim() !== ''"
+        v-html="convertMarkDown(suggestion.hint)"
+      />
+      <span v-else v-html="convertMarkDown('No hint was given')" />
+    </div>
+    <v-divider class="mt-4" />
     <div class="text-right mb-n5">
       <span
         v-html="
@@ -90,4 +103,4 @@ export default class ShowSuggestion extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

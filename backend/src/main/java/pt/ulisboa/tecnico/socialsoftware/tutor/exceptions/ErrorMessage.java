@@ -87,6 +87,8 @@ public enum ErrorMessage {
     TOURNAMENT_UNABLE_REMOVE("Unable to remove, reason: %s"),
     TOURNAMENT_PERMISSION_CANCEL("Only owner can cancel the tournament"),
     TOURNAMENT_INVALID_STATUS("Tournament is %s"),
+    TOURNAMENT_INVALID_TYPE("You only can use power ups in standard tournament "),
+    TOURNAMENT_NOT_ENOUGH_POINTS("You don't have enough points to enroll this tournament "),
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
@@ -133,6 +135,8 @@ public enum ErrorMessage {
     INVALID_CREATION_DATE("The creation date is invalid"),
     INVALID_COMMENT("The comment you submitted is invalid"),
     INVALID_COMMENT_SEARCH("No results available"),
+    ALREADY_UPVOTED("You have already upvoted this post"),
+    ALREADY_DOWNVOTED("You have already downvoted this post"),
     COMMENT_NO_PARENT("The parent does not exist"),
 
     //shop errors

@@ -23,7 +23,9 @@
               id="availableDateInput"
               v-model="quiz.availableDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              :dark="isDark"
+              :color="$vuetify.theme.currentTheme.primary"
+            />
           </v-col>
           <v-col v-if="quiz.timed">
             <VueCtkDateTimePicker
@@ -31,7 +33,9 @@
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              :dark="isDark"
+              :color="$vuetify.theme.currentTheme.primary"
+            />
           </v-col>
           <v-col v-if="quiz.timed">
             <VueCtkDateTimePicker
@@ -39,7 +43,9 @@
               id="resultsDateInput"
               v-model="quiz.resultsDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              :dark="isDark"
+              :color="$vuetify.theme.currentTheme.primary"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -271,9 +277,9 @@
           </v-text-field>
         </v-card-text>
         <v-card-actions>
-          <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" @click="closeSetPosition">Close</v-btn>
-          <v-btn color="blue darken-1" @click="saveSetPosition">Save</v-btn>
+          <div class="flex-grow-1" />
+          <v-btn color="primary" @click="closeSetPosition">Close</v-btn>
+          <v-btn color="primary" @click="saveSetPosition">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -355,6 +361,10 @@ export default class QuizForm extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  get isDark(): boolean {
+    return this.$vuetify.theme.dark;
   }
 
   @Watch('quiz')
@@ -531,4 +541,4 @@ export default class QuizForm extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

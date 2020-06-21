@@ -69,11 +69,7 @@
           </div>
           <div v-else>
             <v-row>
-              <v-col
-                cols="4"
-                v-for="item in categoryItems"
-                :key="item.name"
-              >
+              <v-col cols="4" v-for="item in categoryItems" :key="item.name">
                 <v-card outlined tile class="ma-3">
                   <v-list-item three-line>
                     <v-list-item-content>
@@ -105,10 +101,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Suggestion from '@/models/management/Suggestion';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import showitemdialog from '@/views/showitemdialog.vue';
 
 @Component
 export default class ShopHomeView extends Vue {

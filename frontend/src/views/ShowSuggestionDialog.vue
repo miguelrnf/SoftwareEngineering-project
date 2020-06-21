@@ -8,7 +8,7 @@
     <v-card class="mx-auto" max-height="80%">
       <v-app-bar dense color="primary">
         <v-toolbar-title class="white--text">{{
-          'Suggestion' + suggestion.id
+          'Suggestion ' + suggestion.id
         }}</v-toolbar-title>
         <v-spacer />
         <div>
@@ -48,6 +48,14 @@
         <v-btn color="primary" text @click="closeQuestionDialog">
           Close
         </v-btn>
+        <div v-if="suggestion.status === 'TOAPPROVE' && isTeacher()">
+          <v-btn color="red" text @click="RejectSuggestion">
+            Reject
+          </v-btn>
+          <v-btn color="green" text @click="ApproveSuggestion">
+            Approve
+          </v-btn>
+        </div>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -82,6 +90,10 @@ export default class SuggViewDialog extends Vue {
 
   closeQuestionDialog() {
     this.$emit('close-show-suggestion-dialog');
+  }
+
+  isTeacher(): boolean {
+    return this.$store.getters.isTeacher;
   }
 
   getChipColor(iscorrect: boolean) {
