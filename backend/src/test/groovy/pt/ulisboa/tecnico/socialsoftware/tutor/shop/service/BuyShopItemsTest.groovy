@@ -30,12 +30,15 @@ class BuyShopItemsTest extends Specification {
     public static final String VALID_DESCRIPTION_1 = "We're no strangers to love"
     public static final String VALID_DESCRIPTION_2 = "You know the rules"
     public static final String VALID_DESCRIPTION_3 = "And so, do I"
-    public static final String VALID_TYPE_1 = ShopItem.Type.PRIMARY_COLOR.toString()
+    public static final String VALID_TYPE_1 = ShopItem.Type.THEME.toString()
     public static final String VALID_TYPE_2 = ShopItem.Type.POST_AWARD.toString()
     public static final String VALID_TYPE_3 = ShopItem.Type.POWER_UP.toString()
     public static final int VALID_PRICE_1 = 100
     public static final int VALID_PRICE_2 = 200
     public static final int VALID_PRICE_3 = 300
+    public static final String VALID_CONTENT_THEME = "1,1,1,1,1,1,1"
+    public static final String VALID_CONTENT_POST_AWARD = "TYPE_1"
+    public static final String VALID_CONTENT_POWER_UP = "TYPE_1"
 
     @Autowired
     ShopService shopService
@@ -65,6 +68,7 @@ class BuyShopItemsTest extends Specification {
         ITEM_1.setName(VALID_NAME_1)
         ITEM_1.setDescription(VALID_DESCRIPTION_1)
         ITEM_1.setPrice(VALID_PRICE_1)
+        ITEM_1.setContent(VALID_CONTENT_THEME)
 
         ITEM_2 = new ShopItem()
         ITEM_2.setId(VALID_ID_2)
@@ -72,6 +76,7 @@ class BuyShopItemsTest extends Specification {
         ITEM_2.setName(VALID_NAME_2)
         ITEM_2.setDescription(VALID_DESCRIPTION_2)
         ITEM_2.setPrice(VALID_PRICE_2)
+        ITEM_2.setContent(VALID_CONTENT_POST_AWARD)
 
         ITEM_3 = new ShopItem()
         ITEM_3.setId(VALID_ID_3)
@@ -79,6 +84,7 @@ class BuyShopItemsTest extends Specification {
         ITEM_3.setName(VALID_NAME_3)
         ITEM_3.setDescription(VALID_DESCRIPTION_3)
         ITEM_3.setPrice(VALID_PRICE_3)
+        ITEM_3.setContent(VALID_CONTENT_POWER_UP)
 
         USER_1 = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
     }
@@ -91,6 +97,7 @@ class BuyShopItemsTest extends Specification {
         i1.setName(VALID_NAME_1)
         i1.setDescription(VALID_DESCRIPTION_1)
         i1.setPrice(VALID_PRICE_1)
+        i1.setContent(VALID_CONTENT_THEME)
 
         def i2 = new ShopItem()
         i2.setId(VALID_ID_2)
@@ -98,6 +105,7 @@ class BuyShopItemsTest extends Specification {
         i2.setName(VALID_NAME_2)
         i2.setDescription(VALID_DESCRIPTION_2)
         i2.setPrice(VALID_PRICE_2)
+        i2.setContent(VALID_CONTENT_POST_AWARD)
 
         def i3 = new ShopItem()
         i3.setId(VALID_ID_3)
@@ -105,6 +113,7 @@ class BuyShopItemsTest extends Specification {
         i3.setName(VALID_NAME_3)
         i3.setDescription(VALID_DESCRIPTION_3)
         i3.setPrice(VALID_PRICE_3)
+        i3.setContent(VALID_CONTENT_POWER_UP)
 
         and: "a user with enough score to buy some items"
         def user1 = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)

@@ -4,22 +4,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 
+@Inheritance(strategy = InheritanceType.JOINED)
 @Entity
-@Table(name = "user_items")
-public class UserItem {
-    public enum Type {
-        PRIMARY_COLOR, POST_AWARD, POWER_UP
-    }
-
+@DiscriminatorColumn(name = "ITEM_TYPE")
+public abstract class UserItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "item_name")
     private String name;
-
-    @Column(name = "item_type")
-    private Type type;
 
     @Column(name = "item_description")
     private String description;
@@ -36,15 +30,6 @@ public class UserItem {
     public UserItem() {
     }
 
-    public UserItem(ShopItem item, User user) {
-        this.name = item.getName();
-        this.type = Type.valueOf(item.getType().toString());
-        this.description = item.getDescription();
-        this.icon = item.getIcon();
-        this.color = item.getColor();
-        this.user = user;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -59,14 +44,6 @@ public class UserItem {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = Type.valueOf(type);
     }
 
     public String getDescription() {
@@ -93,12 +70,21 @@ public class UserItem {
         this.color = color;
     }
 
+    protected abstract void checkContentConsistency(String content);
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "UserItem{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", type=" + type +
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
                 ", color='" + color + '\'' +

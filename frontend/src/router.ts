@@ -38,6 +38,8 @@ import DashboardGeneralView from '@/views/DashboardGeneralView.vue';
 import AllTeacherTournaments from '@/views/teacher/AllTeacherTournaments.vue';
 import ShopGeneralView from '@/views/ShopGeneralView.vue';
 import ShopHomeView from '@/views/ShopCategoryView.vue';
+import StudyGeneralView from '@/views/StudyGeneralView.vue';
+import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 
 Vue.use(Router);
 
@@ -244,15 +246,6 @@ let router = new Router({
           }
         },
         {
-          path: 'stats',
-          name: 'stats',
-          component: StatsView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - Stats',
-            requiredAuth: 'Student'
-          }
-        },
-        {
           path: 'suggestions',
           name: 'suggestions',
           component: SuggestionsView,
@@ -325,6 +318,23 @@ let router = new Router({
           component: ShopHomeView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Shop',
+            requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/study',
+      name: 'study',
+      component: StudyGeneralView,
+      children: [
+        {
+          path: 'home',
+          name: 'study-home',
+          component: StudyHomeView,
+          props: { isOwnDashboard: true, isReal: true },
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Study',
             requiredAuth: 'Student'
           }
         }

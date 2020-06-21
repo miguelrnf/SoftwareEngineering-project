@@ -4,14 +4,24 @@
     @input="$emit('close-dashboard-dialog', false)"
     @keydown.esc="$emit('close-dashboard-dialog', false)"
   >
-    <v-card>
+    <v-card class="py-4">
+
       <dashboard-home
         class="mt-10"
         :student="student"
         :is-own-dashboard="false"
         :isReal="isReal"
       >
+
       </dashboard-home>
+      <v-row justify="end" class="px-12">
+      <v-btn color="primary"
+             @click="closeDashboardSearchDialog"
+      >
+        Close
+      </v-btn>
+      </v-row>
+
     </v-card>
   </v-dialog>
 </template>
@@ -40,6 +50,10 @@ export default class StudentDashboardView extends Vue {
   async created() {
     if (this.student == null) this.isReal = false;
     // Falta getSuggestionsByUser
+  }
+
+  closeDashboardSearchDialog() {
+    this.$emit('close-dashboard-dialog', false);
   }
 }
 </script>
