@@ -17,6 +17,9 @@ export default class User {
   dashboardPrivate: boolean = false;
   numberofsuggestions!: number;
   numberofsuggestionsapproved!: number;
+  numberOfQuizzesSolved!: number;
+  numberOfPostsSubmitted!: number;
+  numberOfPTournamentsParticipated!: number;
   postsUpvoted: Post[] | null = null;
   postsDownvoted: Post[] | null = null;
 
@@ -30,6 +33,9 @@ export default class User {
       this.dashboardPrivate = jsonObj.dashboardPrivate;
       this.numberofsuggestions = jsonObj.numberofsuggestions;
       this.numberofsuggestionsapproved = jsonObj.numberofsuggestionsapproved;
+      this.numberOfQuizzesSolved = jsonObj.numberOfQuizzesSolved;
+      this.numberOfPostsSubmitted = jsonObj.numberOfPostsSubmitted;
+      this.numberOfPTournamentsParticipated = jsonObj.numberOfPTournamentsParticipated;
 
       if (jsonObj.courses) {
         for (let [name, courses] of Object.entries(jsonObj.courses)) {

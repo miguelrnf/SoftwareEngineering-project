@@ -26,6 +26,9 @@ public class UserDto implements Serializable {
     private String currentTheme;
     private List<PostDto> postsUpvoted;
     private List<PostDto> postsDownvoted;
+    private Integer numberOfQuizzesSolved;
+    private Integer numberOfPostsSubmitted;
+    private Integer numberOfPTournamentsParticipated;
 
 
     public UserDto(User user) {
@@ -46,6 +49,9 @@ public class UserDto implements Serializable {
 
         this.numberofsuggestions = user.getNumberOfSuggestions();
         this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
+        this.numberOfPostsSubmitted = user.getPostQuestions().size();
+        this.numberOfQuizzesSolved = user.getQuizzes().size();
+        this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
         if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
             user.setCurrentTheme("Default Light");
@@ -124,6 +130,30 @@ public class UserDto implements Serializable {
         isDashboardPrivate = dashboardPrivate;
     }
 
+    public Integer getNumberOfQuizzesSolved() {
+        return numberOfQuizzesSolved;
+    }
+
+    public void setNumberOfQuizzesSolved(Integer numberOfQuizzesSolved) {
+        this.numberOfQuizzesSolved = numberOfQuizzesSolved;
+    }
+
+    public Integer getNumberOfPostsSubmitted() {
+        return numberOfPostsSubmitted;
+    }
+
+    public void setNumberOfPostsSubmitted(Integer numberOfPostsSubmitted) {
+        this.numberOfPostsSubmitted = numberOfPostsSubmitted;
+    }
+
+    public Integer getNumberOfPTournamentsParticipated() {
+        return numberOfPTournamentsParticipated;
+    }
+
+    public void setNumberOfPTournamentsParticipated(Integer numberOfPTournamentsParticipated) {
+        this.numberOfPTournamentsParticipated = numberOfPTournamentsParticipated;
+    }
+
     public List<PostDto> getPostsUpvoted() {
         return postsUpvoted;
     }
@@ -188,4 +218,6 @@ public class UserDto implements Serializable {
     public void setNumberofsuggestions(Integer numberofsuggestions) {
         this.numberofsuggestions = numberofsuggestions;
     }
+
+
 }

@@ -25,6 +25,7 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import { Student } from '@/models/management/Student';
 import { Theme } from '@/models/management/Theme';
 import { ShopItem } from '@/models/management/ShopItem';
+import { Leaderboards } from '@/models/management/Leaderboards';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -1240,6 +1241,19 @@ export default class RemoteServices {
       )
       .then(response => {
         return new ListPost(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getLeaderboards(): Promise<Leaderboards> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/leaderboards`
+      )
+      .then(response => {
+        return new Leaderboards(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

@@ -38,7 +38,6 @@
           </v-card-subtitle>
         </v-col>
       </v-row>
-
       <v-tabs>
         <v-tab>
           <v-icon left>fas fa-book</v-icon>
@@ -52,20 +51,27 @@
           <v-icon left>fas fa-trophy</v-icon>
           Tournaments
         </v-tab>
-        <v-tab>
+        <v-tab v-if="isOwnDashboard">
           <v-icon left>fas fa-user</v-icon>
           Stats
         </v-tab>
-
+        <v-tab v-if="isOwnDashboard">
+          <v-icon left>fas fa-medal</v-icon>
+          Leaderboards
+        </v-tab>
         <v-tab-item class="pb-10">
           <v-card flat>
-            <post-preview
-              v-for="p in posts"
-              class="my-4"
-              :key="p.id"
-              :post="p"
-              @click.native="showPostOpenDialog(p)"
-            />
+            <v-card-text>
+              <div>
+                <post-preview
+                  v-for="p in posts"
+                  class="mb-2"
+                  :key="p.id"
+                  :post="p"
+                  @click.native="showPostOpenDialog(p)"
+                ></post-preview>
+              </div>
+            </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
@@ -91,197 +97,10 @@
           </v-card>
         </v-tab-item>
         <v-tab-item class="pb-10">
-          <v-card flat>
-            <v-row class="mt-3">
-              <v-col>
-                <v-card>
-                  <v-list-item three-line>
-                    <v-icon left large>question_answer</v-icon>
-                    <v-list-item-content>
-                      <v-list-item-title style="font-size: large"
-                        >Total Suggestions Submitted:
-                        <span>
-                          {{
-                            this.stats.approveSuggestions +
-                              this.stats.rejectedSuggestions +
-                              this.stats.pendingSuggestions
-                          }}
-                        </span>
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card>
-                  <v-list-item three-line>
-                    <v-icon left large>assignment</v-icon>
-                    <v-list-item-content>
-                      <v-list-item-title style="font-size: large">
-                        Total Unique Answered Questions:
-                        <span>
-                          {{ this.stats.totalUniqueQuestions }}
-                        </span>
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card>
-                  <v-list-item three-line>
-                    <v-icon left large>assignment</v-icon>
-                    <v-list-item-content>
-                      <v-list-item-title style="font-size: large">
-                        Total Quizzes Solved:
-                        <span>
-                          {{ this.stats.totalQuizzes }}
-                        </span>
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-card>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-card
-                  max-width="97%"
-                  v-if="
-                    this.stats.approveSuggestions +
-                      this.stats.rejectedSuggestions +
-                      this.stats.pendingSuggestions !==
-                      0
-                  "
-                >
-                  <v-card-title style="justify-content: center">
-                    SUGGESTIONS
-                  </v-card-title>
-                  <GChart
-                    type="PieChart"
-                    :data="suggestionChartData"
-                    :options="chartOptions"
-                    @ready="getStats"
-                  />
-                </v-card>
-                <v-card max-width="97%" v-else class="pb-10" height="255">
-                  <v-card-text class="pt-12">
-                    NO SUGGESTIONS SUBMITTED
-                  </v-card-text>
-                  <v-icon class="pt-6" left x-large>
-                    fas fa-exclamation-triangle
-                  </v-icon>
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card max-width="97%">
-                  <v-card-title style="justify-content: center">
-                    QUESTIONS
-                  </v-card-title>
-                  <GChart
-                    type="PieChart"
-                    :data="questionChartData"
-                    :options="chartOptions"
-                    @ready="getStats"
-                  />
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card
-                  max-width="97%"
-                  v-if="this.correctAnswers !== 0 || this.wrongAnswers !== 0"
-                >
-                  <v-card-title style="justify-content: center"
-                    >CORRECT ANSWERS
-                  </v-card-title>
-                  <GChart
-                    type="PieChart"
-                    :data="correctChartData"
-                    :options="chartOptions"
-                    @ready="getStats"
-                  />
-                </v-card>
-                <v-card max-width="97%" v-else class="pb-10" height="255">
-                  <v-card-text class="pt-12">NO ANSWERED QUESTIONS</v-card-text>
-                  <v-icon class="pt-6" left x-large
-                    >fas fa-exclamation-triangle
-                  </v-icon>
-                </v-card>
-              </v-col>
-            </v-row>
-            <v-row class="mt-3">
-              <v-col>
-                <v-card>
-                  <v-list-item three-line>
-                    <v-icon left large>fas fa-trophy</v-icon>
-                    <v-list-item-content>
-                      <v-list-item-title style="font-size: large">
-                        Total Tournaments Done:
-                        <span>
-                          {{ this.stats.tournamentDone }}
-                        </span>
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card>
-                  <v-list-item three-line>
-                    <v-icon left large>fas fa-book</v-icon>
-                    <v-list-item-content>
-                      <v-list-item-title style="font-size: large">
-                        Total Posts Submitted:
-                        <span>
-                          {{ this.stats.postSubmitted }}
-                        </span>
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-card>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-card max-width="97%" v-if="this.stats.tournamentDone !== 0">
-                  <v-card-title style="justify-content: center"
-                    >TOURNAMENTS</v-card-title
-                  >
-                  <GChart
-                    type="PieChart"
-                    :data="tournamentChartData"
-                    :options="chartOptions"
-                    @ready="getStats"
-                  />
-                </v-card>
-                <v-card max-width="97%" v-else class="pb-10" height="255">
-                  <v-card-text class="pt-12">NO TOURNAMENTS DONE</v-card-text>
-                  <v-icon class="pt-6" left x-large
-                    >fas fa-exclamation-triangle</v-icon
-                  >
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card max-width="97%" v-if="this.stats.postSubmitted !== 0">
-                  <v-card-title style="justify-content: center">
-                    POSTS
-                  </v-card-title>
-                  <GChart
-                    type="PieChart"
-                    :data="postChartData"
-                    :options="chartOptions"
-                    @ready="getStats"
-                  />
-                </v-card>
-                <v-card max-width="97%" v-else class="pb-10 " height="255">
-                  <v-card-text class="pt-12">NO POSTS SUBMITTED</v-card-text>
-                  <v-icon class="pt-6" x-large
-                    >fas fa-exclamation-triangle</v-icon
-                  >
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card>
+          <dashboard-stats-view />
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <dashboard-leaderboards-view />
         </v-tab-item>
       </v-tabs>
     </v-card>
@@ -323,23 +142,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
-import PostPreview from '@/views/PostPreview.vue';
-import TournamentPreview from '@/views/TournamentPreview.vue';
-import Post from '@/models/management/Post';
-import PostViewDialog from '@/views/ShowPostDialog.vue';
-import Suggestion from '@/models/management/Suggestion';
-import { Tournament } from '@/models/management/Tournament';
-import StudentDashboardView from '@/views/StudentDashboardView.vue';
-import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
-import User from '@/models/user/User';
-import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
-import SuggsPreview from '@/views/SuggsPreview.vue';
-import { GChart } from 'vue-google-charts';
-import StudentStats from '@/models/statement/StudentStats';
+  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import RemoteServices from '@/services/RemoteServices';
+  import PostPreview from '@/views/PostPreview.vue';
+  import TournamentPreview from '@/views/TournamentPreview.vue';
+  import Post from '@/models/management/Post';
+  import PostViewDialog from '@/views/ShowPostDialog.vue';
+  import Suggestion from '@/models/management/Suggestion';
+  import { Tournament } from '@/models/management/Tournament';
+  import StudentDashboardView from '@/views/StudentDashboardView.vue';
+  import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
+  import User from '@/models/user/User';
+  import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
+  import SuggsPreview from '@/views/SuggsPreview.vue';
+  import DashboardStatsView from '@/views/DashboardStatsView.vue';
+  import DashboardLeaderboardsView from '@/views/DashboardLeaderboardsView.vue';
 
-@Component({
+  @Component({
   components: {
     'post-preview': PostPreview,
     'tournament-preview': TournamentPreview,
@@ -348,7 +167,8 @@ import StudentStats from '@/models/statement/StudentStats';
     'student-dashboard': StudentDashboardView,
     'show-suggestion-dialog': SuggViewDialog,
     'suggestion-preview': SuggsPreview,
-    GChart
+    'dashboard-stats-view': DashboardStatsView,
+    'dashboard-leaderboards-view': DashboardLeaderboardsView
   }
 })
 export default class DashboardHomeView extends Vue {
@@ -375,30 +195,7 @@ export default class DashboardHomeView extends Vue {
   dashboardDialog: boolean = false;
   beStudent: User | undefined = undefined;
   textLabel: string = '';
-  stats: StudentStats | null = null;
-  wrongAnswers: number | null = null;
   correctAnswers: number | null = null;
-
-  suggestionChartData: Array<Object> = [];
-  questionChartData: Array<Object> = [];
-  correctChartData: Array<Object> = [];
-  postChartData: Array<Object> = [];
-  tournamentChartData: Array<Object> = [];
-
-  chartOptions = {
-    pieHole: 0.7,
-    colors: ['red', this.$vuetify.theme.currentTheme.info, '#F4D50E'],
-    pieSliceText: 'none',
-    backgroundColor: this.$vuetify.theme.currentTheme.background,
-    pieSliceBorderColor: this.$vuetify.theme.currentTheme.background,
-    legend: {
-      textStyle: {
-        color: this.$vuetify.theme.currentTheme.font,
-        fontSize: '14'
-      }
-    },
-    tooltip: { textStyle: { fontSize: '14' } }
-  };
 
   async created() {
     if (this.student == null) this.beStudent = this.$store.getters.getUser;
@@ -430,58 +227,6 @@ export default class DashboardHomeView extends Vue {
         }
       }
     }
-    this.stats = await RemoteServices.getUserStats();
-
-    this.getStats();
-  }
-
-  async getStats() {
-    this.suggestionChartData = [
-      ['Title', 'Number'],
-      ['Number Of Rejected Suggestions', this.stats?.rejectedSuggestions],
-      ['Number Of Approved Suggestions', this.stats?.approveSuggestions],
-      ['Number Of Pending Suggestions', this.stats?.pendingSuggestions]
-    ];
-
-    this.questionChartData = [
-      ['Title', 'Number'],
-      [
-        'Total Unique Not Answered Question',
-        this.stats?.totalAvailableQuestions - this.stats?.totalUniqueQuestions
-      ],
-      ['Total Unique Answered Question', this.stats?.totalUniqueQuestions]
-    ];
-
-    this.wrongAnswers =
-      this.stats?.totalAnswers -
-      (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100;
-    this.correctAnswers =
-      (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100;
-
-    this.correctChartData = [
-      ['Title', 'Number'],
-      [
-        'Total Wrong Answers',
-        this.stats?.totalAnswers -
-          (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100
-      ],
-      [
-        'Total Correct Answers',
-        (this.stats?.correctAnswers * this.stats?.totalAnswers) / 100
-      ]
-    ];
-
-    this.postChartData = [
-      ['Title', 'Number'],
-      ['Upvoted Posts', 7],
-      ['Downvoted Posts', 5]
-    ];
-
-    this.tournamentChartData = [
-      ['Title', 'Number'],
-      ['Won Tournaments', 10],
-      ['Lost Tournaments', 15]
-    ];
   }
 
   async changePrivacy() {

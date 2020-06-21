@@ -70,15 +70,15 @@ public class Tournament {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "tournament", orphanRemoval = true)
     private Quiz quiz;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @ManyToMany(mappedBy = "tournaments")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "tournaments")
     private Set<User> enrolledStudents = new HashSet<>();
 
     public Tournament(){

@@ -299,7 +299,7 @@ class EditSuggestion extends Specification {
 
 /*    @Unroll
     def "edit a suggestion with invalid fields"() {
-        println(topicRepository.findAll().dump())
+
 
         when:
         def sug = new SuggestionDto()

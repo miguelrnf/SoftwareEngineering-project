@@ -12,7 +12,7 @@ export default class StudentStats {
   rejectedSuggestions!: number;
   pendingSuggestions!: number;
   tournamentDone!: number;
-  postSubmitted!: number;
+  postSubmitted!:number;
 
   constructor(jsonObj?: StudentStats) {
     if (jsonObj) {
