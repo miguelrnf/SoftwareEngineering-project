@@ -140,11 +140,11 @@ public class Document implements DomainEntity {
         if (documentDto.getType().equals("DOC") && this.type==Type.DOC ){
 
             String extensionComplete = documentDto.getExtension();
-            String[] parts = extensionComplete.split("/");
+            String[] parts = extensionComplete.split("\\.");
 
             this.setContent(documentDto.getContent());
 
-            this.setExtension(parts[1]);
+            this.setExtension(parts[parts.length-1]);
 
         }
         else if (documentDto.getType().equals("VIDEO") && this.type==Type.VIDEO){

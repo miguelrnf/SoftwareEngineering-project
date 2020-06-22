@@ -95,8 +95,7 @@ public class ClassroomService {
 
         classroom.editClassroom(classroomDto);
 
-
-        return new ClassroomDto(classroom);
+      return new ClassroomDto(classroom);
     }
 
     @Retryable(

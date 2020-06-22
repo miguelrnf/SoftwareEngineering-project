@@ -70,7 +70,7 @@
             <div class="container">
 
               <form enctype="multipart/form-data" novalidate v-if="currentStatus===0 || currentStatus===1">
-                <h2>Upload file</h2>
+                <h3>Upload file</h3>
                 <div class="dropbox">
                   <input type="file" multiple :name="uploadFieldName" :disabled="currentStatus===1" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                           class="input-file">
@@ -216,15 +216,7 @@ export default class EditDocumentDialog extends Vue {
     this.uploadError = null;
   }
 
-  async loader () {
-    try {
-      this.loading = true
-      setTimeout(() => (this.loading = false, this.hidden = false), 2500)
-      this.suggestedQuiz = await RemoteServices.getSuggestTopicQuiz()
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
+
 
   async save(formData: FormData, name: string) {
     // upload data to the server
@@ -234,8 +226,7 @@ export default class EditDocumentDialog extends Vue {
     console.log(formData.get(name))
     const f: File = formData.get(name);
     console.log(f.type)
-
-    this.editDocument.extension = f.type;
+    this.editDocument.extension = f.name;
 
 
 
