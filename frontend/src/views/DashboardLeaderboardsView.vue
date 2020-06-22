@@ -115,6 +115,7 @@
         v-if="this.stats.mostApprovedSuggestions.length !== 0"
         class="pa-2 display-3 flex-grow-1"
         width="33%"
+
       >
         <v-chip label color="white" class="mt-3">
           <v-icon color="grey darken-1">fas fa-trophy</v-icon>
@@ -149,7 +150,6 @@
 })
 export default class DashboardLeaderboardsView extends Vue {
   stats: Leaderboards | null = null;
-
   bestScoreStats: Array<Object> = [];
   mostPostsStats: Array<Object> = [];
   mostApprovedSuggestionsStats: Array<Object> = [];
@@ -157,8 +157,12 @@ export default class DashboardLeaderboardsView extends Vue {
   mostTournamentsParticipated: Array<Object> = [];
 
   chartOptions = {
-    colors: ['red', 'blue', 'green', 'grey', 'orange'],
-    subtitle: ''
+    legend: { position: 'none' },
+
+    subtitle: '',
+    backgroundColor: this.$vuetify.theme.currentTheme.background,
+
+
   };
 
   async created() {
@@ -180,12 +184,12 @@ export default class DashboardLeaderboardsView extends Vue {
       : (bestScores = []);
     this.shuffleArray(bestScores);
     this.bestScoreStats = [
-      ['Name', 'Score'],
-      [bestScores[0].name, bestScores[0].score],
-      [bestScores[1].name, bestScores[1].score],
-      [bestScores[2].name, bestScores[2].score],
-      [bestScores[3].name, bestScores[3].score],
-      [bestScores[4].name, bestScores[4].score]
+      ['Name', 'Score',{ role: "style" }],
+      [bestScores[0].name, bestScores[0].score, 'red'],
+      [bestScores[1].name, bestScores[1].score, 'blue'],
+      [bestScores[2].name, bestScores[2].score, 'green'],
+      [bestScores[3].name, bestScores[3].score, 'grey'],
+      [bestScores[4].name, bestScores[4].score, 'orange']
     ];
 
     let mostPosts: { name: string; numberOfPostsSubmitted: number }[];
@@ -194,12 +198,12 @@ export default class DashboardLeaderboardsView extends Vue {
       : (mostPosts = []);
     this.shuffleArray(mostPosts);
     this.mostPostsStats = [
-      ['Name', 'Posts Submitted'],
-      [mostPosts[0].name, mostPosts[0].numberOfPostsSubmitted],
-      [mostPosts[1].name, mostPosts[1].numberOfPostsSubmitted],
-      [mostPosts[2].name, mostPosts[2].numberOfPostsSubmitted],
-      [mostPosts[3].name, mostPosts[3].numberOfPostsSubmitted],
-      [mostPosts[4].name, mostPosts[4].numberOfPostsSubmitted]
+      ['Name', 'Posts Submitted',{ role: "style" }],
+      [mostPosts[0].name, mostPosts[0].numberOfPostsSubmitted , 'red'],
+      [mostPosts[1].name, mostPosts[1].numberOfPostsSubmitted, 'blue'],
+      [mostPosts[2].name, mostPosts[2].numberOfPostsSubmitted, 'green'],
+      [mostPosts[3].name, mostPosts[3].numberOfPostsSubmitted, 'grey'],
+      [mostPosts[4].name, mostPosts[4].numberOfPostsSubmitted, 'orange']
     ];
 
     let mostApprovedSuggestions: {
@@ -211,36 +215,41 @@ export default class DashboardLeaderboardsView extends Vue {
       : (mostApprovedSuggestions = []);
     this.shuffleArray(mostApprovedSuggestions);
     this.mostApprovedSuggestionsStats = [
-      ['Name', 'Approved Suggestions'],
+      ['Name', 'Approved Suggestions',{ role: "style" }],
       [
         mostApprovedSuggestions[0].name,
         mostApprovedSuggestions[0].numberofsuggestionsapproved == null
           ? 0
-          : mostApprovedSuggestions[0].numberofsuggestionsapproved
+          : mostApprovedSuggestions[0].numberofsuggestionsapproved,
+        'red'
       ],
       [
         mostApprovedSuggestions[1].name,
         mostApprovedSuggestions[1].numberofsuggestionsapproved == null
           ? 0
-          : mostApprovedSuggestions[1].numberofsuggestionsapproved
+          : mostApprovedSuggestions[1].numberofsuggestionsapproved,
+        'blue'
       ],
       [
         mostApprovedSuggestions[2].name,
         mostApprovedSuggestions[2].numberofsuggestionsapproved == null
           ? 0
-          : mostApprovedSuggestions[2].numberofsuggestionsapproved
+          : mostApprovedSuggestions[2].numberofsuggestionsapproved,
+        'green'
       ],
       [
         mostApprovedSuggestions[3].name,
         mostApprovedSuggestions[3].numberofsuggestionsapproved == null
           ? 0
-          : mostApprovedSuggestions[3].numberofsuggestionsapproved
+          : mostApprovedSuggestions[3].numberofsuggestionsapproved,
+        'grey'
       ],
       [
         mostApprovedSuggestions[4].name,
         mostApprovedSuggestions[4].numberofsuggestionsapproved == null
           ? 0
-          : mostApprovedSuggestions[4].numberofsuggestionsapproved
+          : mostApprovedSuggestions[4].numberofsuggestionsapproved,
+        'orange'
       ]
     ];
 
@@ -253,12 +262,12 @@ export default class DashboardLeaderboardsView extends Vue {
       : (mostQuizzesSolved = []);
     this.shuffleArray(mostQuizzesSolved);
     this.mostQuizzesSolvedStats = [
-      ['Name', 'Quizzes Solved'],
-      [mostQuizzesSolved[0].name, mostQuizzesSolved[0].numberOfQuizzesSolved],
-      [mostQuizzesSolved[1].name, mostQuizzesSolved[1].numberOfQuizzesSolved],
-      [mostQuizzesSolved[2].name, mostQuizzesSolved[2].numberOfQuizzesSolved],
-      [mostQuizzesSolved[3].name, mostQuizzesSolved[3].numberOfQuizzesSolved],
-      [mostQuizzesSolved[4].name, mostQuizzesSolved[4].numberOfQuizzesSolved]
+      ['Name', 'Quizzes Solved',{ role: "style" }],
+      [mostQuizzesSolved[0].name, mostQuizzesSolved[0].numberOfQuizzesSolved , 'red'],
+      [mostQuizzesSolved[1].name, mostQuizzesSolved[1].numberOfQuizzesSolved , 'blue'],
+      [mostQuizzesSolved[2].name, mostQuizzesSolved[2].numberOfQuizzesSolved , 'green'],
+      [mostQuizzesSolved[3].name, mostQuizzesSolved[3].numberOfQuizzesSolved , 'grey'],
+      [mostQuizzesSolved[4].name, mostQuizzesSolved[4].numberOfQuizzesSolved , 'orange']
     ];
 
     let mostTournamentsParticipated: {
@@ -270,26 +279,31 @@ export default class DashboardLeaderboardsView extends Vue {
       : (mostTournamentsParticipated = []);
     this.shuffleArray(mostTournamentsParticipated);
     this.mostTournamentsParticipated = [
-      ['Name', 'Tournaments Participated'],
+      ['Name', 'Tournaments Participated',{ role: "style" }],
       [
         mostTournamentsParticipated[0].name,
-        mostTournamentsParticipated[0].numberOfPTournamentsParticipated
+        mostTournamentsParticipated[0].numberOfPTournamentsParticipated,
+        'red'
       ],
       [
         mostTournamentsParticipated[1].name,
-        mostTournamentsParticipated[1].numberOfPTournamentsParticipated
+        mostTournamentsParticipated[1].numberOfPTournamentsParticipated,
+        'blue'
       ],
       [
         mostTournamentsParticipated[2].name,
-        mostTournamentsParticipated[2].numberOfPTournamentsParticipated
+        mostTournamentsParticipated[2].numberOfPTournamentsParticipated,
+        'green'
       ],
       [
         mostTournamentsParticipated[3].name,
-        mostTournamentsParticipated[3].numberOfPTournamentsParticipated
+        mostTournamentsParticipated[3].numberOfPTournamentsParticipated,
+        'grey'
       ],
       [
         mostTournamentsParticipated[4].name,
-        mostTournamentsParticipated[4].numberOfPTournamentsParticipated
+        mostTournamentsParticipated[4].numberOfPTournamentsParticipated,
+        'orange'
       ]
     ];
   }
