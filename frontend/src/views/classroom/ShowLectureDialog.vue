@@ -225,6 +225,36 @@
                                     :key="index"
                             ></v-divider>
                         </template>
+
+                        <template v-for="(l, index) in solvedQuizzes">
+                            <v-list-item :key="l.title" class="test1" @click="show(l)" >
+                                <template>
+                                    <v-list-item-content>
+                                        <v-row>
+                                            <v-col>
+                                                <v-list-item-title class="test" v-text=" l.statementQuiz.title"></v-list-item-title>
+
+                                            </v-col>
+                                            <v-col>
+                                                <v-list-item-subtitle class="text--primary" v-text="l.statementQuiz.availableDate"></v-list-item-subtitle>
+                                            </v-col>
+
+
+                                        </v-row>
+
+                                    </v-list-item-content>
+
+
+                                </template>
+                            </v-list-item>
+
+                            <v-divider
+                                    v-if="index + 1 < solvedQuizzes.length"
+                                    :key="index"
+                            ></v-divider>
+                        </template>
+
+
                     </v-list-item-group>
                 </v-list>
 
@@ -274,6 +304,7 @@ import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
   import {Quiz} from "@/models/management/Quiz";
   import EditSelectedQuizzesDialog from '@/views/classroom/EditSelectedQuizzesDialog.vue';
   import StatementManager from '@/models/statement/StatementManager';
+  import SolvedQuiz from "@/models/statement/SolvedQuiz";
 
 @Component({
   components: {
@@ -298,6 +329,7 @@ availableQuizzes : StatementQuiz[] | null=null;
   documents: Document[] = [];
   lec!: Classroom
   selectedQuizzes : StatementQuiz[] | null = null;
+  solvedQuizzes : SolvedQuiz[] | null = null;
   search: string = '';
   statementManager: StatementManager = StatementManager.getInstance;
 
@@ -343,6 +375,7 @@ availableQuizzes : StatementQuiz[] | null=null;
       this.selectedQuizzes = await RemoteServices.getClassroomQuizzes(this.lec);
       console.log(this.lec);
 
+      this.solvedQuizzes = await RemoteServices.getClassroomSolvedQuizzes(this.lec);
 
     this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
   }
@@ -353,6 +386,12 @@ availableQuizzes : StatementQuiz[] | null=null;
 
   }
 
+    async show(quiz: SolvedQuiz) {
+        this.statementManager.correctAnswers = quiz.correctAnswers;
+        this.statementManager.statementQuiz = quiz.statementQuiz;
+        console.log(quiz)
+        await this.$router.push({path: '/student/results'});
+    }
 
   closeLectureDialog() {
     this.$emit('close-show-lecture-dialog');

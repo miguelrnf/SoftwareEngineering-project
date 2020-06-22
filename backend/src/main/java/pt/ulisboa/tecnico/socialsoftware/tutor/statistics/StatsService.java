@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -212,24 +213,18 @@ public class StatsService {
             b = (statsDto.getTournamentDone() / courseExecution.getTournaments().size()) * ( (courseExecution.getTournamentWeight()) / 100.0);
 
         if (courseExecution.getSuggestions().size()==0)
-            c = courseExecution.getSuggWeight()/100.0;
-        else
-            c = (statsDto.getApproveSuggestions() / courseExecution.getSuggestions().size()) * (courseExecution.getSuggWeight() / 100.0);
-
-        if(user.getName().contains("Demo Student")) {
-            System.out.println(courseExecution.getQuizWeight() / 100.0);
-
-            System.out.println(a);
-            System.out.println(b);
-            System.out.println(c);
+            c = 0;
+        else {
+            List<Suggestion> l = courseExecution.getSuggestions().stream().filter(suggestion -> suggestion.getStatus()== Suggestion.Status.APPROVED).collect(Collectors.toList());
+            if(statsDto.getApproveSuggestions()<=20)
+                c = (statsDto.getApproveSuggestions() / 20) * (courseExecution.getSuggWeight() / 100.0);
+            else
+                c = courseExecution.getSuggWeight() / 100.0;
         }
-
 
         double res = ( a + b + c) * (courseExecution.getScale());
 
         user.setGrade((int) res);
-
-        System.out.println(user.getGrade());
 
         return (int) res;
     }
