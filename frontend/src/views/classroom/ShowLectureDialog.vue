@@ -43,21 +43,23 @@
                     >
                         <template v-slot:activator>
                             <v-list-item-content >
-                                <v-list-item-title  v-text="d.content"></v-list-item-title>
+                                <v-list-item-title  v-text="d.title"></v-list-item-title>
                             </v-list-item-content>
 
-
-                            <v-btn @click="clickPdf(d)">downlod</v-btn>
 
                         </template>
 
                         <v-list-item color="primary"
                         >
 
-                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-up</v-icon>
+                            <v-list-item-content >
+                                <v-list-item-title  v-text="d.content"></v-list-item-title>
+                            </v-list-item-content>
+
+                            <v-icon @click="clickPdf(d)" color="primary">fas fa-file-download</v-icon>
                             <v-icon v-if="teacher" @click="editDocument(d)" color="primary">edit</v-icon>
                             <v-icon v-if="teacher" @click="deleteDocument(d)" color="error">delete</v-icon>
-                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-down</v-icon>
+
 
                         </v-list-item>
                     </v-list-group>
@@ -89,10 +91,8 @@
                             </v-container>
 
 
-                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-up</v-icon>
                             <v-icon v-if="teacher" @click="editDocument(v)" color="primary">edit</v-icon>
                             <v-icon v-if="teacher" @click="deleteDocument(v)" color="error">delete</v-icon>
-                            <v-icon v-if="teacher" large color="primary">mdi-chevron-double-down</v-icon>
 
 
 
@@ -172,7 +172,7 @@
 
                                         @click="setEvaluation(item,false)"
 
-                                >fas fa-cross</v-icon
+                                >fas fa-window-close</v-icon
                                 >
                             </template>
                             <span>Unset Quiz to Evaluation</span>
@@ -491,6 +491,20 @@ availableQuizzes : StatementQuiz[] | null=null;
 
 
   }
+    async onSaveDocument(doc: Document) {
+        console.log(this.documents)
+        if(this.doctype === 'New Document'){
+            this.documents = this.documents.filter(d => d.id != doc.id);
+            this.documents.unshift(doc);
+        }
+        else{
+            this.videos = this.videos.filter(v => v.id != doc.id);
+            this.videos.unshift(doc);
+        }
+        this.newOrEditDialog = false;
+        this.current = null;
+        console.log(this.documents)
+    }
 
   getLectureTypeIcon(){
     if (this.type === 'New Lecture') {

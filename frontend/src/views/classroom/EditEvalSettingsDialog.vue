@@ -156,10 +156,11 @@
         }
 
         async save(){
+            console.log(this.settings)
             if(this.settings != null) {
                 this.settings.quizWeight = this.quizzes;
                 this.settings.suggWeight = this.suggestions
-                this.settings.suggWeight = this.suggestions;
+                this.settings.tournamentWeight = this.tournament;
             }
 
             if( this.settings != null) {

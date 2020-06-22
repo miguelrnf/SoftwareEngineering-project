@@ -490,6 +490,7 @@ export default class ClassroomHomeView extends Vue {
 
   async onCloseEditDialog() {
     this.editEvalDialog = false;
+    this.students = await RemoteServices.getEvalStudents();
   }
 
   async onCloseShowDialog() {

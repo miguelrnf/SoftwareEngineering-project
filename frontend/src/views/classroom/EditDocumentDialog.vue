@@ -70,12 +70,12 @@
             <div class="container">
 
               <form enctype="multipart/form-data" novalidate v-if="currentStatus===0 || currentStatus===1">
-                <h1>Upload images</h1>
+                <h2>Upload file</h2>
                 <div class="dropbox">
                   <input type="file" multiple :name="uploadFieldName" :disabled="currentStatus===1" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                           class="input-file">
                   <p v-if="currentStatus===0">
-                    Drag your file(s) here to begin<br> or click to browse
+                    Drag your file here to begin<br> or click to browse (20 Mb max size)
                   </p>
                   <p v-if="currentStatus===1">
                     Uploading {{ fileCount }} files...
@@ -224,10 +224,6 @@ export default class EditDocumentDialog extends Vue {
     console.log(f.type)
 
     this.editDocument.extension = f.type;
-
-
-    /*const result = await RemoteServices.uploaddd(formData, this.editDocument);
-    console.log(result)*/
 
 
 
