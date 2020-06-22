@@ -7,8 +7,8 @@
         class="pa-2 display-3 flex-grow-1"
         width="33%"
       >
-        <v-chip label color="white" class="mt-3">
-          <v-icon color="grey darken-1">fas fa-medal</v-icon>
+        <v-chip label color="primary" class="mt-3">
+          <v-icon  color="white">fas fa-medal</v-icon>
           <v-card-text class="headline"
             >{{ 'Best player scores' }}
           </v-card-text>
@@ -29,8 +29,8 @@
         class="pa-2 display-3 flex-grow-1"
         width="33%"
       >
-        <v-chip label color="white" class="mt-3">
-          <v-icon color="grey darken-1">fas fa-book</v-icon>
+        <v-chip label color="primary" class="mt-3">
+          <v-icon color="white">fas fa-book</v-icon>
           <v-card-text class="headline"
             >{{ 'Most posts submitted' }}
           </v-card-text>
@@ -51,8 +51,8 @@
         class="pa-2 display-3 flex-grow-1"
         width="33%"
       >
-        <v-chip label color="white" class="mt-3">
-          <v-icon color="grey darken-1">question_answer</v-icon>
+        <v-chip label color="primary" class="mt-3">
+          <v-icon color="white">question_answer</v-icon>
           <v-card-text class="headline"
             >{{ 'Most suggestions approved' }}
           </v-card-text>
@@ -74,8 +74,8 @@
         class="pa-2 display-3 flex-grow-1"
         width="33%"
       >
-        <v-chip label color="white" class="mt-3">
-          <v-icon color="grey darken-1">assignment</v-icon>
+        <v-chip label color="primary" class="mt-3">
+          <v-icon color="white">assignment</v-icon>
           <v-card-text class="headline"
             >{{ 'Most quizzes solved' }}
           </v-card-text>
@@ -95,8 +95,8 @@
         class="pa-2 display-3 flex-grow-1"
         width="33%"
       >
-        <v-chip label color="white" class="mt-3">
-          <v-icon color="grey darken-1">fas fa-trophy</v-icon>
+        <v-chip label color="primary" class="mt-3">
+          <v-icon color="white">fas fa-trophy</v-icon>
           <v-card-text class="headline"
             >{{ 'Most tournaments participated' }}
           </v-card-text>
@@ -117,8 +117,8 @@
         width="33%"
 
       >
-        <v-chip label color="white" class="mt-3">
-          <v-icon color="grey darken-1">fas fa-trophy</v-icon>
+        <v-chip label color="primary" class="mt-3">
+          <v-icon color="white">fas fa-trophy</v-icon>
           <v-card-text class="headline"
             >{{ 'Most posts upvoted' }}
           </v-card-text>
@@ -131,7 +131,7 @@
       </v-card>
       <v-card v-else class="pb-10 " height="100%">
         <v-card-text class="pt-12">NO TOURNAMENTS PARTICIPATED</v-card-text>
-        <v-icon class="pt-6" x-large>fas fa-exclamation-triangle</v-icon>
+        <v-icon class="pt-6"  x-large>fas fa-exclamation-triangle</v-icon>
       </v-card>
     </div>
   </v-card>
@@ -149,7 +149,7 @@
   }
 })
 export default class DashboardLeaderboardsView extends Vue {
-  stats: Leaderboards | null = null;
+  stats: Leaderboards | null = new Leaderboards();
   bestScoreStats: Array<Object> = [];
   mostPostsStats: Array<Object> = [];
   mostApprovedSuggestionsStats: Array<Object> = [];
@@ -184,7 +184,7 @@ export default class DashboardLeaderboardsView extends Vue {
       : (bestScores = []);
     this.shuffleArray(bestScores);
     this.bestScoreStats = [
-      ['Name', 'Score',{ role: "style" }],
+      ['Name', 'Score',{ role: "style"  }],
       [bestScores[0].name, bestScores[0].score, 'red'],
       [bestScores[1].name, bestScores[1].score, 'blue'],
       [bestScores[2].name, bestScores[2].score, 'green'],
@@ -306,7 +306,10 @@ export default class DashboardLeaderboardsView extends Vue {
         'orange'
       ]
     ];
+
   }
+
+
 }
 </script>
 

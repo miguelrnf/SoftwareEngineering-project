@@ -1,11 +1,11 @@
 import User from '@/models/user/User';
 
 export class Leaderboards {
-  bestScores!: User[];
-  mostApprovedSuggestions!: User[];
-  mostPosts!: User[];
-  mostQuizzesSolved!: User[];
-  mostTournamentsParticipated!: User[];
+  bestScores: User[] | null = [];
+  mostApprovedSuggestions: User[] | null = [];;
+  mostPosts: User[]| null = [];;
+  mostQuizzesSolved: User[]| null = [];;
+  mostTournamentsParticipated: User[]| null = [];;
 
   constructor(jsonObj?: Leaderboards) {
     if (jsonObj) {
