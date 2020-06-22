@@ -77,14 +77,14 @@
                   <p v-if="currentStatus===0">
                     Drag your file here to begin<br> or click to browse (20 Mb max size)
                   </p>
-                  <p v-if="currentStatus===1">
-                    Uploading {{ fileCount }} files...
+                  <p v-if="currentStatus===1" >
+                    Uploading file...
                   </p>
                 </div>
               </form>
               <!--SUCCESS-->
               <div v-if="currentStatus===2">
-                <h2>Uploaded {{ uploadedFiles.length }} file(s) successfully.</h2>
+                <h2>Uploaded file successfully.</h2>
                 <p>
                   <a href="javascript:void(0)" @click="reset()">Upload again</a>
                 </p>
@@ -205,6 +205,8 @@ export default class EditDocumentDialog extends Vue {
   uploadFieldName: string = 'photos';
   uploadedFiles = [];
 
+  private loading: boolean = false;
+  private hidden: boolean = true;
 
 
   reset() {
@@ -212,6 +214,16 @@ export default class EditDocumentDialog extends Vue {
     this.currentStatus = STATUS_INITIAL;
     this.uploadedFiles = [];
     this.uploadError = null;
+  }
+
+  async loader () {
+    try {
+      this.loading = true
+      setTimeout(() => (this.loading = false, this.hidden = false), 2500)
+      this.suggestedQuiz = await RemoteServices.getSuggestTopicQuiz()
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 
   async save(formData: FormData, name: string) {
@@ -228,11 +240,14 @@ export default class EditDocumentDialog extends Vue {
 
 
     try {
+      this.currentStatus = STATUS_SAVING;
+
       console.log(this.editDocument)
 
       const result1 = await RemoteServices.createDocument(this.editDocument)
+
       const result = await RemoteServices.uploadDoc(formData, result1)
-      console.log(result);
+
 
       this.upload2(formData)
               .then(x => {
