@@ -70,12 +70,12 @@
             <div class="container">
 
               <form enctype="multipart/form-data" novalidate v-if="currentStatus===0 || currentStatus===1">
-                <h1>Upload images</h1>
+                <h1>Upload File </h1>
                 <div class="dropbox">
                   <input type="file" multiple :name="uploadFieldName" :disabled="currentStatus===1" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                           class="input-file">
                   <p v-if="currentStatus===0">
-                    Drag your file(s) here to begin<br> or click to browse
+                    Drag your file here to begin<br> or click to browse <br>(20Mb Max)
                   </p>
                   <p v-if="currentStatus===1">
                     Uploading {{ fileCount }} files...
@@ -434,11 +434,15 @@ export default class EditDocumentDialog extends Vue {
   }
 
   .input-file {
-    opacity: 0; /* invisible but it's there! */
-    width: 100%;
-    height: 200px;
+    opacity: 100; /* invisible but it's there! */
+    width: 350px;
+    height:350px;
     position: absolute;
     cursor: pointer;
+
+
+
+
   }
 
   .dropbox:hover {
@@ -446,9 +450,12 @@ export default class EditDocumentDialog extends Vue {
   }
 
   .dropbox p {
+    width: 350px;
+    height: 350px;
     font-size: 1.2em;
     text-align: center;
     padding: 50px 0;
+
   }
 
 </style>
