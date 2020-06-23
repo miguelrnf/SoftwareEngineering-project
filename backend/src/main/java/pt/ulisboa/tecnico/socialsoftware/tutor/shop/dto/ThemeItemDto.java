@@ -33,12 +33,13 @@ public class ThemeItemDto implements Serializable {
         this.dark = item.getDark();
     }
 
-    public UserItemDto getUserItemDTO() {
+    public UserItemDto getUserItemDto() {
         return userItemDto;
     }
 
-    public void setUserItemDTO(UserItemDto userItemDTO) {
-        this.userItemDto = userItemDTO;
+    public void setUserItemDto(UserItemDto userItemDto) {
+        this.userItemDto = userItemDto;
+
     }
 
     public String getSuccess() {

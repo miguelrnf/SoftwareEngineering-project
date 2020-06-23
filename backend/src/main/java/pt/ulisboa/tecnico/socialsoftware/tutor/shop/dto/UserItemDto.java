@@ -12,8 +12,7 @@ public class UserItemDto implements Serializable {
     private String color;
     private Integer userId;
 
-    public UserItemDto() {
-    }
+    public UserItemDto() {}
 
     public UserItemDto(UserItem item) {
         this.id = item.getId();
@@ -64,11 +63,25 @@ public class UserItemDto implements Serializable {
         this.color = color;
     }
 
+
+    @Override
+    public String toString() {
+        return "UserItemDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", icon='" + icon + '\'' +
+                ", color='" + color + '\'' +
+                ", userId=" + userId +
+                '}';
+    }
+
     public Integer getUserId() {
         return userId;
     }
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+
     }
 }

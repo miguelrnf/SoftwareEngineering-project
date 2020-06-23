@@ -4,6 +4,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
+import javax.persistence.*;
+import java.util.Arrays;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -51,7 +53,7 @@ public class ThemeItem extends UserItem {
 
     @Override
     protected void checkContentConsistency(String content) {
-        String[] colors = content.split(",");
+        String[] colors = content.split(";");
         if(colors.length != 8) throw new TutorException(ErrorMessage.INVALID_THEME);
         this.dark = colors[0].equals("true");
         this.success = colors[1];

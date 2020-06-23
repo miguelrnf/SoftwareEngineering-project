@@ -119,12 +119,19 @@ public class ShopService {
     }
 
     private void addItemToUser(User user, ShopItem item) {
-        if(item.getType() == ShopItem.Type.THEME)
+        if(item.getType() == ShopItem.Type.THEME){
+            if (hasTheme(user, item))
+                return;
             user.addItem(new ThemeItem(item, user));
+        }
         else if(item.getType() == ShopItem.Type.POWER_UP)
             user.addItem(new PowerUpItem(item, user));
         else if(item.getType() == ShopItem.Type.POST_AWARD)
             user.addItem(new PostAwardItem(item, user));
         else throw new TutorException(ErrorMessage.INVALID_ITEM_TYPE);
+    }
+
+    private boolean hasTheme(User user, ShopItem item){
+        return user.getItems().stream().anyMatch(userItem -> userItem.getName().equals(item.getName()));
     }
 }

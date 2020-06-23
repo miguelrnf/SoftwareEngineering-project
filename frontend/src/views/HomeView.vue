@@ -78,11 +78,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Store from '@/store';
+import { Theme } from '@/models/management/Theme';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class HomeView extends Vue {
   appName: string = process.env.VUE_APP_NAME;
   fenixUrl: string = process.env.VUE_APP_FENIX_URL;
+  theme: Theme = new Theme();
 
   get isLoggedIn() {
     return Store.state.token;
@@ -92,7 +95,7 @@ export default class HomeView extends Vue {
     await this.$store.dispatch('loading');
     try {
       await this.$store.dispatch('demoStudentLogin');
-      //todo get all themes and apply current
+      await this.applyTheme();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -117,6 +120,18 @@ export default class HomeView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async applyTheme() {
+    this.theme = await RemoteServices.getCurrentTheme();
+    this.$vuetify.theme.dark = this.theme.dark;
+    this.$vuetify.theme.currentTheme.primary = this.theme.primary;
+    this.$vuetify.theme.currentTheme.accent = this.theme.accent;
+    this.$vuetify.theme.currentTheme.secondary = this.theme.secondary;
+    this.$vuetify.theme.currentTheme.info = this.theme.info;
+    this.$vuetify.theme.currentTheme.warning = this.theme.warning;
+    this.$vuetify.theme.currentTheme.error = this.theme.error;
+    this.$vuetify.theme.currentTheme.success = this.theme.success;
   }
 }
 </script>

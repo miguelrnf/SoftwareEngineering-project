@@ -9,14 +9,6 @@
           </v-row>
           <v-divider class="mt-5 white"></v-divider>
           <v-list>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search Product"
-              class="mx-2 mb-n5"
-              data-cy="search"
-              color="white"
-            />
             <v-list-item
               v-for="item in categories"
               :key="item.title"
@@ -52,9 +44,9 @@
       </v-col>
       <v-col cols="9">
         <v-container style="max-height: 87vh" class="overflow-y-auto" fluid>
-          <div v-if="type === 'All' || type === 'None'">
+          <div>
             <v-row>
-              <v-col cols="4" v-for="item in shopItems" :key="item.name">
+              <v-col cols="4" v-for="item in filteredItems" :key="item.name">
                 <v-card outlined tile class="ma-3">
                   <v-list-item three-line>
                     <v-list-item-content>
@@ -66,49 +58,31 @@
                       </v-list-item-subtitle>
                     </v-list-item-content>
 
-                    <v-icon xx-large class="ma-4" :color="item.color">{{
-                      item.icon
-                    }}</v-icon>
+                    <v-icon
+                      v-if="item.type !== 'THEME'"
+                      x-large
+                      :color="item.color"
+                      class="ma-4"
+                    >
+                      {{ item.icon }}
+                    </v-icon>
+                    <v-icon
+                      v-else
+                      x-large
+                      class="ma-4"
+                      @click="openDialog(item)"
+                    >
+                      fas fa-eye
+                    </v-icon>
                   </v-list-item>
 
                   <v-card-actions class="px-4">
-                    <v-btn right color="primary" @click="buyItem(item)">
-                      Buy
-                    </v-btn>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-icon class="ma-4 pa-0" v-on="on"
-                          >far fa-question-circle</v-icon
-                        >
-                      </template>
-                      <span>{{ item.description }}</span>
-                    </v-tooltip>
-                  </v-card-actions>
-                </v-card>
-              </v-col>
-            </v-row>
-          </div>
-          <div v-else>
-            <v-row>
-              <v-col cols="4" v-for="item in categoryItems" :key="item.name">
-                <v-card outlined tile class="ma-3">
-                  <v-list-item three-line>
-                    <v-list-item-content>
-                      <v-list-item-title class="text-left">
-                        {{ item.name }}
-                      </v-list-item-title>
-                      <v-list-item-subtitle class="text-left">
-                        {{ item.price + ' Achandos' }}
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-
-                    <v-icon xx-large :color="item.color" class="ma-4">{{
-                      item.icon
-                    }}</v-icon>
-                  </v-list-item>
-
-                  <v-card-actions class="px-4">
-                    <v-btn right color="primary" @click="buyItem(item)">
+                    <v-btn
+                      right
+                      color="primary"
+                      @click="buyItem(item)"
+                      :disabled="hasItem(item)"
+                    >
                       Buy
                     </v-btn>
                     <v-tooltip bottom>
@@ -127,6 +101,11 @@
         </v-container>
       </v-col>
     </v-row>
+    <theme-preview
+      :theme="currentTheme"
+      :dialog="themeDialog"
+      v-on:close-show-theme-dialog="themeDialog = false"
+    />
   </v-card>
 </template>
 
@@ -136,14 +115,24 @@ import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import { ShopItem } from '@/models/management/ShopItem';
 import RemoteServices from '@/services/RemoteServices';
+import ThemePreviewDialog from '@/views/ThemePreviewDialog.vue';
+import { Theme } from '@/models/management/Theme';
 
-@Component
+@Component({
+  components: {
+    'theme-preview': ThemePreviewDialog
+  }
+})
 export default class ShopHomeView extends Vue {
   search: string = '';
   type: string = 'None';
   numHint: number = 0;
   numFifty: number = 0;
   numRightAns: number = 0;
+  currentTheme: Theme = new Theme();
+  themeDialog: boolean = false;
+  colors: string[] | undefined;
+  themes: string[] | undefined;
 
   categories = [
     { value: 'THEME', title: 'Themes', icon: 'fas fa-paint-roller' },
@@ -152,13 +141,16 @@ export default class ShopHomeView extends Vue {
     { value: 'All', title: 'All', icon: 'fas fa-ellipsis-v' }
   ];
 
-  categoryItems: ShopItem[] = [];
+  filteredItems: ShopItem[] = [];
   shopItems: ShopItem[] = [];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
+      this.themes = await RemoteServices.getOwnedThemes();
       this.shopItems = await RemoteServices.getShopItems();
+      this.shopItems.sort((a, b): number => this.sortfn(a, b));
+      this.filteredItems = this.shopItems;
       this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
       this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
       this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
@@ -166,6 +158,13 @@ export default class ShopHomeView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  sortfn(a: ShopItem, b: ShopItem): number {
+    if (a.type === b.type) {
+      return a.price < b.price ? -1 : a.price == b.price ? 0 : 1;
+    }
+    return a.type < b.type ? 1 : -1;
   }
 
   async buyItem(item: ShopItem) {
@@ -182,6 +181,31 @@ export default class ShopHomeView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
+  hasItem(item: ShopItem): boolean {
+    if (item.type != 'THEME') return false;
+    if (this.themes) return this.themes?.includes(item.name);
+    return false;
+  }
+
+  openDialog(item: ShopItem) {
+    this.setTheme(item);
+
+    this.themeDialog = true;
+  }
+
+  setTheme(item: ShopItem) {
+    this.colors = item.content.split(';');
+
+    this.currentTheme.dark = this.colors[0] === 'true';
+    this.currentTheme.success = this.colors[1];
+    this.currentTheme.secondary = this.colors[2];
+    this.currentTheme.accent = this.colors[3];
+    this.currentTheme.info = this.colors[4];
+    this.currentTheme.warning = this.colors[5];
+    this.currentTheme.primary = this.colors[6];
+    this.currentTheme.error = this.colors[7];
+  }
+
   defineCategory(type: string) {
     this.type = type;
     this.isInTheRightCategory(type);
@@ -189,13 +213,13 @@ export default class ShopHomeView extends Vue {
 
   async isInTheRightCategory(search: string) {
     if (search != '' && search != 'All') {
-      this.categoryItems = this.shopItems.filter(
+      this.filteredItems = this.shopItems.filter(
         item => item.type == this.type
       );
     } else {
-      this.categoryItems = this.shopItems;
+      this.filteredItems = this.shopItems;
     }
-    return this.categoryItems;
+    return this.filteredItems;
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
