@@ -25,7 +25,6 @@ public class AuthUserDto implements Serializable {
     private boolean isDashboardPrivate = false;
     private List<PostDto> postsUpvoted;
     private List<PostDto> postsDownvoted;
-    private List<UserItem> items;
 
     public AuthUserDto(User user) {
         this.name = user.getName();
@@ -52,7 +51,6 @@ public class AuthUserDto implements Serializable {
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
         this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
-        this.items = new ArrayList<>(user.getItems());
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -169,11 +167,4 @@ public class AuthUserDto implements Serializable {
         this.postsDownvoted = postsDownvoted;
     }
 
-    public List<UserItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<UserItem> items) {
-        this.items = items;
-    }
 }

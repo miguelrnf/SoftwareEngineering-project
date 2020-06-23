@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.UserItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -30,7 +31,6 @@ public class UserDto implements Serializable {
     private Integer numberOfQuizzesSolved;
     private Integer numberOfPostsSubmitted;
     private Integer numberOfPTournamentsParticipated;
-    private List<UserItem> items;
 
 
 
@@ -40,12 +40,12 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
-        if (user.getScore() == null )
+        if (user.getScore() == null)
             this.score = 0;
         else
             this.score = user.getScore();
 
-        if(user.getDashboardPrivate() == null)
+        if (user.getDashboardPrivate() == null)
             this.isDashboardPrivate = false;
         else
             this.isDashboardPrivate = user.getDashboardPrivate();
@@ -56,15 +56,14 @@ public class UserDto implements Serializable {
         this.numberOfQuizzesSolved = user.getQuizzes().size();
         this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
-        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
+        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()) {
             user.setCurrentTheme("Default Light");
         }
         this.currentTheme = user.getCurrentTheme();
         this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
-        this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
+        this.postsDownvoted = user.getPostsDownvoted() != null ? user.getPostsDownvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
-        this.items = new ArrayList<>(user.getItems());
     }
 
     public UserDto() {
@@ -172,14 +171,6 @@ public class UserDto implements Serializable {
 
     public void setPostsDownvoted(List<PostDto> postsDownvoted) {
         this.postsDownvoted = postsDownvoted;
-    }
-
-    public List<UserItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<UserItem> items) {
-        this.items = items;
     }
 
     @Override
