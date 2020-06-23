@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
 import org.hibernate.mapping.Map;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -48,6 +49,9 @@ public class Post {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<User> usersWhoDownvoted = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<PostAwardItem> awards = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "post", orphanRemoval = true)
     private Set<PostComment> comments = new HashSet<>();
@@ -179,6 +183,18 @@ public class Post {
         this.usersWhoDownvoted = usersWhoDownvoted;
     }
 
+    public Set<PostAwardItem> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(Set<PostAwardItem> awards) {
+        this.awards = awards;
+    }
+
+    public void awardPost(PostAwardItem award) {
+        this.awards.add(award);
+    }
+
     public void remove() {
         this.question.remove();
         if(this.comments != null)
@@ -205,6 +221,7 @@ public class Post {
     public void downvote(User u) {
         this.usersWhoDownvoted.add(u);
     }
+
 
 
     @Override

@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
@@ -159,5 +161,12 @@ public class PostController {
     public PostDto downvote(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return postService.vote(postId, user, "downvote");
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/award")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto award(Principal principal, @PathVariable int executionId, @PathVariable int postId, @Valid @RequestBody PostAwardItemDto award) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.award(postId, award, user);
     }
 }

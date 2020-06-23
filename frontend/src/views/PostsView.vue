@@ -327,11 +327,8 @@ export default class PostsView extends Vue {
   }
 
   onCreatePost(postmalone: Post) {
-
     this.posts.push(postmalone);
     this.createPost = false;
-
-
   }
 
   isTeacher(): boolean {

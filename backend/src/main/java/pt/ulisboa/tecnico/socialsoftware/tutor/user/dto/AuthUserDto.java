@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public class AuthUserDto implements Serializable {
     private boolean isDashboardPrivate = false;
     private List<PostDto> postsUpvoted;
     private List<PostDto> postsDownvoted;
+    private List<UserItem> items;
 
     public AuthUserDto(User user) {
         this.name = user.getName();
@@ -44,6 +46,7 @@ public class AuthUserDto implements Serializable {
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
         this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
+        this.items = new ArrayList<>(user.getItems());
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -150,5 +153,13 @@ public class AuthUserDto implements Serializable {
 
     public void setPostsDownvoted(List<PostDto> postsDownvoted) {
         this.postsDownvoted = postsDownvoted;
+    }
+
+    public List<UserItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<UserItem> items) {
+        this.items = items;
     }
 }

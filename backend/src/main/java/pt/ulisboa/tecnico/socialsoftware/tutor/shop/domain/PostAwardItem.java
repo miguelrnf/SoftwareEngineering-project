@@ -6,13 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("POST_AWARD")
 @Table(name = "item_post_award")
 public class PostAwardItem extends UserItem {
     public enum Type {
-        TYPE_1, TYPE_2, TYPE_3, TYPE_4 //TODO - Change names
+        SILVER, GOLD, PLATINUM
     }
 
     @Column(name = "post_award_type")
@@ -43,6 +44,7 @@ public class PostAwardItem extends UserItem {
         this.type = type;
     }
 
+
     @Override
     public String toString() {
         return
@@ -52,7 +54,6 @@ public class PostAwardItem extends UserItem {
                 ", description='" + this.getDescription() + '\'' +
                 ", icon='" + this.getIcon() + '\'' +
                 ", color='" + this.getColor() + '\'' +
-                ", user=" + this.getUser() +
                 "}\n" +
                 "PostAwardItem{" +
                 "type=" + type +
