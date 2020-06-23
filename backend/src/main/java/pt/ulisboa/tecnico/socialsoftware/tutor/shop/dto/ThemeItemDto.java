@@ -14,8 +14,8 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 
-public class ThemeItemDTO implements Serializable {
-    private UserItemDTO userItemDTO;
+public class ThemeItemDto implements Serializable {
+    private UserItemDto userItemDto;
 
     private String success;
     private String secondary;
@@ -26,11 +26,11 @@ public class ThemeItemDTO implements Serializable {
     private String error;
     private Boolean dark;
 
-    public ThemeItemDTO() {}
+    public ThemeItemDto() {}
 
-    public ThemeItemDTO(ThemeItem item) {
+    public ThemeItemDto(ThemeItem item) {
 
-        this.userItemDTO = new UserItemDTO(item);
+        this.userItemDto = new UserItemDto(item);
 
         this.success = item.getSuccess();
         this.secondary = item.getSecondary();
@@ -42,12 +42,12 @@ public class ThemeItemDTO implements Serializable {
         this.dark = item.getDark();
     }
 
-    public UserItemDTO getUserItemDTO() {
-        return userItemDTO;
+    public UserItemDto getUserItemDTO() {
+        return userItemDto;
     }
 
-    public void setUserItemDTO(UserItemDTO userItemDTO) {
-        this.userItemDTO = userItemDTO;
+    public void setUserItemDTO(UserItemDto userItemDTO) {
+        this.userItemDto = userItemDTO;
     }
 
     public String getSuccess() {
@@ -117,7 +117,7 @@ public class ThemeItemDTO implements Serializable {
     @Override
     public String toString() {
         return "ThemeItemDTO{" +
-                "userItemDTO=" + userItemDTO +
+                "userItemDTO=" + userItemDto +
                 ", success='" + success + '\'' +
                 ", secondary='" + secondary + '\'' +
                 ", accent='" + accent + '\'' +

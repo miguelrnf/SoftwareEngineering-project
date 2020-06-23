@@ -30,8 +30,6 @@ public class UserDto implements Serializable {
     private Integer numberOfQuizzesSolved;
     private Integer numberOfPostsSubmitted;
     private Integer numberOfPTournamentsParticipated;
-    private List<UserItem> items;
-
 
 
     public UserDto(User user) {
@@ -64,7 +62,6 @@ public class UserDto implements Serializable {
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
         this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
-        this.items = new ArrayList<>(user.getItems());
     }
 
     public UserDto() {
@@ -174,13 +171,6 @@ public class UserDto implements Serializable {
         this.postsDownvoted = postsDownvoted;
     }
 
-    public List<UserItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<UserItem> items) {
-        this.items = items;
-    }
 
     @Override
     public String toString() {
