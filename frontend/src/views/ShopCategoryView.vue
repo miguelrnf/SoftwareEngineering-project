@@ -43,6 +43,16 @@
               {{ numRightAns + 'x' }}
               <v-icon color="white" class="mr-4">fas fa-check</v-icon>
             </v-row>
+            <v-row class="white--text pa-5 ml-0" justify="center">
+              {{ numSilvers + 'x' }}
+              <v-icon color="white" class="mr-4">fas fa-star-half-alt</v-icon>
+
+              {{ numGolds + 'x' }}
+              <v-icon color="white" class="mr-4">fas fa-star</v-icon>
+
+              {{ numPlatinums + 'x' }}
+              <v-icon color="white" class="mr-4">fas fa-shield-alt</v-icon>
+            </v-row>
             <v-row class="white--text pa-5 ml-0">
               <v-icon color="white" class="mr-12">fas fa-coins</v-icon>
               {{ $store.getters.getUser.score + ' Achandos' }}
@@ -131,11 +141,13 @@
 </template>
 
 <script lang="ts">
+import Vue2Filters from 'vue2-filters';
 import { Component, Vue } from 'vue-property-decorator';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import { ShopItem } from '@/models/management/ShopItem';
 import RemoteServices from '@/services/RemoteServices';
+import { PostAwardItem } from '@/models/management/PostAwardItem';
 
 @Component
 export default class ShopHomeView extends Vue {
@@ -144,6 +156,10 @@ export default class ShopHomeView extends Vue {
   numHint: number = 0;
   numFifty: number = 0;
   numRightAns: number = 0;
+  userAwardsInventory: PostAwardItem[] = [];
+  numSilvers: number = 0;
+  numGolds: number = 0;
+  numPlatinums: number = 0;
 
   categories = [
     { value: 'THEME', title: 'Themes', icon: 'fas fa-paint-roller' },
@@ -162,6 +178,18 @@ export default class ShopHomeView extends Vue {
       this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
       this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
       this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+      this.userAwardsInventory = await RemoteServices.getAwards();
+      for (let i = 0; i < this.userAwardsInventory.length; i++) {
+        if (this.userAwardsInventory[i].type == 'SILVER') {
+          this.numSilvers = this.numSilvers + 1;
+        }
+        if (this.userAwardsInventory[i].type == 'GOLD') {
+          this.numGolds = this.numGolds + 1;
+        }
+        if (this.userAwardsInventory[i].type == 'PLATINUM') {
+          this.numPlatinums = this.numPlatinums + 1;
+        }
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
