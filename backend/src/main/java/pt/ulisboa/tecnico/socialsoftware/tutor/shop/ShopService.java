@@ -13,12 +13,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemListDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.repository.ShopRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND;
 
 @Service
 public class ShopService {
@@ -28,26 +33,38 @@ public class ShopService {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ShopItemListDto listShopItems() {
-        ShopItemListDto dto = new ShopItemListDto();
-        dto.setItemList(shopRepository.findAll().stream().map(ShopItemDto::new).collect(Collectors.toList()));
-        return dto;
+    public List<ShopItemDto> listShopItems() {
+        return shopRepository.findAll().stream().map(ShopItemDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public ShopItemDto buyShopItem(User user, int shopItemId) {
+    public ShopItemDto buyShopItem(String username, int shopItemId) {
         ShopItem item = checkIfShopItemExistsById(shopItemId);
-        if(user.getRole() != User.Role.ADMIN) checkIfUserHasEnoughAchandos(user, item.getPrice());
-        addItemToUser(user, item);
+        User u = findUsername(username);
+        if(u.getRole() != User.Role.ADMIN) checkIfUserHasEnoughAchandos(u, item.getPrice());
+
+        addItemToUser(u, item);
       
         return new ShopItemDto(item);
+    }
+
+    private User findUsername(String username){
+        User user = userRepository.findByUsername(username);
+
+        if(user == null)
+            throw new TutorException(USERNAME_NOT_FOUND, username);
+
+        return user;
     }
 
     @Retryable(
@@ -86,8 +103,7 @@ public class ShopService {
 
     private void checkIfUserHasEnoughAchandos(User user, int price) {
         if(user.getScore() - price < 0) throw new TutorException(ErrorMessage.NOT_ENOUGH_ACHANDOS);
-        // to remove achandos we multiply by -1
-        else user.changeScore(price * -1);
+        else user.changeScore(-price);
     }
 
     private ShopItem checkIfShopItemExistsById(int id) {

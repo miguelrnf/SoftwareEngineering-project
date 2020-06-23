@@ -63,8 +63,12 @@
               fab
               color="primary"
               v-on="on"
-              @click.stop="getHint"
-              :disabled="usedHint || disableHint"
+              @click="getHint"
+              :disabled="
+                usedHint ||
+                  !statementQuiz.questions[questionOrder].hasHint ||
+                  disableHint
+              "
             >
               <v-icon class="pa-0">far fa-lightbulb</v-icon>
             </v-btn>
@@ -284,7 +288,11 @@ export default class QuizView extends Vue {
         try {
           await RemoteServices.startQuiz(this.statementQuiz?.id);
           await this.getQuizType();
-          if (this.showPowerUps) await this.disHint();
+          if (this.showPowerUps) {
+            await this.haveFifty();
+            await this.haveHint();
+            await this.haveRightAnswer();
+          }
         } catch (error) {
           await this.$store.dispatch('error', error);
           await this.$router.push({ path: '/student/available-quizzes' });
@@ -321,6 +329,7 @@ export default class QuizView extends Vue {
         );
         this.fiftyFifty = true;
         this.show = false;
+        await this.haveFifty();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -338,6 +347,7 @@ export default class QuizView extends Vue {
           this.questionOrder
         ] = await RemoteServices.rigthAnswer(question, this.statementQuiz.id);
         this.rightAns = true;
+        await this.haveRightAnswer();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -356,7 +366,6 @@ export default class QuizView extends Vue {
     try {
       if (question != null && this.statementQuiz?.id != null) {
         hint = await RemoteServices.getHint(question, this.statementQuiz.id);
-        console.log(hint);
       }
       this.disableHint = hint === '';
     } catch (error) {
@@ -379,6 +388,7 @@ export default class QuizView extends Vue {
         this.dialog = true;
       }
       this.usedHint = true;
+      await this.haveHint();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -388,7 +398,6 @@ export default class QuizView extends Vue {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.questionOrder += 1;
-      if (this.showPowerUps) this.disHint();
     }
     this.nextConfirmationDialog = false;
   }
@@ -397,7 +406,6 @@ export default class QuizView extends Vue {
     if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
       this.questionOrder -= 1;
-      if (this.showPowerUps) this.disHint();
     }
   }
 
@@ -486,6 +494,36 @@ export default class QuizView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async haveHint() {
+    let numbOfHint;
+
+    if (this.usedHint || this.disableHint) return;
+
+    numbOfHint = await RemoteServices.getNumOfPowerUp('HINT');
+
+    if (numbOfHint <= 0) this.disableHint = true;
+  }
+
+  async haveFifty() {
+    let numbOfFifty;
+
+    if (this.fiftyFifty) return;
+
+    numbOfFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+
+    if (numbOfFifty <= 0) this.fiftyFifty = true;
+  }
+
+  async haveRightAnswer() {
+    let numbOfRight;
+
+    if (this.rightAns) return;
+
+    numbOfRight = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
+
+    if (numbOfRight <= 0) this.rightAns = true;
   }
 
   calculateTime() {

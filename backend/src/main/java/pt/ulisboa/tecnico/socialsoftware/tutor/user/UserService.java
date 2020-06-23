@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PowerUpItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
@@ -166,4 +168,38 @@ public class UserService {
         user.setCurrentTheme(theme);
         return new UserDto(user);
     }
+
+    private List<UserItem> userPowerUps(User user, String type) {
+
+        return user.getItems().stream().filter(userItem -> {
+            if(userItem instanceof PowerUpItem)
+                    return ((PowerUpItem) userItem).getType() == PowerUpItem.Type.valueOf(type);
+            return false;
+        }).collect(Collectors.toList());
+    }
+
+        @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public Integer getTypeItemNumb(int userId, String type) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        return userPowerUps(user, type).size();
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void usePowerUp(int userId, String type) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        if (userPowerUps(user, type).isEmpty()){
+            throw new TutorException(INVALID_POWER_UP);
+        }
+        else
+            user.getItems().stream().filter(userItem -> ((PowerUpItem) userItem).getType() == PowerUpItem.Type
+                    .valueOf(type)).collect(Collectors.toList()).remove(0);
+    }
+
 }

@@ -89,6 +89,8 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_STATUS("Tournament is %s"),
     TOURNAMENT_INVALID_TYPE("You only can use power ups in standard tournament "),
     TOURNAMENT_NOT_ENOUGH_POINTS("You don't have enough points to enroll this tournament "),
+    INVALID_POWER_UP("You don't have that power up"),
+
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
