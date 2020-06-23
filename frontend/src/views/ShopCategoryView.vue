@@ -9,14 +9,6 @@
           </v-row>
           <v-divider class="mt-5 white"></v-divider>
           <v-list>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search Product"
-              class="mx-2 mb-n5"
-              data-cy="search"
-              color="white"
-            />
             <v-list-item
               v-for="item in categories"
               :key="item.title"

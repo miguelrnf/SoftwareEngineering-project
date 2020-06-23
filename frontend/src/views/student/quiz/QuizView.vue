@@ -329,7 +329,6 @@ export default class QuizView extends Vue {
         );
         this.fiftyFifty = true;
         this.show = false;
-        await this.haveFifty();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -347,27 +346,7 @@ export default class QuizView extends Vue {
           this.questionOrder
         ] = await RemoteServices.rigthAnswer(question, this.statementQuiz.id);
         this.rightAns = true;
-        await this.haveRightAnswer();
       }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-
-  async disHint() {
-    let hint;
-    let question;
-    if (this.usedHint) {
-      return;
-    }
-    if (this.statementQuiz != null && this.questionOrder != null) {
-      question = this.statementQuiz.questions[this.questionOrder];
-    }
-    try {
-      if (question != null && this.statementQuiz?.id != null) {
-        hint = await RemoteServices.getHint(question, this.statementQuiz.id);
-      }
-      this.disableHint = hint === '';
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -388,7 +367,6 @@ export default class QuizView extends Vue {
         this.dialog = true;
       }
       this.usedHint = true;
-      await this.haveHint();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
