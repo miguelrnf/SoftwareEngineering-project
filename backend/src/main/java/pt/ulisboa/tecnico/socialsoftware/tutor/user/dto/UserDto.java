@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import org.hibernate.Hibernate;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;

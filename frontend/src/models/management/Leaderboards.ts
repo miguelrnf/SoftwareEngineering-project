@@ -1,11 +1,13 @@
 import User from '@/models/user/User';
+import Post from '@/models/management/Post';
 
 export class Leaderboards {
   bestScores: User[] | null = [];
-  mostApprovedSuggestions: User[] | null = [];;
-  mostPosts: User[]| null = [];;
-  mostQuizzesSolved: User[]| null = [];;
-  mostTournamentsParticipated: User[]| null = [];;
+  mostApprovedSuggestions: User[] | null = [];
+  mostPosts: User[]| null = [];
+  mostQuizzesSolved: User[]| null = [];
+  mostTournamentsParticipated: User[]| null = [];
+  mostUpvotedPosts: Post[]| null = [];
 
   constructor(jsonObj?: Leaderboards) {
     if (jsonObj) {
@@ -30,6 +32,11 @@ export class Leaderboards {
       if (jsonObj.mostTournamentsParticipated) {
         this.mostTournamentsParticipated = jsonObj.mostTournamentsParticipated.map(
           (user: User) => new User(user)
+        );
+      }
+      if (jsonObj.mostUpvotedPosts) {
+        this.mostUpvotedPosts = jsonObj.mostUpvotedPosts.map(
+          (post: Post) => new Post(post)
         );
       }
     }

@@ -70,13 +70,13 @@ public class User implements UserDetails, DomainEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     private Set<Tournament> tournaments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
     private Set<Suggestion> suggestions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.EAGER)
     private Set<Quiz> quizzes = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)

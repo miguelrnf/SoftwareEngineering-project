@@ -103,7 +103,7 @@
         </v-chip>
         <GChart
           type="ColumnChart"
-          :data="mostTournamentsParticipated"
+          :data="mostTournamentsParticipatedStats"
           :options="chartOptions"
         />
       </v-card>
@@ -125,7 +125,7 @@
         </v-chip>
         <GChart
           type="ColumnChart"
-          :data="mostTournamentsParticipated"
+          :data="mostUpvotedPostsStats"
           :options="chartOptions"
         />
       </v-card>
@@ -142,6 +142,10 @@
   import RemoteServices from '@/services/RemoteServices';
   import { GChart } from 'vue-google-charts';
   import { Leaderboards } from '@/models/management/Leaderboards';
+  import User from '@/models/user/User';
+  import Post from '@/models/management/Post';
+  import { PostQuestion } from '@/models/management/PostQuestion';
+  import { PostAnswer } from '@/models/management/PostAnswer';
 
   @Component({
   components: {
@@ -154,7 +158,44 @@ export default class DashboardLeaderboardsView extends Vue {
   mostPostsStats: Array<Object> = [];
   mostApprovedSuggestionsStats: Array<Object> = [];
   mostQuizzesSolvedStats: Array<Object> = [];
-  mostTournamentsParticipated: Array<Object> = [];
+  mostTournamentsParticipatedStats: Array<Object> = [];
+  mostUpvotedPostsStats: Array<Object> = [];
+
+  defaultUser : User = {
+    courses: undefined,
+    name :  'None',
+    username: 'None',
+    role: 'None',
+    numberofsuggestions: 0,
+    numberofsuggestionsapproved: 0,
+    numberOfQuizzesSolved: 0,
+    numberOfPostsSubmitted: 0,
+    numberOfPTournamentsParticipated: 0,
+    coursesNumber: 0,
+    score: 0,
+    currentTheme: 'None',
+    dashboardPrivate: false,
+    postsUpvoted: [] ,
+    postsDownvoted: []
+
+
+  }
+
+  defaultPost : Post = {
+    id :  0,
+    upvotes : 0,
+    key: 0,
+    question: new PostQuestion(),
+    answer: new PostAnswer() ,
+    comments: [],
+    postStatus: false,
+    discussStatus: false,
+    postPrivacy: false,
+    answerPrivacy: false,
+    downvotes: 0,
+
+  }
+
 
   chartOptions = {
     legend: { position: 'none' },
@@ -167,6 +208,8 @@ export default class DashboardLeaderboardsView extends Vue {
 
   async created() {
     this.stats = await RemoteServices.getLeaderboards();
+    console.log(this.stats)
+
     this.getStats();
   }
 
@@ -185,11 +228,57 @@ export default class DashboardLeaderboardsView extends Vue {
     this.shuffleArray(bestScores);
     this.bestScoreStats = [
       ['Name', 'Score',{ role: "style"  }],
-      [bestScores[0].name, bestScores[0].score, 'red'],
-      [bestScores[1].name, bestScores[1].score, 'blue'],
-      [bestScores[2].name, bestScores[2].score, 'green'],
-      [bestScores[3].name, bestScores[3].score, 'grey'],
-      [bestScores[4].name, bestScores[4].score, 'orange']
+      [
+        bestScores.length >= 1
+                ?  bestScores[0].name
+                :  this.defaultUser.name,
+
+        bestScores.length >= 1
+                ?  bestScores[0].score
+                :  this.defaultUser.score,
+
+        'red'
+      ],
+      [
+        bestScores.length >= 2
+                ?  bestScores[1].name
+                :  this.defaultUser.name,
+
+        bestScores.length >= 2
+                ?  bestScores[1].score
+                :  this.defaultUser.score,
+        'blue'
+      ],
+      [
+        bestScores.length >= 3
+                ?  bestScores[2].name
+                :  this.defaultUser.name,
+
+        bestScores.length >= 3
+                ?  bestScores[2].score
+                :  this.defaultUser.score,
+        'green'
+      ],
+      [
+        bestScores.length >= 4
+                ?  bestScores[3].name
+                :  this.defaultUser.name,
+
+        bestScores.length >= 4
+                ?  bestScores[3].score
+                :  this.defaultUser.score,
+        'grey'
+      ],
+      [
+            bestScores.length >= 5
+              ?  bestScores[4].name
+              :  this.defaultUser.name,
+
+            bestScores.length >= 5
+                ?  bestScores[4].score
+                :  this.defaultUser.score,
+        'orange'
+      ]
     ];
 
     let mostPosts: { name: string; numberOfPostsSubmitted: number }[];
@@ -199,11 +288,57 @@ export default class DashboardLeaderboardsView extends Vue {
     this.shuffleArray(mostPosts);
     this.mostPostsStats = [
       ['Name', 'Posts Submitted',{ role: "style" }],
-      [mostPosts[0].name, mostPosts[0].numberOfPostsSubmitted , 'red'],
-      [mostPosts[1].name, mostPosts[1].numberOfPostsSubmitted, 'blue'],
-      [mostPosts[2].name, mostPosts[2].numberOfPostsSubmitted, 'green'],
-      [mostPosts[3].name, mostPosts[3].numberOfPostsSubmitted, 'grey'],
-      [mostPosts[4].name, mostPosts[4].numberOfPostsSubmitted, 'orange']
+      [
+        mostPosts.length >= 1
+                ?  mostPosts[0].name
+                :  this.defaultUser.name,
+
+        mostPosts.length >= 1
+                ?  mostPosts[0].numberOfPostsSubmitted
+                :  this.defaultUser.numberOfPostsSubmitted,
+
+        'red'
+      ],
+      [
+        mostPosts.length >= 2
+                ?  mostPosts[1].name
+                :  this.defaultUser.name,
+
+        mostPosts.length >= 2
+                ?  mostPosts[1].numberOfPostsSubmitted
+                :  this.defaultUser.numberOfPostsSubmitted,
+        'blue'
+      ],
+      [
+        mostPosts.length >= 3
+                ?  mostPosts[2].name
+                :  this.defaultUser.name,
+
+        mostPosts.length >= 3
+                ?  mostPosts[1].numberOfPostsSubmitted
+                :  this.defaultUser.numberOfPostsSubmitted,
+        'green'
+      ],
+      [
+        mostPosts.length >= 4
+                ?  mostPosts[3].name
+                :  this.defaultUser.name,
+
+        mostPosts.length >= 4
+                ?  mostPosts[3].numberOfPostsSubmitted
+                :  this.defaultUser.numberOfPostsSubmitted,
+        'grey'
+      ],
+      [
+        mostPosts.length >= 5
+                ?  mostPosts[4].name
+                :  this.defaultUser.name,
+
+        mostPosts.length >= 5
+                ?  mostPosts[4].numberOfPostsSubmitted
+                :  this.defaultUser.numberOfPostsSubmitted,
+        'orange'
+      ]
     ];
 
     let mostApprovedSuggestions: {
@@ -217,38 +352,65 @@ export default class DashboardLeaderboardsView extends Vue {
     this.mostApprovedSuggestionsStats = [
       ['Name', 'Approved Suggestions',{ role: "style" }],
       [
-        mostApprovedSuggestions[0].name,
-        mostApprovedSuggestions[0].numberofsuggestionsapproved == null
-          ? 0
-          : mostApprovedSuggestions[0].numberofsuggestionsapproved,
+        mostApprovedSuggestions.length >= 1
+                ?  mostApprovedSuggestions[0].name
+                :  this.defaultUser.name,
+
+        mostApprovedSuggestions.length >= 1
+                ?  mostApprovedSuggestions[0].numberofsuggestionsapproved == null
+                      ? 0
+                      : mostApprovedSuggestions[0].numberofsuggestionsapproved
+                :  this.defaultUser.numberofsuggestionsapproved,
+
+
         'red'
       ],
       [
-        mostApprovedSuggestions[1].name,
-        mostApprovedSuggestions[1].numberofsuggestionsapproved == null
-          ? 0
-          : mostApprovedSuggestions[1].numberofsuggestionsapproved,
+        mostApprovedSuggestions.length >= 2
+                ?  mostApprovedSuggestions[1].name
+                :  this.defaultUser.name,
+
+        mostApprovedSuggestions.length >= 2
+                ?  mostApprovedSuggestions[1].numberofsuggestionsapproved == null
+                    ? 0
+                    : mostApprovedSuggestions[1].numberofsuggestionsapproved
+                :  this.defaultUser.numberofsuggestionsapproved,
         'blue'
       ],
       [
-        mostApprovedSuggestions[2].name,
-        mostApprovedSuggestions[2].numberofsuggestionsapproved == null
-          ? 0
-          : mostApprovedSuggestions[2].numberofsuggestionsapproved,
+        mostApprovedSuggestions.length >= 3
+                ?  mostApprovedSuggestions[2].name
+                :  this.defaultUser.name,
+
+        mostApprovedSuggestions.length >= 3
+                ?  mostApprovedSuggestions[2].numberofsuggestionsapproved == null
+                    ? 0
+                    : mostApprovedSuggestions[2].numberofsuggestionsapproved
+                :  this.defaultUser.numberofsuggestionsapproved,
         'green'
       ],
       [
-        mostApprovedSuggestions[3].name,
-        mostApprovedSuggestions[3].numberofsuggestionsapproved == null
-          ? 0
-          : mostApprovedSuggestions[3].numberofsuggestionsapproved,
+        mostApprovedSuggestions.length >= 4
+                ?  mostApprovedSuggestions[3].name
+                :  this.defaultUser.name,
+
+        mostApprovedSuggestions.length >= 4
+                ?  mostApprovedSuggestions[3].numberofsuggestionsapproved == null
+                    ? 0
+                    : mostApprovedSuggestions[3].numberofsuggestionsapproved
+                :  this.defaultUser.numberofsuggestionsapproved,
         'grey'
       ],
       [
-        mostApprovedSuggestions[4].name,
-        mostApprovedSuggestions[4].numberofsuggestionsapproved == null
-          ? 0
-          : mostApprovedSuggestions[4].numberofsuggestionsapproved,
+        mostApprovedSuggestions.length >= 5
+                ?  mostApprovedSuggestions[4].name
+                :  this.defaultUser.name,
+
+        mostApprovedSuggestions.length >= 5
+                ?  mostApprovedSuggestions[4].numberofsuggestionsapproved == null
+                    ? 0
+                    : mostApprovedSuggestions[4].numberofsuggestionsapproved
+                :  this.defaultUser.numberofsuggestionsapproved,
         'orange'
       ]
     ];
@@ -263,11 +425,57 @@ export default class DashboardLeaderboardsView extends Vue {
     this.shuffleArray(mostQuizzesSolved);
     this.mostQuizzesSolvedStats = [
       ['Name', 'Quizzes Solved',{ role: "style" }],
-      [mostQuizzesSolved[0].name, mostQuizzesSolved[0].numberOfQuizzesSolved , 'red'],
-      [mostQuizzesSolved[1].name, mostQuizzesSolved[1].numberOfQuizzesSolved , 'blue'],
-      [mostQuizzesSolved[2].name, mostQuizzesSolved[2].numberOfQuizzesSolved , 'green'],
-      [mostQuizzesSolved[3].name, mostQuizzesSolved[3].numberOfQuizzesSolved , 'grey'],
-      [mostQuizzesSolved[4].name, mostQuizzesSolved[4].numberOfQuizzesSolved , 'orange']
+      [
+          mostQuizzesSolved.length >= 1
+            ?  mostQuizzesSolved[0].name
+            :  this.defaultUser.name,
+
+          mostQuizzesSolved.length >= 1
+            ?  mostQuizzesSolved[0].numberOfQuizzesSolved
+            :  this.defaultUser.numberOfQuizzesSolved,
+
+          'red'
+      ],
+      [
+        mostQuizzesSolved.length >= 2
+                ?  mostQuizzesSolved[1].name
+                :  this.defaultUser.name,
+
+        mostQuizzesSolved.length >= 2
+                ?  mostQuizzesSolved[1].numberOfQuizzesSolved
+                :  this.defaultUser.numberOfQuizzesSolved,
+        'blue'
+      ],
+      [
+        mostQuizzesSolved.length >= 3
+                ?  mostQuizzesSolved[2].name
+                :  this.defaultUser.name,
+
+        mostQuizzesSolved.length >= 3
+                ?  mostQuizzesSolved[2].numberOfQuizzesSolved
+                :  this.defaultUser.numberOfQuizzesSolved,
+        'green'
+      ],
+      [
+        mostQuizzesSolved.length >= 4
+                ?  mostQuizzesSolved[3].name
+                :  this.defaultUser.name,
+
+        mostQuizzesSolved.length >= 4
+                ?  mostQuizzesSolved[3].numberOfQuizzesSolved
+                :  this.defaultUser.numberOfQuizzesSolved,
+        'grey'
+      ],
+      [
+        mostQuizzesSolved.length >= 5
+                ?  mostQuizzesSolved[4].name
+                :  this.defaultUser.name,
+
+        mostQuizzesSolved.length >= 5
+                ?  mostQuizzesSolved[4].numberOfQuizzesSolved
+                :  this.defaultUser.numberOfQuizzesSolved,
+        'orange'
+      ]
     ];
 
     let mostTournamentsParticipated: {
@@ -278,34 +486,138 @@ export default class DashboardLeaderboardsView extends Vue {
       ? (mostTournamentsParticipated = this.stats.mostTournamentsParticipated)
       : (mostTournamentsParticipated = []);
     this.shuffleArray(mostTournamentsParticipated);
-    this.mostTournamentsParticipated = [
+    this.mostTournamentsParticipatedStats = [
       ['Name', 'Tournaments Participated',{ role: "style" }],
       [
-        mostTournamentsParticipated[0].name,
-        mostTournamentsParticipated[0].numberOfPTournamentsParticipated,
+        mostTournamentsParticipated.length >= 1
+                ?  mostTournamentsParticipated[0].name
+                :  this.defaultUser.name,
+
+        mostTournamentsParticipated.length >= 1
+                ?  mostTournamentsParticipated[0].numberOfPTournamentsParticipated
+                :  this.defaultUser.numberOfPTournamentsParticipated,
+
+
+
         'red'
       ],
       [
-        mostTournamentsParticipated[1].name,
-        mostTournamentsParticipated[1].numberOfPTournamentsParticipated,
+        mostTournamentsParticipated.length >= 2
+                ?  mostTournamentsParticipated[1].name
+                :  this.defaultUser.name,
+
+        mostTournamentsParticipated.length >= 2
+                ?  mostTournamentsParticipated[1].numberOfPTournamentsParticipated
+                :  this.defaultUser.numberOfPTournamentsParticipated,
+
+
         'blue'
       ],
       [
-        mostTournamentsParticipated[2].name,
-        mostTournamentsParticipated[2].numberOfPTournamentsParticipated,
+        mostTournamentsParticipated.length >= 3
+                ?  mostTournamentsParticipated[2].name
+                :  this.defaultUser.name,
+
+        mostTournamentsParticipated.length >= 3
+                ?  mostTournamentsParticipated[2].numberOfPTournamentsParticipated
+                :  this.defaultUser.numberOfPTournamentsParticipated,
+
+
+
         'green'
       ],
       [
-        mostTournamentsParticipated[3].name,
-        mostTournamentsParticipated[3].numberOfPTournamentsParticipated,
+        mostTournamentsParticipated.length >= 4
+                ?  mostTournamentsParticipated[3].name
+                :  this.defaultUser.name,
+
+
+        mostTournamentsParticipated.length >= 4
+                ?  mostTournamentsParticipated[3].numberOfPTournamentsParticipated
+                :  this.defaultUser.numberOfPTournamentsParticipated,
+
         'grey'
       ],
       [
-        mostTournamentsParticipated[4].name,
-        mostTournamentsParticipated[4].numberOfPTournamentsParticipated,
+        mostTournamentsParticipated.length >= 5
+                ?  mostTournamentsParticipated[4].name
+                :  this.defaultUser.name,
+
+        mostTournamentsParticipated.length >= 5
+                ?  mostTournamentsParticipated[4].numberOfPTournamentsParticipated
+                :  this.defaultUser.numberOfPTournamentsParticipated,
         'orange'
       ]
     ];
+
+    let mostUpvotedPosts: {
+      id: number ;
+      upvotes: number;
+    }[];
+    this.stats?.mostUpvotedPosts !== undefined
+            ? (mostUpvotedPosts = this.stats.mostUpvotedPosts)
+            : (mostUpvotedPosts = []);
+    this.shuffleArray(mostUpvotedPosts);
+    this.mostUpvotedPostsStats = [
+      ['PostId', 'Number Of Upvotes',{ role: "style" }],
+      [
+        mostUpvotedPosts.length >= 1
+        ?  mostUpvotedPosts[0].id
+        :  this.defaultPost.id,
+
+        mostUpvotedPosts.length >= 1
+          ?  mostUpvotedPosts[0].upvotes
+          :  this.defaultPost.upvotes,
+
+        'red'
+      ],
+      [
+        mostUpvotedPosts.length >= 2
+                ?  mostUpvotedPosts[1].id
+                :  this.defaultPost.id - 1,
+
+        mostUpvotedPosts.length >= 2
+                ?  mostUpvotedPosts[1].upvotes
+                :  this.defaultPost.upvotes,
+
+        'blue'
+      ],
+      [
+        mostUpvotedPosts.length >= 3
+                ?  mostUpvotedPosts[2].id
+                :  this.defaultPost.id - 2,
+
+        mostUpvotedPosts.length >= 3
+                ?  mostUpvotedPosts[2].upvotes
+                :  this.defaultPost.upvotes,
+
+        'green'
+      ],
+      [
+        mostUpvotedPosts.length >= 4
+                ?  mostUpvotedPosts[3].id
+                :  this.defaultPost.id - 3 ,
+
+        mostUpvotedPosts.length >= 4
+                ?  mostUpvotedPosts[3].upvotes
+                :  this.defaultPost.upvotes,
+
+        'grey'
+      ],
+      [
+        mostUpvotedPosts.length >= 5
+                ?  mostUpvotedPosts[4].id
+                :  this.defaultPost.id - 4,
+
+        mostUpvotedPosts.length >= 5
+                ?  mostUpvotedPosts[4].upvotes
+                :  this.defaultPost.upvotes ,
+
+        'orange'
+      ]
+    ];
+
+
 
   }
 
