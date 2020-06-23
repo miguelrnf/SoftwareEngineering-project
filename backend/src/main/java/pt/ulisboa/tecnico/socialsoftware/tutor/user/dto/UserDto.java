@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.UserItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 

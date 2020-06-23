@@ -24,12 +24,12 @@
           </v-badge>
         </div>
         <v-spacer />
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="!isTeacher()">
           <template v-slot:activator="{ on }">
             <v-card
               color="accent"
               @click="
-                getUserAwards() === 0 ? buyAwardDialog() : awardPostDialog()
+                (getUserAwards() === 0) ? buyAwardDialog() : awardPostDialog()
               "
               v-on="on"
               class="px-1 mx-2"
@@ -205,7 +205,7 @@ export default class ShowPostDialog extends Vue {
     if (this.typingReply) this.typingReply = !this.typingReply;
   }
 
-  buyAwardDialog() {
+    buyAwardDialog() {
     this.buyAwardsDialog = true;
   }
 
@@ -220,6 +220,7 @@ export default class ShowPostDialog extends Vue {
 
   async getUserAwards() {
     this.awardsList = await RemoteServices.getAwards();
+    console.log(this.awardsList.length);
     return this.awardsList.length;
   }
 

@@ -6,19 +6,16 @@
     max-width="25%"
     max-height="80%"
   >
-      <v-row>
-          <v-badge
-                  class="font-weight-bold"
-                  offset-y="30"
-                  color=""
-                  :content="'x' + "
-          ><v-icon :color="award.award.item.color" small>{{
-              award.award.item.icon
-              }}</v-icon>
-          </v-badge>
-      </v-row>
-    <v-card>
-      <v-card-actions class="pb-5 pt-0 px-5">
+      <v-card>
+      <v-card-title class="justify-center pb-5">Use your available awards</v-card-title>
+
+          <div>
+              <v-badge v-if="numSilvers !== 0" :content="'x' + numSilvers" offset-y="62" offset-x="61"><v-icon class="mx-6" color="#AAA9AD" x-large>fas fa-star-half-alt</v-icon></v-badge>
+              <v-badge v-if="numGolds !== 0" :content="'x' + numGolds" offset-y="62" offset-x="58"><v-icon  class="mx-5" color="#f9c700" x-large>fas fa-star</v-icon></v-badge>
+              <v-badge v-if="numPlatinums !== 0" :content="'x' + numPlatinums" offset-y="62" offset-x="57"><v-icon class="mx-5" color="cyan" x-large>fas fa-shield-alt</v-icon></v-badge>
+          </div>
+
+      <v-card-actions class="pt-7 pt-0 px-5">
         <v-spacer />
         <v-btn
           class="mt-2 white--text"
@@ -66,7 +63,7 @@ export default class AwardPostDialog extends Vue {
 
   async created() {
     this.userAwardsInventory = await RemoteServices.getAwards();
-    this.getAwards();
+    await this.getAwards();
   }
 }
 </script>
