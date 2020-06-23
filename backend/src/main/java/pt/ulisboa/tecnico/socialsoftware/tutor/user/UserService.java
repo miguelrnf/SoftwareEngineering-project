@@ -16,6 +16,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PowerUpItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
@@ -165,7 +168,7 @@ public class UserService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public UserDto updateCurrentTheme(int userId, String theme) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        user.setCurrentTheme(theme);
+
         return new UserDto(user);
     }
 
@@ -202,4 +205,15 @@ public class UserService {
                     .valueOf(type)).collect(Collectors.toList()).remove(0);
     }
 
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<PostAwardItemDto> getAwards(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        return user.getItems().stream().filter(x -> x instanceof PostAwardItem)
+                .map(x -> new PostAwardItemDto((PostAwardItem) x)).collect(Collectors.toList());
+
+    }
 }

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import jdk.jshell.SourceCodeAnalysis;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -440,7 +439,7 @@ public class User implements UserDetails, DomainEntity {
         return postsUpvoted;
     }
 
-    public void setPostUpvoted(Set<Post> postUpvoted) {
+    public void setPostsUpvoted(Set<Post> postUpvoted) {
         this.postsUpvoted = postUpvoted;
     }
 
@@ -459,6 +458,7 @@ public class User implements UserDetails, DomainEntity {
     public void addDownvotedPosts(Post post) {
         this.postsDownvoted.add(post);
     }
+
 
     public void addTournament(Tournament tournament){
         tournaments.add(tournament);
