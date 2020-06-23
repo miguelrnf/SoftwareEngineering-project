@@ -4,6 +4,7 @@ export class UserItem {
   description!: string;
   icon!: string;
   color!: string;
+  userId!: number;
 
   constructor(jsonObj?: UserItem) {
     if (jsonObj) {
@@ -12,6 +13,7 @@ export class UserItem {
       this.description = jsonObj.description;
       this.icon = jsonObj.icon;
       this.color = jsonObj.color;
+      this.userId = jsonObj.userId;
     }
   }
 }

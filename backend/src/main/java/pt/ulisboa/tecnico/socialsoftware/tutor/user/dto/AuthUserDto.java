@@ -165,4 +165,5 @@ public class AuthUserDto implements Serializable {
     public void setPostsDownvoted(List<PostDto> postsDownvoted) {
         this.postsDownvoted = postsDownvoted;
     }
+
 }

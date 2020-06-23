@@ -35,7 +35,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPIC_NOT_FOUND;
 
 @Service
 public class StudyService {

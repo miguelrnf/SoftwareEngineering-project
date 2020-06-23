@@ -1,16 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserDto implements Serializable {
@@ -169,6 +165,7 @@ public class UserDto implements Serializable {
     public void setPostsDownvoted(List<PostDto> postsDownvoted) {
         this.postsDownvoted = postsDownvoted;
     }
+
 
     @Override
     public String toString() {

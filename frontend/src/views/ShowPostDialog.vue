@@ -12,8 +12,35 @@
         <v-toolbar-title class="white--text">{{
           post.question.question.title
         }}</v-toolbar-title>
+        <div v-for="award in post.awards" :key="award">
+          <v-badge
+            class="font-weight-bold"
+            offset-y="30"
+            color=""
+            :content="'x' + award.number"
+            ><v-icon :color="award.award.item.color" small>{{
+              award.award.item.icon
+            }}</v-icon>
+          </v-badge>
+        </div>
         <v-spacer />
         <post-status-buttons :post="post" />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-card
+              color="accent"
+              @click="
+                awardsList.length === 0 ? buyAwardDialog() : buyAwardDialog()
+              "
+              v-on="on"
+              class="px-1 mx-2"
+            >
+              <v-icon class="px-0" color="white">fas fa-award</v-icon>
+            </v-card>
+          </template>
+          <span>Award this Post</span>
+        </v-tooltip>
+        <post-status-buttons :post="post"></post-status-buttons>
         <v-tooltip bottom v-if="isOwner(post)">
           <template v-slot:activator="{ on }">
             <v-icon color="white" small v-on="on" @click="editPost(post)"
@@ -93,6 +120,12 @@
       v-on:close-post-answered-dialog="submitAnswer"
     >
     </answer-post>
+    <buy-awards-dialog
+      v-model="buyAwardsDialog"
+      :post="post"
+      :dialog="buyAwardsDialog"
+      v-on:close-buy-awards-dialog="onCloseAwardDialog"
+    />
   </v-dialog>
 </template>
 
@@ -105,24 +138,32 @@ import { PostAnswer } from '@/models/management/PostAnswer';
 import RemoteServices from '@/services/RemoteServices';
 import ShowComments from '@/views/ShowComments.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
+import { PostAwardItem } from '@/models/management/PostAwardItem';
+import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
 
 @Component({
   components: {
     'show-post': ShowPost,
     'answer-post': AnswerPost,
     'show-comments': ShowComments,
+    'buy-awards-dialog': BuyAwardsDialog,
     'post-status-buttons': PostStatusButtons
   }
 })
-export default class PostViewDialog extends Vue {
+export default class ShowPostDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
   @Prop({ type: Post, required: true }) readonly post!: Post;
   acceptAnswer: boolean = false;
   comment: string = '';
   editPostDialog: boolean = false;
   editAnswerDialog: boolean = false;
+  buyAwardsDialog: boolean = false;
   typingComment: boolean = false;
   typingReply: boolean = false;
+  awardsList: PostAwardItem[] = [];
+  silversOnUser: number = 0;
+  goldsOnUser: number = 0;
+  platinumsOnUser: number = 0;
 
   async submitAnswer(answer: string) {
     if (answer != '') {
@@ -157,6 +198,34 @@ export default class PostViewDialog extends Vue {
   writeComment() {
     this.typingComment = !this.typingComment;
     if (this.typingReply) this.typingReply = !this.typingReply;
+  }
+
+  buyAwardDialog() {
+    this.buyAwardsDialog = true;
+  }
+
+  onCloseAwardDialog() {
+    this.buyAwardsDialog = false;
+  }
+
+  async awardPost() {
+    let user = await RemoteServices.updateLoggedUser();
+    this.awardsList = await RemoteServices.getAwards();
+    if (this.awardsList.length == 0) {
+      return 'buy-awards-dialog';
+    } else {
+      for (let i = 0; i <= this.awardsList.length; i++) {
+        if (this.awardsList[i].type == 'PLATINUM') {
+          this.platinumsOnUser == this.platinumsOnUser + 1;
+        }
+        if (this.awardsList[i].type == 'GOLD') {
+          this.goldsOnUser = this.goldsOnUser + 1;
+        }
+        if (this.awardsList[i].type == 'SILVER') {
+          this.silversOnUser = this.silversOnUser + 1;
+        }
+      }
+    }
   }
 }
 </script>

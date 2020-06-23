@@ -39,6 +39,7 @@ public class ThemeItemDto implements Serializable {
 
     public void setUserItemDto(UserItemDto userItemDto) {
         this.userItemDto = userItemDto;
+
     }
 
     public String getSuccess() {

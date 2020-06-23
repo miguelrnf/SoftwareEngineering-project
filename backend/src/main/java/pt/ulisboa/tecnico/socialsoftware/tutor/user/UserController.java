@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ThemeItemDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.security.Principal;
@@ -108,5 +110,12 @@ public class UserController {
                     userRepository.delete(user);
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+    }
+
+    @GetMapping("/users/updateAwards")
+    @PreAuthorize("(hasRole('ROLE_STUDENT')) or hasRole('ROLE_TEACHER')")
+    public List<PostAwardItemDto> getAwards(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.getAwards(user.getId());
     }
 }

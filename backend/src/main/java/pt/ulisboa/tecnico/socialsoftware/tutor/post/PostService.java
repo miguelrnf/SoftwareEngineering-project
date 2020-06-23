@@ -20,6 +20,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -29,7 +31,6 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -361,6 +362,28 @@ public class PostService {
             user.addDownvotedPosts(post);
             post.downvote(user);
         }
+    }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public PostDto award(Integer postId, PostAwardItemDto awardDto, User u) {
+        User user = checkIfUserExistsByUsername(u.getUsername());
+        Post post = checkIfPostExists(null, postId);
+        PostAwardItem award = (PostAwardItem) user.getItems().stream().filter(x -> x.getId().
+                equals(awardDto.getItem().getId())).findFirst().orElse(null);
+        if (!user.getItems().contains(award)) {
+            throw new TutorException(NON_EXISTING_ITEM_ID, awardDto.getItem().getId());
+        }
+        else {
+            user.removeItem(award);
+            post.awardPost(award);
+        }
+
+        post.awardPost(award);
+        return new PostDto(post);
     }
 
 

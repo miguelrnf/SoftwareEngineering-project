@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import jdk.jshell.SourceCodeAnalysis;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
@@ -440,7 +438,7 @@ public class User implements UserDetails, DomainEntity {
         return postsUpvoted;
     }
 
-    public void setPostUpvoted(Set<Post> postUpvoted) {
+    public void setPostsUpvoted(Set<Post> postUpvoted) {
         this.postsUpvoted = postUpvoted;
     }
 
@@ -459,6 +457,7 @@ public class User implements UserDetails, DomainEntity {
     public void addDownvotedPosts(Post post) {
         this.postsDownvoted.add(post);
     }
+
 
     public void addTournament(Tournament tournament){
         tournaments.add(tournament);
