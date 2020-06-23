@@ -28,9 +28,7 @@
           <template v-slot:activator="{ on }">
             <v-card
               color="accent"
-              @click="
-                (getUserAwards() === 0) ? buyAwardDialog() : awardPostDialog()
-              "
+              @click="getUserAwards()"
               v-on="on"
               class="px-1 mx-2"
             >
@@ -126,10 +124,10 @@
       v-on:close-buy-awards-dialog="onCloseAwardDialog"
     />
     <award-post-dialog
-            v-model="awardDialog"
-            :post="post"
-            :dialog="awardDialog"
-            v-on:close-buy-awards-dialog="onCloseAwardDialog"
+      v-model="awardDialog"
+      :post="post"
+      :dialog="awardDialog"
+      v-on:close-buy-awards-dialog="onCloseAwardDialog"
     />
   </v-dialog>
 </template>
@@ -168,6 +166,7 @@ export default class ShowPostDialog extends Vue {
   awardDialog: boolean = false;
   typingComment: boolean = false;
   typingReply: boolean = false;
+  awardNumber: number = 0;
   awardsList: PostAwardItem[] = [];
 
   async submitAnswer(answer: string) {
@@ -205,11 +204,13 @@ export default class ShowPostDialog extends Vue {
     if (this.typingReply) this.typingReply = !this.typingReply;
   }
 
-    buyAwardDialog() {
+  buyAwardDialog() {
+    console.log('buy award');
     this.buyAwardsDialog = true;
   }
 
   awardPostDialog() {
+    console.log('not buy award');
     this.awardDialog = true;
   }
 
@@ -220,8 +221,10 @@ export default class ShowPostDialog extends Vue {
 
   async getUserAwards() {
     this.awardsList = await RemoteServices.getAwards();
+    this.awardsList.length === 0
+      ? this.buyAwardDialog()
+      : this.awardPostDialog();
     console.log(this.awardsList.length);
-    return this.awardsList.length;
   }
 
   async updateLoggedUser() {
