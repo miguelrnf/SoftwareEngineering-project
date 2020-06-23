@@ -1,9 +1,7 @@
+import { UserItem } from '@/models/management/UserItem';
+
 export class Theme {
-  id!: number;
-  name!: string;
-  description!: string;
-  icon!: string;
-  color!: string;
+  userItemDto!: UserItem;
   success!: string;
   secondary!: string;
   accent!: string;
@@ -15,11 +13,8 @@ export class Theme {
 
   constructor(jsonObj?: Theme) {
     if (jsonObj) {
-      this.id = jsonObj.id;
-      this.name = jsonObj.name;
-      this.description = jsonObj.description;
-      this.icon = jsonObj.icon;
-      this.color = jsonObj.color;
+      if (jsonObj.userItemDto)
+        this.userItemDto = new UserItem(jsonObj.userItemDto);
       this.success = jsonObj.success;
       this.secondary = jsonObj.secondary;
       this.accent = jsonObj.accent;

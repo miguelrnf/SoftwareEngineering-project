@@ -642,6 +642,14 @@ export default class TopBar extends Vue {
 
   async logout() {
     await this.$store.dispatch('logout');
+    this.$vuetify.theme.dark = false;
+    this.$vuetify.theme.currentTheme.primary = '#1976D2';
+    this.$vuetify.theme.currentTheme.accent = '#828282';
+    this.$vuetify.theme.currentTheme.secondary = '#d8d8d8';
+    this.$vuetify.theme.currentTheme.info = '#2196F3';
+    this.$vuetify.theme.currentTheme.warning = '#FB8C00';
+    this.$vuetify.theme.currentTheme.error = '#FF5252';
+    this.$vuetify.theme.currentTheme.success = '#4CAF50';
     await this.$router.push({ name: 'home' }).catch(() => {});
   }
 }

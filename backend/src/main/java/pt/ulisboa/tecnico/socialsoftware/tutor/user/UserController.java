@@ -8,10 +8,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PowerUpItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ThemeItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -64,6 +63,27 @@ public class UserController {
     public UserDto getLoggedUser(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return userService.getLoggedUser(user.getId());
+    }
+
+    @GetMapping("/users/currentTheme")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public ThemeItemDto getCurrentTheme(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.getCurrentTheme(user.getId());
+    }
+
+    @GetMapping("/users/themes")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public List<ThemeItemDto> getUserThemes(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.getUserThemes(user.getId());
+    }
+
+    @GetMapping("/users/themes/owned")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public List<String> getOwnedThemes(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.userOwnedThemes(user.getId());
     }
 
     @GetMapping("/users/update/theme/{themeName}")

@@ -21,7 +21,7 @@
       >
       </v-text-field>
       <v-row no-gutters>
-        <v-col cols="4" v-for="n in filteredThemes" :key="n.name">
+        <v-col cols="4" v-for="n in filteredThemes" :key="n.userItemDto.name">
           <v-card
             outlined
             :color="isCurrent(n) ? 'primary' : ''"
@@ -41,20 +41,20 @@
                 Secondary
               </v-chip>
               <v-chip :light="!n.dark" :color="n.accent" small :dark="n.dark"
-                >Accent</v-chip
-              >
-              <v-chip :light="!n.dark" :color="n.info" small :dark="n.dark"
-                >Info</v-chip
-              >
-              <v-chip :light="!n.dark" :color="n.warning" small :dark="n.dark"
-                >Warning</v-chip
-              >
-              <v-chip :light="!n.dark" :color="n.error" small :dark="n.dark"
-                >Error</v-chip
-              >
-              <v-chip :light="!n.dark" :color="n.success" small :dark="n.dark"
-                >Success</v-chip
-              >
+                >Accent
+              </v-chip>
+              <v-chip :light="!n.dark" :color="n.info" small :dark="n.dark">
+                Info
+              </v-chip>
+              <v-chip :light="!n.dark" :color="n.warning" small :dark="n.dark">
+                Warning
+              </v-chip>
+              <v-chip :light="!n.dark" :color="n.error" small :dark="n.dark">
+                Error
+              </v-chip>
+              <v-chip :light="!n.dark" :color="n.success" small :dark="n.dark">
+                Success
+              </v-chip>
               <v-icon style="cursor: pointer" @click="openDialog(n)">
                 search
               </v-icon>
@@ -62,7 +62,7 @@
 
             <v-card-actions>
               <v-card-title class="pa-0" style="font-size: x-large">{{
-                n.name
+                n.userItemDto.name
               }}</v-card-title>
               <v-spacer />
               <v-btn
@@ -97,64 +97,20 @@ import ThemePreviewDialog from './ThemePreviewDialog.vue';
 })
 export default class ThemeInventory extends Vue {
   themeDialog: boolean = false;
-  currentTheme: Theme | null = null;
+  currentTheme: Theme = new Theme();
   search: string = '';
   filteredThemes: Theme[] = [];
-  testThemes: Theme[] = [];
+  themes: Theme[] = [];
 
   async created() {
-    this.filteredThemes = this.testThemes;
-
-    this.testThemes[0] = new Theme();
-    this.testThemes[1] = new Theme();
-    this.testThemes[2] = new Theme();
-    this.testThemes[3] = new Theme();
-
-    this.testThemes[0].name = 'Default Light';
-    this.testThemes[0].dark = false;
-    this.testThemes[0].primary = '#1976D2';
-    this.testThemes[0].accent = '#828282';
-    this.testThemes[0].secondary = '#d8d8d8';
-    this.testThemes[0].info = '#2196F3';
-    this.testThemes[0].warning = '#FB8C00';
-    this.testThemes[0].error = '#FF5252';
-    this.testThemes[0].success = '#4CAF50';
-
-    this.testThemes[1].name = 'Default Dark';
-    this.testThemes[1].dark = true;
-    this.testThemes[1].primary = '#25302b';
-    this.testThemes[1].accent = '#829ab1';
-    this.testThemes[1].secondary = '#393e46';
-    this.testThemes[1].info = '#4ecca3';
-    this.testThemes[1].warning = '#102a43';
-    this.testThemes[1].error = '#ec625f';
-    this.testThemes[1].success = '#cee397';
-
-    this.testThemes[2].name = 'Test Light';
-    this.testThemes[2].dark = false;
-    this.testThemes[2].primary = '#1976D2';
-    this.testThemes[2].accent = '#828282';
-    this.testThemes[2].secondary = '#d8d8d8';
-    this.testThemes[2].info = '#2196F3';
-    this.testThemes[2].warning = '#FB8C00';
-    this.testThemes[2].error = '#FF5252';
-    this.testThemes[2].success = '#4CAF50';
-
-    this.testThemes[3].name = 'Test Dark';
-    this.testThemes[3].dark = true;
-    this.testThemes[3].primary = '#25302b';
-    this.testThemes[3].accent = '#829ab1';
-    this.testThemes[3].secondary = '#393e46';
-    this.testThemes[3].info = '#4ecca3';
-    this.testThemes[3].warning = '#102a43';
-    this.testThemes[3].error = '#ec625f';
-    this.testThemes[3].success = '#cee397';
-    this.currentTheme = this.testThemes[0];
+    this.themes = await RemoteServices.getThemes();
+    this.filteredThemes = this.themes;
+    this.currentTheme = this.themes[0];
   }
 
   filterThemes() {
-    this.filteredThemes = this.testThemes.filter(t =>
-      t.name.includes(this.search)
+    this.filteredThemes = this.themes.filter(t =>
+      t.userItemDto.name.includes(this.search)
     );
   }
 
@@ -164,7 +120,7 @@ export default class ThemeInventory extends Vue {
   }
 
   async applyTheme(theme: Theme) {
-    await RemoteServices.updateCurrentTheme(theme.name);
+    await RemoteServices.updateCurrentTheme(theme.userItemDto.name);
     await this.$store.dispatch('updateUser');
     this.$vuetify.theme.dark = theme.dark;
     this.$vuetify.theme.currentTheme.primary = theme.primary;
@@ -177,7 +133,7 @@ export default class ThemeInventory extends Vue {
   }
 
   isCurrent(theme: Theme): boolean {
-    return theme.name === this.$store.getters.getUser.currentTheme;
+    return theme.userItemDto.name === this.$store.getters.getUser.currentTheme;
   }
 }
 </script>
