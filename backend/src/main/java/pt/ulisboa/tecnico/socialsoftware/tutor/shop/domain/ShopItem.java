@@ -17,6 +17,7 @@ public class ShopItem {
     private String name;
 
     @Column(name = "item_type")
+    @Enumerated(EnumType.STRING)
     private Type type;
 
     @Column(name = "item_price")

@@ -63,7 +63,10 @@
       <v-card-text>
         <div class="text-right">
           by
-          <span v-html="convertMarkDown(tournament.owner.username)" />
+          <span
+            v-if="tournament.owner != null"
+            v-html="convertMarkDown(tournament.owner.username)"
+          />
         </div>
       </v-card-text>
 

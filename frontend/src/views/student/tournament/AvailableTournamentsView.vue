@@ -188,7 +188,7 @@ export default class AvailableTournamentsView2 extends Vue {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.enrollTournament(id);
-      await this.$store.dispatch('updateScore');
+      await this.$store.dispatch('updateUser');
       await this.$router.push({ name: 'enrolled-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -200,7 +200,7 @@ export default class AvailableTournamentsView2 extends Vue {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.unenrollTournament(id);
-      await this.$store.dispatch('updateScore');
+      await this.$store.dispatch('updateUser');
       await this.$router.push({ name: 'enrolled-Tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);

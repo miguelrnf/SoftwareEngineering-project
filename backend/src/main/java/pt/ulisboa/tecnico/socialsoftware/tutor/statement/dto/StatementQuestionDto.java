@@ -12,6 +12,7 @@ public class StatementQuestionDto implements Serializable {
     private List<StatementOptionDto> options;
     private ImageDto image;
     private Integer sequence;
+    private boolean hasHint;
 
     public StatementQuestionDto(){
 
@@ -24,6 +25,9 @@ public class StatementQuestionDto implements Serializable {
         }
         this.options = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
         this.sequence = questionAnswer.getSequence();
+        this.hasHint = (questionAnswer.getQuizQuestion().getQuestion().getHint() != null && !questionAnswer.getQuizQuestion().getQuestion().getHint().isBlank() &&
+                !questionAnswer.getQuizQuestion().getQuestion().getHint().isEmpty() &&
+                !questionAnswer.getQuizQuestion().getQuestion().getHint().trim().equals(""));
     }
 
     public String getContent() {
@@ -56,6 +60,14 @@ public class StatementQuestionDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    public boolean isHasHint() {
+        return hasHint;
+    }
+
+    public void setHasHint(boolean hasHint) {
+        this.hasHint = hasHint;
     }
 
     @Override

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto mt-4" width="95%" flat v-scroll height="100%">
+  <v-card class="mx-auto mt-4" width="95%" flat v-scroll height="95%">
     <v-row>
       <v-col cols="3">
         <v-navigation-drawer absolute permanent dense color="primary">
@@ -20,7 +20,7 @@
             <v-list-item
               v-for="item in categories"
               :key="item.title"
-              @click="defineCategory(item.title)"
+              @click="defineCategory(item.value)"
             >
               <v-list-item-icon>
                 <v-icon color="white">{{ item.icon }}</v-icon>
@@ -31,7 +31,18 @@
               </v-list-item-content>
             </v-list-item>
           </v-list>
+
           <template v-slot:append>
+            <v-row class="white--text pa-5 ml-0" justify="center">
+              {{ numHint + 'x' }}
+              <v-icon color="white" class="mr-4">far fa-lightbulb</v-icon>
+
+              {{ numFifty + 'x' }}
+              <v-icon color="white" class="mr-4">fas fa-adjust</v-icon>
+
+              {{ numRightAns + 'x' }}
+              <v-icon color="white" class="mr-4">fas fa-check</v-icon>
+            </v-row>
             <v-row class="white--text pa-5 ml-0">
               <v-icon color="white" class="mr-12">fas fa-coins</v-icon>
               {{ $store.getters.getUser.score + ' Achandos' }}
@@ -41,9 +52,9 @@
       </v-col>
       <v-col cols="9">
         <v-container style="max-height: 87vh" class="overflow-y-auto" fluid>
-          <div v-if="category === 'All' || category === 'None'">
+          <div v-if="type === 'All' || type === 'None'">
             <v-row>
-              <v-col cols="4" v-for="item in items" :key="item.name">
+              <v-col cols="4" v-for="item in shopItems" :key="item.name">
                 <v-card outlined tile class="ma-3">
                   <v-list-item three-line>
                     <v-list-item-content>
@@ -55,13 +66,23 @@
                       </v-list-item-subtitle>
                     </v-list-item-content>
 
-                    <v-icon xx-large class="ma-4">{{ item.icon }}</v-icon>
+                    <v-icon xx-large class="ma-4" :color="item.color">{{
+                      item.icon
+                    }}</v-icon>
                   </v-list-item>
 
-                  <v-card-actions>
-                    <v-btn right color="primary">
+                  <v-card-actions class="px-4">
+                    <v-btn right color="primary" @click="buyItem(item)">
                       Buy
                     </v-btn>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon class="ma-4 pa-0" v-on="on"
+                          >far fa-question-circle</v-icon
+                        >
+                      </template>
+                      <span>{{ item.description }}</span>
+                    </v-tooltip>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -81,13 +102,23 @@
                       </v-list-item-subtitle>
                     </v-list-item-content>
 
-                    <v-icon xx-large class="ma-4">{{ item.icon }}</v-icon>
+                    <v-icon xx-large :color="item.color" class="ma-4">{{
+                      item.icon
+                    }}</v-icon>
                   </v-list-item>
 
-                  <v-card-actions>
-                    <v-btn right color="primary">
+                  <v-card-actions class="px-4">
+                    <v-btn right color="primary" @click="buyItem(item)">
                       Buy
                     </v-btn>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon class="ma-4 pa-0" v-on="on"
+                          >far fa-question-circle</v-icon
+                        >
+                      </template>
+                      <span>{{ item.description }}</span>
+                    </v-tooltip>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -103,126 +134,66 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import { ShopItem } from '@/models/management/ShopItem';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class ShopHomeView extends Vue {
   search: string = '';
-  category: string = 'None';
+  type: string = 'None';
+  numHint: number = 0;
+  numFifty: number = 0;
+  numRightAns: number = 0;
 
   categories = [
-    { title: 'Themes', icon: 'fas fa-paint-roller' },
-    { title: 'Power Ups', icon: 'fas fa-rocket' },
-    { title: 'Post Awards', icon: 'fas fa-star' },
-    { title: 'All', icon: 'fas fa-ellipsis-v' }
+    { value: 'THEME', title: 'Themes', icon: 'fas fa-paint-roller' },
+    { value: 'POWER_UP', title: 'Power Ups', icon: 'fas fa-rocket' },
+    { value: 'POST_AWARD', title: 'Post Awards', icon: 'fas fa-star' },
+    { value: 'All', title: 'All', icon: 'fas fa-ellipsis-v' }
   ];
-  items = [
-    {
-      name: 'YAO MING',
-      icon: 'fas fa-viruses',
-      color: 'grey',
-      category: 'Themes',
-      price: '69'
-    },
-    {
-      name: 'MANUTE BOL',
-      icon: 'fas fa-carrot',
-      color: 'ay',
-      category: 'Themes',
-      price: '169'
-    },
-    {
-      name: 'CHING CHONG',
-      icon: 'fas fa-pepper-hot',
-      color: 'ay',
-      category: 'Themes',
-      price: '1169'
-    },
-    {
-      name: 'KOBE BRYANT',
-      icon: 'fas fa-cross',
-      color: 'ay',
-      category: 'Themes',
-      price: '6969'
-    },
-    {
-      name: 'LEBRON JAMES',
-      icon: 'fab fa-apple',
-      color: 'ay',
-      category: 'Themes',
-      price: '116969'
-    },
-    {
-      name: 'SHAQ',
-      icon: 'fas fa-cannabis',
-      color: 'ay',
-      category: 'Themes',
-      price: '6'
-    },
-    {
-      name: 'Lil Uzi Vert',
-      icon: 'fas fa-toilet',
-      color: 'ay',
-      category: 'Power Ups',
-      price: '9'
-    },
-    {
-      name: 'Playboi Carti',
-      icon: 'fas fa-toilet-paper-slash',
-      color: 'ay',
-      category: 'Power Ups',
-      price: '69'
-    },
-    {
-      name: 'Lil Pump',
-      icon: 'fas fa-hand-middle-finger',
-      color: 'ay',
-      category: 'Power Ups',
-      price: '269'
-    },
-    {
-      name: 'Ricardo',
-      icon: 'fas fa-cookie-bite',
-      color: 'ay',
-      category: 'Post Awards',
-      price: '0'
-    },
-    {
-      name: 'Daniel',
-      icon: 'fas fa-wine-bottle',
-      color: 'ay',
-      category: 'Post Awards',
-      price: '0'
-    },
-    {
-      name: 'Henriques',
-      icon: 'fas fa-glass-cheers',
-      color: 'ay',
-      category: 'Post Awards',
-      price: '0'
-    },
-    {
-      name: 'Vazo',
-      icon: 'fas fa-cocktail',
-      color: 'ay',
-      category: 'Post Awards',
-      price: '0'
+
+  categoryItems: ShopItem[] = [];
+  shopItems: ShopItem[] = [];
+
+  async created() {
+    await this.$store.dispatch('loading');
+    try {
+      this.shopItems = await RemoteServices.getShopItems();
+      this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
+      this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
+      this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
-  ];
+    await this.$store.dispatch('clearLoading');
+  }
 
-  categoryItems: object[] = [];
+  async buyItem(item: ShopItem) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.buyItem(item.id);
+      await this.$store.dispatch('updateUser');
+      this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
+      this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
+      this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
 
-  defineCategory(title: string) {
-    this.category = title;
-    this.isInTheRightCategory(title);
+  defineCategory(type: string) {
+    this.type = type;
+    this.isInTheRightCategory(type);
   }
 
   async isInTheRightCategory(search: string) {
     if (search != '' && search != 'All') {
-      this.categoryItems = this.items.filter(
-        item => item.category == this.category
+      this.categoryItems = this.shopItems.filter(
+        item => item.type == this.type
       );
     } else {
-      this.categoryItems = this.items;
+      this.categoryItems = this.shopItems;
     }
     return this.categoryItems;
   }

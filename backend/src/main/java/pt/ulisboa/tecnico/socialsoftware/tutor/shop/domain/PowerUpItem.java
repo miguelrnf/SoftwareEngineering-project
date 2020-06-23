@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Table(name = "item_pwr_up")
 public class PowerUpItem extends UserItem {
     public enum Type {
-        TYPE_1, TYPE_2, TYPE_3, TYPE_4 //TODO - Change names
+        FIFTYFIFTY, HINT, RIGHTANSWER
     }
 
     @Column(name = "pwr_up_type")

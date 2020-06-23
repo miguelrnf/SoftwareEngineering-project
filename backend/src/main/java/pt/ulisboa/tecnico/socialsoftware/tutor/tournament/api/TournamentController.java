@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDt
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
@@ -23,6 +24,9 @@ public class TournamentController {
 
     @Autowired
     private TournamentService tournamentservice;
+
+    @Autowired
+    private UserService userService;
 
     TournamentController(TournamentService tournamentService) {
         this.tournamentservice = tournamentService;
@@ -129,21 +133,42 @@ public class TournamentController {
 
     @PutMapping("/tournaments/fiftyFifty/{quizId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public StatementQuestionDto removeTwoOptions(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+    public StatementQuestionDto removeTwoOptions(Principal principal, @PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.usePowerUp(user.getId(), "FIFTYFIFTY");
 
         return tournamentservice.removeTwoOptions(statementQuestionDto, quizId);
     }
 
     @PutMapping("/tournaments/rigthAnswer/{quizId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public StatementQuestionDto rigthAnswer(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+    public StatementQuestionDto rigthAnswer(Principal principal, @PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.usePowerUp(user.getId(), "RIGHTANSWER");
 
         return tournamentservice.rigthAnswer(statementQuestionDto, quizId);
     }
 
     @PutMapping("/tournaments/getHint/{quizId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public String getHint(@PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+    public String getHint(Principal principal, @PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.usePowerUp(user.getId(), "HINT");
 
         return tournamentservice.getHint(statementQuestionDto, quizId);
     }

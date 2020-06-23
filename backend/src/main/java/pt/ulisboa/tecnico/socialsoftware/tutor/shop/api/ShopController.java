@@ -3,13 +3,16 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.shop.api;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.ShopService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemListDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class ShopController {
@@ -21,7 +24,7 @@ public class ShopController {
 
     @GetMapping("shop")
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
-    public ShopItemListDto listShopItems() {
+    public List<ShopItemDto> listShopItems() {
         return shopService.listShopItems();
     }
 
@@ -29,7 +32,9 @@ public class ShopController {
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public ShopItemDto buyShopItem(Principal principal, @PathVariable int itemId) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return shopService.buyShopItem(user, itemId);
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+        return shopService.buyShopItem(user.getUsername(), itemId);
     }
 
     // TODO - REMOVE DEMO ADMIN

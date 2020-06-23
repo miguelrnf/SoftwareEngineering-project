@@ -563,6 +563,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getShopItems(): Promise<ShopItem[]> {
+    return httpClient
+      .get('shop')
+      .then(response => {
+        return response.data.map((shopItem: any) => {
+          return new ShopItem(shopItem);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async enrollTournament(tournamentId: Number): Promise<Tournament> {
     return httpClient
       .put(`/tournament/${tournamentId}/opened/enroll`)
@@ -1105,6 +1118,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getNumOfPowerUp(type: String): Promise<number> {
+    return httpClient
+      .get(`/users/numberPowerUps/${type}`)
+      .then(response => {
+        return response.data as number;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async changeDiscussStatus(id: number): Promise<Post> {
     return httpClient
       .put(
@@ -1134,6 +1158,17 @@ export default class RemoteServices {
   static async createShopTheme(theme: ShopItem) {
     return httpClient
       .post('shop/add', theme)
+      .then(response => {
+        return new ShopItem(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async buyItem(itemId: number) {
+    return httpClient
+      .put(`shop/buy/${itemId}`)
       .then(response => {
         return new ShopItem(response.data);
       })

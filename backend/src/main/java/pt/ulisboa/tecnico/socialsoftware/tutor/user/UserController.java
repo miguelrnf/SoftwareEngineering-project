@@ -8,8 +8,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PowerUpItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -69,6 +71,13 @@ public class UserController {
     public UserDto updateCurrentTheme(Principal principal, @PathVariable String themeName) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return userService.updateCurrentTheme(user.getId(), themeName);
+    }
+
+    @GetMapping("/users/numberPowerUps/{type}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    public Integer getNumberPowerUps(Principal principal, @PathVariable String type) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return userService.getTypeItemNumb(user.getId(), type);
     }
 
 

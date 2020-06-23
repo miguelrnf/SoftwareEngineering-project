@@ -179,7 +179,6 @@ export default class AllTeacherTournaments2 extends Vue {
 
   async showQuizAnswers(t: Tournament) {
     try {
-      console.log(t);
       let quizAnswers: QuizAnswers = await RemoteServices.getQuizAnswers(
         t.quiz.id
       );
