@@ -122,7 +122,7 @@ export default new Vuex.Store({
     currentCourse({ commit }, currentCourse) {
       commit('currentCourse', currentCourse);
     },
-    async updateVotes({ commit }) {
+    async updateLoggedUser({ commit }) {
       const user = await RemoteServices.updateLoggedUser();
       commit('votes', user);
     }

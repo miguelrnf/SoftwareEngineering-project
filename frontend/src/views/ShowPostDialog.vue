@@ -12,7 +12,7 @@
         <v-toolbar-title class="white--text">{{
           post.question.question.title
         }}</v-toolbar-title>
-        <div v-for="award in post.awards" :key="award">
+        <div v-for="award in post.awards" :key="award.award">
           <v-badge
             class="font-weight-bold"
             offset-y="30"
@@ -29,7 +29,7 @@
             <v-card
               color="accent"
               @click="
-                awardsList.length === 0 ? buyAwardDialog() : buyAwardDialog()
+                getUserAwards() === 0 ? buyAwardDialog() : awardPostDialog()
               "
               v-on="on"
               class="px-1 mx-2"
@@ -125,6 +125,12 @@
       :dialog="buyAwardsDialog"
       v-on:close-buy-awards-dialog="onCloseAwardDialog"
     />
+    <award-post-dialog
+            v-model="awardDialog"
+            :post="post"
+            :dialog="awardDialog"
+            v-on:close-buy-awards-dialog="onCloseAwardDialog"
+    />
   </v-dialog>
 </template>
 
@@ -139,6 +145,7 @@ import ShowComments from '@/views/ShowComments.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
 import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
+import AwardPostDialog from '@/views/AwardPostDialog.vue';
 
 @Component({
   components: {
@@ -146,6 +153,7 @@ import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
     'answer-post': AnswerPost,
     'show-comments': ShowComments,
     'buy-awards-dialog': BuyAwardsDialog,
+    'award-post-dialog': AwardPostDialog,
     'post-status-buttons': PostStatusButtons
   }
 })
@@ -157,12 +165,10 @@ export default class ShowPostDialog extends Vue {
   editPostDialog: boolean = false;
   editAnswerDialog: boolean = false;
   buyAwardsDialog: boolean = false;
+  awardDialog: boolean = false;
   typingComment: boolean = false;
   typingReply: boolean = false;
   awardsList: PostAwardItem[] = [];
-  silversOnUser: number = 0;
-  goldsOnUser: number = 0;
-  platinumsOnUser: number = 0;
 
   async submitAnswer(answer: string) {
     if (answer != '') {
@@ -203,28 +209,28 @@ export default class ShowPostDialog extends Vue {
     this.buyAwardsDialog = true;
   }
 
+  awardPostDialog() {
+    this.awardDialog = true;
+  }
+
   onCloseAwardDialog() {
     this.buyAwardsDialog = false;
+    this.awardDialog = false;
+  }
+
+  async getUserAwards() {
+    this.awardsList = await RemoteServices.getAwards();
+    return this.awardsList.length;
+  }
+
+  async updateLoggedUser() {
+    await this.$store.dispatch('updateLoggedUser');
   }
 
   async awardPost() {
-    let user = await RemoteServices.updateLoggedUser();
-    this.awardsList = await RemoteServices.getAwards();
-    if (this.awardsList.length == 0) {
-      return 'buy-awards-dialog';
-    } else {
-      for (let i = 0; i <= this.awardsList.length; i++) {
-        if (this.awardsList[i].type == 'PLATINUM') {
-          this.platinumsOnUser == this.platinumsOnUser + 1;
-        }
-        if (this.awardsList[i].type == 'GOLD') {
-          this.goldsOnUser = this.goldsOnUser + 1;
-        }
-        if (this.awardsList[i].type == 'SILVER') {
-          this.silversOnUser = this.silversOnUser + 1;
-        }
-      }
-    }
+    //let post2 = await RemoteServices.award(this.post.id, award);
+    //this.post.awards = post2.awards;
+    await this.updateLoggedUser();
   }
 }
 </script>

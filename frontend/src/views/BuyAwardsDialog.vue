@@ -53,7 +53,7 @@ export default class BuyAwardDialog extends Vue {
   hover: boolean = false;
 
   async shopRedirect() {
-    //TODO await this.$router.push({ name: 'shop?' }); redirect para a shop
+    await this.$router.push({ name: 'shop-home' });
   }
 
 }

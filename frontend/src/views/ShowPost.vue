@@ -187,22 +187,22 @@ export default class ShowPost extends Vue {
     } else return 'grey';
   }
 
-  async updateVotes() {
-    await this.$store.dispatch('updateVotes');
+  async updateLoggedUser() {
+    await this.$store.dispatch('updateLoggedUser');
   }
 
   async upvote() {
     let post2 = await RemoteServices.vote(this.post.id, 'upvote');
     this.post.upvotes = post2.upvotes;
     this.post.downvotes = post2.downvotes;
-    await this.updateVotes();
+    await this.updateLoggedUser();
   }
 
   async downvote() {
     let post2 = await RemoteServices.vote(this.post.id, 'downvote');
     this.post.upvotes = post2.upvotes;
     this.post.downvotes = post2.downvotes;
-    await this.updateVotes();
+    await this.updateLoggedUser();
   }
 
   valueForProgress() {

@@ -204,6 +204,21 @@ export default class ShopHomeView extends Vue {
       this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
       this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
       this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+      this.userAwardsInventory = await RemoteServices.getAwards();
+      this.numSilvers = 0;
+      this.numGolds = 0;
+      this.numPlatinums = 0;
+      for (let i = 0; i < this.userAwardsInventory.length; i++) {
+        if (this.userAwardsInventory[i].type == 'SILVER') {
+          this.numSilvers = this.numSilvers + 1;
+        }
+        if (this.userAwardsInventory[i].type == 'GOLD') {
+          this.numGolds = this.numGolds + 1;
+        }
+        if (this.userAwardsInventory[i].type == 'PLATINUM') {
+          this.numPlatinums = this.numPlatinums + 1;
+        }
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

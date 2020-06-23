@@ -1319,10 +1319,11 @@ export default class RemoteServices {
       });
   }
 
-  static async award(id: number): Promise<Post> {
+  static async award(id: number, award: PostAwardItem): Promise<Post> {
     return httpClient
       .put(
-        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/award`
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/award`,
+        award
       )
       .then(response => {
         return new Post(response.data);
