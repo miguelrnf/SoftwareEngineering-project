@@ -1,16 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ThemeItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.io.Serializable;
 
 

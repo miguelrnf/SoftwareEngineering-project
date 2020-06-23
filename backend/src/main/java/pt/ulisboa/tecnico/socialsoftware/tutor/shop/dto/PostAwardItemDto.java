@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
 

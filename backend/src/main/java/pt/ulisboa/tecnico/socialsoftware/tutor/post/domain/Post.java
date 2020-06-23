@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.domain;
 
-import org.hibernate.mapping.Map;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(

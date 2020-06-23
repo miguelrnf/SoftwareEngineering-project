@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
-
 public class AwardsPerPostDto {
 
     private PostAwardItemDto award;
