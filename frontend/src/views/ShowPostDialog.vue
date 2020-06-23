@@ -24,7 +24,6 @@
           </v-badge>
         </div>
         <v-spacer />
-        <post-status-buttons :post="post" />
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-card
