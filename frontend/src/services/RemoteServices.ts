@@ -26,6 +26,7 @@ import { Student } from '@/models/management/Student';
 import { ShopItem } from '@/models/management/ShopItem';
 import { Leaderboards } from '@/models/management/Leaderboards';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
+import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -1341,6 +1342,21 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((awards: any) => {
           return new PostAwardItem(awards);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAwardsOnThisPost(id: number): Promise<AwardsPerPost[]> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/getAwards`
+      )
+      .then(response => {
+        return response.data.map((awards: any) => {
+          return new AwardsPerPost(awards);
         });
       })
       .catch(async error => {

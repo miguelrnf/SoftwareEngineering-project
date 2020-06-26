@@ -12,17 +12,32 @@
         <v-toolbar-title class="white--text">{{
           post.question.question.title
         }}</v-toolbar-title>
-        <div v-for="award in post.awards" :key="award.award">
+        <p v-if="updateAwards()"></p>
+        <div v-for="award in post.awards" :key="award.award.item.id">
           <v-badge
+            v-if="award.award.type !== 'PLATINUM'"
             class="font-weight-bold"
             offset-y="30"
+            offset-x="20"
             color=""
             :content="'x' + award.number"
-            ><v-icon :color="award.award.item.color" small>{{
+            ><v-icon class="px-3" :color="award.award.item.color" small>{{
+              award.award.item.icon
+            }}</v-icon>
+          </v-badge>
+          <v-badge
+            v-if="award.award.type === 'PLATINUM'"
+            class="font-weight-bold"
+            offset-y="34"
+            offset-x="23"
+            color=""
+            :content="'x' + award.number"
+            ><v-icon class="px-3" :color="award.award.item.color" medium>{{
               award.award.item.icon
             }}</v-icon>
           </v-badge>
         </div>
+
         <v-spacer />
         <v-tooltip bottom v-if="!isTeacher()">
           <template v-slot:activator="{ on }">
@@ -127,7 +142,8 @@
       v-model="awardDialog"
       :post="post"
       :dialog="awardDialog"
-      v-on:close-buy-awards-dialog="onCloseAwardDialog"
+      v-on:update-number-of-awards="updateAwards()"
+      v-on:close-buy-awards-dialog="onCloseAwardDialog()"
     />
   </v-dialog>
 </template>
@@ -144,6 +160,7 @@ import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
 import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
 import AwardPostDialog from '@/views/AwardPostDialog.vue';
+import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 
 @Component({
   components: {
@@ -157,7 +174,7 @@ import AwardPostDialog from '@/views/AwardPostDialog.vue';
 })
 export default class ShowPostDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-  @Prop({ type: Post, required: true }) readonly post!: Post;
+  @Prop({ type: Post, required: true }) post!: Post;
   acceptAnswer: boolean = false;
   comment: string = '';
   editPostDialog: boolean = false;
@@ -166,8 +183,8 @@ export default class ShowPostDialog extends Vue {
   awardDialog: boolean = false;
   typingComment: boolean = false;
   typingReply: boolean = false;
-  awardNumber: number = 0;
   awardsList: PostAwardItem[] = [];
+  awardsOnPostList: AwardsPerPost[] = [];
 
   async submitAnswer(answer: string) {
     if (answer != '') {
@@ -205,18 +222,17 @@ export default class ShowPostDialog extends Vue {
   }
 
   buyAwardDialog() {
-    console.log('buy award');
     this.buyAwardsDialog = true;
   }
 
   awardPostDialog() {
-    console.log('not buy award');
     this.awardDialog = true;
   }
 
   onCloseAwardDialog() {
     this.buyAwardsDialog = false;
     this.awardDialog = false;
+    this.updateAwards();
   }
 
   async getUserAwards() {
@@ -224,17 +240,22 @@ export default class ShowPostDialog extends Vue {
     this.awardsList.length === 0
       ? this.buyAwardDialog()
       : this.awardPostDialog();
-    console.log(this.awardsList.length);
   }
 
-  async updateLoggedUser() {
-    await this.$store.dispatch('updateLoggedUser');
-  }
-
-  async awardPost() {
-    //let post2 = await RemoteServices.award(this.post.id, award);
-    //this.post.awards = post2.awards;
-    await this.updateLoggedUser();
+  async updateAwards() {
+    this.awardsOnPostList = await RemoteServices.getAwardsOnThisPost(
+      this.post.id
+    );
+    this.awardsOnPostList.sort((a, b) => {
+      if (a.award.item.description > b.award.item.description) {
+        return 1;
+      }
+      if (a.award.item.description < b.award.item.description) {
+        return -1;
+      }
+      return 1;
+    });
+    this.post.awards = this.awardsOnPostList;
   }
 }
 </script>

@@ -13,17 +13,21 @@
         </span>
         </v-card-title>
         <v-card-text>
-          {{'Hello there. It seems like you don\'t have any awards on your account. If you have any Achandos check these out!'+'&#x1f600' }}
+          {{'Hello there. It seems like you don\'t have any awards on your account. If you have any Achandos to spend check these out! '+'&#x1f600' }}
 
         </v-card-text>
 
         <div>
-          <v-badge offset-y="60" offset-x="74" content="Platinum"><v-icon class="mx-6" color="cyan" x-large>fas fa-shield-alt</v-icon></v-badge>
-          <v-badge offset-y="58" offset-x="59" content="Gold"><v-icon  class="mx-5" color="#f9c700" large>fas fa-star</v-icon></v-badge>
-          <v-badge offset-y="58" offset-x="59" content="Silver"><v-icon class="mx-5" color="#AAA9AD" large>fas fa-star-half-alt</v-icon></v-badge>
+          <v-badge offset-y="62" offset-x="74" content="Platinum"><v-icon class="mx-6" color="cyan" x-large>fas fa-shield-alt</v-icon></v-badge>
+          <v-badge offset-y="60" offset-x="59" content="Gold"><v-icon  class="mx-5" color="#f9c700" large>fas fa-star</v-icon></v-badge>
+          <v-badge offset-y="60" offset-x="59" content="Silver"><v-icon class="mx-5" color="#AAA9AD" large>fas fa-star-half-alt</v-icon></v-badge>
         </div>
         <v-spacer></v-spacer>
-        <div class="px-0 pt-8" ><v-card-text @mouseover="hover=true" @mouseleave="hover=false" style="font-size: medium" :class="hover ? 'primary--text' : 'black--text'" @click="shopRedirect">Buy some awards here
+        <div class="px-0 pt-8" >
+          <v-card-text @mouseover="hover=true" @mouseleave="hover=false"
+                                             style="font-size: medium"
+                                             :class="hover ? 'primary--text' : 'black--text'"
+                                             @click="shopRedirect">Get some awards by clicking here
           </v-card-text></div>
 
 
