@@ -197,8 +197,11 @@ public class Post {
 
     public void remove() {
         this.question.remove();
-        if(this.comments != null)
+        if (this.comments != null) {
             this.comments.forEach(x -> x.setPost(null));
+            this.comments.forEach(x -> x.getChildren().forEach(y -> {y.setPost(null); y.setParent(null);}));
+        }
+
         this.comments = null;
     }
 

@@ -20,7 +20,6 @@ public class UserItemDto implements Serializable {
         this.description = item.getDescription();
         this.icon = item.getIcon();
         this.color = item.getColor();
-        this.userId = item.getUser().getId();
     }
 
     public Integer getId() {
@@ -72,7 +71,6 @@ public class UserItemDto implements Serializable {
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
                 ", color='" + color + '\'' +
-                ", userId=" + userId +
                 '}';
     }
 
