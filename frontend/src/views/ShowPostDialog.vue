@@ -1,37 +1,86 @@
 <template>
   <v-dialog
-    scrollable
     :value="dialog"
     @input="$emit('close-show-post-dialog', false)"
     @keydown.esc="$emit('close-show-post-dialog', false)"
-    class="post-dialog"
+    class="post-dialog ma-0"
     max-width="90%"
   >
     <v-card>
-      <v-app-bar dense color="primary">
-        <v-toolbar-title class="white--text">{{
-          post.question.question.title
-        }}</v-toolbar-title>
-        <div v-for="award in post.awards" :key="award">
+      <v-app-bar height="65%" dense color="primary" class="">
+        <v-col cols="3" class="mx-n3">
+          <v-toolbar-title class="white--text text-left my-n1">{{
+            post.question.question.title
+          }}</v-toolbar-title>
+          <v-col cols="10" class="my-n2">
+            <v-row justify="end" class="">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-progress-linear
+                    class=""
+                    color="primary lighten-4"
+                    background-color="red lighten-4"
+                    height="10"
+                    :value="valueForProgress()"
+                    striped
+                    rounded
+                    v-on="on"
+                  ></v-progress-linear>
+                </template>
+                <span>
+                  {{ 'Up: ' + this.post.upvotes }}
+                  {{ ' Down: ' + this.post.downvotes }}
+                </span>
+              </v-tooltip>
+            </v-row>
+          </v-col>
+        </v-col>
+        <div v-for="awards in post.awards" :key="awards.award.type">
           <v-badge
+            v-if="awards.award.type === 'PLATINUM'"
             class="font-weight-bold"
-            offset-y="30"
+            offset-y="34"
+            offset-x="23"
             color=""
-            :content="'x' + award.number"
-            ><v-icon :color="award.award.item.color" small>{{
-              award.award.item.icon
+            :content="'x' + awards.number"
+            ><v-icon class="px-3" :color="awards.award.item.color" medium>{{
+              awards.award.item.icon
             }}</v-icon>
           </v-badge>
         </div>
+        <div v-for="awards in post.awards" :key="awards.award.item.id">
+          <v-badge
+            v-if="awards.award.type === 'GOLD'"
+            class="font-weight-bold"
+            offset-y="30"
+            offset-x="20"
+            color=""
+            :content="'x' + awards.number"
+            ><v-icon class="px-3" :color="awards.award.item.color" small>{{
+              awards.award.item.icon
+            }}</v-icon>
+          </v-badge>
+        </div>
+        <div v-for="awards in post.awards" :key="awards.award.item.name">
+          <v-badge
+            v-if="awards.award.type === 'SILVER'"
+            class="font-weight-bold"
+            offset-y="30"
+            offset-x="20"
+            color=""
+            :content="'x' + awards.number"
+            ><v-icon class="px-3" :color="awards.award.item.color" small>{{
+              awards.award.item.icon
+            }}</v-icon>
+          </v-badge>
+        </div>
+
         <v-spacer />
-        <post-status-buttons :post="post" />
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="!isTeacher()">
           <template v-slot:activator="{ on }">
             <v-card
               color="accent"
-              @click="
-                awardsList.length === 0 ? buyAwardDialog() : buyAwardDialog()
-              "
+              @click="getUserAwards()"
               v-on="on"
               class="px-1 mx-2"
             >
@@ -120,11 +169,29 @@
       v-on:close-post-answered-dialog="submitAnswer"
     >
     </answer-post>
+    <edit-post-dialog
+      v-if="post"
+      v-model="editPostDialog"
+      :post="post"
+      v-on:close-edit-post-dialog="onCloseEditPost"
+    />
+    <edit-answer-dialog
+      v-if="post && post.answer"
+      v-model="editAnswerDialog"
+      :post="post"
+      v-on:close-edit-answer-dialog="onCloseEditAnswerDialog()"
+    />
     <buy-awards-dialog
       v-model="buyAwardsDialog"
       :post="post"
       :dialog="buyAwardsDialog"
       v-on:close-buy-awards-dialog="onCloseAwardDialog"
+    />
+    <award-post-dialog
+      v-model="awardDialog"
+      :post="post"
+      :dialog="awardDialog"
+      v-on:close-buy-awards-dialog="onCloseAwardDialog()"
     />
   </v-dialog>
 </template>
@@ -140,6 +207,9 @@ import ShowComments from '@/views/ShowComments.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
 import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
+import AwardPostDialog from '@/views/AwardPostDialog.vue';
+import EditPostDialog from '@/views/EditPostDialog.vue';
+import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 
 @Component({
   components: {
@@ -147,23 +217,24 @@ import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
     'answer-post': AnswerPost,
     'show-comments': ShowComments,
     'buy-awards-dialog': BuyAwardsDialog,
+    'award-post-dialog': AwardPostDialog,
+    'edit-post-dialog': EditPostDialog,
+    'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons
   }
 })
 export default class ShowPostDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-  @Prop({ type: Post, required: true }) readonly post!: Post;
+  @Prop({ type: Post, required: true }) post!: Post;
   acceptAnswer: boolean = false;
   comment: string = '';
   editPostDialog: boolean = false;
   editAnswerDialog: boolean = false;
   buyAwardsDialog: boolean = false;
+  awardDialog: boolean = false;
   typingComment: boolean = false;
   typingReply: boolean = false;
   awardsList: PostAwardItem[] = [];
-  silversOnUser: number = 0;
-  goldsOnUser: number = 0;
-  platinumsOnUser: number = 0;
 
   async submitAnswer(answer: string) {
     if (answer != '') {
@@ -191,6 +262,14 @@ export default class ShowPostDialog extends Vue {
     this.editPostDialog = true;
   }
 
+  onCloseEditPost() {
+    this.editPostDialog = false;
+  }
+
+  onCloseEditAnswerDialog() {
+    this.editAnswerDialog = false;
+  }
+
   editAnswer() {
     this.editAnswerDialog = true;
   }
@@ -204,27 +283,32 @@ export default class ShowPostDialog extends Vue {
     this.buyAwardsDialog = true;
   }
 
-  onCloseAwardDialog() {
-    this.buyAwardsDialog = false;
+  awardPostDialog() {
+    this.awardDialog = true;
   }
 
-  async awardPost() {
-    let user = await RemoteServices.updateLoggedUser();
+  onCloseAwardDialog() {
+    this.buyAwardsDialog = false;
+    this.awardDialog = false;
+  }
+
+  async getUserAwards() {
     this.awardsList = await RemoteServices.getAwards();
-    if (this.awardsList.length == 0) {
-      return 'buy-awards-dialog';
+    this.awardsList.length === 0
+      ? this.buyAwardDialog()
+      : this.awardPostDialog();
+  }
+
+  valueForProgress() {
+    if (this.post.downvotes == 0 && this.post.upvotes != 0) {
+      return 100;
+    }
+    if (this.post.upvotes == 0) {
+      return 0;
     } else {
-      for (let i = 0; i <= this.awardsList.length; i++) {
-        if (this.awardsList[i].type == 'PLATINUM') {
-          this.platinumsOnUser == this.platinumsOnUser + 1;
-        }
-        if (this.awardsList[i].type == 'GOLD') {
-          this.goldsOnUser = this.goldsOnUser + 1;
-        }
-        if (this.awardsList[i].type == 'SILVER') {
-          this.silversOnUser = this.silversOnUser + 1;
-        }
-      }
+      let upvotes = this.post.upvotes;
+      let downvotes = this.post.downvotes;
+      return (upvotes / (upvotes + downvotes)) * 100;
     }
   }
 }

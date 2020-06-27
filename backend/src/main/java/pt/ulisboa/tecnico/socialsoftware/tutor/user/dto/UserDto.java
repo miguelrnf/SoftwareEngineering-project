@@ -27,18 +27,19 @@ public class UserDto implements Serializable {
     private Integer numberOfPTournamentsParticipated;
 
 
+
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
-        if (user.getScore() == null )
+        if (user.getScore() == null)
             this.score = 0;
         else
             this.score = user.getScore();
 
-        if(user.getDashboardPrivate() == null)
+        if (user.getDashboardPrivate() == null)
             this.isDashboardPrivate = false;
         else
             this.isDashboardPrivate = user.getDashboardPrivate();
@@ -49,13 +50,13 @@ public class UserDto implements Serializable {
         this.numberOfQuizzesSolved = user.getQuizzes().size();
         this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
-        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
+        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()) {
             user.setCurrentTheme("Default Light");
         }
         this.currentTheme = user.getCurrentTheme();
         this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
-        this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
+        this.postsDownvoted = user.getPostsDownvoted() != null ? user.getPostsDownvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
     }
 

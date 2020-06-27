@@ -27,6 +27,7 @@ import { ShopItem } from '@/models/management/ShopItem';
 import { Leaderboards } from '@/models/management/Leaderboards';
 import { Theme } from '@/models/management/Theme';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
+import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -1355,10 +1356,11 @@ export default class RemoteServices {
       });
   }
 
-  static async award(id: number): Promise<Post> {
+  static async award(id: number, award: PostAwardItem): Promise<Post> {
     return httpClient
       .put(
-        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/award`
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/award`,
+        award
       )
       .then(response => {
         return new Post(response.data);
@@ -1380,6 +1382,22 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static async getAwardsOnThisPost(id: number): Promise<AwardsPerPost[]> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/getAwards`
+      )
+      .then(response => {
+        return response.data.map((awards: any) => {
+          return new AwardsPerPost(awards);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
 
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {

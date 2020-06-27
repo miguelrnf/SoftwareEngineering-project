@@ -43,7 +43,10 @@
           data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn color="primary" @click="savePostEdit" data-cy="saveEditButton"
+        <v-btn
+          color="primary"
+          @click="savePostEdit() && $emit('close-edit-post-dialog', false)"
+          data-cy="saveEditButton"
           >Save Edit</v-btn
         >
       </v-card-actions>
@@ -72,6 +75,7 @@ export default class EditPostDialog extends Vue {
     try {
       let editedPost = new Post(this.post);
       editedPost.question.studentQuestion = this.editedQuestion;
+      this.post.question.studentQuestion = this.editedQuestion;
       const result = await RemoteServices.updatePost(editedPost);
       this.$emit('save-post-edit', result);
       this.post.question.studentQuestion = this.editedQuestion;

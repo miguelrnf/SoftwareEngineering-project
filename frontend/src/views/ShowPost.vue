@@ -1,63 +1,59 @@
 <template>
   <div class="text-left">
     <div class="mt-3 ml-3">
-      <div class="headline grey--text font-weight-bold">
-        {{ post.question.question.content }}
-      </div>
-      <div class="ml-5 mt-3">
-        {{ post.question.studentQuestion }}
-      </div>
-      <div class="font-weight-light text-right mr-3">
-        {{ post.question.user.username }}
-      </div>
-    </div>
-    <v-divider inset class="mt-3"></v-divider>
-    <v-card-text>
-      <template>
-        <div class="text-right my-5">
-          <v-btn class="ma-2" @click="upvote()" icon>
-            <v-icon :color="getColorOfUpvotes()" class="mx-4" large left
-              >fas fa-chevron-up</v-icon
-            >
-            <span
-              class="font-weight-bold subtitle-1"
-              v-html="post.upvotes - post.downvotes"
-            />
-          </v-btn>
-          <v-btn class="ma-2" @click="downvote()" icon>
-            <v-icon class="mx-4" :color="getColorOfDownvotes()" large right
-              >fas fa-chevron-down</v-icon
-            >
-          </v-btn>
-        </div>
-        <div>
-          <v-row justify="end">
-            <v-col cols="2">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-progress-linear
-                    color="light-blue"
-                    height="10"
-                    :value="valueForProgress()"
-                    striped
-                    rounded
-                    v-on="on"
-                  ></v-progress-linear>
-                </template>
-                <span>
-                  {{ 'Up: ' + this.post.upvotes }}
-                  {{ ' Down: ' + this.post.downvotes }}
-                </span>
-              </v-tooltip>
+      <v-row class="mx-0">
+        <template class="mx-0">
+          <div class="text-left mx-0">
+            <v-col cols="1">
+              <v-row>
+                <v-btn class="px-5 my-n3" @click="upvote()" icon>
+                  <v-icon :color="getColorOfUpvotes()" class="" medium
+                    >fas fa-chevron-up</v-icon
+                  ></v-btn
+                >
+              </v-row>
+              <v-row
+                v-if="numberOfVotesOnPost() < 10 && numberOfVotesOnPost() > -1"
+              >
+                <span
+                  class="font-weight-bold px-5"
+                  v-html="(post.upvotes - post.downvotes)"
+                />
+              </v-row>
+              <v-row
+                v-if="numberOfVotesOnPost() > 9 || numberOfVotesOnPost() < 0"
+              >
+                <span
+                  class="font-weight-bold px-4"
+                  v-html="post.upvotes - post.downvotes"
+                />
+              </v-row>
+              <v-row>
+                <v-btn class="px-5 my-n3" @click="downvote()" icon>
+                  <v-icon class="" :color="getColorOfDownvotes()" size="25px"
+                    >fas fa-chevron-down</v-icon
+                  >
+                </v-btn>
+              </v-row>
             </v-col>
-          </v-row>
-        </div>
-      </template>
-
+          </div>
+        </template>
+        <v-col class="py-1 px-3" cols="11">
+          <div class="headline grey--text font-weight-bold">
+            {{ post.question.question.content }}
+          </div>
+          <div class="">
+            {{ post.question.studentQuestion }}
+          </div>
+        </v-col>
+      </v-row>
+    </div>
+    <v-card-text>
       <div class="text-right">
         by
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
+      <v-divider inset class="mt-3"></v-divider>
       <v-card-text
         v-if="
           post.answer != null &&
@@ -66,9 +62,11 @@
         "
         class="mt-3 ml-3"
       >
-        <div class="headline grey--text font-weight-bold">{{ 'Answer:' }}</div>
-        <div class="ml-5 mt-3">{{ post.answer.teacherAnswer }}</div>
-        <div class="font-weight-light text-right mr-3">
+        <div class="subtitle-1 grey--text font-weight-bold">
+          {{ 'Answer:' }}
+        </div>
+        <div class="ml-5 mt-3 subtitle-1">{{ post.answer.teacherAnswer }}</div>
+        <div class=" text-right mr-3">
           {{ post.answer.user.username }}
         </div>
       </v-card-text>
@@ -160,62 +158,59 @@ export default class ShowPost extends Vue {
   }
 
   getColorOfUpvotes() {
-    if (this.$store.getters.getUser.postsUpvoted != null) {
-      for (
-        let i = 0;
-        i < this.$store.getters.getUser.postsUpvoted.length;
-        i++
-      ) {
-        if (this.$store.getters.getUser.postsUpvoted[i].id == this.post.id) {
-          return 'blue';
+    if (this.$store.getters.getUser != null) {
+      if (this.$store.getters.getUser.postsUpvoted != null) {
+        for (
+          let i = 0;
+          i < this.$store.getters.getUser.postsUpvoted.length;
+          i++
+        ) {
+          if (this.$store.getters.getUser.postsUpvoted[i].id == this.post.id) {
+            return 'primary';
+          }
         }
       }
     } else return 'grey';
   }
 
   getColorOfDownvotes() {
-    if (this.$store.getters.getUser.postsDownvoted != null) {
-      for (
-        let i = 0;
-        i < this.$store.getters.getUser.postsDownvoted.length;
-        i++
-      ) {
-        if (this.$store.getters.getUser.postsDownvoted[i].id == this.post.id) {
-          return 'blue';
+    if (this.$store.getters.getUser != null) {
+      if (this.$store.getters.getUser.postsDownvoted != null) {
+        for (
+          let i = 0;
+          i < this.$store.getters.getUser.postsDownvoted.length;
+          i++
+        ) {
+          if (
+            this.$store.getters.getUser.postsDownvoted[i].id == this.post.id
+          ) {
+            return 'primary';
+          }
         }
       }
     } else return 'grey';
   }
 
-  async updateVotes() {
-    await this.$store.dispatch('updateVotes');
+  async updateLoggedUser() {
+    await this.$store.dispatch('updateLoggedUser');
+  }
+
+  numberOfVotesOnPost() {
+    return this.post.upvotes - this.post.downvotes;
   }
 
   async upvote() {
     let post2 = await RemoteServices.vote(this.post.id, 'upvote');
     this.post.upvotes = post2.upvotes;
     this.post.downvotes = post2.downvotes;
-    await this.updateVotes();
+    await this.updateLoggedUser();
   }
 
   async downvote() {
     let post2 = await RemoteServices.vote(this.post.id, 'downvote');
     this.post.upvotes = post2.upvotes;
     this.post.downvotes = post2.downvotes;
-    await this.updateVotes();
-  }
-
-  valueForProgress() {
-    if (this.post.downvotes == 0 && this.post.upvotes != 0) {
-      return 100;
-    }
-    if (this.post.upvotes == 0) {
-      return 0;
-    } else {
-      let upvotes = this.post.upvotes;
-      let downvotes = this.post.downvotes;
-      return (upvotes / (upvotes + downvotes)) * 100;
-    }
+    await this.updateLoggedUser();
   }
 }
 </script>

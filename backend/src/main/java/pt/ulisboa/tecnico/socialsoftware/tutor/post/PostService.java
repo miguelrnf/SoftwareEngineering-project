@@ -21,6 +21,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -32,6 +34,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,6 +69,9 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto submitPost(PostQuestionDto postQuestionDto) {
         User user = checkIfUserExistsByUsername(postQuestionDto.getUser().getUsername());
+        if (postQuestionDto.getQuestion() == null) {
+            throw new TutorException(INVALID_CONTENT_FOR_QUESTION);
+        }
 
         checkIfUserHasRoleStudent(user);
         Question question = checkIfQuestionExists(postQuestionDto);
@@ -369,22 +375,26 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public PostDto award(Integer postId, PostAwardItemDto awardDto, User u) {
-        User user = checkIfUserExistsByUsername(u.getUsername());
+    public PostDto award(Integer postId, PostAwardItemDto awardDto, String username) {
+        User user = checkIfUserExistsByUsername(username);
         Post post = checkIfPostExists(null, postId);
-        PostAwardItem award = (PostAwardItem) user.getItems().stream().filter(x -> x.getId().
-                equals(awardDto.getItem().getId())).findFirst().orElse(null);
-        if (!user.getItems().contains(award)) {
-            throw new TutorException(NON_EXISTING_ITEM_ID, awardDto.getItem().getId());
-        }
-        else {
-            user.removeItem(award);
-            post.awardPost(award);
-        }
-
-        post.awardPost(award);
+        UserItem award = user.getItems().stream().filter(x -> x.getId().
+                equals(awardDto.getItem().getId())).findFirst().orElseThrow(() -> new TutorException(NON_EXISTING_ITEM_ID, awardDto.getItem().getId()));
+        user.removeItem(award);
+        post.awardPost((PostAwardItem) award);
         return new PostDto(post);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<AwardsPerPostDto> getpostAwards(Integer postId) {
+        Post post = checkIfPostExists(null, postId);
+        PostDto dto = new PostDto(post);
+        return dto.getAwards();
+    }
+
 
 
     private PostComment checkIfCommentParentExists(PostCommentDto dto) {

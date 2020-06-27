@@ -100,15 +100,7 @@
           </template>
           <span>Edit Answer</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="$store.getters.isTeacher">
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="redirectPost(item)"
-              >cached</v-icon
-            >
-          </template>
-          <span>Redirect Post</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="isOwner(item) || isTeacher()">
+        <v-tooltip bottom v-if="(isOwner(item) || isTeacher()) && (item.comments.length === 0)">
           <template v-slot:activator="{ on }">
             <v-icon
               small
@@ -198,6 +190,7 @@ export default class PostsView extends Vue {
   postStatus: boolean = true;
   postPrivacy: boolean = false;
   answerPrivacy: boolean = false;
+  numberOfComments: number = 0;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -346,6 +339,15 @@ export default class PostsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  numberOfCommentsOnPost() {
+    if (this.currentPost != null) {
+      if (this.currentPost.comments != null) {
+        return this.currentPost.comments.length;
+      }
+    }
+    return;
   }
 }
 </script>

@@ -6,12 +6,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -166,6 +169,12 @@ public class PostController {
     @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto award(Principal principal, @PathVariable int executionId, @PathVariable int postId, @Valid @RequestBody PostAwardItemDto award) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return postService.award(postId, award, user);
+        return postService.award(postId, award, user.getUsername());
+    }
+
+    @GetMapping("executions/{executionId}/posts/{postId}/getAwards")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<AwardsPerPostDto> getpostAwards(@PathVariable int executionId, @PathVariable int postId) {
+        return postService.getpostAwards(postId);
     }
 }

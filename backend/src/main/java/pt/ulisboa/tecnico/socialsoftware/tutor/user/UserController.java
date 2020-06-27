@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @GetMapping("/users/update")
-    @PreAuthorize("(hasRole('ROLE_STUDENT'))")
+    @PreAuthorize("(hasRole('ROLE_STUDENT')) or hasRole('ROLE_TEACHER')")
     public UserDto getLoggedUser(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return userService.getLoggedUser(user.getId());
