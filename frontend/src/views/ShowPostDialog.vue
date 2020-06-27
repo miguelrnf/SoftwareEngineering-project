@@ -1,19 +1,44 @@
 <template>
   <v-dialog
-    scrollable
     :value="dialog"
     @input="$emit('close-show-post-dialog', false)"
     @keydown.esc="$emit('close-show-post-dialog', false)"
-    class="post-dialog"
+    class="post-dialog ma-0"
     max-width="90%"
   >
     <v-card>
-      <v-app-bar dense color="primary">
-        <v-toolbar-title class="white--text">{{
-          post.question.question.title
-        }}</v-toolbar-title>
-        <p v-if="updateAwards()"></p>
-        <div v-for="award in post.awards" :key="award.award.item.id">
+      <v-app-bar height="65%" dense color="primary" class="">
+        <v-col cols="3">
+          <v-toolbar-title class="white--text text-left my-n1">{{
+            post.question.question.title
+          }}</v-toolbar-title>
+          <v-col cols="10" class="my-n2">
+            <v-row justify="end" class="">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-progress-linear
+                    class=""
+                    color="primary lighten-4"
+                    background-color="red lighten-4"
+                    height="10"
+                    :value="valueForProgress()"
+                    striped
+                    rounded
+                    v-on="on"
+                  ></v-progress-linear>
+                </template>
+                <span>
+                  {{ 'Up: ' + this.post.upvotes }}
+                  {{ ' Down: ' + this.post.downvotes }}
+                </span>
+              </v-tooltip>
+            </v-row>
+          </v-col>
+        </v-col>
+        <div
+          v-for="award in post.awards"
+          :key="award.award.item.id"
+        >
           <v-badge
             v-if="award.award.type !== 'PLATINUM'"
             class="font-weight-bold"
@@ -132,6 +157,12 @@
       v-on:close-post-answered-dialog="submitAnswer"
     >
     </answer-post>
+    <edit-post-dialog
+      v-if="post"
+      v-model="editPostDialog"
+      :post="post"
+      v-on:close-edit-post-dialog="onCloseEditPost"
+    />
     <buy-awards-dialog
       v-model="buyAwardsDialog"
       :post="post"
@@ -142,8 +173,8 @@
       v-model="awardDialog"
       :post="post"
       :dialog="awardDialog"
-      v-on:update-number-of-awards="updateAwards()"
       v-on:close-buy-awards-dialog="onCloseAwardDialog()"
+      v-on:timeupdate="updateAwards()"
     />
   </v-dialog>
 </template>
@@ -161,6 +192,7 @@ import { PostAwardItem } from '@/models/management/PostAwardItem';
 import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
 import AwardPostDialog from '@/views/AwardPostDialog.vue';
 import { AwardsPerPost } from '@/models/management/AwardsPerPost';
+import EditPostDialog from '@/views/EditPostDialog.vue';
 
 @Component({
   components: {
@@ -169,6 +201,7 @@ import { AwardsPerPost } from '@/models/management/AwardsPerPost';
     'show-comments': ShowComments,
     'buy-awards-dialog': BuyAwardsDialog,
     'award-post-dialog': AwardPostDialog,
+    'edit-post-dialog': EditPostDialog,
     'post-status-buttons': PostStatusButtons
   }
 })
@@ -212,6 +245,10 @@ export default class ShowPostDialog extends Vue {
     this.editPostDialog = true;
   }
 
+  onCloseEditPost() {
+    this.editPostDialog = false;
+  }
+
   editAnswer() {
     this.editAnswerDialog = true;
   }
@@ -232,7 +269,8 @@ export default class ShowPostDialog extends Vue {
   onCloseAwardDialog() {
     this.buyAwardsDialog = false;
     this.awardDialog = false;
-    this.updateAwards();
+    setTimeout(this.updateAwards, 300);
+    clearTimeout();
   }
 
   async getUserAwards() {
@@ -243,19 +281,34 @@ export default class ShowPostDialog extends Vue {
   }
 
   async updateAwards() {
-    this.awardsOnPostList = await RemoteServices.getAwardsOnThisPost(
-      this.post.id
-    );
-    this.awardsOnPostList.sort((a, b) => {
+    setTimeout(this.updateAwards, 10);
+    this.post.awards.sort((a, b) => {
       if (a.award.item.description > b.award.item.description) {
         return 1;
       }
       if (a.award.item.description < b.award.item.description) {
         return -1;
       }
-      return 1;
+      return 0;
     });
-    this.post.awards = this.awardsOnPostList;
+    clearTimeout();
+  }
+
+  async created() {
+    await this.updateAwards();
+  }
+
+  valueForProgress() {
+    if (this.post.downvotes == 0 && this.post.upvotes != 0) {
+      return 100;
+    }
+    if (this.post.upvotes == 0) {
+      return 0;
+    } else {
+      let upvotes = this.post.upvotes;
+      let downvotes = this.post.downvotes;
+      return (upvotes / (upvotes + downvotes)) * 100;
+    }
   }
 }
 </script>

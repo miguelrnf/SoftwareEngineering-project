@@ -295,6 +295,7 @@ public class User implements UserDetails, DomainEntity {
 
     public void removeItem(UserItem item) {
         this.items.remove(item);
+        item.setUser(null);
     }
 
     public Integer getNumberOfTeacherQuizzes() {

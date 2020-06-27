@@ -102,10 +102,6 @@ export default class AwardPostDialog extends Vue {
   numGolds: number = 0;
   numPlatinums: number = 0;
 
-  async shopRedirect() {
-    await this.$router.push({ name: 'shop-home' });
-  }
-
   async getAwards() {
     for (let i = 0; i < this.userAwardsInventory.length; i++) {
       if (this.userAwardsInventory[i].type == 'SILVER') {
@@ -135,7 +131,7 @@ export default class AwardPostDialog extends Vue {
             this.userAwardsInventory[i]
           );
           this.numSilvers = this.numSilvers - 1;
-          post2.awards = this.post.awards;
+          this.post.awards = post2.awards;
           this.userAwardsInventory = await RemoteServices.getAwards();
           break;
         }
@@ -148,7 +144,7 @@ export default class AwardPostDialog extends Vue {
             this.userAwardsInventory[i]
           );
           this.numGolds = this.numGolds - 1;
-          post2.awards = this.post.awards;
+          this.post.awards = post2.awards;
           this.userAwardsInventory = await RemoteServices.getAwards();
           break;
         }
@@ -161,14 +157,14 @@ export default class AwardPostDialog extends Vue {
             this.userAwardsInventory[i]
           );
           this.numPlatinums = this.numPlatinums - 1;
-          post2.awards = this.post.awards;
+          this.post.awards = post2.awards;
           this.userAwardsInventory = await RemoteServices.getAwards();
           break;
         }
       }
     }
-    await this.updateLoggedUser();
   }
+
 
   async created() {
     this.userAwardsInventory = await RemoteServices.getAwards();

@@ -14,7 +14,6 @@ public class UserItemDto implements Serializable {
     private String description;
     private String icon;
     private String color;
-    private Integer userId;
 
     public UserItemDto() {
     }
@@ -25,7 +24,6 @@ public class UserItemDto implements Serializable {
         this.description = item.getDescription();
         this.icon = item.getIcon();
         this.color = item.getColor();
-        this.userId = item.getUser().getId();
     }
 
     public Integer getId() {
@@ -66,13 +64,5 @@ public class UserItemDto implements Serializable {
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 }
