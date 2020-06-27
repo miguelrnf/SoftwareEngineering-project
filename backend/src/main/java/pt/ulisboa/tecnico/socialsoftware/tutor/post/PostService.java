@@ -69,6 +69,9 @@ public class PostService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PostDto submitPost(PostQuestionDto postQuestionDto) {
         User user = checkIfUserExistsByUsername(postQuestionDto.getUser().getUsername());
+        if (postQuestionDto.getQuestion() == null) {
+            throw new TutorException(INVALID_CONTENT_FOR_QUESTION);
+        }
 
         checkIfUserHasRoleStudent(user);
         Question question = checkIfQuestionExists(postQuestionDto);
