@@ -165,7 +165,6 @@ export default class AwardPostDialog extends Vue {
     }
   }
 
-
   async created() {
     this.userAwardsInventory = await RemoteServices.getAwards();
     await this.getAwards();

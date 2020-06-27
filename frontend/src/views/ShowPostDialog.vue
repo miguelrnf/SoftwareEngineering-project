@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-app-bar height="65%" dense color="primary" class="">
-        <v-col cols="3">
+        <v-col cols="3" class="mx-n3">
           <v-toolbar-title class="white--text text-left my-n1">{{
             post.question.question.title
           }}</v-toolbar-title>
@@ -35,30 +35,42 @@
             </v-row>
           </v-col>
         </v-col>
-        <div
-          v-for="award in post.awards"
-          :key="award.award.item.id"
-        >
+        <div v-for="awards in post.awards" :key="awards.award.type">
           <v-badge
-            v-if="award.award.type !== 'PLATINUM'"
-            class="font-weight-bold"
-            offset-y="30"
-            offset-x="20"
-            color=""
-            :content="'x' + award.number"
-            ><v-icon class="px-3" :color="award.award.item.color" small>{{
-              award.award.item.icon
-            }}</v-icon>
-          </v-badge>
-          <v-badge
-            v-if="award.award.type === 'PLATINUM'"
+            v-if="awards.award.type === 'PLATINUM'"
             class="font-weight-bold"
             offset-y="34"
             offset-x="23"
             color=""
-            :content="'x' + award.number"
-            ><v-icon class="px-3" :color="award.award.item.color" medium>{{
-              award.award.item.icon
+            :content="'x' + awards.number"
+            ><v-icon class="px-3" :color="awards.award.item.color" medium>{{
+              awards.award.item.icon
+            }}</v-icon>
+          </v-badge>
+        </div>
+        <div v-for="awards in post.awards" :key="awards.award.type">
+          <v-badge
+            v-if="awards.award.type === 'GOLD'"
+            class="font-weight-bold"
+            offset-y="30"
+            offset-x="20"
+            color=""
+            :content="'x' + awards.number"
+            ><v-icon class="px-3" :color="awards.award.item.color" small>{{
+              awards.award.item.icon
+            }}</v-icon>
+          </v-badge>
+        </div>
+        <div v-for="awards in post.awards" :key="awards.award.type">
+          <v-badge
+            v-if="awards.award.type === 'SILVER'"
+            class="font-weight-bold"
+            offset-y="30"
+            offset-x="20"
+            color=""
+            :content="'x' + awards.number"
+            ><v-icon class="px-3" :color="awards.award.item.color" small>{{
+              awards.award.item.icon
             }}</v-icon>
           </v-badge>
         </div>
@@ -174,7 +186,7 @@
       :post="post"
       :dialog="awardDialog"
       v-on:close-buy-awards-dialog="onCloseAwardDialog()"
-      v-on:timeupdate="updateAwards()"
+      v-on:timeupdate="getNumberOfAwards()"
     />
   </v-dialog>
 </template>
@@ -193,6 +205,7 @@ import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
 import AwardPostDialog from '@/views/AwardPostDialog.vue';
 import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 import EditPostDialog from '@/views/EditPostDialog.vue';
+import { ShopItem } from '@/models/management/ShopItem';
 
 @Component({
   components: {
@@ -217,7 +230,7 @@ export default class ShowPostDialog extends Vue {
   typingComment: boolean = false;
   typingReply: boolean = false;
   awardsList: PostAwardItem[] = [];
-  awardsOnPostList: AwardsPerPost[] = [];
+  shopAwards: ShopItem[] = [];
 
   async submitAnswer(answer: string) {
     if (answer != '') {
@@ -269,8 +282,6 @@ export default class ShowPostDialog extends Vue {
   onCloseAwardDialog() {
     this.buyAwardsDialog = false;
     this.awardDialog = false;
-    setTimeout(this.updateAwards, 300);
-    clearTimeout();
   }
 
   async getUserAwards() {
@@ -280,22 +291,8 @@ export default class ShowPostDialog extends Vue {
       : this.awardPostDialog();
   }
 
-  async updateAwards() {
-    setTimeout(this.updateAwards, 10);
-    this.post.awards.sort((a, b) => {
-      if (a.award.item.description > b.award.item.description) {
-        return 1;
-      }
-      if (a.award.item.description < b.award.item.description) {
-        return -1;
-      }
-      return 0;
-    });
-    clearTimeout();
-  }
-
   async created() {
-    await this.updateAwards();
+    this.shopAwards = await RemoteServices.getShopItems();
   }
 
   valueForProgress() {
