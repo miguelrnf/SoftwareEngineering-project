@@ -48,7 +48,7 @@
             }}</v-icon>
           </v-badge>
         </div>
-        <div v-for="awards in post.awards" :key="awards.award.type">
+        <div v-for="awards in post.awards" :key="awards.award.item.id">
           <v-badge
             v-if="awards.award.type === 'GOLD'"
             class="font-weight-bold"
@@ -61,7 +61,7 @@
             }}</v-icon>
           </v-badge>
         </div>
-        <div v-for="awards in post.awards" :key="awards.award.type">
+        <div v-for="awards in post.awards" :key="awards.award.item.name">
           <v-badge
             v-if="awards.award.type === 'SILVER'"
             class="font-weight-bold"

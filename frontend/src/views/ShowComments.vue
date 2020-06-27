@@ -54,11 +54,11 @@
           data-cy="replyBox"
         />
         <div v-for="child in c.children" :key="child.id" class="mb-5">
-          <v-divider class="mx-auto" />
-          <div class="headline grey--text font-weight-bold text-left ml-3">
+          <v-divider class="mx-12" />
+          <div class="subtitle-1 grey--text font-weight-bold text-left ml-3 px-8">
             {{ c.user.username.concat(' replied:') }}
           </div>
-          <div class="text-left ml-5 mt-3">
+          <div class="text-left ml-5 mt-3 px-8">
             {{ child.comment }}
           </div>
         </div>
