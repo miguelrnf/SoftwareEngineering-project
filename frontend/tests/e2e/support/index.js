@@ -16,3 +16,7 @@
 // Import commands.js using ES2015 syntax:
 import './login';
 import './commands';
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  return false;
+});

@@ -127,6 +127,53 @@
         </v-container>
       </v-col>
     </v-row>
+    <v-dialog v-model="show" hide-overlay persistent width="300">
+      <v-card
+        style=" position: absolute; top: 9%"
+        max-width="20%"
+        color="primary"
+      >
+        <v-card-text
+          style="font-size: large; font-weight: bold"
+          class="white--text py-3"
+        >
+          Wait a moment
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="ma-0 mt-2"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="show2"
+      transition="dialog-bottom-transition"
+      hide-overlay
+      width="300"
+    >
+      <v-card
+        elevation="5"
+        class="pa-2"
+        style=" position: absolute; top: 9%"
+        max-width="20%"
+        color="success darken-2"
+      >
+        <v-card-text
+          style="font-size: x-large; font-weight: bold"
+          class="white--text pt-3"
+        >
+          Thank you for shopping with us!
+        </v-card-text>
+
+        <v-card-text style="font-size: medium" class="white--text">
+          Your purchase of {{ last }} <br />
+          was successfully processed and <br />
+          is now ready to be used! <br />
+        </v-card-text>
+        <v-btn dark text @click="show2 = false">Close</v-btn>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -144,6 +191,9 @@ export default class ShopHomeView extends Vue {
   numHint: number = 0;
   numFifty: number = 0;
   numRightAns: number = 0;
+  show: boolean = false;
+  show2: boolean = false;
+  last: string = '';
 
   categories = [
     { value: 'THEME', title: 'Themes', icon: 'fas fa-paint-roller' },
@@ -154,6 +204,10 @@ export default class ShopHomeView extends Vue {
 
   categoryItems: ShopItem[] = [];
   shopItems: ShopItem[] = [];
+
+  loader() {
+    setTimeout(() => ((this.show = false), (this.show2 = true)), 1500);
+  }
 
   async created() {
     await this.$store.dispatch('loading');
@@ -171,12 +225,17 @@ export default class ShopHomeView extends Vue {
   async buyItem(item: ShopItem) {
     await this.$store.dispatch('loading');
     try {
+      this.last = item.name;
+      this.show = true;
       await RemoteServices.buyItem(item.id);
+      this.loader();
       await this.$store.dispatch('updateUser');
       this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
       this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
       this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
     } catch (error) {
+      this.show2 = false;
+      this.show = false;
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');

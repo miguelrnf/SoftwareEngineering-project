@@ -47,7 +47,7 @@
           <v-icon left>question_answer</v-icon>
           Suggestions
         </v-tab>
-        <v-tab>
+        <v-tab data-cy="tournaments">
           <v-icon left>fas fa-trophy</v-icon>
           Tournaments
         </v-tab>
