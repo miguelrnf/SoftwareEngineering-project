@@ -25,7 +25,9 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import { Student } from '@/models/management/Student';
 import { ShopItem } from '@/models/management/ShopItem';
 import { Leaderboards } from '@/models/management/Leaderboards';
+import { Theme } from '@/models/management/Theme';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
+
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -863,6 +865,41 @@ export default class RemoteServices {
       .get(`/users/update/theme/${themeName}`)
       .then(response => {
         return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCurrentTheme(): Promise<Theme> {
+    return httpClient
+      .get('/users/currentTheme')
+      .then(response => {
+        return new Theme(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getOwnedThemes(): Promise<string[]> {
+    return httpClient
+      .get('/users/themes/owned')
+      .then(response => {
+        return response.data;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getThemes(): Promise<Theme[]> {
+    return httpClient
+      .get('/users/themes')
+      .then(response => {
+        return response.data.map((theme: any) => {
+          return new Theme(theme);
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

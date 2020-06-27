@@ -14,10 +14,21 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.ShopService;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PowerUpItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ThemeItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ThemeItemDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.repository.ShopRepository;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
@@ -33,6 +44,12 @@ public class UserService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private ShopService shopService;
+
+    @Autowired
+    private ShopRepository shopRepository;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
@@ -155,6 +172,43 @@ public class UserService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ThemeItemDto getCurrentTheme(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        List<UserItem> temp = searchTheme(user);
+
+
+        if (temp.isEmpty()){
+            ShopItem defaultTheme = shopRepository.findShopItemByName("Default Light").orElseThrow(() -> new TutorException(DEFAULT_THEME_MISSING));
+            shopService.buyShopItem(user.getUsername(),defaultTheme.getId());
+            temp = searchTheme(user);
+        }
+
+
+        if (temp.size() > 1 || !(temp.get(0) instanceof ThemeItem))
+            throw new TutorException(INVALID_THEME);
+
+
+        return new ThemeItemDto((ThemeItem) temp.get(0));
+    }
+
+    private List<UserItem> searchTheme(User user){
+        return user.getItems().stream().filter(userItem -> userItem.getName().equals(user.getCurrentTheme())).collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<String> userOwnedThemes(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        return user.getItems().stream().filter(userItem -> userItem instanceof ThemeItem).collect(Collectors.toList())
+                .stream().map(UserItem::getName).collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public UserDto getLoggedUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -180,7 +234,18 @@ public class UserService {
         }).collect(Collectors.toList());
     }
 
-        @Retryable(
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ThemeItemDto> getUserThemes(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        List<UserItem> temp = user.getItems().stream().filter(userItem -> userItem instanceof ThemeItem).collect(Collectors.toList());
+        return temp.stream().map(userItem -> new ThemeItemDto((ThemeItem) userItem)).collect(Collectors.toList());
+    }
+
+    @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)

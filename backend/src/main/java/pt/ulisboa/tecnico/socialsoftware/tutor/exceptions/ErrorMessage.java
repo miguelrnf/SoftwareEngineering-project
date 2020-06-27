@@ -149,7 +149,8 @@ public enum ErrorMessage {
     NON_EXISTING_ITEM_ID("The item with id %d does not exist in the shop"),
     INVALID_THEME("The provided theme is not valid"),
     INVALID_ITEM_TYPE("The item type %s does not exist"),
-    NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop");
+    NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop"),
+    DEFAULT_THEME_MISSING("The default theme is missing, please ask the admin to add it");
 
     public final String label;
 
