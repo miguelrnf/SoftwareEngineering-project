@@ -110,7 +110,7 @@ class RedirectDuplicatePostPerformanceTest extends Specification {
 
 
         when: "redirecting 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postDto.setKey(i)
             postService.redirect(postDto, postAnswered, user_1)
         }

@@ -81,7 +81,7 @@ class CommentPostPerformanceTest extends Specification {
 
 
         when: "commenting 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             commentDto.setKey(i)
             postDto.setKey(i)
             postService.postComment(commentDto)

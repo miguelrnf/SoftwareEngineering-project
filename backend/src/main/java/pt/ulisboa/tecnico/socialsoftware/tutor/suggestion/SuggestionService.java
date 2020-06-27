@@ -150,13 +150,9 @@ public class SuggestionService {
 
         courseExecutionRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = checkIfUserExists(username);
-
-
         Suggestion suggestion = checkIfSuggestionExists(suggestionId);
 
-
         suggestion.remove(user.getRole());
-
         suggestionRepository.delete(suggestion);
 
         return new SuggestionDto(suggestion);

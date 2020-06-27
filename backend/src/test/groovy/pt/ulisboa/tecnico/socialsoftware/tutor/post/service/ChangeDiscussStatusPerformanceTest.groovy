@@ -102,7 +102,7 @@ class ChangeDiscussStatusPerformanceTest extends Specification {
         postAnswer2.setTeacherAnswer("VALID_ANSWER")
 
         when: "3000 posts get discuss status changed"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postDto.setKey(i)
             postQuestion2.setPost(postDto)
             postAnswer2.setPost(postDto)

@@ -652,8 +652,8 @@ public class User implements UserDetails, DomainEntity {
                 ", quizAnswers=" + quizAnswers +
                 ", courseExecutions=" + courseExecutions +
                 ", tournaments=" + tournaments +
-                ", postQuestions=" + postQuestions +
-                ", suggestions=" + suggestions +
+                ", postQuestions=" + postQuestions.size() +
+                ", suggestions=" + suggestions.size() +
                 '}';
     }
 }
