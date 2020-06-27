@@ -100,14 +100,6 @@
           </template>
           <span>Edit Answer</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="$store.getters.isTeacher">
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="redirectPost(item)"
-              >cached</v-icon
-            >
-          </template>
-          <span>Redirect Post</span>
-        </v-tooltip>
         <v-tooltip bottom v-if="(isOwner(item) || isTeacher()) && (item.comments.length === 0)">
           <template v-slot:activator="{ on }">
             <v-icon

@@ -175,6 +175,12 @@
       :post="post"
       v-on:close-edit-post-dialog="onCloseEditPost"
     />
+    <edit-answer-dialog
+      v-if="post && post.answer"
+      v-model="editAnswerDialog"
+      :post="post"
+      v-on:close-edit-answer-dialog="onCloseEditAnswerDialog()"
+    />
     <buy-awards-dialog
       v-model="buyAwardsDialog"
       :post="post"
@@ -186,7 +192,6 @@
       :post="post"
       :dialog="awardDialog"
       v-on:close-buy-awards-dialog="onCloseAwardDialog()"
-      v-on:timeupdate="getNumberOfAwards()"
     />
   </v-dialog>
 </template>
@@ -203,9 +208,8 @@ import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
 import BuyAwardsDialog from '@/views/BuyAwardsDialog.vue';
 import AwardPostDialog from '@/views/AwardPostDialog.vue';
-import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 import EditPostDialog from '@/views/EditPostDialog.vue';
-import { ShopItem } from '@/models/management/ShopItem';
+import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 
 @Component({
   components: {
@@ -215,6 +219,7 @@ import { ShopItem } from '@/models/management/ShopItem';
     'buy-awards-dialog': BuyAwardsDialog,
     'award-post-dialog': AwardPostDialog,
     'edit-post-dialog': EditPostDialog,
+    'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons
   }
 })
@@ -230,7 +235,6 @@ export default class ShowPostDialog extends Vue {
   typingComment: boolean = false;
   typingReply: boolean = false;
   awardsList: PostAwardItem[] = [];
-  shopAwards: ShopItem[] = [];
 
   async submitAnswer(answer: string) {
     if (answer != '') {
@@ -262,6 +266,10 @@ export default class ShowPostDialog extends Vue {
     this.editPostDialog = false;
   }
 
+  onCloseEditAnswerDialog() {
+    this.editAnswerDialog = false;
+  }
+
   editAnswer() {
     this.editAnswerDialog = true;
   }
@@ -289,10 +297,6 @@ export default class ShowPostDialog extends Vue {
     this.awardsList.length === 0
       ? this.buyAwardDialog()
       : this.awardPostDialog();
-  }
-
-  async created() {
-    this.shopAwards = await RemoteServices.getShopItems();
   }
 
   valueForProgress() {
