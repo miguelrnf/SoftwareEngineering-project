@@ -68,7 +68,7 @@ public class Suggestion {
     @JoinColumn(name = "user_id")
     private User student;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "suggestion", fetch = FetchType.EAGER)
     private List<Option> options = new ArrayList<>();
 
     public Suggestion() {
@@ -231,14 +231,14 @@ public class Suggestion {
             canRemove();
         }
 
-
-        getTopicsList().forEach(topic -> topic.getSuggestions().remove(this));
-        getTopicsList().clear();
-        getOptions().forEach(option -> option.setSuggestion(null));
-        getOptions().clear();
-        getCourse().getSuggestions().remove(this);
-        courseExecution = null;
-
+        this.topics.forEach(topic -> topic.getSuggestions().remove(this));
+        this.topics = null;
+        this.options.forEach(option -> option.setSuggestion(null));
+        this.options = null;
+        this.courseExecution.getSuggestions().remove(this);
+        this.courseExecution = null;
+        this.student.getSuggestions().remove(this);
+        this.student = null;
     }
 
     private void canRemove() {
@@ -280,7 +280,7 @@ public class Suggestion {
                 ", teacherExplanation='" + teacherExplanation + '\'' +
                 ", creationDate='" + creationDate + '\'' +
                 ", status='" + status + '\'' +
-                ", student=" + student.getUsername() +
+                ", student=" + student + '\'' +
                 ", options=" + options +
                 ", isprivate=" + isPrivate +
                 ", title='" + title + '\'' +

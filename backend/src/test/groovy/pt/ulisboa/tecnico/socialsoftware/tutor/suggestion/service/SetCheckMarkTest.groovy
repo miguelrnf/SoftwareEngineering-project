@@ -232,10 +232,11 @@ class SetCheckMarkTest extends Specification{
 
         suggestionDto = suggestionService.createSuggestion(courseExecution.getId(),suggestionDto)
 
-        def result = suggestionService.setCheckMark(courseExecution.getId(), suggestionDto, new UserDto(VALID_T as User))
+        def result = suggestionService.setCheckMark(courseExecution.getId(), suggestionDto
+                , VALID_T.getUsername())
 
         then:
-        result.getCheckMark() == true
+        result.getCheckMark()
 
 
     }

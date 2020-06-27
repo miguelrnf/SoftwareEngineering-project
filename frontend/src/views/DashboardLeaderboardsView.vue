@@ -179,6 +179,7 @@ export default class DashboardLeaderboardsView extends Vue {
       ? (bestScores = this.stats.bestScores)
       : (bestScores = []);
     this.shuffleArray(bestScores);
+    
     this.bestScoreStats = [
       ['Name', 'Score'],
       [bestScores[0].name, bestScores[0].score],
@@ -272,6 +273,7 @@ export default class DashboardLeaderboardsView extends Vue {
     this.mostTournamentsParticipated = [
       ['Name', 'Tournaments Participated'],
       [
+              mostTournamentsParticipated[0] !== undefined ?
         mostTournamentsParticipated[0].name,
         mostTournamentsParticipated[0].numberOfPTournamentsParticipated
       ],
