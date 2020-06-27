@@ -82,6 +82,7 @@
                       color="primary"
                       @click="buyItem(item)"
                       :disabled="hasItem(item)"
+                      :key="reload"
                     >
                       Buy
                     </v-btn>
@@ -127,6 +128,7 @@
     </v-dialog>
     <v-dialog
       v-model="show2"
+      retain-focus
       transition="dialog-bottom-transition"
       hide-overlay
       width="300"
@@ -183,6 +185,7 @@ export default class ShopHomeView extends Vue {
   themeDialog: boolean = false;
   colors: string[] | undefined;
   themes: string[] | undefined;
+  reload: number = 0;
 
   categories = [
     { value: 'THEME', title: 'Themes', icon: 'fas fa-paint-roller' },
@@ -232,6 +235,8 @@ export default class ShopHomeView extends Vue {
       this.numRightAns = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
       this.numHint = await RemoteServices.getNumOfPowerUp('HINT');
       this.numFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+      this.themes = await RemoteServices.getOwnedThemes();
+      this.reload += 1;
     } catch (error) {
       this.show2 = false;
       this.show = false;

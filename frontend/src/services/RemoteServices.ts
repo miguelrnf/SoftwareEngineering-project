@@ -28,7 +28,6 @@ import { Leaderboards } from '@/models/management/Leaderboards';
 import { Theme } from '@/models/management/Theme';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
 
-
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
@@ -1371,9 +1370,7 @@ export default class RemoteServices {
 
   static async getAwards(): Promise<PostAwardItem[]> {
     return httpClient
-      .get(
-        '/users/updateAwards'
-      )
+      .get('/users/updateAwards')
       .then(response => {
         return response.data.map((awards: any) => {
           return new PostAwardItem(awards);
@@ -1383,7 +1380,6 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-
 
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {

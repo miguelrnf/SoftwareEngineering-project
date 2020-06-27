@@ -1,7 +1,5 @@
 import Course from '@/models/user/Course';
 import Post from '@/models/management/Post';
-import { PostComment } from '@/models/management/PostComment';
-import { UserItem } from '@/models/management/UserItem';
 
 interface CourseMap {
   [key: string]: Course[];

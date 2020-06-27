@@ -1,7 +1,6 @@
 import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
-import { PostAwardItem } from '@/models/management/PostAwardItem';
 import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 
 export default class Post {

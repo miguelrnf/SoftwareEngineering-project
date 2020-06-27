@@ -43,10 +43,10 @@
 
 
 <script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-import Post from '@/models/management/Post';
+  import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+  import Post from '@/models/management/Post';
 
-@Component
+  @Component
 export default class BuyAwardDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Post, required: true }) readonly post!: Post;
