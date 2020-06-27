@@ -1,15 +1,10 @@
 <template>
   <div class="container">
-    <v-card :dark="dark" light="!dark">
+    <v-card :dark="dark" :light="!dark">
       <v-container>
         <p>Create Item</p>
-        <v-btn-toggle v-model="toggle" mandatory class="button-group">
-          <v-btn value="THEME" text>Theme</v-btn>
-          <v-btn value="POWER_UP" text>Power Up</v-btn>
-          <v-btn value="POST_AWARD" text>Post Award</v-btn>
-        </v-btn-toggle>
       </v-container>
-      <v-container v-if="toggle !== ''">
+      <v-container>
         <v-row>
           <v-col cols="10">
             <v-text-field
@@ -42,7 +37,7 @@
           rows="1"
         />
       </v-container>
-      <v-container v-if="toggle === 'THEME'">
+      <v-container>
         <v-row :justify="'center'">
           <v-col cols="3">
             <v-color-picker
@@ -94,12 +89,6 @@
           Create item
         </v-btn>
       </v-container>
-      <v-container v-if="toggle === 'POWER_UP'">
-        <v-card-title>Currently cannot be added</v-card-title>
-      </v-container>
-      <v-container v-if="toggle === 'POST_AWARD'">
-        <v-card-title>To be implemented</v-card-title>
-      </v-container>
     </v-card>
   </div>
 </template>
@@ -111,7 +100,6 @@ import { ShopItem } from '@/models/management/ShopItem';
 
 @Component
 export default class CreateShopItem extends Vue {
-  toggle: string = '';
   name: string = '';
   content: string = '';
   description: string = '';
@@ -177,7 +165,7 @@ export default class CreateShopItem extends Vue {
     this.shopItem.description = this.description;
     this.shopItem.price = this.price;
     this.shopItem.name = this.name;
-    this.shopItem.type = this.toggle;
+    this.shopItem.type = 'THEME';
     this.shopItem.content =
       this.dark +
       ';' +
