@@ -135,6 +135,14 @@
                 <v-list-item-title>Posts</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/classroom">
+              <v-list-item-action>
+                <v-icon>fas fa-chalkboard-teacher</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Classroom</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -252,6 +260,16 @@
             </v-list-item>
           </v-list>
         </v-menu>
+
+        <v-btn
+                to="/classroom/home"
+                v-if="isStudent && currentCourse"
+                text dark
+                data-cy="classroom"
+        >
+          Classroom
+          <v-icon>fas fa-chalkboard-teacher</v-icon>
+        </v-btn>
 
         <v-btn
           to="/study/home"
@@ -437,6 +455,14 @@
               <v-list-item-title>Posts List</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/classroom">
+            <v-list-item-action>
+              <v-icon>fas fa-chalkboard-teacher</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Classroom</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list-group>
 
         <!-- Student Group-->
@@ -544,12 +570,23 @@
           </v-list-item-content>
         </v-list-item>
 
+
+
         <v-list-item to="/study/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
             <v-icon>fas fa-book-reader</v-icon>
           </v-list-item-action>
           <v-list-item-content class="mobileTitle">
             Study
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/student/classroom" v-if="isStudent && currentCourse">
+          <v-list-item-action>
+            <v-icon>fas fa-chalkboard-teacher</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+            Classroom
           </v-list-item-content>
         </v-list-item>
 

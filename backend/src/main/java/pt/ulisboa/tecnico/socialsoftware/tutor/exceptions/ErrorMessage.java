@@ -25,6 +25,8 @@ public enum ErrorMessage {
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
+    BAD_SETTINGS_VALUES("the total as to be 100 %"),
+    BAD_SETTINGS_SCALE("bad scale"),
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
@@ -117,6 +119,19 @@ public enum ErrorMessage {
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),
 
+    //classroom
+    INVALID_TITLE_FOR_CLASSROOM("Invalid title"),
+    INVALID_TITLE_FOR_DOCUMENT("Invalid title"),
+    NO_STATUS("no initial status"),
+    NO_CHANGED_STATUS("no changed status"),
+    NO_TYPE("no initial type"),
+    NO_DOCUMENT_TYPE("no doc type given"),
+    CLASSROOM_NOT_FOUND("classroom not found"),
+    DOCUMENT_NOT_FOUND("document not found - doc id"),
+    INVALID_CLASSROOM_ID("invalid classroom id"),
+    NO_DATE("no date"),
+    NO_CONTENT("no content for type doc"),
+    NO_URL("no url for type video"),
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),
@@ -148,6 +163,8 @@ public enum ErrorMessage {
     INVALID_THEME("The provided theme is not valid"),
     INVALID_ITEM_TYPE("The item type %s does not exist"),
     NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop");
+
+
 
     public final String label;
 

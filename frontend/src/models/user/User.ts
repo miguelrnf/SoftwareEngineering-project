@@ -22,6 +22,8 @@ export default class User {
   numberOfPTournamentsParticipated!: number;
   postsUpvoted: Post[] | null = null;
   postsDownvoted: Post[] | null = null;
+  grade!: number;
+
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -43,6 +45,8 @@ export default class User {
           this.coursesNumber += this.courses[name].length;
         }
       }
+      this.grade = jsonObj.grade;
+
       if (jsonObj.postsUpvoted != null) {
         this.postsUpvoted = jsonObj.postsUpvoted.map(
           (postsUpvoted: Post) => new Post(postsUpvoted)
