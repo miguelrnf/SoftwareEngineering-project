@@ -32,8 +32,12 @@
             <v-spacer />
             <v-tooltip left>
               <template v-slot:activator="{ on }">
-                <v-icon v-on="on" @click="writeReply(c)" class="mx-0 pa-0" data-cy="replyButton"
-                >fas fa-reply</v-icon
+                <v-icon
+                  v-on="on"
+                  @click="writeReply(c)"
+                  class="mx-0 pa-0"
+                  data-cy="replyButton"
+                  >fas fa-reply</v-icon
                 >
               </template>
               <span>Reply</span>
@@ -55,8 +59,10 @@
         />
         <div v-for="child in c.children" :key="child.id" class="mb-5">
           <v-divider class="mx-12" />
-          <div class="subtitle-1 grey--text font-weight-bold text-left ml-3 px-8">
-            {{ c.user.username.concat(' replied:') }}
+          <div
+            class="subtitle-1 grey--text font-weight-bold text-left ml-3 px-8"
+          >
+            {{ child.user.username.concat(' replied:') }}
           </div>
           <div class="text-left ml-5 mt-3 px-8">
             {{ child.comment }}
