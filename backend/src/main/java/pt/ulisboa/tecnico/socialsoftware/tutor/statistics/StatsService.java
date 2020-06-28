@@ -92,7 +92,7 @@ public class StatsService {
 
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
-
+        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
         statsDto.setApproveSuggestions(user.getNumberApprovedSuggestions());
         statsDto.setPendingSuggestions(user.getNumberToApproveSuggestions());
@@ -103,6 +103,7 @@ public class StatsService {
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
+        statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
@@ -162,7 +163,6 @@ public class StatsService {
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
-
 
         statsDto.setApproveSuggestions(user.getNumberApprovedSuggestions());
         statsDto.setPendingSuggestions(user.getNumberToApproveSuggestions());

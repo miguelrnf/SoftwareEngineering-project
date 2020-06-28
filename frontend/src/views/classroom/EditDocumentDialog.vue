@@ -156,7 +156,7 @@ import ToggleButton from 'vue-js-toggle-button';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import { getIdFromURL } from 'vue-youtube-embed';
-import { LazyYoutubeVideo } from 'vue-lazy-youtube-video';
+import LazyYoutubeVideo from 'vue-lazy-youtube-video';
 import 'vue-lazy-youtube-video/dist/style.css';
 import Classroom from '@/models/management/Classroom';
 import Document from '@/models/management/Document';
@@ -281,8 +281,8 @@ export default class EditDocumentDialog extends Vue {
   }
 
   previewVideo(): string {
-    this.videoId = getIdFromURL(this.editDocument.url);
     let tempvar = this.videoBase;
+    this.videoId = getIdFromURL(this.editDocument.url);
     tempvar = tempvar + this.videoId;
     this.preview = true;
     return tempvar;
