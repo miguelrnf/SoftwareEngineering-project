@@ -137,17 +137,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
-import { GChart } from 'vue-google-charts';
-import { Leaderboards } from '@/models/management/Leaderboards';
-import User from '@/models/user/User';
-import Post from '@/models/management/Post';
-import { PostQuestion } from '@/models/management/PostQuestion';
-import { PostAnswer } from '@/models/management/PostAnswer';
-import Course from '@/models/user/Course';
+  import { Component, Vue } from 'vue-property-decorator';
+  import RemoteServices from '@/services/RemoteServices';
+  import { GChart } from 'vue-google-charts';
+  import { Leaderboards } from '@/models/management/Leaderboards';
+  import User from '@/models/user/User';
+  import Post from '@/models/management/Post';
+  import { PostQuestion } from '@/models/management/PostQuestion';
+  import { PostAnswer } from '@/models/management/PostAnswer';
+  import Course from '@/models/user/Course';
 
-interface CourseMap {
+  interface CourseMap {
   [key: string]: Course[];
 }
 
@@ -190,7 +190,7 @@ export default class DashboardLeaderboardsView extends Vue {
     dashboardPrivate: false,
     postsUpvoted: [],
     postsDownvoted: [],
-    grade: 0
+    grade: 0,
   };
 
   defaultPost: Post = {
@@ -204,7 +204,8 @@ export default class DashboardLeaderboardsView extends Vue {
     discussStatus: false,
     postPrivacy: false,
     answerPrivacy: false,
-    downvotes: 0
+    downvotes: 0,
+    awards: []
   };
 
   chartOptions = {
