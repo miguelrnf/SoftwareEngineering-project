@@ -195,7 +195,7 @@ export default class CreateShopItem extends Vue {
     this.shopItem = new ShopItem();
     this.shopItem.description = this.description;
     this.shopItem.price = this.price;
-    this.shopItem.name = this.name.replace(/;/g, '');
+    this.shopItem.name = this.name.replace(/[^A-Za-z0-9\s]/g, '');
     this.shopItem.type = 'THEME';
     this.shopItem.content =
       this.dark +

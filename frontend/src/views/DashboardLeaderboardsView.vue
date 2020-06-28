@@ -211,11 +211,20 @@ export default class DashboardLeaderboardsView extends Vue {
   chartOptions = {
     subtitle: '',
     backgroundColor: this.$vuetify.theme.currentTheme.background,
-    legend: { position: 'none' },
-    tooltip: { textStyle: { fontSize: '14' } }
+    tooltip: { textStyle: { fontSize: '14' } },
+    legend: {
+      position: 'none'
+    },
+    hAxis: {
+      textStyle: {
+        color: this.$vuetify.theme.currentTheme.font,
+        fontSize: 14
+      }
+    }
   };
 
   async created() {
+    console.log(this.$vuetify.theme.currentTheme.font);
     this.stats = await RemoteServices.getLeaderboards();
 
     this.getStats();
