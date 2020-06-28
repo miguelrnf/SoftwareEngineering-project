@@ -598,7 +598,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/student/classroom" v-if="isStudent && currentCourse">
+        <v-list-item to="/classroom/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
             <v-icon>fas fa-chalkboard-teacher</v-icon>
           </v-list-item-action>
