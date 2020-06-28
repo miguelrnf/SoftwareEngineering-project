@@ -2,12 +2,12 @@ import User from '@/models/user/User';
 import Post from '@/models/management/Post';
 
 export class Leaderboards {
-  bestScores: User[] | null = [];
-  mostApprovedSuggestions: User[] | null = [];
-  mostPosts: User[]| null = [];
-  mostQuizzesSolved: User[]| null = [];
-  mostTournamentsParticipated: User[]| null = [];
-  mostUpvotedPosts: Post[]| null = [];
+  bestScores: User[]  = [];
+  mostApprovedSuggestions: User[]  = [];
+  mostPosts: User[] = [];
+  mostQuizzesSolved: User[] = [];
+  mostTournamentsParticipated: User[] = [];
+  mostUpvotedPosts: Post[] = [];
 
   constructor(jsonObj?: Leaderboards) {
     if (jsonObj) {
