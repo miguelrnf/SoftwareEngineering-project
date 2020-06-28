@@ -66,16 +66,16 @@
 </template>
 
 <script lang="ts">
-  import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import ToggleButton from 'vue-js-toggle-button';
-  import Image from '@/models/management/Image';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import 'vue-lazy-youtube-video/dist/style.css';
-  import Classroom from '@/models/management/Classroom';
-  import StatementQuiz from '@/models/statement/StatementQuiz';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import ToggleButton from 'vue-js-toggle-button';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import 'vue-lazy-youtube-video/dist/style.css';
+import Classroom from '@/models/management/Classroom';
+import StatementQuiz from '@/models/statement/StatementQuiz';
 
-  Vue.use(ToggleButton);
+Vue.use(ToggleButton);
 
 @Component({
   components: {}

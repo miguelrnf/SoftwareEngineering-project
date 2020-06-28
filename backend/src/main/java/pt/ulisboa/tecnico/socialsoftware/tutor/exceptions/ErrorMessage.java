@@ -91,6 +91,8 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_STATUS("Tournament is %s"),
     TOURNAMENT_INVALID_TYPE("You only can use power ups in standard tournament "),
     TOURNAMENT_NOT_ENOUGH_POINTS("You don't have enough points to enroll this tournament "),
+    INVALID_POWER_UP("You don't have that power up"),
+
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
@@ -156,13 +158,15 @@ public enum ErrorMessage {
 
     //shop errors
     NOT_ENOUGH_ACHANDOS("You currently do not have enough achandos to buy this item"),
-    CANT_ADD_POWER_UP("The new item cannot be a power up"),
+    CANT_ADD_ITEM("The new item must be a theme"),
+    ITEM_NOT_CONSISTENT("Field %s of the item is not consistent"),
     CANT_REMOVE_POWER_UP("You cannot remove a power up"),
     ITEM_ALREADY_EXISTS("The item %s is already in the shop"),
     NON_EXISTING_ITEM_ID("The item with id %d does not exist in the shop"),
     INVALID_THEME("The provided theme is not valid"),
     INVALID_ITEM_TYPE("The item type %s does not exist"),
-    NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop");
+    NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop"),
+    DEFAULT_THEME_MISSING("The default theme is missing, please ask the admin to add it");
 
 
 

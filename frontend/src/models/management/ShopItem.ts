@@ -1,10 +1,3 @@
-import Assessment from '@/models/management/Assessment';
-import { Student } from '@/models/management/Student';
-import { ISOtoString } from '@/services/ConvertDateService';
-import StatementQuiz from '@/models/statement/StatementQuiz';
-import SolvedQuiz from '@/models/statement/SolvedQuiz';
-import User from '@/models/user/User';
-
 export class ShopItem {
   id!: number;
   name!: string;

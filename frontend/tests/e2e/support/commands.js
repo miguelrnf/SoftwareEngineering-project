@@ -75,7 +75,13 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('deleteTournament', title => {
   cy.contains(title)
-    .get('[data-cy="id"]')
+    .parent()
+    .should('have.length', 1)
+    .parent()
+    .should('have.length', 1)
+    .parent()
+    .should('have.length', 1)
+    .find('[data-cy="id"]')
     .then($span => {
       const id = parseInt($span.text());
       cy.request('GET', 'http://localhost:8080/auth/demo/student').then(
@@ -132,10 +138,19 @@ Cypress.Commands.add(
     if (isStudentCreate) {
       cy.contains('Tournament').click();
       cy.get('[data-cy="create"]').click();
+      cy.get('.v-app-bar > .v-toolbar__content').click('bottomLeft');
     }
 
     if (isEdit) {
-      cy.get('[data-cy="edit"]').click();
+      cy.contains(title)
+        .parent()
+        .should('have.length', 1)
+        .parent()
+        .should('have.length', 1)
+        .parent()
+        .should('have.length', 1)
+        .find('[data-cy="edit"]')
+        .click();
     }
 
     cy.get('[data-cy="title"]').type(title);
@@ -174,9 +189,10 @@ Cypress.Commands.add('createInvalidTournament', (tile, numbQuestions) => {
   let year2019 = '.flex-wrap > :nth-child(7)';
   let yearConc =
     '#conclusionDateInput-picker-container-DatePicker > .calendar > .datepicker-controls > .datepicker-container-label > :nth-child(2) > .custom-button > .custom-button-content';
-
   cy.contains('Tournament').click();
   cy.contains('Create').click();
+  cy.get('.v-app-bar > .v-toolbar__content').click('bottomLeft');
+
   cy.get('[data-cy="title"]').type(tile);
   cy.get('[data-cy="AssessmentTitle"]')
     .contains('Third mini-test')
@@ -232,9 +248,19 @@ Cypress.Commands.add('listAllTournaments', () => {
 Cypress.Commands.add('signInSignOut', title => {
   cy.contains(title)
     .parent()
+    .should('have.length', 1)
+    .parent()
+    .should('have.length', 1)
+    .parent()
+    .should('have.length', 1)
     .find('[data-cy="details"]')
     .click();
   cy.get('[data-cy="sign"]').click();
+});
+
+Cypress.Commands.add('findTournamentDashboard', title => {
+  cy.get('[data-cy="tournaments"]').click({ force: true });
+  cy.contains(title).click();
 });
 
 Cypress.Commands.add('cancel', title => {
@@ -242,24 +268,9 @@ Cypress.Commands.add('cancel', title => {
     .parent()
     .get('[data-cy="cancel"]')
     .click();
+  cy.wait(100);
+  cy.on('window:confirm', () => true);
 });
-
-Cypress.Commands.add('assertT', title => {
-  cy.contains(title)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 1);
-});
-
-Cypress.Commands.add('assertAvailableEnrolled', title => {
-  cy.contains(title)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 5);
-});
-
 //##############################TOURNAMENTS FEATURE END##########################################
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

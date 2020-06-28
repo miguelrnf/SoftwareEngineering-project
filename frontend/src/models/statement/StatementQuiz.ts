@@ -18,7 +18,7 @@ export default class StatementQuiz {
   answers: StatementAnswer[] = [];
   private lastTimeCalled: number = Date.now();
   private timerId!: number;
-  evaluation!: boolean
+  evaluation!: boolean;
 
   constructor(jsonObj?: StatementQuiz) {
     if (jsonObj) {

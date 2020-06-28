@@ -133,32 +133,32 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import { GChart } from 'vue-google-charts';
-  import StudentStats from '@/models/statement/StudentStats';
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { GChart } from 'vue-google-charts';
+import StudentStats from '@/models/statement/StudentStats';
 
-  @Component({
+@Component({
   components: {
     GChart
   }
 })
 export default class DashboardStatsView extends Vue {
-    stats: StudentStats =  {
-      approveSuggestions: 0,
-      correctAnswers: 0,
-      improvedCorrectAnswers: 0,
-      pendingSuggestions: 0,
-      postSubmitted: 0,
-      rejectedSuggestions: 0,
-      totalAnswers: 0,
-      totalAvailableQuestions: 0,
-      totalQuizzes: 0,
-      totalUniqueQuestions: 0,
-      tournamentDone: 0,
-      uniqueCorrectAnswers: 0,
-      uniqueWrongAnswers: 0
-    }
+  stats: StudentStats = {
+    approveSuggestions: 0,
+    correctAnswers: 0,
+    improvedCorrectAnswers: 0,
+    pendingSuggestions: 0,
+    postSubmitted: 0,
+    rejectedSuggestions: 0,
+    totalAnswers: 0,
+    totalAvailableQuestions: 0,
+    totalQuizzes: 0,
+    totalUniqueQuestions: 0,
+    tournamentDone: 0,
+    uniqueCorrectAnswers: 0,
+    uniqueWrongAnswers: 0
+  };
   wrongAnswers: number | null = null;
   correctAnswers: number | null = null;
 

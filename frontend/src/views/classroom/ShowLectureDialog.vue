@@ -266,20 +266,20 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import Image from '@/models/management/Image';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import Classroom from '@/models/management/Classroom';
-  import Document from '@/models/management/Document';
-  import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
-  import LazyYoutubeVideo from 'vue-lazy-youtube-video';
-  import StatementQuiz from '@/models/statement/StatementQuiz';
-  import EditSelectedQuizzesDialog from '@/views/classroom/EditSelectedQuizzesDialog.vue';
-  import StatementManager from '@/models/statement/StatementManager';
-  import SolvedQuiz from '@/models/statement/SolvedQuiz';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Classroom from '@/models/management/Classroom';
+import Document from '@/models/management/Document';
+import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
+import LazyYoutubeVideo from 'vue-lazy-youtube-video';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import EditSelectedQuizzesDialog from '@/views/classroom/EditSelectedQuizzesDialog.vue';
+import StatementManager from '@/models/statement/StatementManager';
+import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
-  @Component({
+@Component({
   components: {
     'edit-document-dialog': EditDocumentDialog,
     'edit-selected-quizzes-dialog': EditSelectedQuizzesDialog,

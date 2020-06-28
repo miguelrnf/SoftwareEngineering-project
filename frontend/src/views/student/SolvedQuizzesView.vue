@@ -50,7 +50,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementManager from '@/models/statement/StatementManager';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 

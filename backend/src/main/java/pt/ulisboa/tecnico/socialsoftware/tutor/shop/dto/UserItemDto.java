@@ -4,8 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
 
 import java.io.Serializable;
 
-
-public class UserItemDTO implements Serializable {
+public class UserItemDto implements Serializable {
     private Integer id;
     private String name;
     private String description;
@@ -13,15 +12,14 @@ public class UserItemDTO implements Serializable {
     private String color;
     private Integer userId;
 
-    public UserItemDTO() {}
+    public UserItemDto() {}
 
-    public UserItemDTO(UserItem item) {
+    public UserItemDto(UserItem item) {
         this.id = item.getId();
         this.name = item.getName();
         this.description = item.getDescription();
         this.icon = item.getIcon();
-        this.color = item.getName();
-        this.userId = item.getUser().getId();
+        this.color = item.getColor();
     }
 
     public Integer getId() {
@@ -73,7 +71,15 @@ public class UserItemDTO implements Serializable {
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
                 ", color='" + color + '\'' +
-                ", userId=" + userId +
                 '}';
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+
     }
 }

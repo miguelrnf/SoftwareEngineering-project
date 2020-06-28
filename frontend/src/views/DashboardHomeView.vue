@@ -47,7 +47,7 @@
           <v-icon left>question_answer</v-icon>
           Suggestions
         </v-tab>
-        <v-tab>
+        <v-tab data-cy="tournaments">
           <v-icon left>fas fa-trophy</v-icon>
           Tournaments
         </v-tab>
@@ -142,23 +142,23 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import PostPreview from '@/views/PostPreview.vue';
-  import TournamentPreview from '@/views/TournamentPreview.vue';
-  import Post from '@/models/management/Post';
-  import PostViewDialog from '@/views/ShowPostDialog.vue';
-  import Suggestion from '@/models/management/Suggestion';
-  import { Tournament } from '@/models/management/Tournament';
-  import StudentDashboardView from '@/views/StudentDashboardView.vue';
-  import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
-  import User from '@/models/user/User';
-  import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
-  import SuggsPreview from '@/views/SuggsPreview.vue';
-  import DashboardStatsView from '@/views/DashboardStatsView.vue';
-  import DashboardLeaderboardsView from '@/views/DashboardLeaderboardsView.vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import PostPreview from '@/views/PostPreview.vue';
+import TournamentPreview from '@/views/TournamentPreview.vue';
+import Post from '@/models/management/Post';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
+import Suggestion from '@/models/management/Suggestion';
+import { Tournament } from '@/models/management/Tournament';
+import StudentDashboardView from '@/views/StudentDashboardView.vue';
+import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
+import User from '@/models/user/User';
+import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
+import SuggsPreview from '@/views/SuggsPreview.vue';
+import DashboardStatsView from '@/views/DashboardStatsView.vue';
+import DashboardLeaderboardsView from '@/views/DashboardLeaderboardsView.vue';
 
-  @Component({
+@Component({
   components: {
     'post-preview': PostPreview,
     'tournament-preview': TournamentPreview,

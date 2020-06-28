@@ -1,6 +1,5 @@
 import Course from '@/models/user/Course';
 import Post from '@/models/management/Post';
-import { PostComment } from '@/models/management/PostComment';
 
 interface CourseMap {
   [key: string]: Course[];
@@ -24,7 +23,6 @@ export default class User {
   postsDownvoted: Post[] | null = null;
   grade!: number;
 
-
   constructor(jsonObj?: User) {
     if (jsonObj) {
       this.name = jsonObj.name;
@@ -37,7 +35,8 @@ export default class User {
       this.numberofsuggestionsapproved = jsonObj.numberofsuggestionsapproved;
       this.numberOfQuizzesSolved = jsonObj.numberOfQuizzesSolved;
       this.numberOfPostsSubmitted = jsonObj.numberOfPostsSubmitted;
-      this.numberOfPTournamentsParticipated = jsonObj.numberOfPTournamentsParticipated;
+      this.numberOfPTournamentsParticipated =
+        jsonObj.numberOfPTournamentsParticipated;
 
       if (jsonObj.courses) {
         for (let [name, courses] of Object.entries(jsonObj.courses)) {

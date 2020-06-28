@@ -1,15 +1,10 @@
 <template>
   <div class="container">
-    <v-card :dark="dark" light="!dark">
+    <v-card :dark="dark" :light="!dark">
       <v-container>
         <p>Create Item</p>
-        <v-btn-toggle v-model="toggle" mandatory class="button-group">
-          <v-btn value="THEME" text>Theme</v-btn>
-          <v-btn value="POWER_UP" text>Power Up</v-btn>
-          <v-btn value="POST_AWARD" text>Post Award</v-btn>
-        </v-btn-toggle>
       </v-container>
-      <v-container v-if="toggle !== ''">
+      <v-container>
         <v-row>
           <v-col cols="10">
             <v-text-field
@@ -18,6 +13,7 @@
               label="*Name"
               counter
               maxlength="50"
+              @change="button = false"
             />
           </v-col>
           <v-col cols="2">
@@ -42,7 +38,7 @@
           rows="1"
         />
       </v-container>
-      <v-container v-if="toggle === 'THEME'">
+      <v-container>
         <v-row :justify="'center'">
           <v-col cols="3">
             <v-color-picker
@@ -90,17 +86,39 @@
             >
           </v-col>
         </v-row>
-        <v-btn @click="createTheme" depressed :color="primary">
+        <v-btn
+          @click="createTheme"
+          :disabled="button"
+          depressed
+          :color="primary"
+        >
           Create item
         </v-btn>
       </v-container>
-      <v-container v-if="toggle === 'POWER_UP'">
-        <v-card-title>Currently cannot be added</v-card-title>
-      </v-container>
-      <v-container v-if="toggle === 'POST_AWARD'">
-        <v-card-title>To be implemented</v-card-title>
-      </v-container>
     </v-card>
+    <v-dialog
+      v-model="show"
+      transition="dialog-bottom-transition"
+      hide-overlay
+      width="300"
+    >
+      <v-card
+        class="pa-2"
+        style=" position: absolute; top: 9%"
+        max-width="25%"
+        color="success darken-2"
+      >
+        <v-card-text
+          style="font-size: large; font-weight: bold"
+          class="white--text pt-3"
+        >
+          Item created with success! <br />
+          It is now available in the shop!
+        </v-card-text>
+
+        <v-btn dark text @click="show = false">Close</v-btn>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -111,12 +129,11 @@ import { ShopItem } from '@/models/management/ShopItem';
 
 @Component
 export default class CreateShopItem extends Vue {
-  toggle: string = '';
   name: string = '';
   content: string = '';
   description: string = '';
   selected: number = 0;
-  price: number = 0;
+  price: number = 1;
   color: string = '#FFFFFF';
   primary: string = '#FFFFFF';
   secondary: string = '#FFFFFF';
@@ -127,6 +144,8 @@ export default class CreateShopItem extends Vue {
   error: string = '#FFFFFF';
   dark: boolean = false;
   shopItem: ShopItem | null = null;
+  show: boolean = false;
+  button: boolean = false;
 
   created() {
     if (this.$vuetify.theme.currentTheme.primary != undefined)
@@ -177,7 +196,7 @@ export default class CreateShopItem extends Vue {
     this.shopItem.description = this.description;
     this.shopItem.price = this.price;
     this.shopItem.name = this.name;
-    this.shopItem.type = this.toggle;
+    this.shopItem.type = 'THEME';
     this.shopItem.content =
       this.dark +
       ';' +
@@ -197,6 +216,8 @@ export default class CreateShopItem extends Vue {
 
     try {
       await RemoteServices.createShopTheme(this.shopItem);
+      this.button = true;
+      this.show = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

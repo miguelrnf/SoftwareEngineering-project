@@ -2,8 +2,8 @@ import User from '@/models/user/User';
 import Post from '@/models/management/Post';
 
 export class Leaderboards {
-  bestScores: User[]  = [];
-  mostApprovedSuggestions: User[]  = [];
+  bestScores: User[] = [];
+  mostApprovedSuggestions: User[] = [];
   mostPosts: User[] = [];
   mostQuizzesSolved: User[] = [];
   mostTournamentsParticipated: User[] = [];

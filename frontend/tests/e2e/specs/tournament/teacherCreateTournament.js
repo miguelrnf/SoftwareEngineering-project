@@ -8,11 +8,9 @@ describe('Teacher walkthrough', () => {
     cy.contains('Logout').click();
   });
 
-  it('login and edit a Tournament', () => {
+  it('login and creates a Tournament', () => {
     cy.getTeacherTournament();
     cy.createTournament('Demo tournament', '30', false, false);
-    cy.createTournament('Demo tournament Edited', '10', false, true);
-    cy.assertT('Demo tournament Edited');
-    cy.deleteTournament('Demo tournament Edited');
+    cy.deleteTournament('Demo tournament');
   });
 });

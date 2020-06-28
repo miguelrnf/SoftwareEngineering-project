@@ -74,7 +74,7 @@ class EditAnswerPerformanceTest extends Specification {
 
         def pqDto = new PostQuestionDto()
         pqDto.setUser(new UserDto(user2))
-        def postDto = new PostDto()
+        def postDto = new PostDto(post1)
         postDto.setQuestion(pqDto)
         pqDto.setPost(postDto)
         def postADto = new PostAnswerDto()

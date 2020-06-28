@@ -36,77 +36,81 @@
       </v-row>
     </v-card>
     <v-card>
-    <div class="power-up" v-if="this.showPowerUps">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="mx-9 my-3"
-            outlined
-            large
-            fab
-            color="primary"
-            v-on="on"
-            @click="removeTwoOptions"
-            :disabled="fiftyFifty"
-          >
-            <span class="fifty">50:50</span>
-          </v-btn>
-        </template>
-        <span>Eliminate two answers</span>
-      </v-tooltip>
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="mx-9 my-3"
-            outlined
-            large
-            fab
-            color="primary"
-            v-on="on"
-            @click.stop="getHint"
-            :disabled="usedHint || disableHint"
-          >
-            <v-icon class="pa-0">far fa-lightbulb</v-icon>
-          </v-btn>
+      <div class="power-up" v-if="this.showPowerUps">
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="mx-9 my-3"
+              outlined
+              large
+              fab
+              color="primary"
+              v-on="on"
+              @click="removeTwoOptions"
+              :disabled="fiftyFifty"
+            >
+              <span class="fifty">50:50</span>
+            </v-btn>
+          </template>
+          <span>Eliminate two answers</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="mx-9 my-3"
+              outlined
+              large
+              fab
+              color="primary"
+              v-on="on"
+              @click="getHint"
+              :disabled="
+                usedHint ||
+                  !statementQuiz.questions[questionOrder].hasHint ||
+                  disableHint
+              "
+            >
+              <v-icon class="pa-0">far fa-lightbulb</v-icon>
+            </v-btn>
 
-          <v-dialog v-model="dialog" max-width="290">
-            <v-card>
-              <v-card-title class="headline">Hint</v-card-title>
+            <v-dialog v-model="dialog" max-width="290">
+              <v-card>
+                <v-card-title class="headline">Hint</v-card-title>
 
-              <v-card-text>
-                {{ hint }}
-              </v-card-text>
+                <v-card-text>
+                  {{ hint }}
+                </v-card-text>
 
-              <v-card-actions>
-                <v-spacer></v-spacer>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
 
-                <v-btn color="green darken-1" text @click="dialog = false">
-                  Close
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </template>
-        <span>Hint</span>
-      </v-tooltip>
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="mx-9 my-3"
-            outlined
-            large
-            fab
-            color="primary"
-            v-on="on"
-            @click="rigthAnswer"
-            :disabled="rightAns"
-          >
-            <v-icon class="pa-0">fas fa-check</v-icon>
-          </v-btn>
-        </template>
-        <span>Get Correct answer</span>
-      </v-tooltip>
-    </div>
+                  <v-btn color="green darken-1" text @click="dialog = false">
+                    Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </template>
+          <span>Hint</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="mx-9 my-3"
+              outlined
+              large
+              fab
+              color="primary"
+              v-on="on"
+              @click="rigthAnswer"
+              :disabled="rightAns"
+            >
+              <v-icon class="pa-0">fas fa-check</v-icon>
+            </v-btn>
+          </template>
+          <span>Get Correct answer</span>
+        </v-tooltip>
+      </div>
     </v-card>
     <v-card height="45px" class="question-navigation">
       <v-row :justify="'center'" class="navigation-buttons">
@@ -238,14 +242,14 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-  import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
-  import StatementManager from '@/models/statement/StatementManager';
-  import RemoteServices from '@/services/RemoteServices';
-  import StatementQuiz from '@/models/statement/StatementQuiz';
-  import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
+import StatementManager from '@/models/statement/StatementManager';
+import RemoteServices from '@/services/RemoteServices';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
-  @Component({
+@Component({
   components: {
     'question-component': QuestionComponent
   }
@@ -255,7 +259,7 @@ export default class QuizView extends Vue {
   readonly statementManager1!: StatementManager;
   statementManager: StatementManager = StatementManager.getInstance;
   statementQuiz: StatementQuiz | null =
-  StatementManager.getInstance.statementQuiz;
+    StatementManager.getInstance.statementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   nextConfirmationDialog: boolean = false;
@@ -284,7 +288,11 @@ export default class QuizView extends Vue {
         try {
           await RemoteServices.startQuiz(this.statementQuiz?.id);
           await this.getQuizType();
-          if (this.showPowerUps) await this.disHint();
+          if (this.showPowerUps) {
+            await this.haveFifty();
+            await this.haveHint();
+            await this.haveRightAnswer();
+          }
         } catch (error) {
           await this.$store.dispatch('error', error);
           await this.$router.push({ path: '/student/available-quizzes' });
@@ -321,6 +329,7 @@ export default class QuizView extends Vue {
         );
         this.fiftyFifty = true;
         this.show = false;
+        await this.haveFifty();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -338,6 +347,7 @@ export default class QuizView extends Vue {
           this.questionOrder
         ] = await RemoteServices.rigthAnswer(question, this.statementQuiz.id);
         this.rightAns = true;
+        await this.haveRightAnswer();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -378,6 +388,7 @@ export default class QuizView extends Vue {
         this.dialog = true;
       }
       this.usedHint = true;
+      await this.haveHint();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -387,7 +398,6 @@ export default class QuizView extends Vue {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.questionOrder += 1;
-      if (this.showPowerUps) this.disHint();
     }
     this.nextConfirmationDialog = false;
   }
@@ -396,7 +406,6 @@ export default class QuizView extends Vue {
     if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
       this.questionOrder -= 1;
-      if (this.showPowerUps) this.disHint();
     }
   }
 
@@ -487,6 +496,36 @@ export default class QuizView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
+  async haveHint() {
+    let numbOfHint;
+
+    if (this.usedHint || this.disableHint) return;
+
+    numbOfHint = await RemoteServices.getNumOfPowerUp('HINT');
+
+    if (numbOfHint <= 0) this.disableHint = true;
+  }
+
+  async haveFifty() {
+    let numbOfFifty;
+
+    if (this.fiftyFifty) return;
+
+    numbOfFifty = await RemoteServices.getNumOfPowerUp('FIFTYFIFTY');
+
+    if (numbOfFifty <= 0) this.fiftyFifty = true;
+  }
+
+  async haveRightAnswer() {
+    let numbOfRight;
+
+    if (this.rightAns) return;
+
+    numbOfRight = await RemoteServices.getNumOfPowerUp('RIGHTANSWER');
+
+    if (numbOfRight <= 0) this.rightAns = true;
+  }
+
   calculateTime() {
     if (this.statementQuiz) {
       this.statementQuiz.answers[this.questionOrder].timeTaken +=
@@ -502,4 +541,3 @@ export default class QuizView extends Vue {
   font-size: large;
 }
 </style>
-

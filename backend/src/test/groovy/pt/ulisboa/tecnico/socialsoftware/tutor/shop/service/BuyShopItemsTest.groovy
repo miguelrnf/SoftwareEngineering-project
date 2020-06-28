@@ -6,10 +6,8 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.ShopService
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ShopItemDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.repository.ShopRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository

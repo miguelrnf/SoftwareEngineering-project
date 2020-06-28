@@ -7,7 +7,6 @@ declare module 'vue-qrcode';
 declare module 'vue-google-charts';
 declare module 'vue-lazy-youtube-video';
 
-
 declare module '*.vue' {
   import Vue from 'vue';
   export default Vue;

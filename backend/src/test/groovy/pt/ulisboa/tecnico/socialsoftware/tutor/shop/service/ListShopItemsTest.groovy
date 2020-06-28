@@ -4,29 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.PostQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.ShopService
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.ShopItem
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.repository.ShopRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
-import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 @DataJpaTest
 class ListShopItemsTest extends Specification {

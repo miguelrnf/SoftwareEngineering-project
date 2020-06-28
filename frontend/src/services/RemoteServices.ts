@@ -25,6 +25,9 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import { Student } from '@/models/management/Student';
 import { ShopItem } from '@/models/management/ShopItem';
 import { Leaderboards } from '@/models/management/Leaderboards';
+import { Theme } from '@/models/management/Theme';
+import { PostAwardItem } from '@/models/management/PostAwardItem';
+import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 import Classroom from '@/models/management/Classroom';
 import Document from '@/models/management/Document';
 import EvalSettings from '@/models/management/EvalSettings';
@@ -47,7 +50,6 @@ httpClient.interceptors.request.use(
   },
   error => Promise.reject(error)
 );
-
 
 export default class RemoteServices {
   static async fenixLogin(code: string): Promise<AuthDto> {
@@ -615,7 +617,6 @@ export default class RemoteServices {
   }
 
   //----------------------------------------------------
-
   static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient
       .put(
@@ -851,6 +852,19 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getShopItems(): Promise<ShopItem[]> {
+    return httpClient
+      .get('shop')
+      .then(response => {
+        return response.data.map((shopItem: any) => {
+          return new ShopItem(shopItem);
         });
       })
       .catch(async error => {
@@ -1150,6 +1164,41 @@ export default class RemoteServices {
       });
   }
 
+  static async getCurrentTheme(): Promise<Theme> {
+    return httpClient
+      .get('/users/currentTheme')
+      .then(response => {
+        return new Theme(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getOwnedThemes(): Promise<string[]> {
+    return httpClient
+      .get('/users/themes/owned')
+      .then(response => {
+        return response.data;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getThemes(): Promise<Theme[]> {
+    return httpClient
+      .get('/users/themes')
+      .then(response => {
+        return response.data.map((theme: any) => {
+          return new Theme(theme);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async updateUser(): Promise<User> {
     return httpClient
       .get('/users/update')
@@ -1400,6 +1449,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getNumOfPowerUp(type: String): Promise<number> {
+    return httpClient
+      .get(`/users/numberPowerUps/${type}`)
+      .then(response => {
+        return response.data as number;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async changeDiscussStatus(id: number): Promise<Post> {
     return httpClient
       .put(
@@ -1429,6 +1489,17 @@ export default class RemoteServices {
   static async createShopTheme(theme: ShopItem) {
     return httpClient
       .post('shop/add', theme)
+      .then(response => {
+        return new ShopItem(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async buyItem(itemId: number) {
+    return httpClient
+      .put(`shop/buy/${itemId}`)
       .then(response => {
         return new ShopItem(response.data);
       })
@@ -1567,11 +1638,53 @@ export default class RemoteServices {
       });
   }
 
-  static async updateVotes(): Promise<User> {
+  static async updateLoggedUser(): Promise<User> {
     return httpClient
       .get('/users/update')
       .then(response => {
         return new User(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async award(id: number, award: PostAwardItem): Promise<Post> {
+    return httpClient
+      .put(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/award`,
+        award
+      )
+      .then(response => {
+        return new Post(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAwards(): Promise<PostAwardItem[]> {
+    return httpClient
+      .get('/users/updateAwards')
+      .then(response => {
+        return response.data.map((awards: any) => {
+          return new PostAwardItem(awards);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAwardsOnThisPost(id: number): Promise<AwardsPerPost[]> {
+    return httpClient
+      .get(
+        `executions/${Store.getters.getCurrentCourse.courseExecutionId}/posts/${id}/getAwards`
+      )
+      .then(response => {
+        return response.data.map((awards: any) => {
+          return new AwardsPerPost(awards);
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

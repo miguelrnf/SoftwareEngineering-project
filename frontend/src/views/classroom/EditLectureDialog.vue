@@ -51,18 +51,18 @@
 </template>
 
 <script lang="ts">
-  import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import ToggleButton from 'vue-js-toggle-button';
-  import User from '@/models/user/User';
-  import Image from '@/models/management/Image';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import { getIdFromURL } from 'vue-youtube-embed';
-  import LazyYoutubeVideo from 'vue-lazy-youtube-video';
-  import 'vue-lazy-youtube-video/dist/style.css';
-  import Classroom from '@/models/management/Classroom';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import ToggleButton from 'vue-js-toggle-button';
+import User from '@/models/user/User';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import { getIdFromURL } from 'vue-youtube-embed';
+import LazyYoutubeVideo from 'vue-lazy-youtube-video';
+import 'vue-lazy-youtube-video/dist/style.css';
+import Classroom from '@/models/management/Classroom';
 
-  Vue.use(ToggleButton);
+Vue.use(ToggleButton);
 
 @Component({
   components: {

@@ -23,25 +23,29 @@
         outlined
         class="mx-auto"
       >
-        <div class="headline grey--text font-weight-bold text-left ml-3">
+        <div class="body-1 grey--text font-weight-bold text-left ml-3">
           {{ c.user.username.concat(' wrote:') }}
         </div>
-        <v-divider inset class="mt-3" />
         <div class="text-left ml-5 mt-3">
           {{ c.comment }}
+          <v-card-actions v-if="c.id">
+            <v-spacer />
+            <v-tooltip left>
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  v-on="on"
+                  @click="writeReply(c)"
+                  class="mx-0 pa-0"
+                  data-cy="replyButton"
+                  >fas fa-reply</v-icon
+                >
+              </template>
+              <span>Reply</span>
+            </v-tooltip>
+          </v-card-actions>
         </div>
         <!--For the time being you cannot reply to a comment that just got posted since it has no id-->
-        <v-card-actions v-if="c.id">
-          <v-spacer />
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon v-on="on" @click="writeReply(c)" data-cy="replyButton"
-                >fas fa-reply</v-icon
-              >
-            </template>
-            <span>Reply</span>
-          </v-tooltip>
-        </v-card-actions>
+
         <v-textarea
           v-if="typingReply && selectedComment === c"
           filled
@@ -54,12 +58,13 @@
           data-cy="replyBox"
         />
         <div v-for="child in c.children" :key="child.id" class="mb-5">
-          <v-divider />
-          <div class="headline grey--text font-weight-bold text-left ml-3">
-            {{ c.user.username.concat(' replied:') }}
+          <v-divider class="mx-12" />
+          <div
+            class="subtitle-1 grey--text font-weight-bold text-left ml-3 px-8"
+          >
+            {{ child.user.username.concat(' replied:') }}
           </div>
-          <v-divider inset class="mt-3" />
-          <div class="text-left ml-5 mt-3">
+          <div class="text-left ml-5 mt-3 px-8">
             {{ child.comment }}
           </div>
         </div>

@@ -2,16 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import org.hibernate.Hibernate;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
-import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserDto implements Serializable {
@@ -34,13 +30,14 @@ public class UserDto implements Serializable {
 
 
 
+
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
-        if (user.getScore() == null )
+        if (user.getScore() == null)
             this.score = 0;
         else
             this.score = user.getScore();
@@ -61,13 +58,13 @@ public class UserDto implements Serializable {
         this.numberOfQuizzesSolved = user.getQuizAnswers().size();
         this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
-        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
+        if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()) {
             user.setCurrentTheme("Default Light");
         }
         this.currentTheme = user.getCurrentTheme();
         this.postsUpvoted = user.getPostsUpvoted() != null ? user.getPostsUpvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
-        this.postsDownvoted = user.getPostsDownvoted()!= null ? user.getPostsDownvoted().stream()
+        this.postsDownvoted = user.getPostsDownvoted() != null ? user.getPostsDownvoted().stream()
                 .map(x -> new PostDto(x, true)).collect(Collectors.toList()) : null;
     }
 

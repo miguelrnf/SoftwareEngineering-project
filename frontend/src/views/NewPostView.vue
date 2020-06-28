@@ -71,6 +71,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
 import { PostQuestion } from '@/models/management/PostQuestion';
+
 @Component
 export default class NewPostView extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
@@ -114,7 +115,6 @@ export default class NewPostView extends Vue {
   }
 
   async submitPost() {
-
     this.checkConsistency();
 
     if (this.canSubmit) {

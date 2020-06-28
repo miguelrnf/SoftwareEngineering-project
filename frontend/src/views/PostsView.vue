@@ -100,14 +100,6 @@
           </template>
           <span>Edit Answer</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="$store.getters.isTeacher">
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="redirectPost(item)"
-              >cached</v-icon
-            >
-          </template>
-          <span>Redirect Post</span>
-        </v-tooltip>
         <v-tooltip bottom v-if="isOwner(item) || isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -169,8 +161,6 @@ import EditPostDialog from './EditPostDialog.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
-import Suggestion from '@/models/management/Suggestion';
-import PostPostView from '@/views/student/PostPostView.vue';
 import NewPostView from '@/views/NewPostView.vue';
 
 @Component({
@@ -200,6 +190,7 @@ export default class PostsView extends Vue {
   postStatus: boolean = true;
   postPrivacy: boolean = false;
   answerPrivacy: boolean = false;
+  numberOfComments: number = 0;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -325,11 +316,8 @@ export default class PostsView extends Vue {
   }
 
   onCreatePost(postmalone: Post) {
-
     this.posts.push(postmalone);
     this.createPost = false;
-
-
   }
 
   isTeacher(): boolean {
@@ -351,6 +339,15 @@ export default class PostsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  numberOfCommentsOnPost() {
+    if (this.currentPost != null) {
+      if (this.currentPost.comments != null) {
+        return this.currentPost.comments.length;
+      }
+    }
+    return;
   }
 }
 </script>

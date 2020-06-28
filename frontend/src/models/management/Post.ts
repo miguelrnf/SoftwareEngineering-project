@@ -1,6 +1,7 @@
 import { PostQuestion } from '@/models/management/PostQuestion';
 import { PostAnswer } from '@/models/management/PostAnswer';
 import { PostComment } from '@/models/management/PostComment';
+import { AwardsPerPost } from '@/models/management/AwardsPerPost';
 
 export default class Post {
   id!: number;
@@ -14,6 +15,7 @@ export default class Post {
   answerPrivacy!: boolean;
   upvotes!: number;
   downvotes!: number;
+  awards!: AwardsPerPost[];
 
   constructor(jsonObj?: Post) {
     if (jsonObj) {
@@ -31,6 +33,10 @@ export default class Post {
       if (jsonObj.comments != null)
         this.comments = jsonObj.comments.map(
           (comment: PostComment) => new PostComment(comment)
+        );
+      if (jsonObj.awards != null)
+        this.awards = jsonObj.awards.map(
+          (award: AwardsPerPost) => new AwardsPerPost(award)
         );
     }
   }
