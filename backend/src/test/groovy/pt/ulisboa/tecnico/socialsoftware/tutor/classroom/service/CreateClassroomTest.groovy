@@ -226,9 +226,7 @@ class CreateClassroomTest extends Specification {
 
         then:
         classroomRepository.count() == 1L
-        documentRepository.count() == 1L
-        result.getDocuments().size() == 1
-
+        documentRepository.count() == 1
     }
 
 
