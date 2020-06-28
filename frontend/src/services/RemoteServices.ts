@@ -28,6 +28,9 @@ import { Leaderboards } from '@/models/management/Leaderboards';
 import { Theme } from '@/models/management/Theme';
 import { PostAwardItem } from '@/models/management/PostAwardItem';
 import { AwardsPerPost } from '@/models/management/AwardsPerPost';
+import Classroom from '@/models/management/Classroom';
+import Document from '@/models/management/Document';
+import EvalSettings from '@/models/management/EvalSettings';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -323,6 +326,296 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  //--------------------------classroom Remote services ------------------
+
+  static async createClassroom(params: Classroom): Promise<Classroom> {
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/create`,
+        params
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async editClassroom(params: Classroom): Promise<Classroom> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/edit`,
+        params
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async addQuizzes(params: Classroom): Promise<Classroom> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/addQuizzes`,
+        params
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeClassroomStatus(params: Classroom): Promise<Classroom> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/changeStatus`,
+        params
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async setEvaluation(
+    params: Classroom,
+    quiz: StatementQuiz
+  ): Promise<Classroom> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/${params.id}/${quiz.id}/${quiz.evaluation}`
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createDocument(params: Document): Promise<Document> {
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newDoc`,
+        params
+      )
+      .then(response => {
+        return new Document(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async uploadDoc(
+    formData: FormData,
+    document: Document
+  ): Promise<Object> {
+    httpClient.defaults.headers.post['Content-Type'] =
+      'application/octet-stream';
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newFile/${document.id}`,
+        formData.get('photos')
+      )
+      .then(response => {
+        return new Object(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getDoc(document: Document): Promise<Object> {
+    httpClient.defaults.headers.post['Content-Type'] =
+      'application/octet-stream';
+
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/getFile/${document.id}`
+      )
+      .then(response => {
+        return new Object(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async uploadDoc2(formData: FormData, document: Document) {
+    return axios({
+      method: 'post',
+      url: `http://localhost:8080/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/newFile`,
+      data: document
+      //data: formData,
+      //headers: {'Content-Type': 'multipart/form-data' }
+    })
+      .then(function(response) {
+        //handle success
+      })
+      .catch(function(response) {
+        //handle error
+        console.log(response);
+      });
+  }
+
+  static async editDocument(params: Document): Promise<Document> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/editDoc`,
+        params
+      )
+      .then(response => {
+        return new Document(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeEvalSettings(params: EvalSettings): Promise<EvalSettings> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/evalSettings`,
+        params
+      )
+      .then(response => {
+        return new EvalSettings(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  static async getEvalSettings(): Promise<EvalSettings> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/getEvalSettings`
+      )
+      .then(response => {
+        return new EvalSettings(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteClassroom(classroomId: number): Promise<Classroom> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/delete/${classroomId}`
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteClassroomQuiz(
+    classroomId: number,
+    quizId: number
+  ): Promise<Classroom> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/deleteQuiz/${classroomId}/${quizId}`
+      )
+      .then(response => {
+        return new Classroom(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteDocument(
+    classroomId: number,
+    documentId: number
+  ): Promise<Document> {
+    return httpClient
+      .delete(
+        `courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/deleteDoc/${classroomId}/${documentId}`
+      )
+      .then(response => {
+        return new Document(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getClassrooms(type: String): Promise<Classroom[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/list/${type}`
+      )
+      .then(response => {
+        return response.data.map((classroom: any) => {
+          return new Classroom(classroom);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getClassroomQuizzes(
+    classroom: Classroom
+  ): Promise<StatementQuiz[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/listQuizzes/${classroom.id}`
+      )
+      .then(response => {
+        return response.data.map((x: any) => {
+          return new StatementQuiz(x);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getClassroomSolvedQuizzes(
+    classroom: Classroom
+  ): Promise<SolvedQuiz[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseExecutionId}/classroom/listSolvedQuizzes/${classroom.id}`
+      )
+      .then(response => {
+        return response.data.map((x: any) => {
+          return new SolvedQuiz(x);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getEvalStudents(): Promise<Student[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/eval`
+      )
+      .then(response => {
+        return response.data.map((x: any) => {
+          return new Student(x);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   //----------------------------------------------------
   static updateSuggestion(sugg: Suggestion): Promise<Suggestion> {
     return httpClient

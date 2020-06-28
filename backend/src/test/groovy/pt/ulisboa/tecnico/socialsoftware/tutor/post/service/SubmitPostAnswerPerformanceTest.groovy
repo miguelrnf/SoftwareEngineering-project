@@ -76,7 +76,7 @@ class SubmitPostAnswerPerformanceTest extends Specification {
         postADto.setPost(postDto)
 
         when: "answering 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postADto.getPost().setKey(i)
             postService.answerQuestion(postADto)
         }

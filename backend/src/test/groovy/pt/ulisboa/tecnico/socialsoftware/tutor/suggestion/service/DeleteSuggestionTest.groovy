@@ -8,11 +8,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.domain.Suggestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.dto.SuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.repository.SuggestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -20,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 @DataJpaTest
 class DeleteSuggestionTest extends Specification{
@@ -96,8 +103,9 @@ class DeleteSuggestionTest extends Specification{
 
     @Shared
     def suggestion2
-
+    @Shared
     def sug
+
     def sug2
 
     def course
@@ -160,33 +168,22 @@ class DeleteSuggestionTest extends Specification{
         INVALID_TOPIC_LIST = new HashSet<Topic>();
 
         and: "a suggestion"
-        sug = new SuggestionDto()
+        sug = new Suggestion()
         sug.setStudentQuestion(SUGGESTION_CONTENT as String)
         sug.setKey(VALID_KEY)
+        sug.setCourse(courseExecution)
 
-        sug2 = new SuggestionDto()
-        sug2.setStudentQuestion(SUGGESTION_CONTENT as String)
-        sug2.setKey(VALID_KEY2)
-
-        List<TopicDto> topicsDto = new ArrayList<>();
-        for (t in VALID_TOPIC_LIST){
-            topicsDto.add(new TopicDto(t));
-        }
-        sug.setTopicsList(topicsDto)
+        sug.setTopicsList(VALID_TOPIC_LIST)
         sug.setId(VALID_ID)
-        sug.setStudent(new UserDto(userS))
+        sug.setStudent(userS)
         sug.setTitle(SUGGESTION_TITLE)
 
-        sug2.setTopicsList(topicsDto)
-        sug2.setId(VALID_ID2)
-        sug2.setStudent(new UserDto(userS))
-
-
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
+        def option = new Option()
+        option.setContent(OPTION_CONTENT)
+        option.setCorrect(true)
+        option.setSequence(1)
+        def options = new ArrayList<Option>()
+        options.add(option)
         sug.setOptions(options)
 
 
@@ -196,14 +193,14 @@ class DeleteSuggestionTest extends Specification{
         userRepository.save(userS)
         userRepository.save(userT)
         topicRepository.save(VALID_TOPIC)
-
+        suggestionRepository.save(sug)
     }
 
 
     def "valid deletion"() {
         when:
-        suggestionService.createSuggestion(courseExecution.getId(), sug)
-        suggestionService.deleteSuggestion(courseExecution.getId(), suggestionRepository.findAll().get(0).getId(), VALID_USERNAME )
+        suggestionService.deleteSuggestion(courseExecution.getId(),
+                suggestionRepository.findAll().get(0).getId(), VALID_USERNAME )
 
         then:
         suggestionRepository.findAll().size()==0

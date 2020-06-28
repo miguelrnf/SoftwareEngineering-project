@@ -18,6 +18,7 @@ export default class StatementQuiz {
   answers: StatementAnswer[] = [];
   private lastTimeCalled: number = Date.now();
   private timerId!: number;
+  evaluation!: boolean
 
   constructor(jsonObj?: StatementQuiz) {
     if (jsonObj) {
@@ -33,6 +34,7 @@ export default class StatementQuiz {
       this.timeToAvailability = jsonObj.timeToAvailability;
       this.timeToSubmission = jsonObj.timeToSubmission;
       this.timeToResults = jsonObj.timeToResults;
+      this.evaluation = jsonObj.evaluation;
 
       this.questions = jsonObj.questions.map(question => {
         return new StatementQuestion(question);

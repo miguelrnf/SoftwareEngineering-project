@@ -56,13 +56,15 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfSuggestions;
     private Integer numberOfSuggestionsApproved;
 
+    private Integer grade;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -103,6 +105,7 @@ public class User implements UserDetails, DomainEntity {
         this.key = key;
         this.role = role;
         this.score = 0;
+        this.grade = 0;
         this.creationDate = DateHandler.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfInClassQuizzes = 0;
@@ -117,6 +120,14 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfSuggestions = 0;
         this.numberOfSuggestionsApproved = 0;
         this.currentTheme = "Default Light";
+    }
+
+    public Integer getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
     }
 
     public void incrementNumberOfSuggestions() {
@@ -652,8 +663,8 @@ public class User implements UserDetails, DomainEntity {
                 ", quizAnswers=" + quizAnswers +
                 ", courseExecutions=" + courseExecutions +
                 ", tournaments=" + tournaments +
-                ", postQuestions=" + postQuestions +
-                ", suggestions=" + suggestions +
+                ", postQuestions=" + postQuestions.size() +
+                ", suggestions=" + suggestions.size() +
                 '}';
     }
 }

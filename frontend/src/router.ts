@@ -41,6 +41,8 @@ import StudyGeneralView from '@/views/StudyGeneralView.vue';
 import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 import ThemeInventory from '@/views/ThemeInventory.vue';
 import CreateShopItem from '@/views/admin/CreateShopItem.vue';
+import ClassroomHomeView from '@/views/classroom/ClassroomHomeView.vue';
+import StudentClassroomHomeView from '@/views/classroom/StudentClassroomHomeView.vue';
 
 Vue.use(Router);
 
@@ -155,6 +157,15 @@ let router = new Router({
           component: ImpExpView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - ImpExp',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'classroom',
+          name: 'classroom-management',
+          component: ClassroomHomeView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Classroom',
             requiredAuth: 'Teacher'
           }
         }
@@ -319,6 +330,23 @@ let router = new Router({
           component: ShopHomeView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Shop',
+            requiredAuth: 'Student'
+          }
+        }
+      ]
+    },
+    {
+      path: '/classroom',
+      name: 'classroom',
+      component: StudentClassroomHomeView,
+      children: [
+        {
+          path: 'home',
+          name: 'classroom-home',
+          component: ClassroomHomeView,
+
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Classroom',
             requiredAuth: 'Student'
           }
         }

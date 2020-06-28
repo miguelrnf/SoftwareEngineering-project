@@ -61,7 +61,7 @@ class ViewPostPerformanceTest extends Specification {
         }
 
         when: "viewing 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postService.viewPost(i)
         }
 

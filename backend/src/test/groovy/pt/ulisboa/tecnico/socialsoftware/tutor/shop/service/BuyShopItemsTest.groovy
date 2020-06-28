@@ -34,7 +34,7 @@ class BuyShopItemsTest extends Specification {
     public static final int VALID_PRICE_1 = 100
     public static final int VALID_PRICE_2 = 200
     public static final int VALID_PRICE_3 = 300
-    public static final String VALID_CONTENT_THEME = "1,1,1,1,1,1,1"
+    public static final String VALID_CONTENT_THEME = "1,1,1,1,1,1,1,1"
     public static final String VALID_CONTENT_POST_AWARD = "TYPE_1"
     public static final String VALID_CONTENT_POWER_UP = "TYPE_1"
 

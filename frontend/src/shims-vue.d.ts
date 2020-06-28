@@ -5,6 +5,8 @@ declare module 'vue-ctk-date-time-picker';
 declare module 'vue-qrcode-reader';
 declare module 'vue-qrcode';
 declare module 'vue-google-charts';
+declare module 'vue-lazy-youtube-video';
+
 
 declare module '*.vue' {
   import Vue from 'vue';

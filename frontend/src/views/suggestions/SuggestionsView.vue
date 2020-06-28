@@ -219,7 +219,7 @@
         </v-tooltip>
       </template>
       <template v-slot:item.checkMark="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="!isTeacher()" >
           <template v-slot:activator="{ on }">
             <v-icon
               :color="getCheckMarkColor(item.checkMark)"
@@ -325,9 +325,10 @@ export default class SuggestionsView extends Vue {
       sortable: false
     },
     {
-      text: 'Seen',
+      text: this.isTeacher()? '':'Seen',
       value: 'checkMark',
-      align: 'center'
+      align: 'center',
+      sortable: false
     }
   ];
 
@@ -366,6 +367,9 @@ export default class SuggestionsView extends Vue {
     }
   }
 
+
+
+
   getStatusColor(status: string) {
     if (status === 'REJECTED') return 'red';
     else if (status === 'TOAPPROVE') return 'yellow';
@@ -392,7 +396,10 @@ export default class SuggestionsView extends Vue {
     else return 'PUBLIC';
   }
 
-  showSuggestionDialog(sugg: Suggestion) {
+  async showSuggestionDialog(sugg: Suggestion) {
+    if ( this.isTeacher() ) {
+      await RemoteServices.setCheckMark(sugg);
+    }
     this.currentSuggestion = sugg;
     this.questionDialog = true;
   }
@@ -476,12 +483,14 @@ export default class SuggestionsView extends Vue {
       );
     } else {
       sugg.status = 'APPROVED';
+      await RemoteServices.setCheckMark(sugg);
       await RemoteServices.approveSuggestion(sugg);
     }
   }
 
   async RejectSuggestion(sugg: Suggestion) {
     if (sugg != null) {
+
       this.currentSuggestion = sugg;
     }
 
@@ -491,6 +500,7 @@ export default class SuggestionsView extends Vue {
         'You can not reject an approved suggestion'
       );
     } else {
+      await RemoteServices.setCheckMark(sugg);
       this.rejectSuggDialogue = true;
     }
   }

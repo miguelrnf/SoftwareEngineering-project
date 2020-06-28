@@ -84,7 +84,7 @@ class EditPostPerformanceTest extends Specification {
         postQuestion2.setStudentQuestion("VALID_STUDENT_QUESTION")
 
         when: "3000 posts get edited"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postDto.setKey(i)
             postQuestion2.setPost(postDto)
             postService.editPost(postQuestion2)

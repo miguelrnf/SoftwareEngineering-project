@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.api;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

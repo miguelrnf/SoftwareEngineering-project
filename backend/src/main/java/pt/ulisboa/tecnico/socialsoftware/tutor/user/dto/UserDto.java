@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import org.hibernate.Hibernate;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -25,6 +26,8 @@ public class UserDto implements Serializable {
     private Integer numberOfQuizzesSolved;
     private Integer numberOfPostsSubmitted;
     private Integer numberOfPTournamentsParticipated;
+    private Integer grade;
+
 
 
 
@@ -39,7 +42,12 @@ public class UserDto implements Serializable {
         else
             this.score = user.getScore();
 
-        if (user.getDashboardPrivate() == null)
+        if (user.getGrade() == null )
+            this.grade = 0;
+        else
+            this.grade = user.getGrade();
+
+        if(user.getDashboardPrivate() == null)
             this.isDashboardPrivate = false;
         else
             this.isDashboardPrivate = user.getDashboardPrivate();
@@ -47,7 +55,7 @@ public class UserDto implements Serializable {
         this.numberofsuggestions = user.getNumberOfSuggestions();
         this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
         this.numberOfPostsSubmitted = user.getPostQuestions().size();
-        this.numberOfQuizzesSolved = user.getQuizzes().size();
+        this.numberOfQuizzesSolved = user.getQuizAnswers().size();
         this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
         if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()) {
@@ -111,6 +119,14 @@ public class UserDto implements Serializable {
         return score;
     }
 
+    public Integer getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
+    }
+
     public void setScore(Integer score) {
         this.score = score;
     }
@@ -166,7 +182,6 @@ public class UserDto implements Serializable {
     public void setPostsDownvoted(List<PostDto> postsDownvoted) {
         this.postsDownvoted = postsDownvoted;
     }
-
 
     @Override
     public String toString() {
