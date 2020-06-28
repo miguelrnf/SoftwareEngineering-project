@@ -4,264 +4,240 @@
     @input="closeLectureDialog"
     @keydown.esc="closeLectureDialog"
     max-width="100%"
-
   >
-    <v-card  max-height="85%" class="px-5">
-        <v-row>
+    <v-card max-height="85%" class="px-5">
+      <v-row>
+        <v-card-title color="primary" class="mb-5 table">
+          <v-icon left>{{ getLectureTypeIcon() }}</v-icon>
+          {{ getLectureTypeCaps() + ' - ' + this.lecture.title }}
+        </v-card-title>
+      </v-row>
+      <v-tabs>
+        <v-tab @click="setTabName('New Document')">
+          <v-icon left>far fa-bookmark</v-icon>
+          DOCUMENTATION
+        </v-tab>
 
-          <v-card-title color="primary" class="mb-5 table" >
-            <v-icon left>{{getLectureTypeIcon()}}</v-icon>
-            {{getLectureTypeCaps() + ' - ' + this.lecture.title}}
-          </v-card-title>
+        <v-tab @click="setTabName('New Video')">
+          <v-icon left>fas fa-play</v-icon>
+          VIDEOS
+        </v-tab>
+        <v-tab @click="setTabName('New Quiz')">
+          <v-icon left>ballot</v-icon>
+          QUIZZES
+        </v-tab>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          class="mr-6"
+          v-if="teacher && doctype !== 'New Quiz'"
+          @click="newDocument"
+          >{{ this.doctype }}</v-btn
+        >
+        <v-btn
+          color="primary"
+          class="mr-6"
+          v-if="teacher && doctype === 'New Quiz'"
+          @click="newQuizSelection"
+          >{{ this.doctype }}</v-btn
+        >
+        <v-tab-item>
+          <v-list>
+            <v-list-group v-for="d in documents" :key="d.title">
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title v-text="d.title"></v-list-item-title>
+                </v-list-item-content>
+              </template>
 
-        </v-row>
-        <v-tabs >
+              <v-list-item color="primary">
+                <v-list-item-content>
+                  <v-list-item-title v-text="d.content"></v-list-item-title>
+                </v-list-item-content>
 
-            <v-tab @click="setTabName('New Document')">
-                <v-icon left>far fa-bookmark</v-icon>
-                DOCUMENTATION
-            </v-tab >
-
-            <v-tab @click="setTabName('New Video')">
-                <v-icon left>fas fa-play</v-icon>
-                VIDEOS
-            </v-tab>
-            <v-tab @click="setTabName('New Quiz')">
-                <v-icon left>ballot</v-icon>
-                QUIZZES
-            </v-tab>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" class="mr-6" v-if="teacher && doctype !== 'New Quiz'" @click="newDocument">{{this.doctype}}</v-btn>
-            <v-btn color="primary" class="mr-6" v-if="teacher && doctype === 'New Quiz' " @click="newQuizSelection">{{this.doctype}}</v-btn>
-            <v-tab-item>
-                <v-list >
-                    <v-list-group
-
-                            v-for="d in documents"
-                            :key="d.title"
-
-                    >
-                        <template v-slot:activator>
-                            <v-list-item-content >
-                                <v-list-item-title  v-text="d.title"></v-list-item-title>
-                            </v-list-item-content>
-
-
-                        </template>
-
-                        <v-list-item color="primary"
-                        >
-
-                            <v-list-item-content >
-                                <v-list-item-title  v-text="d.content"></v-list-item-title>
-                            </v-list-item-content>
-
-                            <v-icon @click="clickPdf(d)" color="primary">fas fa-file-download</v-icon>
-                            <v-icon v-if="teacher" @click="editDocument(d)" color="primary">edit</v-icon>
-                            <v-icon v-if="teacher" @click="deleteDocument(d)" color="error">delete</v-icon>
-
-
-                        </v-list-item>
-                    </v-list-group>
-                </v-list>
-            </v-tab-item>
-            <v-tab-item>
-                <v-list >
-                    <v-list-group
-
-                            v-for="v in videos"
-                            :key="v.title"
-
-                    >
-                        <template v-slot:activator>
-                            <v-list-item-content >
-                                <v-list-item-title  v-text="v.title"></v-list-item-title>
-                            </v-list-item-content>
-                        </template>
-
-                        <v-list-item color="primary"
-                        >
-
-
-                            <v-container class="test">
-                                <LazyYoutubeVideo
-                                        :src="v.url"
-                                        preview-image-size=sddefault
-                                />
-                            </v-container>
-
-
-                            <v-icon v-if="teacher" @click="editDocument(v)" color="primary">edit</v-icon>
-                            <v-icon v-if="teacher" @click="deleteDocument(v)" color="error">delete</v-icon>
-
-
-
-
-                        </v-list-item>
-                    </v-list-group>
-                </v-list>
-
-            </v-tab-item>
-            <v-tab-item v-if="teacher" >
-                <v-data-table
-
-                        :headers="headers"
-                        :custom-filter="customFilter"
-                        :items="selectedQuizzes"
-                        :search="search"
-                        multi-sort
-                        :mobile-breakpoint="0"
-                        :items-per-page="15"
-                        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-
+                <v-icon @click="clickPdf(d)" color="primary"
+                  >fas fa-file-download</v-icon
                 >
-                    <template v-slot:top>
-                        <v-card-title>
-                            <v-spacer />
-                            <v-spacer />
-                            <v-text-field
-                                    v-model="search"
-                                    append-icon="search"
-                                    label="Search Quizzes"
-                                    class="mx-2"
-                                    data-cy="search"
-                            />
+                <v-icon v-if="teacher" @click="editDocument(d)" color="primary"
+                  >edit</v-icon
+                >
+                <v-icon v-if="teacher" @click="deleteDocument(d)" color="error"
+                  >delete</v-icon
+                >
+              </v-list-item>
+            </v-list-group>
+          </v-list>
+        </v-tab-item>
+        <v-tab-item>
+          <v-list>
+            <v-list-group v-for="v in videos" :key="v.title">
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title v-text="v.title"></v-list-item-title>
+                </v-list-item-content>
+              </template>
 
-                        </v-card-title>
-                    </template >
+              <v-list-item color="primary">
+                <v-container class="test">
+                  <LazyYoutubeVideo
+                    :src="v.url"
+                    preview-image-size="sddefault"
+                  />
+                </v-container>
 
-                    <template v-slot:item.action="{ item }">
+                <v-icon v-if="teacher" @click="editDocument(v)" color="primary"
+                  >edit</v-icon
+                >
+                <v-icon v-if="teacher" @click="deleteDocument(v)" color="error"
+                  >delete</v-icon
+                >
+              </v-list-item>
+            </v-list-group>
+          </v-list>
+        </v-tab-item>
+        <v-tab-item v-if="teacher">
+          <v-data-table
+            :headers="headers"
+            :custom-filter="customFilter"
+            :items="selectedQuizzes"
+            :search="search"
+            multi-sort
+            :mobile-breakpoint="0"
+            :items-per-page="15"
+            :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          >
+            <template v-slot:top>
+              <v-card-title>
+                <v-spacer />
+                <v-spacer />
+                <v-text-field
+                  v-model="search"
+                  append-icon="search"
+                  label="Search Quizzes"
+                  class="mx-2"
+                  data-cy="search"
+                />
+              </v-card-title>
+            </template>
 
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                                <v-icon
-                                        small
-                                        class="mr-2"
-                                        v-on="on"
-                                        color="red"
-                                        @click="removeQuiz(item.id)"
+            <template v-slot:item.action="{ item }">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    color="red"
+                    @click="removeQuiz(item.id)"
+                    >delete</v-icon
+                  >
+                </template>
+                <span>Delete Quiz</span>
+              </v-tooltip>
 
-                                >delete</v-icon
-                                >
-                            </template>
-                            <span>Delete Quiz</span>
-                        </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    color="primary"
+                    @click="setEvaluation(item, true)"
+                    >fas fa-check</v-icon
+                  >
+                </template>
+                <span>Set Quiz to Evaluation</span>
+              </v-tooltip>
 
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                                <v-icon
-                                        small
-                                        class="mr-2"
-                                        v-on="on"
-                                        color="primary"
-                                        @click="setEvaluation(item, true)"
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    color="primary"
+                    @click="setEvaluation(item, false)"
+                    >fas fa-window-close</v-icon
+                  >
+                </template>
+                <span>Unset Quiz to Evaluation</span>
+              </v-tooltip>
+            </template>
+          </v-data-table>
+        </v-tab-item>
+        <v-tab-item v-if="!teacher">
+          <v-list three-line>
+            <v-row>
+              <v-col>
+                <div class="col">
+                  Title
+                </div>
+              </v-col>
 
-                                >fas fa-check</v-icon
-                                >
-                            </template>
-                            <span>Set Quiz to Evaluation</span>
-                        </v-tooltip>
-
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                                <v-icon
-                                        small
-                                        class="mr-2"
-                                        v-on="on"
-                                        color="primary"
-
-                                        @click="setEvaluation(item,false)"
-
-                                >fas fa-window-close</v-icon
-                                >
-                            </template>
-                            <span>Unset Quiz to Evaluation</span>
-                        </v-tooltip>
-
-                    </template>
-
-
-                </v-data-table>
-
-            </v-tab-item>
-            <v-tab-item v-if="!teacher" >
-                <v-list three-line>
-                    <v-row>
+              <v-col>
+                <div class="col">Available since</div>
+              </v-col>
+            </v-row>
+            <v-list-item-group>
+              <template v-for="(l, index) in selectedQuizzes">
+                <v-list-item :key="l.title" class="test1" @click="startQuiz(l)">
+                  <template>
+                    <v-list-item-content>
+                      <v-row>
                         <v-col>
-                            <div class="col">
-                                Title
-                            </div>
+                          <v-list-item-title
+                            class="test"
+                            v-text="l.title"
+                          ></v-list-item-title>
                         </v-col>
-
-                        <v-col >
-                            <div class="col">Available since</div>
+                        <v-col>
+                          <v-list-item-subtitle
+                            class="text--primary"
+                            v-text="l.availableDate"
+                          ></v-list-item-subtitle>
                         </v-col>
-                    </v-row>
-                    <v-list-item-group
+                      </v-row>
+                    </v-list-item-content>
+                  </template>
+                </v-list-item>
 
-                    >
-                        <template v-for="(l, index) in selectedQuizzes">
-                            <v-list-item :key="l.title" class="test1" @click="startQuiz(l)" >
-                                <template >
-                                    <v-list-item-content>
-                                        <v-row>
-                                            <v-col>
-                                                <v-list-item-title class="test" v-text=" l.title"></v-list-item-title>
+                <v-divider
+                  v-if="index + 1 < selectedQuizzes.length"
+                  :key="index"
+                ></v-divider>
+              </template>
 
-                                            </v-col>
-                                            <v-col>
-                                                <v-list-item-subtitle class="text--primary" v-text="l.availableDate"></v-list-item-subtitle>
-                                            </v-col>
-                                        </v-row>
+              <template v-for="(l, index) in solvedQuizzes">
+                <v-list-item :key="l.title" class="test1" @click="show(l)">
+                  <template>
+                    <v-list-item-content>
+                      <v-row>
+                        <v-col>
+                          <v-list-item-title
+                            class="test"
+                            v-text="l.statementQuiz.title"
+                          ></v-list-item-title>
+                        </v-col>
+                        <v-col>
+                          <v-list-item-subtitle
+                            class="text--primary"
+                            v-text="l.statementQuiz.availableDate"
+                          ></v-list-item-subtitle>
+                        </v-col>
+                      </v-row>
+                    </v-list-item-content>
+                  </template>
+                </v-list-item>
 
-                                    </v-list-item-content>
-
-
-                                </template>
-                            </v-list-item>
-
-                            <v-divider
-                                    v-if="index + 1 < selectedQuizzes.length"
-                                    :key="index"
-                            ></v-divider>
-                        </template>
-
-                        <template v-for="(l, index) in solvedQuizzes">
-                            <v-list-item :key="l.title" class="test1" @click="show(l)" >
-                                <template>
-                                    <v-list-item-content>
-                                        <v-row>
-                                            <v-col>
-                                                <v-list-item-title class="test" v-text=" l.statementQuiz.title"></v-list-item-title>
-
-                                            </v-col>
-                                            <v-col>
-                                                <v-list-item-subtitle class="text--primary" v-text="l.statementQuiz.availableDate"></v-list-item-subtitle>
-                                            </v-col>
-
-
-                                        </v-row>
-
-                                    </v-list-item-content>
-
-
-                                </template>
-                            </v-list-item>
-
-                            <v-divider
-                                    v-if="index + 1 < solvedQuizzes.length"
-                                    :key="index"
-                            ></v-divider>
-                        </template>
-
-
-                    </v-list-item-group>
-                </v-list>
-
-
-            </v-tab-item>
-
-        </v-tabs>
+                <v-divider
+                  v-if="index + 1 < solvedQuizzes.length"
+                  :key="index"
+                ></v-divider>
+              </template>
+            </v-list-item-group>
+          </v-list>
+        </v-tab-item>
+      </v-tabs>
 
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -269,44 +245,41 @@
           Close
         </v-btn>
       </v-card-actions>
-        <edit-document-dialog
-                v-if="current && newOrEditDialog"
-                v-model="newOrEditDialog"
-                :document="current"
-                :type="doctype"
-                :dialog="newOrEditDialog"
-                :lecture="this.lecture"
-                v-on:save-document="onSaveDocument"
-        />
-        <edit-selected-quizzes-dialog
-                v-if="lec && selectQuizBoolean"
-                v-model="selectQuizBoolean"
-                :available-quizzes="availableQuizzes"
-                :lecture="this.lecture"
-                v-on:save-selected-quizzes="onSaveQuizzes"
-        />
+      <edit-document-dialog
+        v-if="current && newOrEditDialog"
+        v-model="newOrEditDialog"
+        :document="current"
+        :type="doctype"
+        :dialog="newOrEditDialog"
+        :lecture="this.lecture"
+        v-on:save-document="onSaveDocument"
+      />
+      <edit-selected-quizzes-dialog
+        v-if="lec && selectQuizBoolean"
+        v-model="selectQuizBoolean"
+        :available-quizzes="availableQuizzes"
+        :lecture="this.lecture"
+        v-on:save-selected-quizzes="onSaveQuizzes"
+      />
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
   import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import Suggestion from '@/models/management/Suggestion';
-import RemoteServices from '@/services/RemoteServices';
-import Image from '@/models/management/Image';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import ShowSuggestion from '@/views/ShowSuggestion.vue';
-import Classroom from '@/models/management/Classroom';
-import Document from '@/models/management/Document';
-import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
+  import RemoteServices from '@/services/RemoteServices';
+  import Image from '@/models/management/Image';
+  import { convertMarkDown } from '@/services/ConvertMarkdownService';
+  import Classroom from '@/models/management/Classroom';
+  import Document from '@/models/management/Document';
+  import EditDocumentDialog from '@/views/classroom/EditDocumentDialog.vue';
   import LazyYoutubeVideo from 'vue-lazy-youtube-video';
   import StatementQuiz from '@/models/statement/StatementQuiz';
-  import {Quiz} from "@/models/management/Quiz";
   import EditSelectedQuizzesDialog from '@/views/classroom/EditSelectedQuizzesDialog.vue';
   import StatementManager from '@/models/statement/StatementManager';
-  import SolvedQuiz from "@/models/statement/SolvedQuiz";
+  import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
-@Component({
+  @Component({
   components: {
     'edit-document-dialog': EditDocumentDialog,
     'edit-selected-quizzes-dialog': EditSelectedQuizzesDialog,
@@ -319,17 +292,16 @@ export default class ShowLectureDialog extends Vue {
   @Prop({ type: String, required: true }) readonly type!: String;
   @Prop({ type: Boolean, required: true }) readonly teacher!: boolean;
 
-
-availableQuizzes : StatementQuiz[] | null=null;
+  availableQuizzes: StatementQuiz[] | null = null;
 
   doctype: string = 'New Document';
 
   selectQuizBoolean: boolean = false;
   videos: Document[] = [];
   documents: Document[] = [];
-  lec!: Classroom
-  selectedQuizzes : StatementQuiz[] | null = null;
-  solvedQuizzes : SolvedQuiz[] | null = null;
+  lec!: Classroom;
+  selectedQuizzes: StatementQuiz[] | null = null;
+  solvedQuizzes: SolvedQuiz[] | null = null;
   search: string = '';
   statementManager: StatementManager = StatementManager.getInstance;
 
@@ -347,14 +319,12 @@ availableQuizzes : StatementQuiz[] | null=null;
       value: 'availableDate',
       align: 'center'
     },
-      {
-          text: 'Actions',
-          value: 'action',
-          align: 'center',
-          sortable: false
-      },
-
-
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      sortable: false
+    }
   ];
   @Watch('newOrEditDialog')
   closeError() {
@@ -365,46 +335,32 @@ availableQuizzes : StatementQuiz[] | null=null;
 
   async created() {
     this.statementManager.reset();
-    this.documents = this.lecture.documents.filter(d => d.type != 'VIDEO')
+    this.documents = this.lecture.documents.filter(d => d.type != 'VIDEO');
 
-    this.videos = this.lecture.documents.filter(d => d.type != 'DOC')
+    this.videos = this.lecture.documents.filter(d => d.type != 'DOC');
 
     this.lec = new Classroom(this.lecture);
-      console.log(this.lec);
-
-      this.selectedQuizzes = await RemoteServices.getClassroomQuizzes(this.lec);
-      console.log(this.lec);
-
-      this.solvedQuizzes = await RemoteServices.getClassroomSolvedQuizzes(this.lec);
+    this.selectedQuizzes = await RemoteServices.getClassroomQuizzes(this.lec);
+    this.solvedQuizzes = await RemoteServices.getClassroomSolvedQuizzes(
+      this.lec
+    );
 
     this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
   }
 
-  async removeQuiz(quizId: number){
-      this.lec = await RemoteServices.deleteClassroomQuiz(this.lec.id, quizId)
-      this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
-
+  async removeQuiz(quizId: number) {
+    this.lec = await RemoteServices.deleteClassroomQuiz(this.lec.id, quizId);
+    this.availableQuizzes = await RemoteServices.getAvailableQuizzes();
   }
 
-    async show(quiz: SolvedQuiz) {
-        this.statementManager.correctAnswers = quiz.correctAnswers;
-        this.statementManager.statementQuiz = quiz.statementQuiz;
-        console.log(quiz)
-        await this.$router.push({path: '/student/results'});
-    }
+  async show(quiz: SolvedQuiz) {
+    this.statementManager.correctAnswers = quiz.correctAnswers;
+    this.statementManager.statementQuiz = quiz.statementQuiz;
+    await this.$router.push({ path: '/student/results' });
+  }
 
   closeLectureDialog() {
     this.$emit('close-show-lecture-dialog');
-  }
-
-  getLectureType() {
-    if (this.type === 'New Lecture') {
-      return 'Lecture'
-    } else if (this.type === 'New Lab') {
-      return 'Lab'
-    } else {
-      return 'Project'
-    }
   }
 
   async startQuiz(quiz: StatementQuiz) {
@@ -422,33 +378,23 @@ availableQuizzes : StatementQuiz[] | null=null;
       confirm('Are you sure you want to delete this question?')
     ) {
       try {
-        await RemoteServices.deleteDocument(this.lec.id,document.id);
+        await RemoteServices.deleteDocument(this.lec.id, document.id);
 
-        if(this.doctype == 'New Document'){
-          this.documents = this.documents.filter(
-            l => l.id != document.id
-          );
-
-        }else{
-          this.videos = this.videos.filter(
-            l => l.id != document.id
-          );
+        if (this.doctype == 'New Document') {
+          this.documents = this.documents.filter(l => l.id != document.id);
+        } else {
+          this.videos = this.videos.filter(l => l.id != document.id);
         }
-
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
     }
   }
 
-
-    async setEvaluation(q: StatementQuiz,bool: boolean){
-
-      q.evaluation = bool;
-      console.log(q)
-      await RemoteServices.setEvaluation(this.lec,q)
-
-    }
+  async setEvaluation(q: StatementQuiz, bool: boolean) {
+    q.evaluation = bool;
+    await RemoteServices.setEvaluation(this.lec, q);
+  }
   customFilter(value: string, search: string, lecture: Classroom) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
@@ -460,11 +406,11 @@ availableQuizzes : StatementQuiz[] | null=null;
   }
   getLectureTypeCaps() {
     if (this.type === 'New Lecture') {
-      return 'LECTURE'
+      return 'LECTURE';
     } else if (this.type === 'New Lab') {
-      return 'LAB'
+      return 'LAB';
     } else {
-      return 'PROJECT'
+      return 'PROJECT';
     }
   }
 
@@ -472,7 +418,6 @@ availableQuizzes : StatementQuiz[] | null=null;
     this.current = doc;
     this.newOrEditDialog = true;
   }
-
 
   newDocument() {
     this.current = new Document();
@@ -483,110 +428,82 @@ availableQuizzes : StatementQuiz[] | null=null;
     this.selectQuizBoolean = true;
   }
 
-  async onSaveQuizzes(lecQuiz: Classroom) {
-
+  async onSaveQuizzes() {
     this.selectedQuizzes = await RemoteServices.getClassroomQuizzes(this.lec);
-        console.log(this.selectedQuizzes);
     this.selectQuizBoolean = false;
-
-
   }
-    async onSaveDocument(doc: Document) {
-        console.log(this.documents)
-        if(this.doctype === 'New Document'){
-            this.documents = this.documents.filter(d => d.id != doc.id);
-            this.documents.unshift(doc);
-        }
-        else{
-            this.videos = this.videos.filter(v => v.id != doc.id);
-            this.videos.unshift(doc);
-        }
-        this.newOrEditDialog = false;
-        this.current = null;
-        console.log(this.documents)
-    }
-
-  getLectureTypeIcon(){
-    if (this.type === 'New Lecture') {
-      return 'fab fa-leanpub'
-    } else if (this.type === 'New Lab') {
-      return 'fas fa-laptop-code'
+  async onSaveDocument(doc: Document) {
+    if (this.doctype === 'New Document') {
+      this.documents = this.documents.filter(d => d.id != doc.id);
+      this.documents.unshift(doc);
     } else {
-      return 'fab fa-git-alt'
+      this.videos = this.videos.filter(v => v.id != doc.id);
+      this.videos.unshift(doc);
+    }
+    this.newOrEditDialog = false;
+    this.current = null;
+  }
+
+  getLectureTypeIcon() {
+    if (this.type === 'New Lecture') {
+      return 'fab fa-leanpub';
+    } else if (this.type === 'New Lab') {
+      return 'fas fa-laptop-code';
+    } else {
+      return 'fab fa-git-alt';
     }
   }
-  setTabName(str: string){
+  setTabName(str: string) {
     this.doctype = str;
   }
-
-
-
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
-    async clickPdf(response: Document) {
-      console.log(response)
-        const result = await RemoteServices.getDoc(response)
-            /*var fileURL = window.URL.createObjectURL(result);
-            var fileLink = document.createElement('a');
+  async clickPdf(response: Document) {
+    const result = await RemoteServices.getDoc(response);
+    let binaryString = window.atob(result as string);
 
-            fileLink.href = fileURL;
-            fileLink.setAttribute('download', 'file.pdf');
-            document.body.appendChild(fileLink);
+    let binaryLen = binaryString.length;
 
-            fileLink.click();*/
+    let bytes = new Uint8Array(binaryLen);
 
-        let binaryString = window.atob(result);
-
-        let binaryLen = binaryString.length;
-
-        let bytes = new Uint8Array(binaryLen);
-
-        for (let i = 0; i < binaryLen; i++) {
-            let ascii = binaryString.charCodeAt(i);
-            bytes[i] = ascii;
-        }
-
-        let blob = new Blob([bytes], {type: "application/octet-stream"});
-
-        let link = document.createElement('a');
-
-        link.href = window.URL.createObjectURL(blob);
-        link.download = response.title + "." + response.extension;
-
-        link.click();
+    for (let i = 0; i < binaryLen; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
     }
 
+    let blob = new Blob([bytes], { type: 'application/octet-stream' });
+
+    let link = document.createElement('a');
+
+    link.href = window.URL.createObjectURL(blob);
+    link.download = response.title + '.' + response.extension;
+
+    link.click();
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-    $gap: 20px;
+$gap: 20px;
 
-    .test {
-        justify-content: center;
-        width: 50%;
+.test {
+  justify-content: center;
+  width: 50%;
+}
 
-    }
-
-    .test1{
-        border-color: #ffffff  ;
-        background-color: #FAF6F6  ;
-        border-left-style: solid;
-        border-right-style: solid;
-        border-top-style: solid;
-
-    }
-    .test2{
-        padding-right: 60px;
-
-    }
-    .test3{
-        background-color:#FAF6F6 ;
-
-    }
-
-
+.test1 {
+  border-color: #ffffff;
+  background-color: #faf6f6;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-top-style: solid;
+}
+.test2 {
+  padding-right: 60px;
+}
+.test3 {
+  background-color: #faf6f6;
+}
 </style>

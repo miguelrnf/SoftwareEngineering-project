@@ -262,10 +262,11 @@
         </v-menu>
 
         <v-btn
-                to="/classroom/home"
-                v-if="isStudent && currentCourse"
-                text dark
-                data-cy="classroom"
+          to="/classroom/home"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="classroom"
         >
           Classroom
           <v-icon>fas fa-chalkboard-teacher</v-icon>
@@ -327,7 +328,6 @@
         <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
-
 
         <v-btn href="https://www.worldometers.info/coronavirus/" text dark>
           #STAYHOME
@@ -518,7 +518,6 @@
             </v-list-item-action>
             <v-list-item-content>Posts List</v-list-item-content>
           </v-list-item>
-
         </v-list-group>
 
         <v-list-group
@@ -569,8 +568,6 @@
             Dashboard
           </v-list-item-content>
         </v-list-item>
-
-
 
         <v-list-item to="/study/home" v-if="isStudent && currentCourse">
           <v-list-item-action>
@@ -625,9 +622,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+  import { Component, Vue } from 'vue-property-decorator';
 
-@Component
+  @Component
 export default class TopBar extends Vue {
   fenixUrl: string = process.env.VUE_APP_FENIX_URL;
   appName: string = process.env.VUE_APP_NAME;

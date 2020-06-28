@@ -238,14 +238,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
-import StatementManager from '@/models/statement/StatementManager';
-import RemoteServices from '@/services/RemoteServices';
-import StatementQuiz from '@/models/statement/StatementQuiz';
-import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+  import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
+  import StatementManager from '@/models/statement/StatementManager';
+  import RemoteServices from '@/services/RemoteServices';
+  import StatementQuiz from '@/models/statement/StatementQuiz';
+  import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
-@Component({
+  @Component({
   components: {
     'question-component': QuestionComponent
   }
@@ -356,7 +356,6 @@ export default class QuizView extends Vue {
     try {
       if (question != null && this.statementQuiz?.id != null) {
         hint = await RemoteServices.getHint(question, this.statementQuiz.id);
-        console.log(hint);
       }
       this.disableHint = hint === '';
     } catch (error) {
