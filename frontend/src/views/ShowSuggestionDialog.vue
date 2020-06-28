@@ -32,7 +32,7 @@
           >
         </div>
       </v-app-bar>
-      <show-suggestion :suggestion="this.suggestion"></show-suggestion>
+      <show-suggestion :suggestion="this.suggestion" />
       <div v-if="suggestion.status === 'REJECTED'">
         <v-app-bar dense color="primary">
           <v-toolbar-title class="white--text">{{
@@ -44,7 +44,7 @@
         </v-card-text>
       </div>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="primary" text @click="closeQuestionDialog">
           Close
         </v-btn>

@@ -7,7 +7,7 @@
             <v-icon color="white" class="mr-12">fas fa-align-justify</v-icon>
             {{ 'Categories' }}
           </v-row>
-          <v-divider class="mt-5 white"></v-divider>
+          <v-divider class="mt-5 white" />
           <v-list>
             <v-list-item
               v-for="item in categories"
@@ -128,11 +128,7 @@
           class="white--text py-3"
         >
           Wait a moment
-          <v-progress-linear
-            indeterminate
-            color="white"
-            class="ma-0 mt-2"
-          ></v-progress-linear>
+          <v-progress-linear indeterminate color="white" class="ma-0 mt-2" />
         </v-card-text>
       </v-card>
     </v-dialog>

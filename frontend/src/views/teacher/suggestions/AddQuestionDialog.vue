@@ -36,7 +36,7 @@
                 auto-grow
                 v-model="currentSuggestion.hint"
                 label="Hint (Optional)"
-              ></v-textarea>
+              />
             </v-flex>
             <v-flex
               xs24

@@ -20,7 +20,7 @@
           outlined
           rows="20"
           row-height="15"
-        ></v-textarea>
+        />
       </v-row>
       <v-row>
         <VueCtkDateTimePicker
@@ -29,8 +29,9 @@
           v-model="date"
           format="YYYY-MM-DDTHH:mm:ssZ"
           data-cy="availableDate"
-        >
-        </VueCtkDateTimePicker>
+          :dark="isDark"
+          :color="$vuetify.theme.currentTheme.primary"
+        />
       </v-row>
 
       <v-card-actions>
@@ -159,6 +160,10 @@ export default class EditLectureDialog extends Vue {
     } else {
       return 'Write Project Title Here';
     }
+  }
+
+  get isDark(): boolean {
+    return this.$vuetify.theme.dark;
   }
 }
 </script>

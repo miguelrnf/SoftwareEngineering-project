@@ -31,7 +31,7 @@
           auto-grow
           v-model="editQuestion.hint"
           label="Hint (Optional)"
-        ></v-textarea>
+        />
         <div v-for="index in editQuestion.options.length" :key="index">
           <v-switch
             v-model="editQuestion.options[index - 1].correct"

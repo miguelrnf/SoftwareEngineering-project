@@ -13,7 +13,7 @@
             ? 'New Suggestion'
             : 'Edit Suggestion'
         }}</v-toolbar-title>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <toggle-button
           v-model="editSuggestion.isPrivate"
           :value="editSuggestion.isPrivate"
@@ -54,8 +54,8 @@
                   label="Suggestion Content"
                   outlined
                   data-cy="content"
-                ></v-textarea>
-                <v-divider></v-divider>
+                />
+                <v-divider />
               </v-flex>
               <v-flex xs24 sm12 md12>
                 <v-textarea
@@ -69,8 +69,8 @@
                   label="Hint (Optional)"
                   outlined
                   data-cy="content"
-                ></v-textarea>
-                <v-divider></v-divider>
+                />
+                <v-divider />
               </v-flex>
               <v-flex xs24 sm12 md12>
                 <v-row>
@@ -87,7 +87,7 @@
                     color="green"
                     :label="`Correct Option`"
                     data-cy="optionTextArea"
-                  ></v-textarea>
+                  />
                 </v-row>
 
                 <v-row
@@ -107,13 +107,13 @@
                     color="red"
                     :label="`Option ${index + 1}`"
                     data-cy="optionTextArea"
-                  ></v-textarea>
+                  />
                 </v-row>
               </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-text>
           <v-autocomplete
             v-model="questionTopics"
@@ -147,10 +147,7 @@
         </v-card-text>
       </div>
       <div v-if="suggestion.status === 'APPROVED'">
-        <show-suggestion
-          :suggestion="this.suggestion"
-          :dialog="true"
-        ></show-suggestion>
+        <show-suggestion :suggestion="this.suggestion" :dialog="true" />
       </div>
       <v-card-actions>
         <v-spacer />

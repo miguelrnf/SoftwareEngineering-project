@@ -53,4 +53,4 @@ export default class StudentDashboardView extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

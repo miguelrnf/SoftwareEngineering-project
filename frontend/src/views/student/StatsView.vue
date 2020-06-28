@@ -59,7 +59,7 @@
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="improvedCorrectAnswers">
-          <animated-number :number="user.numberofsuggestions"></animated-number>
+          <animated-number :number="user.numberofsuggestions" />
         </div>
         <div class="project-name">
           <p>Number of Suggestions</p>
@@ -67,9 +67,7 @@
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="improvedCorrectAnswers">
-          <animated-number
-            :number="user.numberofsuggestionsapproved"
-          ></animated-number>
+          <animated-number :number="user.numberofsuggestionsapproved" />
         </div>
         <div class="project-name">
           <p>Number of Approved Suggestions</p>

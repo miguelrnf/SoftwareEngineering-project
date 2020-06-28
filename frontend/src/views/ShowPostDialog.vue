@@ -25,7 +25,7 @@
                     striped
                     rounded
                     v-on="on"
-                  ></v-progress-linear>
+                  />
                 </template>
                 <span>
                   {{ 'Up: ' + this.post.upvotes }}
@@ -43,9 +43,10 @@
             offset-x="23"
             color=""
             :content="'x' + awards.number"
-            ><v-icon class="px-3" :color="awards.award.item.color" medium>{{
-              awards.award.item.icon
-            }}</v-icon>
+          >
+            <v-icon class="px-3" :color="awards.award.item.color" medium>
+              {{ awards.award.item.icon }}
+            </v-icon>
           </v-badge>
         </div>
         <div v-for="awards in post.awards" :key="awards.award.item.id">
@@ -56,9 +57,10 @@
             offset-x="20"
             color=""
             :content="'x' + awards.number"
-            ><v-icon class="px-3" :color="awards.award.item.color" small>{{
-              awards.award.item.icon
-            }}</v-icon>
+          >
+            <v-icon class="px-3" :color="awards.award.item.color" small>
+              {{ awards.award.item.icon }}
+            </v-icon>
           </v-badge>
         </div>
         <div v-for="awards in post.awards" :key="awards.award.item.name">
@@ -89,7 +91,7 @@
           </template>
           <span>Award this Post</span>
         </v-tooltip>
-        <post-status-buttons :post="post"></post-status-buttons>
+        <post-status-buttons :post="post" />
         <v-tooltip bottom v-if="isOwner(post)">
           <template v-slot:activator="{ on }">
             <v-icon color="white" small v-on="on" @click="editPost(post)"

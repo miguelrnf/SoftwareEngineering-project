@@ -15,7 +15,7 @@
             @click="hideTime = !hideTime"
             v-if="statementQuiz && statementQuiz.timeToSubmission"
           >
-            <i class="fas fa-clock"></i>
+            <i class="fas fa-clock" />
             <span v-if="!hideTime">{{ submissionTimer }}</span>
           </span>
         </v-col>
@@ -82,7 +82,7 @@
                 </v-card-text>
 
                 <v-card-actions>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
 
                   <v-btn color="green darken-1" text @click="dialog = false">
                     Close

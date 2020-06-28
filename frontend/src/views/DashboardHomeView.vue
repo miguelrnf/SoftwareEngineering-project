@@ -69,7 +69,7 @@
                   :key="p.id"
                   :post="p"
                   @click.native="showPostOpenDialog(p)"
-                ></post-preview>
+                />
               </div>
             </v-card-text>
           </v-card>

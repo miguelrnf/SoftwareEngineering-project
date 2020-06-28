@@ -26,7 +26,7 @@
           Evaluation
         </v-tab>
 
-        <v-spacer></v-spacer>
+        <v-spacer />
 
         <v-btn
           color="primary"
@@ -546,4 +546,4 @@ export default class ClassroomHomeView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

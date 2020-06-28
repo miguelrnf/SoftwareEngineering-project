@@ -400,8 +400,9 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
-            </v-list-item-content> </v-list-item
-          ><v-list-item to="/management/suggestions">
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/suggestions">
             <v-list-item-action>
               <v-icon>question_answer</v-icon>
             </v-list-item-action>

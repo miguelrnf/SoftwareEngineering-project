@@ -65,10 +65,9 @@
               data-cy="availableDate"
               :dark="isDark"
               :color="$vuetify.theme.themes.light.primary"
-            >
-            </VueCtkDateTimePicker>
+            />
           </v-col>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-col cols="12" sm="6">
             <VueCtkDateTimePicker
               label="*Conclusion Date"
@@ -78,8 +77,7 @@
               data-cy="conclusionDate"
               :dark="isDark"
               :color="$vuetify.theme.themes.light.primary"
-            >
-            </VueCtkDateTimePicker>
+            />
           </v-col>
         </v-row>
       </v-container>

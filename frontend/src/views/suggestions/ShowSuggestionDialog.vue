@@ -16,10 +16,11 @@
               :color="getColor1(suggestion.isprivate)"
               text-color="white"
               dark
-              ><span class="white--text ">{{
-                getPrivacyTag(suggestion.isprivate)
-              }}</span></v-chip
             >
+              <span class="white--text ">
+                {{ getPrivacyTag(suggestion.isprivate) }}
+              </span>
+            </v-chip>
             <v-chip
               class="ma-1"
               x-small

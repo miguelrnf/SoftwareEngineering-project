@@ -5,7 +5,7 @@
     </v-card-text>
 
     <v-tabs vertical>
-      <v-tabs-slider color="primary"></v-tabs-slider>
+      <v-tabs-slider color="primary" />
 
       <v-tab>
         <v-icon left>fab fa-leanpub</v-icon>
@@ -70,7 +70,7 @@
             <v-toolbar height="37" color="primary" dark>
               <v-toolbar-title>My Topic Quizzes</v-toolbar-title>
 
-              <v-spacer></v-spacer>
+              <v-spacer />
 
               <v-btn small icon>
                 <v-icon>mdi-magnify</v-icon>
@@ -84,14 +84,10 @@
                     v-for="item in quizzes"
                     :key="item.statementQuiz.id"
                   >
-                    <template v-slot:default="{ active, toggle }">
+                    <template v-slot:default="{ active }">
                       <v-list-item-content @click="show(item)">
-                        <v-list-item-title
-                          v-text="item.statementQuiz.title"
-                        ></v-list-item-title>
-                        <v-list-item-subtitle
-                          v-text="item.answerDate"
-                        ></v-list-item-subtitle>
+                        <v-list-item-title v-text="item.statementQuiz.title" />
+                        <v-list-item-subtitle v-text="item.answerDate" />
                       </v-list-item-content>
 
                       <v-list-item-action>

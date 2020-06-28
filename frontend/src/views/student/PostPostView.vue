@@ -13,7 +13,7 @@
           label="Pick a question"
           solo
           data-cy="pickQ"
-        ></v-autocomplete>
+        />
       </v-container>
       <v-container fluid>
         <label class="text-area">
@@ -23,7 +23,7 @@
             @input="checkConsistency"
             placeholder="type your question here"
             data-cy="typeQ"
-          ></v-textarea>
+          />
         </label>
         <p class="len">{{ limit }}</p>
       </v-container>

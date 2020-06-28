@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <qrcode-stream v-if="!quizId" @decode="onDecode"></qrcode-stream>
+    <qrcode-stream v-if="!quizId" @decode="onDecode" />
     <v-card v-else>
       <v-card-title class="justify-center">
         Hold on and wait {{ timer() }} to start the quiz!
@@ -58,4 +58,4 @@ export default class ScanView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

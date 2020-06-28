@@ -68,7 +68,7 @@
             :length="topicsOrderMax"
             circle
             @input="changeTopicPage(page)"
-          ></v-pagination>
+          />
         </div>
 
         <v-spacer />
@@ -164,4 +164,4 @@ export default class ShowSummaryDialog extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

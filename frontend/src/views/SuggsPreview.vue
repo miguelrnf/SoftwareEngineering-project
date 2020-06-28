@@ -12,14 +12,14 @@
           label
           :color="getColor1(suggestion.isprivate)"
           dark
-        ></v-chip>
+        />
         <v-chip
           class="ma-1"
           x-small
           label
           :color="getColor2(suggestion.status)"
           dark
-        ></v-chip>
+        />
       </div>
       <v-card-text>
         <div class="mt-n4 text-left">
@@ -59,4 +59,4 @@ export default class SuggsPreview extends Vue {
   }
 }
 </script>
-<style scoped></style>
+<style scoped />

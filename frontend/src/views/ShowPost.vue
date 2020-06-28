@@ -7,10 +7,10 @@
             <v-col cols="1">
               <v-row>
                 <v-btn class="px-5 my-n3" @click="upvote()" icon>
-                  <v-icon :color="getColorOfUpvotes()" class="" medium
-                    >fas fa-chevron-up</v-icon
-                  ></v-btn
-                >
+                  <v-icon :color="getColorOfUpvotes()" class="" medium>
+                    fas fa-chevron-up
+                  </v-icon>
+                </v-btn>
               </v-row>
               <v-row
                 v-if="numberOfVotesOnPost() < 10 && numberOfVotesOnPost() > -1"
@@ -53,7 +53,7 @@
         by
         <span v-html="convertMarkDown(post.question.user.username)" />
       </div>
-      <v-divider inset class="mt-3"></v-divider>
+      <v-divider inset class="mt-3" />
       <v-card-text
         v-if="
           post.answer != null &&

@@ -26,7 +26,7 @@
           <v-icon left>ballot</v-icon>
           QUIZZES
         </v-tab>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="primary"
           class="mr-6"
@@ -46,13 +46,13 @@
             <v-list-group v-for="d in documents" :key="d.title">
               <template v-slot:activator>
                 <v-list-item-content>
-                  <v-list-item-title v-text="d.title"></v-list-item-title>
+                  <v-list-item-title v-text="d.title" />
                 </v-list-item-content>
               </template>
 
               <v-list-item color="primary">
                 <v-list-item-content>
-                  <v-list-item-title v-text="d.content"></v-list-item-title>
+                  <v-list-item-title v-text="d.content" />
                 </v-list-item-content>
 
                 <v-icon @click="clickPdf(d)" color="primary"
@@ -73,7 +73,7 @@
             <v-list-group v-for="v in videos" :key="v.title">
               <template v-slot:activator>
                 <v-list-item-content>
-                  <v-list-item-title v-text="v.title"></v-list-item-title>
+                  <v-list-item-title v-text="v.title" />
                 </v-list-item-content>
               </template>
 
@@ -185,16 +185,13 @@
                     <v-list-item-content>
                       <v-row>
                         <v-col>
-                          <v-list-item-title
-                            class="test"
-                            v-text="l.title"
-                          ></v-list-item-title>
+                          <v-list-item-title class="test" v-text="l.title" />
                         </v-col>
                         <v-col>
                           <v-list-item-subtitle
                             class="text--primary"
                             v-text="l.availableDate"
-                          ></v-list-item-subtitle>
+                          />
                         </v-col>
                       </v-row>
                     </v-list-item-content>
@@ -204,7 +201,7 @@
                 <v-divider
                   v-if="index + 1 < selectedQuizzes.length"
                   :key="index"
-                ></v-divider>
+                />
               </template>
 
               <template v-for="(l, index) in solvedQuizzes">
@@ -216,13 +213,13 @@
                           <v-list-item-title
                             class="test"
                             v-text="l.statementQuiz.title"
-                          ></v-list-item-title>
+                          />
                         </v-col>
                         <v-col>
                           <v-list-item-subtitle
                             class="text--primary"
                             v-text="l.statementQuiz.availableDate"
-                          ></v-list-item-subtitle>
+                          />
                         </v-col>
                       </v-row>
                     </v-list-item-content>
@@ -232,7 +229,7 @@
                 <v-divider
                   v-if="index + 1 < solvedQuizzes.length"
                   :key="index"
-                ></v-divider>
+                />
               </template>
             </v-list-item-group>
           </v-list>
@@ -240,7 +237,7 @@
       </v-tabs>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn color="primary" text @click="closeLectureDialog">
           Close
         </v-btn>

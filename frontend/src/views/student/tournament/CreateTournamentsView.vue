@@ -99,14 +99,14 @@
                 style="width: 100%"
                 type="number"
                 suffix="Achandos"
-              ></v-text-field>
+              />
             </v-container>
           </v-col>
         </v-row>
       </v-container>
       <v-container fluid>
         <v-row>
-          <v-col cols="12" sm="6">
+          <v-col cols="6" sm="6">
             <VueCtkDateTimePicker
               label="*Available Date"
               id="availableDateInput"
@@ -115,11 +115,9 @@
               data-cy="availableDate"
               :dark="isDark"
               :color="$vuetify.theme.currentTheme.primary"
-            >
-            </VueCtkDateTimePicker>
+            />
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" sm="6">
+          <v-col cols="6" sm="6">
             <VueCtkDateTimePicker
               label="*Conclusion Date"
               id="conclusionDateInput"
@@ -128,8 +126,7 @@
               data-cy="conclusionDate"
               :dark="isDark"
               :color="$vuetify.theme.currentTheme.primary"
-            >
-            </VueCtkDateTimePicker>
+            />
           </v-col>
         </v-row>
       </v-container>

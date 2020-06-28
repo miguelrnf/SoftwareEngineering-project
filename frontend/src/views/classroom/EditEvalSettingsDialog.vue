@@ -24,7 +24,7 @@
               persistent-hint
               return-object
               single-line
-            ></v-select>
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -39,7 +39,7 @@
           step="5"
           thumb-label="always"
           ticks
-        ></v-slider>
+        />
       </v-card-text>
 
       <v-card-text class="pt-0">
@@ -51,7 +51,7 @@
           step="5"
           thumb-label="always"
           ticks
-        ></v-slider>
+        />
       </v-card-text>
 
       <v-card-text class="pt-0">
@@ -63,7 +63,7 @@
           step="5"
           thumb-label="always"
           ticks
-        ></v-slider>
+        />
       </v-card-text>
 
       <v-subheader inset v-if="suggestions + tournament + quizzes < 100"
@@ -188,4 +188,4 @@ export default class EditEvalSettingsDialog extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

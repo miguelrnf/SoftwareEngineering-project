@@ -138,4 +138,4 @@ export default class ThemeInventory extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped />

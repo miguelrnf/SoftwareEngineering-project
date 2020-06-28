@@ -20,7 +20,7 @@
           <v-icon left>fab fa-git-alt</v-icon>
           Project
         </v-tab>
-        <v-spacer></v-spacer>
+        <v-spacer />
 
         <v-tab-item class="pt-5 pb-10">
           <v-list three-line>
@@ -52,26 +52,20 @@
                     <v-list-item-content>
                       <v-row>
                         <v-col>
-                          <v-list-item-title
-                            class="test"
-                            v-text="l.title"
-                          ></v-list-item-title>
+                          <v-list-item-title class="test" v-text="l.title" />
                         </v-col>
                         <v-col>
                           <v-list-item-subtitle
                             class="text--primary"
                             v-text="l.availableDate"
-                          ></v-list-item-subtitle>
+                          />
                         </v-col>
                       </v-row>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
 
-                <v-divider
-                  v-if="index + 1 < lectures.length"
-                  :key="index"
-                ></v-divider>
+                <v-divider v-if="index + 1 < lectures.length" :key="index" />
               </template>
             </v-list-item-group>
           </v-list>
@@ -106,26 +100,20 @@
                     <v-list-item-content>
                       <v-row>
                         <v-col>
-                          <v-list-item-title
-                            class="test"
-                            v-text="l.title"
-                          ></v-list-item-title>
+                          <v-list-item-title class="test" v-text="l.title" />
                         </v-col>
                         <v-col>
                           <v-list-item-subtitle
                             class="text--primary"
                             v-text="l.availableDate"
-                          ></v-list-item-subtitle>
+                          />
                         </v-col>
                       </v-row>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
 
-                <v-divider
-                  v-if="index + 1 < lab.length"
-                  :key="index"
-                ></v-divider>
+                <v-divider v-if="index + 1 < lab.length" :key="index" />
               </template>
             </v-list-item-group>
           </v-list>
@@ -160,26 +148,20 @@
                     <v-list-item-content>
                       <v-row>
                         <v-col>
-                          <v-list-item-title
-                            class="test"
-                            v-text="l.title"
-                          ></v-list-item-title>
+                          <v-list-item-title class="test" v-text="l.title" />
                         </v-col>
                         <v-col>
                           <v-list-item-subtitle
                             class="text--primary"
                             v-text="l.availableDate"
-                          ></v-list-item-subtitle>
+                          />
                         </v-col>
                       </v-row>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
 
-                <v-divider
-                  v-if="index + 1 < project.length"
-                  :key="index"
-                ></v-divider>
+                <v-divider v-if="index + 1 < project.length" :key="index" />
               </template>
             </v-list-item-group>
           </v-list>

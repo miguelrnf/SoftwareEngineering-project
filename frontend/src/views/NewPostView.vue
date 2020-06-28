@@ -10,8 +10,8 @@
       <v-app-bar dense color="primary">
         <v-toolbar-title class="white--text">{{
           'Submit Post'
-        }}</v-toolbar-title></v-app-bar
-      >
+        }}</v-toolbar-title>
+      </v-app-bar>
       <v-container grid-list-md fluid>
         <v-card-text>
           <v-autocomplete
@@ -22,7 +22,7 @@
             label="Pick a question"
             solo
             data-cy="pickQ"
-          ></v-autocomplete>
+          />
         </v-card-text>
 
         <div v-if="selectedQuestion !== null" class="ml-4 mt-n7 mb-4 mr-4">
@@ -33,7 +33,7 @@
           </v-card>
         </div>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-text>
           <label class="text-area">
@@ -44,10 +44,10 @@
               v-model="message"
               placeholder="type your question here"
               data-cy="typeQ"
-            ></v-textarea>
+            />
           </label>
         </v-card-text>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
           <v-spacer />
 

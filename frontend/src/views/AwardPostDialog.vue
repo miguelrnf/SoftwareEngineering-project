@@ -33,28 +33,32 @@
           offset-y="80"
           offset-x="62"
           class="ma-3"
-          ><v-icon
+        >
+          <v-icon
             class="mx-6"
             color="#AAA9AD"
             size="50px"
             @click="awardthisPost('SILVER') && $emit('close-buy-awards-dialog')"
-            >fas fa-star-half-alt</v-icon
-          ></v-badge
-        >
+          >
+            fas fa-star-half-alt
+          </v-icon>
+        </v-badge>
         <v-badge
           v-if="numGolds !== 0"
           :content="'x' + numGolds"
           offset-y="80"
           offset-x="61"
           class="ma-3"
-          ><v-icon
+        >
+          <v-icon
             class="mx-5"
             color="#f9c700"
             size="50px"
             @click="awardthisPost('GOLD') && $emit('close-buy-awards-dialog')"
-            >fas fa-star</v-icon
-          ></v-badge
-        >
+          >
+            fas fa-star
+          </v-icon>
+        </v-badge>
         <v-badge
           v-if="numPlatinums !== 0"
           :content="'x' + numPlatinums"
@@ -172,4 +176,4 @@ export default class AwardPostDialog extends Vue {
 }
 </script>
 
-<style></style>
+<style />
