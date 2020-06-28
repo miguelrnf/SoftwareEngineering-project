@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -84,9 +85,16 @@ public class Quiz implements DomainEntity {
     @JoinColumn(name = "student_id")
     private User student;
 
+    @ManyToOne
+    @JoinColumn(name = "classroom_id")
+    private Classroom classroom;
+
     @OneToOne
     @JoinColumn(name = "tournament_id")
     private Tournament tournament;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean evaluation = false;
 
     public Quiz() {}
 
@@ -111,13 +119,21 @@ public class Quiz implements DomainEntity {
         setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         setSeries(quizDto.getSeries());
         setVersion(quizDto.getVersion());
-
+        setEvaluation(quizDto.isEvaluation());
 
     }
 
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuiz(this);
+    }
+
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
     }
 
     public Integer getId() {
@@ -129,6 +145,14 @@ public class Quiz implements DomainEntity {
             generateKeys();
 
         return key;
+    }
+
+    public Classroom getClassroom() {
+        return classroom;
+    }
+
+    public void setClassroom(Classroom classroom) {
+        this.classroom = classroom;
     }
 
     public Tournament getTournament() {

@@ -36,7 +36,7 @@ public class Option implements DomainEntity {
     private Question question;
 
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @JoinColumn(name = "suggestion_id")
     private Suggestion suggestion;
 

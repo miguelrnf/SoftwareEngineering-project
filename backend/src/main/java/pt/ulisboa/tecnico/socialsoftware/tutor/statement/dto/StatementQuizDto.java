@@ -23,6 +23,7 @@ public class StatementQuizDto implements Serializable {
     private Long timeToResults;
     private List<StatementQuestionDto> questions = new ArrayList<>();
     private List<StatementAnswerDto> answers = new ArrayList<>();
+    private boolean evaluation;
 
     public StatementQuizDto() {}
 
@@ -53,6 +54,16 @@ public class StatementQuizDto implements Serializable {
                 .map(StatementAnswerDto::new)
                 .sorted(Comparator.comparing(StatementAnswerDto::getSequence))
                 .collect(Collectors.toList());
+
+        this.evaluation = quizAnswer.getQuiz().isEvaluation();
+    }
+
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
     }
 
     public Integer getId() {

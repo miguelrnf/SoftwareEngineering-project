@@ -69,7 +69,7 @@ class DeletePostPerformanceTest extends Specification {
         pqDto.setPost(postDto)
 
         when: "3000 posts get deleted"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postDto.setKey(i)
             postService.deletePost(i, user1)
         }

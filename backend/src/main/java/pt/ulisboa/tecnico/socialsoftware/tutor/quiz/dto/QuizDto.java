@@ -29,6 +29,7 @@ public class QuizDto implements Serializable {
     private int numberOfQuestions;
     private int numberOfAnswers;
     private List<QuestionDto> questions = new ArrayList<>();
+    private boolean evaluation;
 
     public QuizDto(){
     }
@@ -50,7 +51,7 @@ public class QuizDto implements Serializable {
         this.availableDate = DateHandler.toISOString(quiz.getAvailableDate());
         this.conclusionDate = DateHandler.toISOString(quiz.getConclusionDate());
         this.resultsDate = DateHandler.toISOString(quiz.getResultsDate());
-
+        this.evaluation = quiz.isEvaluation();
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
                     .sorted(Comparator.comparing(QuizQuestion::getSequence))
@@ -61,6 +62,14 @@ public class QuizDto implements Serializable {
                     })
                     .collect(Collectors.toList());
         }
+    }
+
+    public boolean isEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(boolean evaluation) {
+        this.evaluation = evaluation;
     }
 
     public Integer getId() {

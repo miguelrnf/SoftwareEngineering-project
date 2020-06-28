@@ -30,6 +30,8 @@ public class UserDto implements Serializable {
     private Integer numberOfQuizzesSolved;
     private Integer numberOfPostsSubmitted;
     private Integer numberOfPTournamentsParticipated;
+    private Integer grade;
+
 
 
     public UserDto(User user) {
@@ -42,6 +44,11 @@ public class UserDto implements Serializable {
             this.score = 0;
         else
             this.score = user.getScore();
+
+        if (user.getGrade() == null )
+            this.grade = 0;
+        else
+            this.grade = user.getGrade();
 
         if(user.getDashboardPrivate() == null)
             this.isDashboardPrivate = false;
@@ -113,6 +120,14 @@ public class UserDto implements Serializable {
 
     public Integer getScore() {
         return score;
+    }
+
+    public Integer getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
     }
 
     public void setScore(Integer score) {

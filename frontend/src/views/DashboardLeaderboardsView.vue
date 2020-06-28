@@ -244,6 +244,7 @@ export default class DashboardLeaderboardsView extends Vue {
       ? (bestScores = this.stats.bestScores)
       : (bestScores = []);
     this.shuffleArray(bestScores);
+    
     this.bestScoreStats = [
       ['Name', 'Score',{ role: "style"  }],
       [
@@ -579,6 +580,7 @@ export default class DashboardLeaderboardsView extends Vue {
     this.mostUpvotedPostsStats = [
       ['PostId', 'Number Of Upvotes',{ role: "style" }],
       [
+
         mostUpvotedPosts.length >= 1
         ?  mostUpvotedPosts[0].id
         :  this.defaultPost.id,
@@ -588,6 +590,7 @@ export default class DashboardLeaderboardsView extends Vue {
           :  this.defaultPost.upvotes,
 
         'red'
+
       ],
       [
         mostUpvotedPosts.length >= 2
