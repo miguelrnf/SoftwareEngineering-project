@@ -21,7 +21,7 @@
           outlined
           rows="5"
           row-height="15"
-        ></v-textarea>
+        />
         <v-textarea
           v-if="type === 'New Document'"
           :label="getDocumentLabel()"
@@ -30,7 +30,7 @@
           outlined
           rows="5"
           row-height="15"
-        ></v-textarea>
+        />
       </v-row>
 
       <v-row>
@@ -42,7 +42,7 @@
           outlined
           rows="1"
           row-height="15"
-        ></v-textarea>
+        />
 
         <div v-if="type === 'New Document'">
           <v-textarea
@@ -53,7 +53,7 @@
             outlined
             rows="5"
             row-height="15"
-          ></v-textarea>
+          />
 
           <div id="app">
             <div class="container">

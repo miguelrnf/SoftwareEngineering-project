@@ -175,8 +175,8 @@ public class StatsService {
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
         if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
-            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
+            statsDto.setCorrectAnswers(((float)correctAnswers) * 100 / totalAnswers);
+            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers) * 100 / uniqueQuestions);
         }
         return statsDto;
     }
@@ -191,33 +191,37 @@ public class StatsService {
     public List<UserDto> getFinalEval(int userId, int courseExecutionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if (userRepository.findById(userId).get().getRole() != User.Role.TEACHER)
+        if (userRepository.findById(userId).isPresent() && userRepository.findById(userId).get().getRole() != User.Role.TEACHER)
             throw new TutorException(USER_HAS_WRONG_ROLE);
 
         courseExecution.getUsers().forEach(user -> multiplier(courseExecution, getStatsEval(user.getId(), courseExecutionId), user));
 
-        return courseExecution.getUsers().stream().map(user -> new UserDto(user)).collect(Collectors.toList());
+        return courseExecution.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
     }
 
-    private int multiplier(CourseExecution courseExecution, StatsDto statsDto, User user){
+    private void multiplier(CourseExecution courseExecution, StatsDto statsDto, User user){
         double a,b,c;
+
+        if (courseExecution.getTournamentWeight() == null)courseExecution.setTournamentWeight(10);
+        if (courseExecution.getSuggWeight() == null)courseExecution.setSuggWeight(10);
+        if (courseExecution.getQuizWeight() == null)courseExecution.setQuizWeight(80);
+        if (courseExecution.getScale() == null)courseExecution.setScale(20);
 
         if(statsDto.getTotalAnswers() == 0)
             a = 0;
         else
             a = ((statsDto.getCorrectAnswers() / statsDto.getTotalAnswers()) * (courseExecution.getQuizWeight() / 100.0));
 
-        if(courseExecution.getTournaments().size()==0)
-            b = courseExecution.getTournamentWeight()/100.0;
+        if(courseExecution.getTournaments().size() == 0)
+            b = courseExecution.getTournamentWeight() / 100.0;
         else
-            b = (statsDto.getTournamentDone() / courseExecution.getTournaments().size()) * ( (courseExecution.getTournamentWeight()) / 100.0);
+            b = (statsDto.getTournamentDone() / (double) courseExecution.getTournaments().size()) * ( (courseExecution.getTournamentWeight()) / 100.0);
 
-        if (courseExecution.getSuggestions().size()==0)
+        if (courseExecution.getSuggestions().size() == 0)
             c = 0;
         else {
-            List<Suggestion> l = courseExecution.getSuggestions().stream().filter(suggestion -> suggestion.getStatus()== Suggestion.Status.APPROVED).collect(Collectors.toList());
-            if(statsDto.getApproveSuggestions()<=20)
-                c = (statsDto.getApproveSuggestions() / 20) * (courseExecution.getSuggWeight() / 100.0);
+            if(statsDto.getApproveSuggestions() <= 20)
+                c = (statsDto.getApproveSuggestions() / 20.0) * (courseExecution.getSuggWeight() / 100.0);
             else
                 c = courseExecution.getSuggWeight() / 100.0;
         }
@@ -225,7 +229,5 @@ public class StatsService {
         double res = ( a + b + c) * (courseExecution.getScale());
 
         user.setGrade((int) res);
-
-        return (int) res;
     }
 }

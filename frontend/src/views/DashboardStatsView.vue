@@ -275,4 +275,4 @@ export default class DashboardStatsView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />
