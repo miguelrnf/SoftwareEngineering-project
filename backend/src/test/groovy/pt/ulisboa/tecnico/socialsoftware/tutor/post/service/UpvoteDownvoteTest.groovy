@@ -207,7 +207,7 @@ class UpvoteDownvoteTest extends Specification{
         def result = postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "upvote")
 
         then:
-        result.getUserUpvotes() == upvotes+1
+        result.getUpvotes() == upvotes+1
 
     }
 
@@ -217,29 +217,27 @@ class UpvoteDownvoteTest extends Specification{
         def result = postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "downvote")
 
         then:
-        result.getUserDownvotes() == downvotes+1
+        result.getDownvotes() == downvotes+1
 
     }
 
     def "double upvote"() {
         when:
         postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "upvote")
-        postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "upvote")
+        def result = postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "upvote")
 
         then:
-        def result = thrown(TutorException)
-        result.message == ErrorMessage.ALREADY_UPVOTED.label
+        result.getUpvotes() == 0
 
     }
 
     def "double downvote"() {
         when:
         postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "downvote")
-        postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "downvote")
+        def result = postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "downvote")
 
         then:
-        def result = thrown(TutorException)
-        result.message == ErrorMessage.ALREADY_DOWNVOTED.label
+        result.getDownvotes() == 0
     }
 
     def "change downvote to upvote"() {
@@ -248,10 +246,10 @@ class UpvoteDownvoteTest extends Specification{
         def result2 = postService.vote(VALID_P.getKey() as Integer, VALID_U as User, "upvote")
 
         then:
-        result1.getUserDownvotes() == 1
-        result1.getUserUpvotes() == 0
-        result2.getUserDownvotes() == 0
-        result2.getUserUpvotes() == 1
+        result1.getDownvotes() == 1
+        result1.getUpvotes() == 0
+        result2.getDownvotes() == 0
+        result2.getUpvotes() == 1
     }
 
 

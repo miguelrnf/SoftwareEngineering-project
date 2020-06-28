@@ -175,6 +175,10 @@ public class Post {
         return usersWhoDownvoted;
     }
 
+    public Integer getNumberOfUpVotes(){
+        return this.usersWhoUpvoted.size();
+    }
+
     public void setUsersWhoDownvoted(Set<User> usersWhoDownvoted) {
         this.usersWhoDownvoted = usersWhoDownvoted;
     }

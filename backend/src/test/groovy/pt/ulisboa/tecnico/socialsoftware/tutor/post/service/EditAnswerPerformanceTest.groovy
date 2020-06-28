@@ -83,7 +83,7 @@ class EditAnswerPerformanceTest extends Specification {
         postADto.setPost(postDto)
 
         when: "editing the answer of 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postADto.getPost().setKey(i)
             postService.editAnswer(postADto)
         }

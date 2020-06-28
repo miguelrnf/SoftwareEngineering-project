@@ -199,7 +199,7 @@ class ListAllByUsername extends Specification {
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
-        VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
+        //VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
         VALID_SUGGESTION.setStudent(VALID_Udto)
 
         and: "a valid user - STUDENT "
@@ -295,8 +295,7 @@ class ListAllByUsername extends Specification {
         def list = suggestionService.listAllSuggestions(new UserDto(u as User))
 
         then:
-        def result = thrown(TutorException)
-        result.message == expected
+        list.size() == 0
 
         where:
         s                  | l                | u                     | expected

@@ -48,6 +48,7 @@ httpClient.interceptors.request.use(
   error => Promise.reject(error)
 );
 
+
 export default class RemoteServices {
   static async fenixLogin(code: string): Promise<AuthDto> {
     return httpClient

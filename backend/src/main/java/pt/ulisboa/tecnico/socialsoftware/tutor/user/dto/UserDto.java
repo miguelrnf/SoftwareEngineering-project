@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import org.hibernate.Hibernate;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostCommentDto;
@@ -57,7 +58,7 @@ public class UserDto implements Serializable {
         this.numberofsuggestions = user.getNumberOfSuggestions();
         this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
         this.numberOfPostsSubmitted = user.getPostQuestions().size();
-        this.numberOfQuizzesSolved = user.getQuizzes().size();
+        this.numberOfQuizzesSolved = user.getQuizAnswers().size();
         this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
         if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){
