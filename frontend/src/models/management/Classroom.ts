@@ -10,7 +10,7 @@ export default class Classroom {
     status: string = '';
     documents: Document[] = [];
     quizzes: number[] = [];
-    availableDate!: string;
+    availableDate!: String | null;
 
 
 

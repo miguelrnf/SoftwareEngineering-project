@@ -369,8 +369,7 @@
 <script lang="ts">
   import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import User from '@/models/user/User';
-import Suggestion from '@/models/management/Suggestion';
-import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
+  import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
   import Classroom from '@/models/management/Classroom';
   import RemoteServices from '@/services/RemoteServices';
   import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
@@ -469,10 +468,6 @@ export default class ClassroomHomeView extends Vue {
 
   setTabName(str: string){
     this.tabName = str;
-  }
-
-  getTabName(){
-   return this.tabName;
   }
 
   isTeacher(): boolean {

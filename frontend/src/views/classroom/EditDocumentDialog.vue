@@ -72,7 +72,7 @@
               <form enctype="multipart/form-data" novalidate v-if="currentStatus===0 || currentStatus===1">
                 <h3>Upload file</h3>
                 <div class="dropbox">
-                  <input type="file" multiple :name="uploadFieldName" :disabled="currentStatus===1" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+                  <input type="file" multiple :name="uploadFieldName" :disabled="currentStatus===1" @change="filesChange($event.target.name, $event.target.files)"
                           class="input-file">
                   <p v-if="currentStatus===0">
                     Drag your file here to begin<br> or click to browse (20 Mb max size)
@@ -88,11 +88,7 @@
                 <p>
                   <a href="javascript:void(0)" @click="reset()">Upload again</a>
                 </p>
-                <ul class="list-unstyled">
-                  <li v-for="item in uploadedFiles">
-                    <img :src="item.url" class="img-responsive img-thumbnail" :alt="item.originalName">
-                  </li>
-                </ul>
+
               </div>
               <!--FAILED-->
               <div v-if="currentStatus===3">
@@ -159,21 +155,16 @@
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import Suggestion from '@/models/management/Suggestion';
-import Topic from '@/models/management/Topic';
 import ToggleButton from 'vue-js-toggle-button';
-import User from '@/models/user/User';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import ShowSuggestion from '@/views/ShowSuggestion.vue';
-import VueYouTubeEmbed, { getIdFromURL } from 'vue-youtube-embed';
-import LazyYoutubeVideo from 'vue-lazy-youtube-video'
+import { getIdFromURL } from 'vue-youtube-embed';
+import { LazyYoutubeVideo } from 'vue-lazy-youtube-video'
 import 'vue-lazy-youtube-video/dist/style.css'
 import Classroom from '@/models/management/Classroom';
 import Document from '@/models/management/Document';
 
 const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
-const BASE_URL = 'http://localhost:8081';
 
 
 Vue.use(ToggleButton);
@@ -181,9 +172,7 @@ Vue.use(ToggleButton);
 @Component({
   components: {
     LazyYoutubeVideo
-  },
-
-
+  }
 })
 export default class EditDocumentDialog extends Vue {
 
@@ -195,7 +184,6 @@ export default class EditDocumentDialog extends Vue {
 
   editDocument!: Document;
 
-  previewImageSize: string = "sddefault";
   preview : boolean = false;
   videoId : string = '';
   videoBase : string = 'https://www.youtube.com/embed/';
@@ -203,16 +191,10 @@ export default class EditDocumentDialog extends Vue {
   currentStatus = 0;
   uploadError: null = null;
   uploadFieldName: string = 'photos';
-  uploadedFiles = [];
-
-  private loading: boolean = false;
-  private hidden: boolean = true;
-
 
   reset() {
     // reset form to initial state
     this.currentStatus = STATUS_INITIAL;
-    this.uploadedFiles = [];
     this.uploadError = null;
   }
 
@@ -223,32 +205,16 @@ export default class EditDocumentDialog extends Vue {
 
     this.editDocument.classroomId = this.lecture.id
     this.editDocument.type = "DOC";
-    console.log(formData.get(name))
-    const f: File = formData.get(name);
-    console.log(f.type)
+    let f = formData.get(name) as File;
     this.editDocument.extension = f.name;
-
-
 
     try {
       this.currentStatus = STATUS_SAVING;
 
-      console.log(this.editDocument)
+      const doc = await RemoteServices.createDocument(this.editDocument)
 
-      const result1 = await RemoteServices.createDocument(this.editDocument)
+      await RemoteServices.uploadDoc(formData, doc)
 
-      const result = await RemoteServices.uploadDoc(formData, result1)
-
-
-      this.upload2(formData)
-              .then(x => {
-                this.uploadedFiles = [].concat(x);
-                this.currentStatus = STATUS_SUCCESS;
-              })
-              .catch(err => {
-                this.uploadError = err.response;
-                this.currentStatus = STATUS_FAILED;
-              });
 
       this.currentStatus = STATUS_SUCCESS;
 
@@ -259,7 +225,7 @@ export default class EditDocumentDialog extends Vue {
     }
   }
 
-  filesChange(fieldName, fileList) {
+  filesChange(fieldName: string, fileList: File[]) {
     // handle file changes
     const formData = new FormData();
 
@@ -284,44 +250,6 @@ export default class EditDocumentDialog extends Vue {
   }
 
 
-   upload2(formData) {
-    const photos = formData.getAll('photos');
-    const promises = photos.map((x) => this.getImage(x)
-            .then(img => ({
-              id: img,
-              originalName: x.name,
-              fileName: x.name,
-              url: img
-            })));
-    return Promise.all(promises);
-  }
-
-   getImage(file: File) {
-    return new Promise((resolve, reject) => {
-      const fReader = new FileReader();
-      const img = document.createElement('img');
-
-      fReader.onload = () => {
-        img.src = fReader.result;
-        resolve(this.getBase64Image(img));
-      }
-
-      fReader.readAsDataURL(file);
-    })
-  }
-
-   getBase64Image(img) {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-
-    const dataURL = canvas.toDataURL('image/png');
-
-    return dataURL;
-  }
 
   getDocumentTypeCaps() {
     if(this.type === 'New Document'){
@@ -387,12 +315,9 @@ export default class EditDocumentDialog extends Vue {
   }
 
 
-  previewVideo(){
-    var tempvar = '';
-
+  previewVideo(): string {
     this.videoId = getIdFromURL(this.editDocument.url);
-
-    tempvar = this.videoBase;
+    let tempvar = this.videoBase;
     tempvar = tempvar + this.videoId;
     this.preview = true;
     return tempvar

@@ -36,7 +36,7 @@
             <v-card-text class="pt-0">
                 <v-slider
                         v-model="quizzes"
-                        :rules="rulesQuizzes"
+                        :rules="quizRules"
                         label="Evaluation Quizzes (%)"
                         step="5"
                         thumb-label="always"
@@ -47,7 +47,7 @@
             <v-card-text class="pt-0">
                 <v-slider
                         v-model="tournament"
-                        :rules="rulesTournament"
+                        :rules="tournamentRules"
                         label="Tournaments (%)"
                         persistent-hint
                         step="5"
@@ -60,7 +60,7 @@
             <v-card-text class="pt-0">
                 <v-slider
                         v-model="suggestions"
-                        :rules="rulesSuggestions"
+                        :rules="suggestionRules"
                         label="Approved Suggestions (%)"
                         persistent-hint
                         step="5"
@@ -94,11 +94,7 @@
 </template>
 
 <script lang="ts">
-    import Classroom from "@/models/management/Classroom";
-    import {getIdFromURL} from "vue-youtube-embed";
-    import {Component, Model, Vue} from "vue-property-decorator";
-    import LazyYoutubeVideo from "vue-lazy-youtube-video";
-    import User from "@/models/user/User";
+    import {Component, Model, Vue, Watch} from "vue-property-decorator";
     import EvalSettings from "@/models/management/EvalSettings";
     import RemoteServices from "@/services/RemoteServices";
 
@@ -116,10 +112,7 @@
 
         settings: EvalSettings | null = null;
 
-        select!: {
-            state: string;
-            abbr: number;
-        }
+
 
         items: [{
             state: '0 - 20';
@@ -135,21 +128,39 @@
             abbr: 5;
         }] | undefined
 
+
+        itemsToSelect = [ '0 - 20', '0 - 100', '0 - 10', '0 - 5']
+        selectedItem: string | undefined
+
+        quizRules: Array<Object> | undefined
+        tournamentRules: Array<Object> | undefined
+        suggestionRules: Array<Object> | undefined
+
          async created() {
              this.settings = await RemoteServices.getEvalSettings()
              this.quizzes = this.settings.quizWeight;
              this.tournament = this.settings.tournamentWeight;
              this.suggestions = this.settings.suggWeight;
 
-             if(this.settings.scale == 20 && this.items)
-                 this.select = this.items[0];
-             if(this.settings.scale == 100 && this.items)
-                 this.select = this.items[1];
-             if(this.settings.scale == 10 && this.items)
-                 this.select = this.items[2];
-             if(this.settings.scale == 5 && this.items)
-                 this.select = this.items[3];
+             this.calculateSuggestionRules();
+             this.calculateQuizRules();
+             this.calculateTournamentRules();
          }
+
+        @Watch( 'quizzes', {immediate: true, deep: true})
+        calculateQuizRules(){
+            this.quizRules = [(this.tournament + this.suggestions + this.quizzes) <= 100 ? this.quizzes : 'Max'];
+        }
+
+        @Watch( 'suggestions', {immediate: true, deep: true})
+        calculateSuggestionRules(){
+            this.suggestionRules = [(this.tournament + this.suggestions + this.quizzes) <= 100 ? this.suggestions : 'Max'];
+        }
+
+        @Watch( 'tournament', {immediate: true, deep: true})
+        calculateTournamentRules(){
+            this.tournamentRules = [(this.tournament + this.suggestions + this.quizzes) <= 100 ? this.tournament : 'Max'];
+        }
 
         closeDialog() {
             this.$emit('close-edit-lecture-dialog');
@@ -164,30 +175,16 @@
             }
 
             if( this.settings != null) {
-                this.settings.scale = this.select?.abbr;
 
-                await RemoteServices.changeEvalSettings(this.settings);
-                this.$emit('close-edit-lecture-dialog');
-            }
-        }
+                if(this.select?.abbr != undefined){
+                    this.settings.scale = this.select.abbr;
+                    await RemoteServices.changeEvalSettings(this.settings);
+                    this.$emit('close-edit-lecture-dialog');
+                }
+                else{
+                    await this.$store.dispatch('Invalid settings', Error);
+                }
 
-
-        data () {
-            return {
-                select: { state: '0 - 20', abbr: 20 },
-                items: [
-                    { state: '0 - 20', abbr: 20 },
-                    { state: '0 - 100', abbr: 100 },
-                    { state: '0 - 10', abbr: 10 },
-                    { state: '0 - 5', abbr: 5 },
-                ],
-                rulesQuizzes: [
-                    v => v <= 100-(this.tournament+this.suggestions) || 'Max',
-                ],rulesTournament: [
-                    v => v <= 100-(this.quizzes+this.suggestions) || 'Max',
-                ],rulesSuggestions: [
-                    v => v <= 100-(this.quizzes+this.tournament) || 'Max',
-                ],
             }
         }
     }
