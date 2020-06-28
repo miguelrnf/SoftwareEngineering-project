@@ -10,7 +10,7 @@
             <v-text-field
               clearable
               v-model="name"
-              label="*Name"
+              label="*Name (Only alpha-numeric characters and spaces)"
               counter
               maxlength="50"
               @change="button = false"
