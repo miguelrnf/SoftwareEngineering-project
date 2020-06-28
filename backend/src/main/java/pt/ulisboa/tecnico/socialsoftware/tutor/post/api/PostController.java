@@ -1,13 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.api;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;

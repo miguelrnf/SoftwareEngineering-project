@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Document;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
 import java.io.Serializable;
 import java.util.Arrays;

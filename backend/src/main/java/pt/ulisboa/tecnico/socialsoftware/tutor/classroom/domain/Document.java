@@ -1,15 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain;
 
-import groovy.lang.GString;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
 import javax.persistence.*;
-
-
-import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 

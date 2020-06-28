@@ -21,17 +21,21 @@ class AddShopItemsTest extends Specification {
     public static final int VALID_ID_1 = 1
     public static final int VALID_ID_2 = 2
     public static final int VALID_ID_3 = 3
+    public static final int VALID_ID_4 = 4
     public static final String VALID_NAME = "Joe Mama"
     public static final String VALID_USERNAME = "Joe-Mama"
     public static final String VALID_NAME_1 = "Ben Dover"
     public static final String VALID_NAME_2 = "Mike Litoris"
     public static final String VALID_NAME_3 = "Peixe Acha"
+    public static final String VALID_NAME_4 = "Peixe Achão"
     public static final String VALID_DESCRIPTION_1 = "We're no strangers to love"
     public static final String VALID_DESCRIPTION_2 = "You know the rules"
     public static final String VALID_DESCRIPTION_3 = "And so, do I"
+    public static final String VALID_DESCRIPTION_4 = "I'm garfield"
     public static final String VALID_TYPE_1 = ShopItem.Type.THEME.toString()
     public static final String VALID_TYPE_2 = ShopItem.Type.POST_AWARD.toString()
     public static final String VALID_TYPE_3 = ShopItem.Type.POWER_UP.toString()
+    public static final String VALID_TYPE_4 = ShopItem.Type.THEME.toString()
     public static final int VALID_PRICE_1 = 100
     public static final int VALID_PRICE_2 = 200
     public static final int VALID_PRICE_3 = 300
@@ -53,6 +57,9 @@ class AddShopItemsTest extends Specification {
 
     @Shared
     def ITEM_3
+
+    @Shared
+    def ITEM_4
 
     @Shared
     def USER_1
@@ -78,6 +85,13 @@ class AddShopItemsTest extends Specification {
         ITEM_3.setName(VALID_NAME_3)
         ITEM_3.setDescription(VALID_DESCRIPTION_3)
         ITEM_3.setPrice(VALID_PRICE_3)
+
+        ITEM_4 = new ShopItem()
+        ITEM_4.setId(VALID_ID_4)
+        ITEM_4.setType(VALID_TYPE_4)
+        ITEM_4.setName(VALID_NAME_4)
+        ITEM_4.setDescription(VALID_DESCRIPTION_4)
+        ITEM_4.setPrice(VALID_PRICE_1)
 
         USER_1 = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
     }
@@ -106,7 +120,7 @@ class AddShopItemsTest extends Specification {
 
         where:
         item                    ||       expected
-        ITEM_2 as ShopItem      ||       VALID_NAME_2
+        ITEM_4 as ShopItem      ||       VALID_NAME_4
     }
 
     @Unroll
@@ -121,7 +135,8 @@ class AddShopItemsTest extends Specification {
 
         where:
         item                    ||       expected
-        ITEM_3 as ShopItem      ||       ErrorMessage.CANT_ADD_POWER_UP.label
+        ITEM_3 as ShopItem      ||       ErrorMessage.CANT_ADD_ITEM.label
+        ITEM_2 as ShopItem      ||       ErrorMessage.CANT_ADD_ITEM.label
         ITEM_1 as ShopItem      ||       ErrorMessage.ITEM_ALREADY_EXISTS.label.toString().replace("%s", VALID_NAME_1)
     }
 

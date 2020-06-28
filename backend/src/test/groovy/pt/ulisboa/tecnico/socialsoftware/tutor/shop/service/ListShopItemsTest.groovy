@@ -67,7 +67,7 @@ class ListShopItemsTest extends Specification {
         def result = shopService.listShopItems()
 
         then:
-        result.getItemList().size() == 3
+        result.size() == 3
     }
 
     @TestConfiguration

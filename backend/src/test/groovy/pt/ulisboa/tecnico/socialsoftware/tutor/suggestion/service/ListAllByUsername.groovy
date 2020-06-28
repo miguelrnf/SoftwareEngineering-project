@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -194,12 +193,11 @@ class ListAllByUsername extends Specification {
         VALID_SUGGESTION = new SuggestionDto()
         VALID_SUGGESTION.setId(VALID_ID)
         VALID_SUGGESTION.setStudentQuestion(SUGGESTION_CONTENT)
-        VALID_SUGGESTION.setIsPrivate(null);
-        VALID_SUGGESTION.setStatus('TOAPPROVE');
+        VALID_SUGGESTION.setIsPrivate(null)
+        VALID_SUGGESTION.setStatus('TOAPPROVE')
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
-        //VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
         VALID_SUGGESTION.setStudent(VALID_Udto)
 
         and: "a valid user - STUDENT "
@@ -241,7 +239,7 @@ class ListAllByUsername extends Specification {
         def userS2 = new User(VALID_NAME2, VALID_USERNAME2, 3, User.Role.STUDENT)
 
         and:
-        def topic = new Topic();
+        def topic = new Topic()
         topic.setName(VALID_NAME_TOPIC)
         topic.setCourse(course)
 

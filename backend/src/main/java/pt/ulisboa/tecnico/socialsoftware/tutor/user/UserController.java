@@ -8,9 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ThemeItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.ThemeItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.security.Principal;
@@ -39,19 +38,6 @@ public class UserController {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
     }
-
-//    @PostMapping("/users")
-//    public User createUser(@Valid @RequestBody UserDto user) {
-//        return userService.createUser(user.getName(), user.getUsername(), user.getRole());
-//    }
-
-//    @PutMapping("/users/{userId}")
-//    public User updateUser(@PathVariable Integer userId,
-//                              @Valid @RequestBody UserDto user) {
-//
-//        return userRepository.findById(userId)
-//                .map(usr -> userRepository.save(usr)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-//    }
 
     @PutMapping("/users/dashboard/privacy")
     @PreAuthorize("(hasRole('ROLE_STUDENT'))")

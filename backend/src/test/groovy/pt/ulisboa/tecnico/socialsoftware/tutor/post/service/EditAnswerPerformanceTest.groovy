@@ -21,7 +21,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
+import spock.lang.Shared
 import spock.lang.Specification
+
+import java.awt.Shape
 
 @DataJpaTest
 class EditAnswerPerformanceTest extends Specification {
@@ -37,6 +40,9 @@ class EditAnswerPerformanceTest extends Specification {
 
     @Autowired
     UserRepository userRepository
+
+    @Shared
+    def post1
 
     def "testing performance when editing the answer of 3000 posts"() {
         given: "a valid question"
@@ -64,7 +70,7 @@ class EditAnswerPerformanceTest extends Specification {
             def postAnswer1 = new PostAnswer()
             postAnswer1.setUser(user1)
             postAnswer1.setTeacherAnswer("VALID_ANSWER")
-            def post1 = new Post(i, postQuestion1)
+            post1 = new Post(i, postQuestion1)
             postQuestion1.setPost(post1)
             post1.setAnswer(postAnswer1)
             postAnswer1.setPost(post1)

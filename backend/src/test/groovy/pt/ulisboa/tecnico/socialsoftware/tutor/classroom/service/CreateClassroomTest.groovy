@@ -25,18 +25,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.study.StudyService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.study.StudyService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Specification
-
-import java.util.stream.Collectors
 
 @DataJpaTest
 class CreateClassroomTest extends Specification {
@@ -221,7 +215,7 @@ class CreateClassroomTest extends Specification {
         when:
 
         def classroom = classroomService.createClassroom(courseExecution.getId(), classroomDto)
-        def result = classroomService.addDocument(classroom.getId(), documentDto)
+        classroomService.addDocument(classroom.getId(), documentDto)
 
 
         then:

@@ -6,15 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.ClassroomService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.ClassroomDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.DocumentDto;
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto.YaDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.EvalSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
-import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 

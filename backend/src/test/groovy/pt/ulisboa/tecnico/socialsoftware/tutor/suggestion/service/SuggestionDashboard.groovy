@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -239,7 +238,7 @@ class SuggestionDashboard extends Specification {
         userS2.setCourseExecutions(set)
 
         and:
-        def topic = new Topic();
+        def topic = new Topic()
         topic.setName(VALID_NAME_TOPIC)
         topic.setCourse(course)
 
@@ -266,15 +265,15 @@ class SuggestionDashboard extends Specification {
     def "valid suggestion status as a student"() {
 
         when:
-        def result = suggestionService.listAllSuggestions(u)
+        def result = suggestionService.listAllSuggestions(u as UserDto)
 
 
         then:
-        result.size().equals(VALID_SUGGESTION_LIST.size())
+        result.size() == (VALID_SUGGESTION_LIST.size())
 
         for(int i = 0; i < result.size(); i++) {
 
-            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
+            assert result.get(i) == (VALID_SUGGESTION_LIST.get(i))
 
         }
 

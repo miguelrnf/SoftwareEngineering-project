@@ -2,9 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.classroom.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 
 import java.io.Serializable;
 import java.util.ArrayList;

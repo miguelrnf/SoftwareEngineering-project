@@ -28,15 +28,15 @@ class BuyShopItemsTest extends Specification {
     public static final String VALID_DESCRIPTION_1 = "We're no strangers to love"
     public static final String VALID_DESCRIPTION_2 = "You know the rules"
     public static final String VALID_DESCRIPTION_3 = "And so, do I"
-    public static final String VALID_TYPE_1 = ShopItem.Type.THEME.toString()
-    public static final String VALID_TYPE_2 = ShopItem.Type.POST_AWARD.toString()
-    public static final String VALID_TYPE_3 = ShopItem.Type.POWER_UP.toString()
+    public static final String VALID_TYPE_1 = ShopItem.Type.THEME.name()
+    public static final String VALID_TYPE_2 = ShopItem.Type.POST_AWARD.name()
+    public static final String VALID_TYPE_3 = ShopItem.Type.POWER_UP.name()
     public static final int VALID_PRICE_1 = 100
     public static final int VALID_PRICE_2 = 200
     public static final int VALID_PRICE_3 = 300
-    public static final String VALID_CONTENT_THEME = "1,1,1,1,1,1,1,1"
-    public static final String VALID_CONTENT_POST_AWARD = "TYPE_1"
-    public static final String VALID_CONTENT_POWER_UP = "TYPE_1"
+    public static final String VALID_CONTENT_THEME = "1;1;1;1;1;1;1;1"
+    public static final String VALID_CONTENT_POST_AWARD = "SILVER"
+    public static final String VALID_CONTENT_POWER_UP = "HINT"
 
     @Autowired
     ShopService shopService
@@ -58,6 +58,10 @@ class BuyShopItemsTest extends Specification {
 
     @Shared
     def USER_1
+
+    @Shared
+    def user1
+
 
     def setupSpec() {
         ITEM_1 = new ShopItem()
@@ -114,7 +118,7 @@ class BuyShopItemsTest extends Specification {
         i3.setContent(VALID_CONTENT_POWER_UP)
 
         and: "a user with enough score to buy some items"
-        def user1 = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+        user1 = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
 
         then: "add to repository"
         userRepository.save(user1)
@@ -132,9 +136,9 @@ class BuyShopItemsTest extends Specification {
         else if(item.getId() == 3)
             id = 9
         else id = 1
-        USER_1.changeScore(300)
+        user1.changeScore(300)
 
-        def result = shopService.buyShopItem(USER_1 as User, id)
+        def result = shopService.buyShopItem(USER_1.getUsername() as String, id)
 
         then:
         result.getName() == expected
@@ -148,11 +152,11 @@ class BuyShopItemsTest extends Specification {
 
     def "buy all of the items when there is not enough achandos"() {
         when:
-        USER_1.changeScore(100)
+        user1.changeScore(100)
 
-        shopService.buyShopItem(USER_1 as User, 10)
-        shopService.buyShopItem(USER_1 as User, 11)
-        shopService.buyShopItem(USER_1 as User, 12)
+        shopService.buyShopItem(USER_1.getUsername() as String, 10)
+        shopService.buyShopItem(USER_1.getUsername() as String, 11)
+        shopService.buyShopItem(USER_1.getUsername() as String, 12)
 
         then:
         def result = thrown(TutorException)
