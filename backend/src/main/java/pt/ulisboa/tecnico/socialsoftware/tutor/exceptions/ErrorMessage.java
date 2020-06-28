@@ -143,7 +143,8 @@ public enum ErrorMessage {
 
     //shop errors
     NOT_ENOUGH_ACHANDOS("You currently do not have enough achandos to buy this item"),
-    CANT_ADD_POWER_UP("The new item cannot be a power up"),
+    CANT_ADD_ITEM("The new item must be a theme"),
+    ITEM_NOT_CONSISTENT("Field %s of the item is not consistent"),
     CANT_REMOVE_POWER_UP("You cannot remove a power up"),
     ITEM_ALREADY_EXISTS("The item %s is already in the shop"),
     NON_EXISTING_ITEM_ID("The item with id %d does not exist in the shop"),

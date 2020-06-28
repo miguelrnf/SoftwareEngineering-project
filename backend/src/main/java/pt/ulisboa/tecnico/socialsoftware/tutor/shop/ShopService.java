@@ -76,13 +76,27 @@ public class ShopService {
         try {
             checkIfShopItemExistsByName(shopItemDto);
         } catch (TutorException e) {
-            if(checkIfItemIsPowerUp(shopItemDto.getType())) throw new TutorException(ErrorMessage.CANT_ADD_POWER_UP);
+            if(!shopItemDto.getType().equals("THEME")) throw new TutorException(ErrorMessage.CANT_ADD_ITEM);
+            checkConsistency(shopItemDto);
             ShopItem item = new ShopItem(shopItemDto.getName(), shopItemDto.getType(), shopItemDto.getPrice(),
                     shopItemDto.getDescription(), shopItemDto.getIcon(), shopItemDto.getColor(), shopItemDto.getContent());
             entityManager.persist(item);
             return new ShopItemDto(item);
         }
         throw new TutorException(ErrorMessage.ITEM_ALREADY_EXISTS, shopItemDto.getName());
+    }
+
+    private void checkConsistency(ShopItemDto item) {
+        if (item.getName() == null || item.getName().isBlank() ||
+                item.getName().isEmpty() || item.getName().length() > 50)
+            throw new TutorException(ErrorMessage.ITEM_NOT_CONSISTENT, "Name");
+
+        if (item.getDescription() == null || item.getDescription().isBlank() ||
+                item.getDescription().isEmpty() || item.getDescription().length() > 250)
+            throw new TutorException(ErrorMessage.ITEM_NOT_CONSISTENT, "Description");
+
+        if (item.getPrice() < 1)
+            throw new TutorException(ErrorMessage.ITEM_NOT_CONSISTENT, "Price");
     }
 
     @Retryable(
