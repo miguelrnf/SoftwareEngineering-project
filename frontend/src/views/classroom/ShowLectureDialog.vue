@@ -165,7 +165,7 @@
             </template>
           </v-data-table>
         </v-tab-item>
-        <v-tab-item v-if="!teacher">
+        <v-tab-item v-else>
           <v-list three-line>
             <v-row>
               <v-col>
@@ -180,7 +180,7 @@
             </v-row>
             <v-list-item-group>
               <template v-for="(l, index) in selectedQuizzes">
-                <v-list-item :key="l.title" class="test1" @click="startQuiz(l)">
+                <v-list-item :key="l.title" @click="startQuiz(l)">
                   <template>
                     <v-list-item-content>
                       <v-row>
@@ -208,7 +208,7 @@
               </template>
 
               <template v-for="(l, index) in solvedQuizzes">
-                <v-list-item :key="l.title" class="test1" @click="show(l)">
+                <v-list-item :key="l.title" @click="show(l)">
                   <template>
                     <v-list-item-content>
                       <v-row>
@@ -493,17 +493,7 @@ $gap: 20px;
   width: 50%;
 }
 
-.test1 {
-  border-color: #ffffff;
-  background-color: #faf6f6;
-  border-left-style: solid;
-  border-right-style: solid;
-  border-top-style: solid;
-}
 .test2 {
   padding-right: 60px;
-}
-.test3 {
-  background-color: #faf6f6;
 }
 </style>

@@ -21,13 +21,6 @@
           Project
         </v-tab>
         <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          class="mr-6"
-          v-if="isTeacher()"
-          @click="newLecture"
-          >{{ tabName }}</v-btn
-        >
 
         <v-tab-item class="pt-5 pb-10">
           <v-list three-line>
@@ -52,13 +45,9 @@
                 </v-col>
               </v-col>
             </v-row>
-            <v-list-item-group class="test3">
+            <v-list-item-group>
               <template v-for="(l, index) in lectures">
-                <v-list-item
-                  :key="l.title"
-                  class="test1"
-                  @click="showLectureDialog(l)"
-                >
+                <v-list-item :key="l.title" @click="showLectureDialog(l)">
                   <template>
                     <v-list-item-content>
                       <v-row>
@@ -112,11 +101,7 @@
             </v-row>
             <v-list-item-group class="test3">
               <template v-for="(l, index) in lab">
-                <v-list-item
-                  :key="l.title"
-                  class="test1"
-                  @click="showLectureDialog(l)"
-                >
+                <v-list-item :key="l.title" @click="showLectureDialog(l)">
                   <template>
                     <v-list-item-content>
                       <v-row>
@@ -168,13 +153,9 @@
                 </v-col>
               </v-col>
             </v-row>
-            <v-list-item-group class="test3">
+            <v-list-item-group>
               <template v-for="(l, index) in project">
-                <v-list-item
-                  :key="l.title"
-                  class="test1"
-                  @click="showLectureDialog(l)"
-                >
+                <v-list-item :key="l.title" @click="showLectureDialog(l)">
                   <template>
                     <v-list-item-content>
                       <v-row>
@@ -312,11 +293,11 @@ export default class ClassroomHomeView extends Vue {
     this.project = await RemoteServices.getClassrooms('PROJECT');
     this.showDialog = false;
   }
-
-  newLecture() {
-    this.current = new Classroom();
-    this.newOrEditDialog = true;
-  }
+  //
+  // newLecture() {
+  //   this.current = new Classroom();
+  //   this.newOrEditDialog = true;
+  // }
 
   async onSaveLecture(lecture: Classroom) {
     if (this.tabName === 'New Lecture') {
@@ -340,18 +321,7 @@ export default class ClassroomHomeView extends Vue {
 .test {
   font-size: large;
 }
-
-.test1 {
-  border-color: #ffffff;
-  background-color: #faf6f6;
-  border-left-style: solid;
-  border-right-style: solid;
-  border-top-style: solid;
-}
 .test2 {
   padding-right: 60px;
-}
-.test3 {
-  background-color: #faf6f6;
 }
 </style>

@@ -171,7 +171,16 @@ export default class DashboardStatsView extends Vue {
   chartOptions = {
     pieHole: 0.7,
     colors: ['red', '#1877d3', '#F4D50E'],
-    pieSliceText: 'none'
+    pieSliceText: 'none',
+    backgroundColor: this.$vuetify.theme.currentTheme.background,
+    pieSliceBorderColor: this.$vuetify.theme.currentTheme.background,
+    legend: {
+      textStyle: {
+        color: this.$vuetify.theme.currentTheme.font,
+        fontSize: '14'
+      }
+    },
+    tooltip: { textStyle: { fontSize: '14' } }
   };
 
   async created() {

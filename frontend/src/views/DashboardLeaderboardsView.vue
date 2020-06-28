@@ -208,10 +208,10 @@ export default class DashboardLeaderboardsView extends Vue {
   };
 
   chartOptions = {
-    legend: { position: 'none' },
-
     subtitle: '',
-    backgroundColor: this.$vuetify.theme.currentTheme.background
+    backgroundColor: this.$vuetify.theme.currentTheme.background,
+    legend: { position: 'none' },
+    tooltip: { textStyle: { fontSize: '14' } }
   };
 
   async created() {
