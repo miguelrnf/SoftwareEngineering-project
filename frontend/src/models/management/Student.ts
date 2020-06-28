@@ -9,6 +9,7 @@ export class Student {
   percentageOfCorrectAnswers!: number;
   percentageOfCorrectTeacherAnswers!: number;
   score!: number;
+  grade!: number;
 
   constructor(jsonObj?: Student) {
     if (jsonObj) {
@@ -23,6 +24,7 @@ export class Student {
       this.percentageOfCorrectAnswers = jsonObj.percentageOfCorrectAnswers;
       this.percentageOfCorrectTeacherAnswers =
         jsonObj.percentageOfCorrectTeacherAnswers;
+      this.grade = jsonObj.grade;
     }
   }
 }

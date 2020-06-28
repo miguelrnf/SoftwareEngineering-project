@@ -6,17 +6,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.PostService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 
 @RestController
 public class PostController {
 
-    private PostService postService;
+    private final PostService postService;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -26,8 +29,7 @@ public class PostController {
     }
 
     @GetMapping("executions/{executionId}/posts/{postId}")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))" +
-            "or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public PostDto viewPost(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         return postService.viewPost(postId);
     }
@@ -146,5 +148,32 @@ public class PostController {
     public PostDto changeAnswerPrivacy(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         return postService.changeAnswerPrivacy(postId, user);
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/upvote")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto upvote(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.vote(postId, user, "upvote");
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/downvote")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto downvote(Principal principal, @PathVariable int executionId, @PathVariable int postId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.vote(postId, user, "downvote");
+    }
+
+    @PutMapping("executions/{executionId}/posts/{postId}/award")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public PostDto award(Principal principal, @PathVariable int executionId, @PathVariable int postId, @Valid @RequestBody PostAwardItemDto award) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+        return postService.award(postId, award, user.getUsername());
+    }
+
+    @GetMapping("executions/{executionId}/posts/{postId}/getAwards")
+    @PreAuthorize("hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<AwardsPerPostDto> getpostAwards(@PathVariable int executionId, @PathVariable int postId) {
+        return postService.getpostAwards(postId);
     }
 }

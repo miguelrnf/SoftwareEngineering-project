@@ -37,6 +37,9 @@ public class Question implements DomainEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column(name = "hint")
+    private String hint;
+
     @Column(name = "number_of_answers", columnDefinition = "integer default 0")
     private Integer numberOfAnswers = 0;
 
@@ -58,7 +61,7 @@ public class Question implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
-    @ManyToMany(mappedBy = "questions")
+    @ManyToMany(mappedBy = "questions", fetch = FetchType.LAZY)
     private final Set<Topic> topics = new HashSet<>();
 
     @ManyToOne
@@ -76,6 +79,7 @@ public class Question implements DomainEntity {
         setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         setCourse(course);
         setOptions(questionDto.getOptions());
+        setHint(questionDto.getHint());
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
@@ -110,6 +114,14 @@ public class Question implements DomainEntity {
             throw new TutorException(INVALID_CONTENT_FOR_QUESTION);
 
         this.content = content;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     public Status getStatus() {

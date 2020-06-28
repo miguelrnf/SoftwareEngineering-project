@@ -55,4 +55,4 @@ export default class TournamentPreview extends Vue {
   }
 }
 </script>
-<style scoped></style>
+<style scoped />

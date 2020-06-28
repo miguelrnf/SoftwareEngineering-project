@@ -26,7 +26,7 @@
                   editAnswer() && $emit('close-edit-answer-dialog', false)
                 "
                 data-cy="editAnswerBox"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>
@@ -34,12 +34,14 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="blue darken-1"
-          @click="$emit('close-edit-answer-dialog', false)"
+        <v-btn color="primary" @click="$emit('close-edit-answer-dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="editAnswer">Save Edit</v-btn>
+        <v-btn
+          color="primary"
+          @click="editAnswer() && $emit('close-edit-answer-dialog', false)"
+          >Save Edit</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -73,6 +75,9 @@ export default class EditAnswerDialog extends Vue {
       this.$emit('save-post-edit-answer', newAnswer);
     } catch (error) {
       await this.$store.dispatch('error', error);
+    }
+    if (this.post.answer != null) {
+      this.post.answer.teacherAnswer = this.answer;
     }
   }
 }

@@ -4,7 +4,7 @@
       <v-app-bar dense color="grey lighten-2">
         <v-row>
           <v-card-title class="mt-n2 ml-3">{{
-            'Suggestion' + suggestion._id
+            'Suggestion' + suggestion.id
           }}</v-card-title>
 
           <v-spacer />
@@ -13,20 +13,22 @@
               class="ma-1"
               x-small
               label
-              :color="getColor1(suggestion._isprivate)"
+              :color="getColor1(suggestion.isprivate)"
               text-color="white"
               dark
-              ><span class="white--text ">{{
-                getPrivacyTag(suggestion._isprivate)
-              }}</span></v-chip
             >
+              <span class="white--text ">
+                {{ getPrivacyTag(suggestion.isprivate) }}
+              </span>
+            </v-chip>
             <v-chip
               class="ma-1"
               x-small
               label
               :color="getColor2(suggestion.status)"
               dark
-              ><span class="white--text ">{{ suggestion.status }}</span></v-chip
+            >
+              <span class="white--text ">{{ suggestion.status }}</span></v-chip
             >
           </div>
         </v-row>
@@ -37,7 +39,7 @@
           <span v-html="convertMarkDown(suggestion.title)" />
         </p>
         <div class="headline text-left">
-          <span v-html="convertMarkDown(suggestion._questionStr)" />
+          <span v-html="convertMarkDown(suggestion.studentQuestion)" />
         </div>
         <v-row>
           <span v-html="convertMarkDown('Options: ')" />
@@ -56,14 +58,15 @@
         <v-row>
           <span v-html="convertMarkDown('Topics: ')" />
           <v-chip
-            v-for="option in suggestion._topicsList"
+            v-for="option in suggestion.topicsList"
             :key="option.id"
             class="ma-1"
             x-small
             color="grey"
             text-color="white"
             dark
-            ><span class="white--text">{{ option.name }}</span>
+          >
+            <span class="white--text">{{ option.name }}</span>
           </v-chip>
         </v-row>
         <div class="text-right">
@@ -71,7 +74,7 @@
           <span
             v-html="
               convertMarkDown(
-                suggestion._student.username + ' on ' + suggestion.creationDate
+                suggestion.student.username + ' on ' + suggestion.creationDate
               )
             "
           />
@@ -84,7 +87,7 @@
         </v-app-bar>
 
         <v-card-text class="text-left">
-          <span>{{ suggestion._justification }}</span>
+          <span>{{ suggestion.teacherExplanation }}</span>
         </v-card-text>
       </h1>
       <br />
@@ -93,7 +96,7 @@
         <v-spacer />
         <v-btn
           dark
-          color="blue darken-1"
+          color="primary"
           @click="closeQuestionDialog"
           data-cy="closeButton"
           >close</v-btn
@@ -149,8 +152,6 @@ export default class ShowSuggestionDialog extends Vue {
     this.$emit('close-show-suggestion-dialog');
   }
 
-  created() {
-    console.log(this.suggestion);
-  }
+  created() {}
 }
 </script>

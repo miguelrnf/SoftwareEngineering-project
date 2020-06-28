@@ -7,17 +7,26 @@
     max-height="80%"
   >
     <v-card>
-      <v-card-title>
-        <span class="headline">
-          {{
-            editSuggestion && editSuggestion._id === null
-              ? 'New Suggestion'
-              : 'Edit Suggestion'
-          }}
-        </span>
-      </v-card-title>
-
-      <h1
+      <v-app-bar dense color="primary">
+        <v-toolbar-title class="white--text">{{
+          editSuggestion && editSuggestion.id === null
+            ? 'New Suggestion'
+            : 'Edit Suggestion'
+        }}</v-toolbar-title>
+        <v-spacer />
+        <toggle-button
+          v-model="editSuggestion.isPrivate"
+          :value="editSuggestion.isPrivate"
+          :color="{ checked: 'red', unchecked: 'green' }"
+          :width="75"
+          :height="33"
+          :name="'Make This Suggestion Private:'"
+          :font-size="10"
+          :labels="{ checked: 'Private', unchecked: 'Public' }"
+          data-cy="togglePrivacyButton"
+        />
+      </v-app-bar>
+      <div
         v-if="
           suggestion.status === 'REJECTED' || suggestion.status === 'TOAPPROVE'
         "
@@ -27,6 +36,7 @@
             <v-layout column wrap>
               <v-flex xs24 sm12 md8>
                 <v-text-field
+                  no-resize
                   v-model="editSuggestion.title"
                   label="Title"
                   data-cy="titleTextArea"
@@ -34,38 +44,76 @@
               </v-flex>
               <v-flex xs24 sm12 md12>
                 <v-textarea
+                  no-resize
                   outline
-                  rows="10"
-                  v-model="editSuggestion._questionStr"
-                  label="Content"
+                  auto-grow
+                  autofocus
+                  counter="1024"
+                  rows="4"
+                  v-model="editSuggestion.studentQuestion"
+                  label="Suggestion Content"
                   outlined
                   data-cy="content"
-                ></v-textarea>
-              </v-flex>
-              <v-flex
-                xs24
-                sm12
-                md12
-                v-for="index in editSuggestion.options.length"
-                :key="index"
-              >
-                <v-switch
-                  v-model="editSuggestion.options[index - 1].correct"
-                  class="ma-4"
-                  label="Correct"
-                  data-cy="correctToggleButton"
                 />
+                <v-divider />
+              </v-flex>
+              <v-flex xs24 sm12 md12>
                 <v-textarea
+                  no-resize
                   outline
-                  rows="10"
-                  v-model="editSuggestion.options[index - 1].content"
-                  :label="`Option ${index}`"
-                  data-cy="optionTextArea"
-                ></v-textarea>
+                  auto-grow
+                  autofocus
+                  counter="1024"
+                  rows="4"
+                  v-model="editSuggestion.hint"
+                  label="Hint (Optional)"
+                  outlined
+                  data-cy="content"
+                />
+                <v-divider />
+              </v-flex>
+              <v-flex xs24 sm12 md12>
+                <v-row>
+                  <v-icon color="green" class="px-3"
+                    >mdi-check-circle-outline</v-icon
+                  >
+
+                  <v-textarea
+                    no-resize
+                    outline
+                    single-line
+                    rows="1"
+                    v-model="editSuggestion.options[0].content"
+                    color="green"
+                    :label="`Correct Option`"
+                    data-cy="optionTextArea"
+                  />
+                </v-row>
+
+                <v-row
+                  v-for="index in editSuggestion.options.length - 1"
+                  :key="index"
+                >
+                  <v-icon color="red" class="px-3"
+                    >mdi-close-circle-outline</v-icon
+                  >
+
+                  <v-textarea
+                    no-resize
+                    outline
+                    single-line
+                    rows="1"
+                    v-model="editSuggestion.options[index].content"
+                    color="red"
+                    :label="`Option ${index + 1}`"
+                    data-cy="optionTextArea"
+                  />
+                </v-row>
               </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
+        <v-divider />
         <v-card-text>
           <v-autocomplete
             v-model="questionTopics"
@@ -97,120 +145,16 @@
             </template>
           </v-autocomplete>
         </v-card-text>
-      </h1>
-
-      <h1 v-if="suggestion.status === 'APPROVED'">
-        <v-card class="mx-auto" max-height="80%">
-          <v-app-bar dense color="grey lighten-2">
-            <v-row>
-              <v-card-title class="mt-n2 ml-3">{{
-                'Suggestion' + suggestion._id
-              }}</v-card-title>
-
-              <v-spacer />
-              <div class="mr-6 mt-3">
-                <v-chip
-                  class="ma-1"
-                  x-small
-                  label
-                  :color="getColor1(suggestion._isprivate)"
-                  text-color="white"
-                  dark
-                  ><span class="white--text ">{{
-                    getPrivacyTag(suggestion._isprivate)
-                  }}</span></v-chip
-                >
-                <v-chip
-                  class="ma-1"
-                  x-small
-                  label
-                  :color="getColor2(suggestion.status)"
-                  dark
-                  ><span class="white--text ">{{
-                    suggestion.status
-                  }}</span></v-chip
-                >
-              </div>
-            </v-row>
-          </v-app-bar>
-
-          <v-card-text>
-            <p class="headline font-weight-black text-left">
-              <span v-html="convertMarkDown(suggestion.title)" />
-            </p>
-            <div class="headline text-left">
-              <span v-html="convertMarkDown(suggestion._questionStr)" />
-            </div>
-            <v-row>
-              <span v-html="convertMarkDown('Options: ')" />
-              <v-chip
-                v-for="option in suggestion.options"
-                :key="option.id"
-                class="ma-1"
-                x-small
-                :color="getChipColor(option.correct)"
-                outlined
-                :text-color="getTextColor(option.correct)"
-                dark
-                >{{ option.content }}
-              </v-chip>
-            </v-row>
-            <v-row>
-              <span v-html="convertMarkDown('Topics: ')" />
-              <v-chip
-                v-for="option in suggestion._topicsList"
-                :key="option.id"
-                class="ma-1"
-                x-small
-                color="grey"
-                text-color="white"
-                dark
-                ><span class="white--text">{{ option.name }}</span>
-              </v-chip>
-            </v-row>
-            <div class="text-right">
-              by
-              <span
-                v-html="
-                  convertMarkDown(
-                    suggestion._student.username +
-                      ' on ' +
-                      suggestion.creationDate
-                  )
-                "
-              />
-            </div>
-          </v-card-text>
-        </v-card>
-      </h1>
-
-      <v-subheader>Make Your Suggestion Private:</v-subheader>
-      <v-card-actions>
-        <toggle-button
-          v-model="editSuggestion._isprivate"
-          :value="false"
-          :color="{ checked: 'red', unchecked: 'green' }"
-          :width="75"
-          :height="33"
-          :name="'Make This Suggestion Private:'"
-          :font-size="10"
-          :labels="{ checked: 'Private', unchecked: 'Public' }"
-          data-cy="togglePrivacyButton"
-        />
-      </v-card-actions>
-
+      </div>
+      <div v-if="suggestion.status === 'APPROVED'">
+        <show-suggestion :suggestion="this.suggestion" :dialog="true" />
+      </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="blue darken-1"
-          @click="$emit('dialog', false)"
-          data-cy="cancel"
+        <v-btn color="primary" @click="$emit('dialog', false)" data-cy="cancel"
           >Cancel</v-btn
         >
-        <v-btn
-          color="blue darken-1"
-          @click="saveSuggestion"
-          data-cy="saveButton"
+        <v-btn color="primary" @click="saveSuggestion" data-cy="saveButton"
           >Save</v-btn
         >
       </v-card-actions>
@@ -227,10 +171,15 @@ import ToggleButton from 'vue-js-toggle-button';
 import User from '@/models/user/User';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import ShowSuggestion from '@/views/ShowSuggestion.vue';
 
 Vue.use(ToggleButton);
 
-@Component
+@Component({
+  components: {
+    'show-suggestion': ShowSuggestion
+  }
+})
 export default class EditSuggestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Suggestion, required: true }) readonly suggestion!: Suggestion;
@@ -240,21 +189,22 @@ export default class EditSuggestionDialog extends Vue {
   student: User | null = null;
 
   questionTopics: Topic[] = JSON.parse(
-    JSON.stringify(this.suggestion._topicsList)
+    JSON.stringify(this.suggestion.topicsList)
   );
 
   async created() {
     this.editSuggestion = new Suggestion(this.suggestion);
+    this.editSuggestion.options[0].correct = true;
     this.student = await this.$store.getters.getUser;
   }
 
   async saveSuggestion() {
-    if (this.editSuggestion && !this.editSuggestion._questionStr) {
+    if (this.editSuggestion && !this.editSuggestion.studentQuestion) {
       await this.$store.dispatch('error', 'Suggestion must have content');
       return;
     }
 
-    if (this.editSuggestion && this.editSuggestion._id != null) {
+    if (this.editSuggestion && this.editSuggestion.id != null) {
       try {
         const result = await RemoteServices.updateSuggestion(
           this.editSuggestion
@@ -265,10 +215,8 @@ export default class EditSuggestionDialog extends Vue {
       }
     } else if (this.editSuggestion) {
       try {
-        this.editSuggestion._questionStr = this.editSuggestion._questionStr;
-        this.editSuggestion._student = this.$store.getters.getUser;
-        this.editSuggestion._topicsList = this.questionTopics;
-        this.editSuggestion._isprivate = this.editSuggestion._isprivate;
+        this.editSuggestion.student = this.$store.getters.getUser;
+        this.editSuggestion.topicsList = this.questionTopics;
         const result = await RemoteServices.createSuggestion(
           this.editSuggestion
         );
@@ -279,41 +227,14 @@ export default class EditSuggestionDialog extends Vue {
     }
   }
 
-  getChipColor(iscorrect: boolean) {
-    if (iscorrect) return 'green';
-    return 'red';
-  }
-
-  getTextColor(iscorrect: boolean) {
-    if (iscorrect) return 'green';
-    return 'red';
-  }
-
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
-  getPrivacyTag(isprivate: boolean) {
-    if (isprivate) return 'PRIVATE';
-    else return 'PUBLIC';
-  }
-
-  getColor1(IsPrivate: boolean) {
-    let vazo = 'black';
-    if (IsPrivate) return vazo;
-    else return 'orange';
-  }
-
-  getColor2(Status: string) {
-    if (Status == 'TOAPPROVE') return 'yellow';
-    else if (Status == 'REJECTED') return 'red';
-    else return 'green';
-  }
-
   async saveTopics() {
-    if (this.suggestion._id) {
+    if (this.suggestion.id) {
       try {
-        this.suggestion._topicsList = this.questionTopics;
+        this.suggestion.topicsList = this.questionTopics;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -321,7 +242,7 @@ export default class EditSuggestionDialog extends Vue {
 
     this.$emit(
       'question-changed-topics',
-      this.suggestion._id,
+      this.suggestion.id,
       this.questionTopics
     );
   }

@@ -183,7 +183,7 @@ class addQuestionTest extends Specification{
     def "create a suggestion with invalid fields"(){
         when:
         def sug = new SuggestionDto()
-        sug.set_questionStr(s as String)
+        sug.setStudentQuestion(s as String)
 
         List<TopicDto> topicsDto = new ArrayList<>()
 
@@ -191,9 +191,9 @@ class addQuestionTest extends Specification{
             topicsDto.add(new TopicDto(t));
         }
 
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
 
-        sug.set_student(new UserDto(u as User))
+        sug.setStudent(new UserDto(u as User))
 
         suggestionService.createSuggestion(courseExecution.getId(), sug)
 
@@ -227,15 +227,15 @@ class addQuestionTest extends Specification{
 
 
         def sug = new SuggestionDto()
-        sug.set_questionStr(SUGGESTION_CONTENT)
-        sug.set_student(new UserDto(VALID_U as User))
+        sug.setStudentQuestion(SUGGESTION_CONTENT)
+        sug.setStudent(new UserDto(VALID_U as User))
 
 
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in VALID_TOPIC_LIST){
             topicsDto.add(new TopicDto(t));
         }
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
 
 
         sug.setTitle("TITLE")

@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.ShopService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
@@ -453,6 +454,11 @@ class FenixAuthTest extends Specification {
         @Bean
         UserService userService() {
             return new UserService()
+        }
+
+        @Bean
+        ShopService shopService() {
+            return new ShopService()
         }
     }
 }

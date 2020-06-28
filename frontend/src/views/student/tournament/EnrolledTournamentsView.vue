@@ -1,78 +1,122 @@
 <template>
-  <div class="container">
-    <h2>Enrolled Tournaments</h2>
-    <ul>
-      <li class="list-header">
-        <div class="col">Title</div>
-        <div class="col">Starts</div>
-        <div class="col">Ends</div>
-        <div class="col">Questions</div>
-        <div class="col">Status</div>
-        <div class="col">Assessment</div>
-        <div class="col">Solved</div>
-        <div class="col last-col"></div>
-      </li>
-      <li class="list-row" v-for="t in tournaments" :key="t.id">
-        <div class="col" data-cy="title">
-          {{ t.title }}
-          <p v-show="false" data-cy="id">
-            <span id="num"> {{ t.id }} </span>
-          </p>
-        </div>
-        <div class="col">
-          {{ t.availableDate }}
-        </div>
-        <div class="col">
-          {{ t.conclusionDate }}
-        </div>
-        <div class="col">
-          {{ t.numberOfQuestions }}
-        </div>
-        <div class="col">
-          {{ t.status }}
-        </div>
-        <div class="col">
-          {{ t.assessmentDto.title }}
-        </div>
-        <div class="col">
-          <v-icon v-if="t.completed === true" color="green">
-            fas fa-check
-          </v-icon>
-          <v-icon v-else color="red">fas fa-times </v-icon>
-        </div>
-        <div class="col">
-          <v-btn
-            v-if="isSolvable(t)"
-            class="btn"
-            color="primary"
-            @click="solveQuiz(t.quiz)"
-          >
-            Solve
-          </v-btn>
-          <v-btn
-            v-else-if="prepareToResults(t)"
-            class="btn"
-            color="primary"
-            @click="showResults(t)"
-          >
-            Results
-          </v-btn>
-        </div>
-      </li>
-    </ul>
-  </div>
-</template>
+  <v-card class="table">
+    <v-card-title style="font-size: xx-large"
+      >Enrolled Tournaments</v-card-title
+    >
+    <v-data-table
+      :headers="headers"
+      :items="tournaments"
+      :search="search"
+      :mobile-breakpoint="0"
+      sort-desc
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+    >
+      <template v-slot:top>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
+          />
+        </v-card-title>
+      </template>
 
+      <template v-slot:item.solved="{ item }">
+        <v-tooltip v-if="item.completed === true" bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on" color="success">fas fa-check</v-icon>
+          </template>
+          <span>Solved</span>
+        </v-tooltip>
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on" color="error">fas fa-times</v-icon>
+          </template>
+          <span>Not solved</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:item.action="{ item }">
+        <v-btn
+          v-if="isSolvable(item)"
+          class="mr-2"
+          color="primary"
+          @click="solveQuiz(item.quiz)"
+          >Solve
+        </v-btn>
+        <v-btn
+          v-else-if="prepareToResults(item)"
+          data-cy="details"
+          class="mr-2"
+          color="primary"
+          @click="showResults(item)"
+          >Results
+        </v-btn>
+      </template>
+      <template v-slot:item.title="{ item }">
+        <p v-html="convertMarkDown(item.title, null)" />
+      </template>
+      <template v-slot:item.availableDate="{ item }">
+        <p>{{ item.availableDate }}</p>
+      </template>
+      <template v-slot:item.conclusionDate="{ item }">
+        <p>{{ item.conclusionDate }}</p>
+      </template>
+      <template v-slot:item.type="{ item }">
+        <p v-html="convertMarkDown(item.type, null)" />
+      </template>
+      <template v-slot:item.numberOfQuestions="{ item }">
+        <p>{{ item.numberOfQuestions }}</p>
+      </template>
+      <template v-slot:item.status="{ item }">
+        <p v-html="convertMarkDown(item.status, null)" />
+      </template>
+      <template v-slot:item.assessmentDto.title="{ item }">
+        <p v-html="convertMarkDown(item.assessmentDto.title, null)" />
+      </template>
+    </v-data-table>
+  </v-card>
+</template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
+import Image from '../../../models/management/Image';
 import { Tournament } from '@/models/management/Tournament';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementManager from '@/models/statement/StatementManager';
 
 @Component
-export default class EnrolledTournamentsView extends Vue {
+export default class AvailableTournamentsView2 extends Vue {
   tournaments: Tournament[] = [];
+  search: string = '';
+  sign: string = '';
+
+  headers: object = [
+    {
+      text: 'Solved',
+      value: 'solved',
+      align: 'left',
+      sortable: false,
+      width: '5%'
+    },
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      sortable: false,
+      width: '10%'
+    },
+    { text: 'Title', value: 'title', align: 'left' },
+    { text: 'Starts', value: 'availableDate', align: 'left' },
+    { text: 'Ends', value: 'conclusionDate', align: 'left' },
+    { text: 'Type', value: 'type', align: 'left' },
+    { text: 'Questions', value: 'numberOfQuestions', align: 'left' },
+    { text: 'Status', value: 'status', align: 'left' },
+    { text: 'Assessment', value: 'assessmentDto.title', align: 'left' }
+  ];
 
   async created() {
     await this.$store.dispatch('loading');
@@ -82,6 +126,10 @@ export default class EnrolledTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   async solveQuiz(quiz: StatementQuiz) {
@@ -112,58 +160,3 @@ export default class EnrolledTournamentsView extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.container {
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 10px;
-  padding-right: 10px;
-
-  h2 {
-    font-size: 26px;
-    margin: 20px 0;
-    text-align: center;
-    small {
-      font-size: 0.5em;
-    }
-  }
-
-  ul {
-    overflow: hidden;
-    padding: 0 5px;
-
-    li {
-      border-radius: 3px;
-      padding: 15px 10px;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .list-header {
-      background-color: #1976d2;
-      color: white;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      text-align: center;
-    }
-
-    .col {
-      flex-basis: 25% !important;
-      margin: auto; /* Important */
-      text-align: center;
-      word-wrap: break-word;
-      max-width: 15%;
-    }
-
-    .list-row {
-      background-color: #ffffff;
-      box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
-      display: flex;
-    }
-  }
-}
-</style>

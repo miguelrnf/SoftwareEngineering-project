@@ -6,9 +6,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
@@ -22,6 +24,9 @@ public class TournamentController {
 
     @Autowired
     private TournamentService tournamentservice;
+
+    @Autowired
+    private UserService userService;
 
     TournamentController(TournamentService tournamentService) {
         this.tournamentservice = tournamentService;
@@ -37,6 +42,17 @@ public class TournamentController {
         }
         tournamentDto.setOwner(new UserDto(user));
         return tournamentservice.createTournament(executionId, tournamentDto);
+    }
+
+    @PutMapping("/executions/{executionId}/tournaments/edit")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public TournamentDto editTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable Integer executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        return tournamentservice.editTournament(user.getUsername(), tournamentDto);
     }
 
     @PutMapping("/tournament/{tournamentId}/opened/enroll")
@@ -113,6 +129,48 @@ public class TournamentController {
             throw new TutorException(AUTHENTICATION_ERROR);
 
         return this.tournamentservice.cancelTournament(tournamentId, user.getUsername());
+    }
+
+    @PutMapping("/tournaments/fiftyFifty/{quizId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public StatementQuestionDto removeTwoOptions(Principal principal, @PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.usePowerUp(user.getId(), "FIFTYFIFTY");
+
+        return tournamentservice.removeTwoOptions(statementQuestionDto, quizId);
+    }
+
+    @PutMapping("/tournaments/rigthAnswer/{quizId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public StatementQuestionDto rigthAnswer(Principal principal, @PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.usePowerUp(user.getId(), "RIGHTANSWER");
+
+        return tournamentservice.rigthAnswer(statementQuestionDto, quizId);
+    }
+
+    @PutMapping("/tournaments/getHint/{quizId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public String getHint(Principal principal, @PathVariable Integer quizId, @Valid @RequestBody StatementQuestionDto statementQuestionDto) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.usePowerUp(user.getId(), "HINT");
+
+        return tournamentservice.getHint(statementQuestionDto, quizId);
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/delete") //ONLY FOR CLEAN DATABASE AFTER EACH TEST

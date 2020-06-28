@@ -55,7 +55,7 @@ class CommentPostPerformanceTest extends Specification {
         userRepository.save(user1)
 
         and: "valid posts"
-        for(int i = 1; i <= 3000; i++) {
+        for(int i = 1; i <= 1; i++) {
             def postQuestion1 = new PostQuestion()
             postQuestion1.setQuestion(question)
             postQuestion1.setUser(user1)
@@ -81,7 +81,7 @@ class CommentPostPerformanceTest extends Specification {
 
 
         when: "commenting 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             commentDto.setKey(i)
             postDto.setKey(i)
             postService.postComment(commentDto)

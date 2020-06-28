@@ -1,13 +1,23 @@
 <template>
-  <div align="center">
+  <div>
     <v-card
+      class="table"
       width="95%"
       v-if="isReal && (!this.beStudent.dashboardPrivate || this.isOwnDashboard)"
     >
       <v-row>
-        <v-card-subtitle class="mx-xl-2 display-2 font-weight-black">
+        <v-card-title color="primary">
+          <v-icon left>fas fa-star</v-icon>
           Dashboard
-        </v-card-subtitle>
+        </v-card-title>
+        <v-switch
+          class="mt-6 ml-7 "
+          v-if="isOwnDashboard"
+          v-model="beStudent.dashboardPrivate"
+          :label="`${textLabel}`"
+          color="red"
+          @change="changePrivacy()"
+        />
         <v-spacer />
         <v-autocomplete
           v-if="isOwnDashboard"
@@ -20,74 +30,79 @@
           @keydown.enter.native="searchForDashboard(searchedStudent)"
         />
       </v-row>
-      <v-card>
-        <v-row>
-          <v-col class="pa-2">
-            <v-card-subtitle class="text-left">
-              Username: {{ beStudent.username }} <v-spacer /> Currency:
-              {{ beStudent.score }} Achandos
-            </v-card-subtitle>
-          </v-col>
-          <v-col class="pa-0" :align-self="'center'" cols="2">
-            <v-switch
-              class="my-0"
-              v-if="isOwnDashboard"
-              v-model="beStudent.dashboardPrivate"
-              :label="`${textLabel}`"
-              color="red"
-              @change="changePrivacy()"
-            />
-          </v-col>
-        </v-row>
-      </v-card>
-      <v-row scrollable no-gutters class="mx-0">
-        <v-col v-for="n in 3" :key="n" cols="12" sm="4">
-          <v-card tile outlined>
-            <v-app-bar
-              dense
-              elevation="2"
-              color="grey lighten-2"
-              flat
-              class="mx-0"
-            >
-              <v-toolbar-title>{{ getColumnAppBar(n) }}</v-toolbar-title>
-            </v-app-bar>
-            <v-card
-              style="max-height: 550px"
-              class="overflow-y-auto overflow-x-hidden"
-              flat
-            >
-              <div v-if="n === 1">
+      <v-row>
+        <v-col class="pa-2">
+          <v-card-subtitle class="text-left">
+            Username: {{ beStudent.username }} <v-spacer /> Currency:
+            {{ beStudent.score }} Achandos
+          </v-card-subtitle>
+        </v-col>
+      </v-row>
+      <v-tabs>
+        <v-tab>
+          <v-icon left>fas fa-book</v-icon>
+          Posts
+        </v-tab>
+        <v-tab>
+          <v-icon left>question_answer</v-icon>
+          Suggestions
+        </v-tab>
+        <v-tab data-cy="tournaments">
+          <v-icon left>fas fa-trophy</v-icon>
+          Tournaments
+        </v-tab>
+        <v-tab v-if="isOwnDashboard">
+          <v-icon left>fas fa-user</v-icon>
+          Stats
+        </v-tab>
+        <v-tab v-if="isOwnDashboard">
+          <v-icon left>fas fa-medal</v-icon>
+          Leaderboards
+        </v-tab>
+        <v-tab-item class="pb-10">
+          <v-card flat>
+            <v-card-text>
+              <div>
                 <post-preview
                   v-for="p in posts"
+                  class="mb-2"
                   :key="p.id"
                   :post="p"
                   @click.native="showPostOpenDialog(p)"
-                ></post-preview>
+                />
               </div>
-
-              <div v-if="n === 2">
-                <suggestion-preview
-                  v-for="s in suggestions"
-                  :key="s.id"
-                  :suggestion="s"
-                  @click.native="showSuggOpenDialog(s)"
-                ></suggestion-preview>
-              </div>
-
-              <div v-if="n === 3">
-                <tournament-preview
-                  v-for="t in tournaments"
-                  :key="t.id"
-                  :tournament="t"
-                  @click.native="showTournamentOpenDialog(t)"
-                >
-                </tournament-preview>
-              </div>
-            </v-card>
+            </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <v-card flat>
+            <suggestion-preview
+              v-for="s in suggestions"
+              class="my-4"
+              :key="s.id"
+              :suggestion="s"
+              @click.native="showSuggOpenDialog(s)"
+            />
+          </v-card>
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <v-card flat>
+            <tournament-preview
+              v-for="t in tournaments"
+              class="my-4"
+              :key="t.id"
+              :tournament="t"
+              @click.native="showTournamentOpenDialog(t)"
+            />
+          </v-card>
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <dashboard-stats-view />
+        </v-tab-item>
+        <v-tab-item class="pb-10">
+          <dashboard-leaderboards-view />
+        </v-tab-item>
+      </v-tabs>
     </v-card>
     <student-dashboard
       v-if="dashboardDialog"
@@ -95,7 +110,7 @@
       :student="selectedStudent"
       :is-own-dashboard="false"
       v-on:close-dashboard-dialog="onCloseDialog"
-    ></student-dashboard>
+    />
     <show-post-dialog
       v-if="currentPost"
       :dialog="postDialog"
@@ -114,6 +129,7 @@
       :dialog="tournamentDialog"
       :tournament="currentTournament"
       :student="beStudent"
+      :dashboard="true"
       v-on:close-show-tournament-dialog="onCloseDialog"
     />
     <v-card v-if="!isReal">
@@ -131,14 +147,16 @@ import RemoteServices from '@/services/RemoteServices';
 import PostPreview from '@/views/PostPreview.vue';
 import TournamentPreview from '@/views/TournamentPreview.vue';
 import Post from '@/models/management/Post';
-import PostViewDialog from '@/views/PostViewDialog.vue';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
 import Suggestion from '@/models/management/Suggestion';
 import { Tournament } from '@/models/management/Tournament';
 import StudentDashboardView from '@/views/StudentDashboardView.vue';
 import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
 import User from '@/models/user/User';
-import SuggViewDialog from '@/views/SuggViewDialog.vue';
+import SuggViewDialog from '@/views/ShowSuggestionDialog.vue';
 import SuggsPreview from '@/views/SuggsPreview.vue';
+import DashboardStatsView from '@/views/DashboardStatsView.vue';
+import DashboardLeaderboardsView from '@/views/DashboardLeaderboardsView.vue';
 
 @Component({
   components: {
@@ -148,7 +166,9 @@ import SuggsPreview from '@/views/SuggsPreview.vue';
     'show-tournament-dialog': TournamentViewDialog,
     'student-dashboard': StudentDashboardView,
     'show-suggestion-dialog': SuggViewDialog,
-    'suggestion-preview': SuggsPreview
+    'suggestion-preview': SuggsPreview,
+    'dashboard-stats-view': DashboardStatsView,
+    'dashboard-leaderboards-view': DashboardLeaderboardsView
   }
 })
 export default class DashboardHomeView extends Vue {
@@ -175,6 +195,7 @@ export default class DashboardHomeView extends Vue {
   dashboardDialog: boolean = false;
   beStudent: User | undefined = undefined;
   textLabel: string = '';
+  correctAnswers: number | null = null;
 
   async created() {
     if (this.student == null) this.beStudent = this.$store.getters.getUser;
@@ -184,7 +205,8 @@ export default class DashboardHomeView extends Vue {
     else this.textLabel = 'Public';
 
     this.students = await RemoteServices.getCourseStudents(
-      this.$store.getters.getCurrentCourse
+      this.$store.getters.getCurrentCourse,
+      true
     );
     if (this.beStudent?.username != null) {
       if (!this.beStudent.dashboardPrivate || this.isOwnDashboard) {
@@ -206,22 +228,11 @@ export default class DashboardHomeView extends Vue {
       }
     }
   }
+
   async changePrivacy() {
     if (this.beStudent?.dashboardPrivate) this.textLabel = 'Private';
     else this.textLabel = 'Public';
     await RemoteServices.changeDashboardPrivacy();
-  }
-
-  getColumnAppBar(n: number): string {
-    switch (n) {
-      case 1:
-        return 'Posts';
-      case 2:
-        return 'Suggestions';
-      case 3:
-        return 'Tournaments';
-    }
-    return '';
   }
 
   showPostOpenDialog(post: Post) {
@@ -240,6 +251,9 @@ export default class DashboardHomeView extends Vue {
   showSuggOpenDialog(sugg: Suggestion) {
     this.currentSuggestion = sugg;
     this.suggestionDialog = true;
+    this.beStudent = this.students.find(
+      student => student.username == this.beStudent?.username
+    );
   }
 
   async onSavePost(post: Post) {
@@ -266,4 +280,4 @@ export default class DashboardHomeView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped />

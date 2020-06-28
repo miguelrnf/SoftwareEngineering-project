@@ -25,6 +25,8 @@ public enum ErrorMessage {
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
+    BAD_SETTINGS_VALUES("the total as to be 100 %"),
+    BAD_SETTINGS_SCALE("bad scale"),
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
@@ -48,6 +50,9 @@ public enum ErrorMessage {
 
     SUGGESTION_ALREADY_APP("The Suggestion was Already Approved"),
     SUGGESTION_ALREADY_REJ("The Suggestion was Already Rejected"),
+    SUGGESTION__REM_ALREADY_APP("Can't Remove - The Suggestion was Already Approved"),
+    SUGGESTION__REM_ALREADY_QUESTION("Can't Remove - The Suggestion is Already a Question"),
+
 
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
@@ -84,6 +89,10 @@ public enum ErrorMessage {
     TOURNAMENT_UNABLE_REMOVE("Unable to remove, reason: %s"),
     TOURNAMENT_PERMISSION_CANCEL("Only owner can cancel the tournament"),
     TOURNAMENT_INVALID_STATUS("Tournament is %s"),
+    TOURNAMENT_INVALID_TYPE("You only can use power ups in standard tournament "),
+    TOURNAMENT_NOT_ENOUGH_POINTS("You don't have enough points to enroll this tournament "),
+    INVALID_POWER_UP("You don't have that power up"),
+
 
     USER_ALREADY_ENROLLED("User %s already enrolled in tournament"),
     UNABLE_TO_UNROLL("Student %s isn't enrolled in the tournament"),
@@ -107,10 +116,24 @@ public enum ErrorMessage {
 
     USER_HAS_WRONG_ROLE("User has wrong role"),
     SUGGESTION_TOO_LONG("Suggestion is too long"),
+    NOARGUMENT("no argument"),
     SUGGESTION_EMPTY("Empty suggestion"),
     EMPTY_TOPICS("No topics"),
     JUSTIFICATION_EMPTY("No justufication"),
 
+    //classroom
+    INVALID_TITLE_FOR_CLASSROOM("Invalid title"),
+    INVALID_TITLE_FOR_DOCUMENT("Invalid title"),
+    NO_STATUS("no initial status"),
+    NO_CHANGED_STATUS("no changed status"),
+    NO_TYPE("no initial type"),
+    NO_DOCUMENT_TYPE("no doc type given"),
+    CLASSROOM_NOT_FOUND("classroom not found"),
+    DOCUMENT_NOT_FOUND("document not found - doc id"),
+    INVALID_CLASSROOM_ID("invalid classroom id"),
+    NO_DATE("no date"),
+    NO_CONTENT("no content for type doc"),
+    NO_URL("no url for type video"),
 
     //new errors for posts
     USER_HAS_NOT_ANSWERED("You have not answered the given question"),
@@ -129,7 +152,23 @@ public enum ErrorMessage {
     INVALID_CREATION_DATE("The creation date is invalid"),
     INVALID_COMMENT("The comment you submitted is invalid"),
     INVALID_COMMENT_SEARCH("No results available"),
-    COMMENT_NO_PARENT("The parent does not exist");
+    ALREADY_UPVOTED("You have already upvoted this post"),
+    ALREADY_DOWNVOTED("You have already downvoted this post"),
+    COMMENT_NO_PARENT("The parent does not exist"),
+
+    //shop errors
+    NOT_ENOUGH_ACHANDOS("You currently do not have enough achandos to buy this item"),
+    CANT_ADD_ITEM("The new item must be a theme"),
+    ITEM_NOT_CONSISTENT("Field %s of the item is not consistent"),
+    CANT_REMOVE_POWER_UP("You cannot remove a power up"),
+    ITEM_ALREADY_EXISTS("The item %s is already in the shop"),
+    NON_EXISTING_ITEM_ID("The item with id %d does not exist in the shop"),
+    INVALID_THEME("The provided theme is not valid"),
+    INVALID_ITEM_TYPE("The item type %s does not exist"),
+    NON_EXISTING_ITEM_NAME("The item %s does not exist in the shop"),
+    DEFAULT_THEME_MISSING("The default theme is missing, please ask the admin to add it");
+
+
 
     public final String label;
 

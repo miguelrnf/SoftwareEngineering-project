@@ -25,6 +25,15 @@
             @input="customFilter"
           />
           <v-spacer />
+
+          <v-btn
+            v-if="!isTeacher()"
+            color="primary"
+            dark
+            @click="newPost"
+            data-cy="createButton"
+            >New Post</v-btn
+          >
         </v-card-title>
       </template>
 
@@ -44,11 +53,12 @@
             )
           "
           @click="showPostOpenDialog(item)"
-      /></template>
+        />
+      </template>
 
       <template v-slot:item.user="{ item }">
-        <p v-html="convertMarkDown(item.question.user.username, null)"
-      /></template>
+        <p v-html="convertMarkDown(item.question.user.username, null)" />
+      </template>
 
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -90,14 +100,6 @@
           </template>
           <span>Edit Answer</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="$store.getters.isTeacher">
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="redirectPost(item)"
-              >cached</v-icon
-            >
-          </template>
-          <span>Redirect Post</span>
-        </v-tooltip>
         <v-tooltip bottom v-if="isOwner(item) || isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -114,10 +116,7 @@
         </v-tooltip>
       </template>
       <template v-slot:item.status="{ item }">
-        <post-status-buttons
-          :post="item"
-          data-cy="StatusButtons"
-        ></post-status-buttons>
+        <post-status-buttons :post="item" data-cy="StatusButtons" />
       </template>
     </v-data-table>
     <edit-post-dialog
@@ -141,6 +140,12 @@
       v-on:save-post="onSavePost"
       v-on:close-show-post-dialog="onCloseDialog"
     />
+    <create-post
+      v-if="createPost"
+      :dialog="createPost"
+      v-on:save-post="onCreatePost"
+      v-on:close-new-post-dialog="onCloseDialog"
+    />
   </v-card>
 </template>
 
@@ -151,11 +156,12 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import Post from '@/models/management/Post';
-import PostViewDialog from '@/views/PostViewDialog.vue';
+import PostViewDialog from '@/views/ShowPostDialog.vue';
 import EditPostDialog from './EditPostDialog.vue';
 import PostStatusButtons from '@/views/PostStatusButtons.vue';
 import EditAnswerDialog from '@/views/teacher/EditAnswerDialog.vue';
 import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
+import NewPostView from '@/views/NewPostView.vue';
 
 @Component({
   components: {
@@ -163,7 +169,8 @@ import AnswerPostDialog from '@/views/AnswerPostDialog.vue';
     'edit-post-dialog': EditPostDialog,
     'edit-answer-dialog': EditAnswerDialog,
     'post-status-buttons': PostStatusButtons,
-    'answer-post-dialog': AnswerPostDialog
+    'answer-post-dialog': AnswerPostDialog,
+    'create-post': NewPostView
   }
 })
 export default class PostsView extends Vue {
@@ -175,6 +182,7 @@ export default class PostsView extends Vue {
   editPostDialog: boolean = false;
   editAnswerDialog: boolean = false;
   postDialog: boolean = false;
+  createPost: boolean = false;
   search: string = '';
   perPage: number = 5;
   page: number = 1;
@@ -182,6 +190,7 @@ export default class PostsView extends Vue {
   postStatus: boolean = true;
   postPrivacy: boolean = false;
   answerPrivacy: boolean = false;
+  numberOfComments: number = 0;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -270,6 +279,11 @@ export default class PostsView extends Vue {
     this.postDialog = false;
     this.editPostDialog = false;
     this.editAnswerDialog = false;
+    this.createPost = false;
+  }
+
+  newPost() {
+    this.createPost = true;
   }
 
   editPostOpenDialog(post: Post) {
@@ -283,17 +297,27 @@ export default class PostsView extends Vue {
   }
 
   isOwner(post: Post): boolean {
-    return this.$store.getters.getUser.username === post.question.user.username;
+    if (this.$store.getters.getUser != null) {
+      return (
+        this.$store.getters.getUser.username === post.question.user.username
+      );
+    } else return false;
   }
 
   redirectPost() {}
 
-  async onSavePost(post: Post) {
+  onSavePost(post: Post) {
     this.posts = this.posts.filter(p => p.id !== post.id);
     this.posts.unshift(post);
+    this.createPost = false;
     this.editPostDialog = false;
     this.editAnswerDialog = false;
     this.currentPost = null;
+  }
+
+  onCreatePost(postmalone: Post) {
+    this.posts.push(postmalone);
+    this.createPost = false;
   }
 
   isTeacher(): boolean {
@@ -315,6 +339,15 @@ export default class PostsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  numberOfCommentsOnPost() {
+    if (this.currentPost != null) {
+      if (this.currentPost.comments != null) {
+        return this.currentPost.comments.length;
+      }
+    }
+    return;
   }
 }
 </script>

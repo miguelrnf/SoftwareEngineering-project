@@ -35,6 +35,7 @@ public class TopicService {
     @Autowired
     private TopicRepository topicRepository;
 
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findTopicCourse(int topicId) {
         return topicRepository.findById(topicId)
@@ -124,5 +125,6 @@ public class TopicService {
                 this.topicRepository.delete(topic)
         );
     }
+
 }
 

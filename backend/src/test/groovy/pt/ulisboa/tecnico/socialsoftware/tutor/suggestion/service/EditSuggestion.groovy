@@ -10,9 +10,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -171,19 +170,19 @@ class EditSuggestion extends Specification {
 
         and: "valid suggestion"
         VALID_SUGGESTION = new Suggestion()
-        VALID_SUGGESTION.set_student(VALID_U)
-        VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
-        VALID_SUGGESTION.set_topicsList(VALID_TOPIC_LIST)
+        VALID_SUGGESTION.setStudent(VALID_U)
+        VALID_SUGGESTION.setStudentQuestion(SUGGESTION_CONTENT)
+        VALID_SUGGESTION.setTopicsList(VALID_TOPIC_LIST)
 
         and: "empty suggestion"
         INVALID_SUGGESTION_E = new Suggestion()
-        INVALID_SUGGESTION_E.set_student(VALID_U)
-        INVALID_SUGGESTION_E.set_questionStr(EMPTY_SUGGESTION)
+        INVALID_SUGGESTION_E.setStudent(VALID_U)
+        INVALID_SUGGESTION_E.setStudentQuestion(EMPTY_SUGGESTION)
 
         and: "too much char suggestion"
         INVALID_SUGGESTION_F = new Suggestion()
-        INVALID_SUGGESTION_F.set_student(VALID_U)
-        INVALID_SUGGESTION_F.set_questionStr(TOO_MANY_CHARS)
+        INVALID_SUGGESTION_F.setStudent(VALID_U)
+        INVALID_SUGGESTION_F.setStudentQuestion(TOO_MANY_CHARS)
 
         and: "invalid user"
         INVALID_SUGGESTION_IU = new User()
@@ -217,14 +216,13 @@ class EditSuggestion extends Specification {
 
         and: "valid suggestion"
         def suggestion = new Suggestion()
-        suggestion.set_student(userS)
-        suggestion.set_questionStr(SUGGESTION_CONTENT)
+        suggestion.setStudent(userS)
+        suggestion.setStudentQuestion(SUGGESTION_CONTENT)
         suggestion.setKey(VALID_KEY)
         suggestion.setCreationDate(LocalDateTime.now())
 
 
         then: "add to repository"
-        println(suggestion.dump())
         courseRepository.save(course)
         courseExecutionRepository.save(courseExecution)
         userRepository.save(userS)
@@ -241,16 +239,16 @@ class EditSuggestion extends Specification {
 
         when:
         def sug = new SuggestionDto()
-        sug.set_questionStr(s as String)
-        sug.set_student(new UserDto(u as User))
-        sug.set_id(1)
+        sug.setStudentQuestion(s as String)
+        sug.setStudent(new UserDto(u as User))
+        sug.setId(1)
         sug.setCreationDate(LocalDateTime.now().format(FORMATTER))
 
         then:
         def result = suggestionService.editSuggestion(sug)
-        result.get_questionStr() == sug.get_questionStr()
-        result.get_topicsList() == sug.get_topicsList()
-        result.get_student() == sug.get_student()
+        result.getStudentQuestion() == sug.getStudentQuestion()
+        result.getTopicsList() == sug.getTopicsList()
+        result.getStudent() == sug.getStudent()
         result.getCreationDate() == sug.getCreationDate();
 
 
@@ -264,15 +262,15 @@ class EditSuggestion extends Specification {
     def "invalid users"() {
         when:
         def sug = new SuggestionDto()
-        sug.set_questionStr(s as String)
-        sug.set_student(new UserDto(VALID_U as User))
+        sug.setStudentQuestion(s as String)
+        sug.setStudent(new UserDto(VALID_U as User))
         sug.setCreationDate(LocalDateTime.now().format(FORMATTER))
         List<TopicDto> topicsDto = new ArrayList<>();
         for (t in l){
             topicsDto.add(new TopicDto(t));
         }
 
-        sug.set_topicsList(topicsDto)
+        sug.setTopicsList(topicsDto)
         sug.setTitle("TITLE")
 
         def optionDto = new OptionDto()
@@ -282,7 +280,7 @@ class EditSuggestion extends Specification {
         options.add(optionDto)
         sug.setOptions(options)
         sug = suggestionService.createSuggestion(courseExecution.getId(), sug)
-        sug.set_student(new UserDto(u as User))
+        sug.setStudent(new UserDto(u as User))
 
 
         suggestionService.editSuggestion(sug)
@@ -301,7 +299,7 @@ class EditSuggestion extends Specification {
 
 /*    @Unroll
     def "edit a suggestion with invalid fields"() {
-        println(topicRepository.findAll().dump())
+
 
         when:
         def sug = new SuggestionDto()

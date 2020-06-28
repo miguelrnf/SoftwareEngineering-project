@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.ShopService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
@@ -182,6 +183,10 @@ class ImportExportAnswersTest extends Specification {
         @Bean
         AnswersXmlImport answersXmlImport() {
             return new AnswersXmlImport()
+        }
+        @Bean
+        ShopService shopService() {
+            return new ShopService()
         }
     }
 }

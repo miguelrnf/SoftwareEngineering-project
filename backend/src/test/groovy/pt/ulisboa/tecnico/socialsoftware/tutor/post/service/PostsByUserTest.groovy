@@ -170,7 +170,6 @@ class PostsByUserTest extends Specification{
         def result = postService.postsByUser(user.getUsername())
 
         then:
-        println(result)
         result.getTotalPosts() == expected
 
         where:

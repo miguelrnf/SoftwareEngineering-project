@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.suggestion.SuggestionService
@@ -191,14 +190,13 @@ class SuggestionDashboard extends Specification {
 
         and: "valid suggesiton"
         VALID_SUGGESTION = new SuggestionDto()
-        VALID_SUGGESTION.set_id(VALID_ID)
-        VALID_SUGGESTION.set_questionStr(SUGGESTION_CONTENT)
+        VALID_SUGGESTION.setId(VALID_ID)
+        VALID_SUGGESTION.setStudentQuestion(SUGGESTION_CONTENT)
         VALID_SUGGESTION.setKey(VALID_KEY)
         VALID_SUGGESTION.setCreationDate(LocalDateTime.now().format(FORMATTER))
         VALID_SUGGESTION.setStatus(Suggestion.Status.TOAPPROVE.name())
-        VALID_SUGGESTION.set_changed(null)
-        VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
-        VALID_SUGGESTION.set_student(VALID_Udto)
+        //VALID_SUGGESTION.setCourse(new CourseExecution(new Course(COURSE_NAME, Course.Type.TECNICO), ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO))
+        VALID_SUGGESTION.setStudent(VALID_Udto)
 
         and: "a valid user - STUDENT "
         VALID_U1 = new User()
@@ -230,20 +228,24 @@ class SuggestionDashboard extends Specification {
 
         and: "a user with the role student"
         def userS = new User(VALID_NAME, VALID_USERNAME, 1, User.Role.STUDENT)
+        def set = new HashSet<CourseExecution>()
+        set.add(courseExecution)
+        userS.setCourseExecutions(set)
 
 
         and: "a user with the role student that didn't create that suggestion"
         def userS2 = new User(VALID_NAME2, VALID_USERNAME2, 3, User.Role.STUDENT)
+        userS2.setCourseExecutions(set)
 
         and:
-        def topic = new Topic();
+        def topic = new Topic()
         topic.setName(VALID_NAME_TOPIC)
         topic.setCourse(course)
 
         and: "valid suggestion"
         def suggestion = new Suggestion()
-        suggestion.set_student(userS)
-        suggestion.set_questionStr(SUGGESTION_CONTENT)
+        suggestion.setStudent(userS)
+        suggestion.setStudentQuestion(SUGGESTION_CONTENT)
         suggestion.setKey(VALID_KEY)
         suggestion.setCreationDate(LocalDateTime.now())
         suggestion.setCourse(courseExecution)
@@ -263,15 +265,15 @@ class SuggestionDashboard extends Specification {
     def "valid suggestion status as a student"() {
 
         when:
-        def result = suggestionService.listAllSuggestions(u)
+        def result = suggestionService.listAllSuggestions(u as UserDto)
 
 
         then:
-        result.size().equals(VALID_SUGGESTION_LIST.size())
+        result.size() == (VALID_SUGGESTION_LIST.size())
 
         for(int i = 0; i < result.size(); i++) {
 
-            assert result.get(i).equals(VALID_SUGGESTION_LIST.get(i))
+            assert result.get(i) == (VALID_SUGGESTION_LIST.get(i))
 
         }
 
@@ -291,8 +293,7 @@ class SuggestionDashboard extends Specification {
         def list = suggestionService.listAllSuggestions(new UserDto(u as User))
 
         then:
-        def result = thrown(TutorException)
-        result.message == expected
+        list.size() == 0
 
         where:
         s                  | l                | u                     | expected

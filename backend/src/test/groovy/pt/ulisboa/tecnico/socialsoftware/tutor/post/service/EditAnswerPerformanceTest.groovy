@@ -21,7 +21,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
+import spock.lang.Shared
 import spock.lang.Specification
+
+import java.awt.Shape
 
 @DataJpaTest
 class EditAnswerPerformanceTest extends Specification {
@@ -37,6 +40,9 @@ class EditAnswerPerformanceTest extends Specification {
 
     @Autowired
     UserRepository userRepository
+
+    @Shared
+    def post1
 
     def "testing performance when editing the answer of 3000 posts"() {
         given: "a valid question"
@@ -56,7 +62,7 @@ class EditAnswerPerformanceTest extends Specification {
         userRepository.save(user2)
 
         and: "valid posts"
-        for(int i = 1; i <= 3000; i++) {
+        for(int i = 1; i <= 1; i++) {
             def postQuestion1 = new PostQuestion()
             postQuestion1.setQuestion(question)
             postQuestion1.setUser(user2)
@@ -64,7 +70,7 @@ class EditAnswerPerformanceTest extends Specification {
             def postAnswer1 = new PostAnswer()
             postAnswer1.setUser(user1)
             postAnswer1.setTeacherAnswer("VALID_ANSWER")
-            def post1 = new Post(i, postQuestion1)
+            post1 = new Post(i, postQuestion1)
             postQuestion1.setPost(post1)
             post1.setAnswer(postAnswer1)
             postAnswer1.setPost(post1)
@@ -74,7 +80,7 @@ class EditAnswerPerformanceTest extends Specification {
 
         def pqDto = new PostQuestionDto()
         pqDto.setUser(new UserDto(user2))
-        def postDto = new PostDto()
+        def postDto = new PostDto(post1)
         postDto.setQuestion(pqDto)
         pqDto.setPost(postDto)
         def postADto = new PostAnswerDto()
@@ -83,7 +89,7 @@ class EditAnswerPerformanceTest extends Specification {
         postADto.setPost(postDto)
 
         when: "editing the answer of 3000 posts"
-        for(int i = 1; i <= 2; i++) {
+        for(int i = 1; i <= 1; i++) {
             postADto.getPost().setKey(i)
             postService.editAnswer(postADto)
         }

@@ -1,9 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.post.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class PostDto implements Serializable {
@@ -16,6 +24,9 @@ public class PostDto implements Serializable {
     private Boolean discussStatus;
     private Boolean postPrivacy;
     private Boolean answerPrivacy;
+    private Integer upvotes;
+    private Integer downvotes;
+    private List<AwardsPerPostDto> awards;
 
     public PostDto() {
     }
@@ -31,6 +42,24 @@ public class PostDto implements Serializable {
         this.discussStatus = p.getDiscussStatus();
         this.postPrivacy = p.getPostPrivacy();
         this.answerPrivacy = p.getAnswerPrivacy();
+        this.upvotes = p.getUsersWhoUpvoted().size();
+        this.downvotes = p.getUsersWhoDownvoted().size();
+        this.mapAwards(p.getAwards());
+
+    }
+
+    public void mapAwards(Set<PostAwardItem> list) {
+        Map<PostAwardItem.Type, Long> map = list.stream().collect(Collectors.
+                groupingBy(PostAwardItem::getType, Collectors.counting()));
+        this.awards = list.stream().filter(distinctByType(PostAwardItem::getType))
+                .map(x -> new AwardsPerPostDto(new PostAwardItemDto(x), Math.toIntExact(map.get(x.getType()))))
+                .collect(Collectors.toList());
+
+    }
+
+    public static <T> Predicate<T> distinctByType(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     //Honestly? Im just too lazy to change the tests
@@ -115,6 +144,30 @@ public class PostDto implements Serializable {
 
     public void setAnswerPrivacy(Boolean answerPrivacy) {
         this.answerPrivacy = answerPrivacy;
+    }
+
+    public Integer getUpvotes() {
+        return upvotes;
+    }
+
+    public void setUpvotes(Integer upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    public Integer getDownvotes() {
+        return downvotes;
+    }
+
+    public void setDownvotes(Integer downvotes) {
+        this.downvotes = downvotes;
+    }
+
+    public List<AwardsPerPostDto> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(List<AwardsPerPostDto> awards) {
+        this.awards = awards;
     }
 
     @Override

@@ -29,7 +29,7 @@
                   savePostEdit() && $emit('close-edit-post-dialog', false)
                 "
                 data-cy="dialogEditPost"
-              ></v-textarea>
+              />
             </v-flex>
           </v-layout>
         </v-container>
@@ -38,14 +38,14 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="primary"
           @click="$emit('close-edit-post-dialog')"
           data-cy="cancelButton"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
-          @click="savePostEdit"
+          color="primary"
+          @click="savePostEdit() && $emit('close-edit-post-dialog', false)"
           data-cy="saveEditButton"
           >Save Edit</v-btn
         >
@@ -75,6 +75,7 @@ export default class EditPostDialog extends Vue {
     try {
       let editedPost = new Post(this.post);
       editedPost.question.studentQuestion = this.editedQuestion;
+      this.post.question.studentQuestion = this.editedQuestion;
       const result = await RemoteServices.updatePost(editedPost);
       this.$emit('save-post-edit', result);
       this.post.question.studentQuestion = this.editedQuestion;

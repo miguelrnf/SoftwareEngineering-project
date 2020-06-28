@@ -79,10 +79,10 @@ class CreateSuggestionPerformanceTest extends Specification{
         when: "create 3000 suggestions"
         for (int i = 1; i <= 2; i++) {
             def sug = new Suggestion()
-            sug.set_student(userS)
-            sug.set_topicsList(topicList)
+            sug.setStudent(userS)
+            sug.setTopicsList(topicList)
             def sugDto = new SuggestionDto(sug)
-            sugDto.set_questionStr("question")
+            sugDto.setStudentQuestion("question")
             sugDto.setTitle("TITLE")
 
             def optionDto = new OptionDto()

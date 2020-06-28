@@ -110,7 +110,6 @@ class PostsByQuizTest extends Specification{
         def result = postService.postsByQuiz(quizid)
 
         then:
-        println(result)
         result.getTotalPosts() == expected
 
         where:

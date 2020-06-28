@@ -1,47 +1,56 @@
 <template>
-  <v-container fluid>
-    <h2>Create Random Quiz</h2>
-    <v-container class="create-buttons">
-      <p>Assessment</p>
-      <v-btn-toggle
-        v-model="statementManager.assessment"
-        mandatory
-        class="button-group"
-      >
-        <v-btn
-          v-for="assessment in availableAssessments"
-          text
-          :value="assessment.id"
-          :key="assessment.id"
-          >{{ assessment.title }}</v-btn
-        >
-        <!--          <v-btn text value="all">All</v-btn>-->
-      </v-btn-toggle>
-
-      <div>
-        <p class="pl-0">Number of Questions</p>
+  <div class="container">
+    <v-card>
+      <v-container>
+        <v-card-title class="justify-center">Create Random Quiz</v-card-title>
+      </v-container>
+      <v-container>
+        <p>Assessment</p>
         <v-btn-toggle
-          v-model="statementManager.numberOfQuestions"
+          v-model="statementManager.assessment"
           mandatory
           class="button-group"
         >
-          <v-btn text value="5">5</v-btn>
-          <v-btn text value="10">10</v-btn>
-          <v-btn text value="20" data-cy="twentyQuestionsButton">20</v-btn>
+          <v-btn
+            v-for="assessment in availableAssessments"
+            text
+            :value="assessment.id"
+            :key="assessment.id"
+            >{{ assessment.title }}</v-btn
+          >
         </v-btn-toggle>
-      </div>
-      <div data-cy="quizButtons">
-        <v-btn
-          @click="createQuiz"
-          depressed
-          color="primary"
-          data-cy="createQuizButton"
-        >
-          Create quiz
-        </v-btn>
-      </div>
-    </v-container>
-  </v-container>
+        <v-card-text v-if="availableAssessments.length === 0" class="message">
+          {{ 'NO ASSESSMENTS FOUND' }}
+        </v-card-text>
+      </v-container>
+      <v-container>
+        <div>
+          <p class="pl-0">Number of Questions</p>
+          <v-btn-toggle
+            v-model="statementManager.numberOfQuestions"
+            mandatory
+            class="button-group"
+          >
+            <v-btn text value="5">5</v-btn>
+            <v-btn text value="10">10</v-btn>
+            <v-btn text value="20" data-cy="twentyQuestionsButton">20</v-btn>
+          </v-btn-toggle>
+        </div>
+      </v-container>
+      <v-container>
+        <div data-cy="quizButtons">
+          <v-btn
+            @click="createQuiz"
+            depressed
+            color="primary"
+            data-cy="createQuizButton"
+          >
+            Create quiz
+          </v-btn>
+        </div>
+      </v-container>
+    </v-card>
+  </div>
 </template>
 
 <script lang="ts">
@@ -69,7 +78,7 @@ export default class CreateQuizzesView extends Vue {
   async createQuiz() {
     try {
       await this.statementManager.getQuizStatement();
-      await this.$router.push({ name: 'solve-quiz' });
+      await this.$router.push({ path: '/student/quiz' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -78,16 +87,7 @@ export default class CreateQuizzesView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.create-buttons {
-  width: 80% !important;
-  background-color: white;
-  border-width: 10px;
-  border-style: solid;
-  border-color: #818181;
-}
-
 .button-group {
-  padding: 20px;
   flex-wrap: wrap;
   justify-content: center;
 }

@@ -106,7 +106,7 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
 	&#xd;
-	&quot;numberOfQuestions&quot;:3,&#xd;
+	&quot;numberOfQuestions&quot;:1,&#xd;
 	&quot;availableDate&quot;:&quot;2021-07-23T20:31Z&quot;,&#xd;
 	&quot;conclusionDate&quot;:&quot;2021-07-23t20:31Z&quot;,&#xd;
 	&quot;assessmentDto&quot;:&#xd;
@@ -188,7 +188,7 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert numberOfQuestions" enabled="true">
               <stringProp name="JSON_PATH">$.numberOfQuestions</stringProp>
-              <stringProp name="EXPECTED_VALUE">3</stringProp>
+              <stringProp name="EXPECTED_VALUE">1</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>

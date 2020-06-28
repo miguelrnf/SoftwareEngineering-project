@@ -25,6 +25,8 @@ public class Image implements DomainEntity {
     @JoinColumn(name="question_id")
     private Question question;
 
+
+
     public Image() {}
 
     public Image(ImageDto imageDto) {
@@ -76,4 +78,5 @@ public class Image implements DomainEntity {
                 ", width=" + width +
                 '}';
     }
+
 }

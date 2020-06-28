@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.classroom.domain.Classroom;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -37,7 +38,7 @@ public class CourseExecution implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(mappedBy = "courseExecutions")
+    @ManyToMany(mappedBy = "courseExecutions", fetch=FetchType.LAZY)
     private final Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
@@ -49,9 +50,19 @@ public class CourseExecution implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Tournament> tournaments = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Classroom> classrooms = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Suggestion> suggestions = new HashSet<>();
+
+
+    private Integer scale;
+    private Integer quizWeight;
+    private Integer suggWeight;
+    private Integer tournamentWeight;
+
+
 
 
     public CourseExecution() {
@@ -67,6 +78,43 @@ public class CourseExecution implements DomainEntity {
         setAcronym(acronym);
         setAcademicTerm(academicTerm);
         setStatus(Status.ACTIVE);
+
+        this.scale = 20;
+        this.quizWeight = 80;
+        this.suggWeight = 10;
+        this.tournamentWeight = 10;
+    }
+
+    public Integer getScale() {
+        return scale;
+    }
+
+    public void setScale(Integer scale) {
+        this.scale = scale;
+    }
+
+    public Integer getQuizWeight() {
+        return quizWeight;
+    }
+
+    public void setQuizWeight(Integer quizWeight) {
+        this.quizWeight = quizWeight;
+    }
+
+    public Integer getSuggWeight() {
+        return suggWeight;
+    }
+
+    public void setSuggWeight(Integer suggWeight) {
+        this.suggWeight = suggWeight;
+    }
+
+    public Integer getTournamentWeight() {
+        return tournamentWeight;
+    }
+
+    public void setTournamentWeight(Integer tournamentWeight) {
+        this.tournamentWeight = tournamentWeight;
     }
 
     @Override
@@ -74,8 +122,20 @@ public class CourseExecution implements DomainEntity {
         visitor.visitCourseExecution(this);
     }
 
+    public Set<Classroom> getClassrooms() {
+        return classrooms;
+    }
+
+    public void addClassroom(Classroom classroom){
+        this.classrooms.add(classroom);
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Course.Type getType() {
@@ -171,6 +231,14 @@ public class CourseExecution implements DomainEntity {
 
     public void addSuggestion(Suggestion suggestion) {this.suggestions.add(suggestion); }
 
+    public Set<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void setSuggestions(Set<Suggestion> suggestions) {
+        this.suggestions = suggestions;
+    }
+
     @Override
     public String toString() {
         return "CourseExecution{" +
@@ -182,7 +250,9 @@ public class CourseExecution implements DomainEntity {
                 ", users=" + users +
                 ", quizzes=" + quizzes +
                 ", assessments=" + assessments +
+                ", suggestions=" + suggestions +
                 '}';
     }
+
 
 }

@@ -12,21 +12,21 @@
           label
           :color="getColor1(post.discussStatus)"
           dark
-        ></v-chip>
+        />
         <v-chip
           class="ma-1"
           x-small
           label
           :color="getColor2(post.postStatus)"
           dark
-        ></v-chip>
+        />
         <v-chip
           class="ma-1"
           x-small
           label
           :color="getColor3(post.postPrivacy)"
           dark
-        ></v-chip>
+        />
       </div>
     </v-row>
     <div class="mt-n4 text-left">
@@ -94,4 +94,4 @@ export default class PostPreview extends Vue {
   }
 }
 </script>
-<style scoped></style>
+<style scoped />

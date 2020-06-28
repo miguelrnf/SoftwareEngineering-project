@@ -20,6 +20,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.PostAwardItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.domain.UserItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.AwardsPerPostDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.shop.dto.PostAwardItemDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -62,9 +66,11 @@ public class PostService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public PostDto submitPost(PostQuestionDto postQuestionDto) { //TODO - add executionId to post domain
-        String username = postQuestionDto.getUser().getUsername();
-        User user = checkIfUserExistsByUsername(username);
+    public PostDto submitPost(PostQuestionDto postQuestionDto) {
+        User user = checkIfUserExistsByUsername(postQuestionDto.getUser().getUsername());
+        if (postQuestionDto.getQuestion() == null) {
+            throw new TutorException(INVALID_CONTENT_FOR_QUESTION);
+        }
 
         checkIfUserHasRoleStudent(user);
         Question question = checkIfQuestionExists(postQuestionDto);
@@ -313,6 +319,82 @@ public class PostService {
         post.changeAnswerPrivacy();
         return new PostDto(post);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public PostDto vote(Integer id, User u, String vote) {
+        Post post = checkIfPostExists(null, id);
+        User user = checkIfUserExistsByUsername(u.getUsername());
+        if (vote.equals("upvote")) {
+            upvotePost(post, user);
+        }
+        if (vote.equals("downvote")) {
+            downvotePost(post, user);
+        }
+        return new PostDto(post);
+    }
+
+    private void upvotePost(Post post, User user) {
+        if (post.getUsersWhoUpvoted().contains(user)) {
+            user.getPostsUpvoted().remove(post);
+            post.getUsersWhoUpvoted().remove(user);
+        }
+        else if (post.getUsersWhoDownvoted().contains(user)) {
+            post.getUsersWhoDownvoted().remove(user);
+            user.getPostsDownvoted().remove(post);
+            user.addUpvotedPosts(post);
+            post.upvote(user);
+        } else {
+            user.addUpvotedPosts(post);
+            post.upvote(user);
+        }
+
+    }
+
+    private void downvotePost(Post post, User user) {
+        if (post.getUsersWhoDownvoted().contains(user)) {
+            user.getPostsDownvoted().remove(post);
+            post.getUsersWhoDownvoted().remove(user);
+        }
+        else if (post.getUsersWhoUpvoted().contains(user)) {
+            post.getUsersWhoUpvoted().remove(user);
+            user.getPostsUpvoted().remove(post);
+            user.addDownvotedPosts(post);
+            post.downvote(user);
+        } else {
+            user.addDownvotedPosts(post);
+            post.downvote(user);
+        }
+    }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public PostDto award(Integer postId, PostAwardItemDto awardDto, String username) {
+        User user = checkIfUserExistsByUsername(username);
+        Post post = checkIfPostExists(null, postId);
+        UserItem award = user.getItems().stream().filter(x -> x.getId().
+                equals(awardDto.getItem().getId())).findFirst().orElseThrow(() -> new TutorException(NON_EXISTING_ITEM_ID, awardDto.getItem().getId()));
+        user.removeItem(award);
+        post.awardPost((PostAwardItem) award);
+        return new PostDto(post);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<AwardsPerPostDto> getpostAwards(Integer postId) {
+        Post post = checkIfPostExists(null, postId);
+        PostDto dto = new PostDto(post);
+        return dto.getAwards();
+    }
+
+
 
     private PostComment checkIfCommentParentExists(PostCommentDto dto) {
         if(dto.getKey() != null) {

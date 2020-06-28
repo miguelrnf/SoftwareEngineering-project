@@ -17,10 +17,10 @@ describe('Edit Suggestion', () => {
   });
 
   it('valid edit suggestion', () => {
-    cy.editSuggestion('SUGESTAO§§§§§§§', 'bababoey')
+    cy.editSuggestion('SUGESTAO§§§§§§§', 'bababoey');
   });
 
   it('valid edit suggestion privacy', () => {
-    cy.editSuggestionPrivacy('SUGESTAO§§§§§§§')
+    cy.editSuggestionPrivacy('SUGESTAO§§§§§§§');
   });
 });
