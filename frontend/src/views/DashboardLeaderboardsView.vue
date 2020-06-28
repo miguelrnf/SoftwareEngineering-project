@@ -137,17 +137,17 @@
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import { GChart } from 'vue-google-charts';
-  import { Leaderboards } from '@/models/management/Leaderboards';
-  import User from '@/models/user/User';
-  import Post from '@/models/management/Post';
-  import { PostQuestion } from '@/models/management/PostQuestion';
-  import { PostAnswer } from '@/models/management/PostAnswer';
-  import Course from '@/models/user/Course';
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { GChart } from 'vue-google-charts';
+import { Leaderboards } from '@/models/management/Leaderboards';
+import User from '@/models/user/User';
+import Post from '@/models/management/Post';
+import { PostQuestion } from '@/models/management/PostQuestion';
+import { PostAnswer } from '@/models/management/PostAnswer';
+import Course from '@/models/user/Course';
 
-  interface CourseMap {
+interface CourseMap {
   [key: string]: Course[];
 }
 
@@ -216,7 +216,6 @@ export default class DashboardLeaderboardsView extends Vue {
 
   async created() {
     this.stats = await RemoteServices.getLeaderboards();
-    console.log(this.stats);
 
     this.getStats();
   }

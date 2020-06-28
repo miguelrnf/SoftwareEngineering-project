@@ -341,16 +341,16 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-  import User from '@/models/user/User';
-  import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
-  import Classroom from '@/models/management/Classroom';
-  import RemoteServices from '@/services/RemoteServices';
-  import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
-  import EditEvalSettingsDialog from '@/views/classroom/EditEvalSettingsDialog.vue';
-  import { Student } from '@/models/management/Student';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import User from '@/models/user/User';
+import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
+import Classroom from '@/models/management/Classroom';
+import RemoteServices from '@/services/RemoteServices';
+import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
+import EditEvalSettingsDialog from '@/views/classroom/EditEvalSettingsDialog.vue';
+import { Student } from '@/models/management/Student';
 
-  @Component({
+@Component({
   components: {
     'edit-lecture-dialog': EditLectureDialog,
     'show-lecture-dialog': ShowLectureDialog,

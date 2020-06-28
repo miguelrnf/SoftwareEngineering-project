@@ -23,7 +23,6 @@ export default class User {
   postsDownvoted: Post[] | null = null;
   grade!: number;
 
-
   constructor(jsonObj?: User) {
     if (jsonObj) {
       this.name = jsonObj.name;

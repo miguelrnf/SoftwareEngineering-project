@@ -17,7 +17,7 @@
               >
                 <span
                   class="font-weight-bold px-5"
-                  v-html="(post.upvotes - post.downvotes)"
+                  v-html="post.upvotes - post.downvotes"
                 />
               </v-row>
               <v-row

@@ -100,7 +100,7 @@
           </template>
           <span>Edit Answer</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="(isOwner(item) || isTeacher())">
+        <v-tooltip bottom v-if="isOwner(item) || isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
               small

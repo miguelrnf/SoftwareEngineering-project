@@ -83,11 +83,11 @@
 </template>
 
 <script lang="ts">
-  import { Component, Model, Vue, Watch } from 'vue-property-decorator';
-  import EvalSettings from '@/models/management/EvalSettings';
-  import RemoteServices from '@/services/RemoteServices';
+import { Component, Model, Vue, Watch } from 'vue-property-decorator';
+import EvalSettings from '@/models/management/EvalSettings';
+import RemoteServices from '@/services/RemoteServices';
 
-  @Component
+@Component
 export default class EditEvalSettingsDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
 

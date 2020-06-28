@@ -225,14 +225,14 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-  import User from '@/models/user/User';
-  import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
-  import Classroom from '@/models/management/Classroom';
-  import RemoteServices from '@/services/RemoteServices';
-  import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import User from '@/models/user/User';
+import EditLectureDialog from '@/views/classroom/EditLectureDialog.vue';
+import Classroom from '@/models/management/Classroom';
+import RemoteServices from '@/services/RemoteServices';
+import ShowLectureDialog from '@/views/classroom/ShowLectureDialog.vue';
 
-  @Component({
+@Component({
   components: {
     'edit-lecture-dialog': EditLectureDialog,
     'show-lecture-dialog': ShowLectureDialog

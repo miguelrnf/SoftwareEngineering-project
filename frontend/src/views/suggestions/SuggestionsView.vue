@@ -219,7 +219,7 @@
         </v-tooltip>
       </template>
       <template v-slot:item.checkMark="{ item }">
-        <v-tooltip bottom v-if="!isTeacher()" >
+        <v-tooltip bottom v-if="!isTeacher()">
           <template v-slot:activator="{ on }">
             <v-icon
               :color="getCheckMarkColor(item.checkMark)"
@@ -325,7 +325,7 @@ export default class SuggestionsView extends Vue {
       sortable: false
     },
     {
-      text: this.isTeacher()? '':'Seen',
+      text: this.isTeacher() ? '' : 'Seen',
       value: 'checkMark',
       align: 'center',
       sortable: false
@@ -367,9 +367,6 @@ export default class SuggestionsView extends Vue {
     }
   }
 
-
-
-
   getStatusColor(status: string) {
     if (status === 'REJECTED') return 'red';
     else if (status === 'TOAPPROVE') return 'yellow';
@@ -397,7 +394,7 @@ export default class SuggestionsView extends Vue {
   }
 
   async showSuggestionDialog(sugg: Suggestion) {
-    if ( this.isTeacher() ) {
+    if (this.isTeacher()) {
       await RemoteServices.setCheckMark(sugg);
     }
     this.currentSuggestion = sugg;
@@ -490,7 +487,6 @@ export default class SuggestionsView extends Vue {
 
   async RejectSuggestion(sugg: Suggestion) {
     if (sugg != null) {
-
       this.currentSuggestion = sugg;
     }
 

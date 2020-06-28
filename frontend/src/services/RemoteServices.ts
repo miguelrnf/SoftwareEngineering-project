@@ -1691,7 +1691,6 @@ export default class RemoteServices {
       });
   }
 
-
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';

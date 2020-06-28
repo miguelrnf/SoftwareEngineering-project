@@ -37,7 +37,11 @@
         <v-btn color="primary" @click="$emit('close-edit-answer-dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="primary" @click="editAnswer() && $emit('close-edit-answer-dialog', false)">Save Edit</v-btn>
+        <v-btn
+          color="primary"
+          @click="editAnswer() && $emit('close-edit-answer-dialog', false)"
+          >Save Edit</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

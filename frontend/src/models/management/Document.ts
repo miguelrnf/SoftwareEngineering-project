@@ -1,5 +1,3 @@
-import Image from "@/models/management/Image";
-
 export default class Document {
   id: number | null = null;
   type: string = '';
@@ -10,7 +8,6 @@ export default class Document {
   pdf: string | undefined;
   extension: string = '';
 
-
   constructor(jsonObj?: Document) {
     if (jsonObj) {
       this.id = jsonObj.id;
@@ -20,7 +17,7 @@ export default class Document {
       this.url = jsonObj.url;
       this.classroomId = jsonObj.classroomId;
       this.pdf = jsonObj.pdf;
-      this.extension = jsonObj.extension
+      this.extension = jsonObj.extension;
     }
   }
 }

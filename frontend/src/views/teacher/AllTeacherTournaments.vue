@@ -117,19 +117,19 @@
   </v-card>
 </template>
 <script lang="ts">
-  import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
-  import Image from '../../models/management/Image';
-  import { Tournament } from '@/models/management/Tournament';
-  import { QuizAnswer } from '@/models/management/QuizAnswer';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
-  import RemoteServices from '@/services/RemoteServices';
-  import { QuizAnswers } from '@/models/management/QuizAnswers';
-  import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
-  import CreateTournamentsViewDialog from '@/views/student/tournament/EditTournamentsViewDialog.vue';
+import Image from '../../models/management/Image';
+import { Tournament } from '@/models/management/Tournament';
+import { QuizAnswer } from '@/models/management/QuizAnswer';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
+import RemoteServices from '@/services/RemoteServices';
+import { QuizAnswers } from '@/models/management/QuizAnswers';
+import TournamentViewDialog from '@/views/TournamentViewDialog.vue';
+import CreateTournamentsViewDialog from '@/views/student/tournament/EditTournamentsViewDialog.vue';
 
-  @Component({
+@Component({
   components: {
     'show-tournament-dialog': TournamentViewDialog,
     'show-edit-tournament-dialog': CreateTournamentsViewDialog,

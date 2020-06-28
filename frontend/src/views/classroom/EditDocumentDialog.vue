@@ -150,18 +150,18 @@
 </template>
 
 <script lang="ts">
-  import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-  import RemoteServices from '@/services/RemoteServices';
-  import ToggleButton from 'vue-js-toggle-button';
-  import Image from '@/models/management/Image';
-  import { convertMarkDown } from '@/services/ConvertMarkdownService';
-  import { getIdFromURL } from 'vue-youtube-embed';
-  import { LazyYoutubeVideo } from 'vue-lazy-youtube-video';
-  import 'vue-lazy-youtube-video/dist/style.css';
-  import Classroom from '@/models/management/Classroom';
-  import Document from '@/models/management/Document';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import ToggleButton from 'vue-js-toggle-button';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import { getIdFromURL } from 'vue-youtube-embed';
+import { LazyYoutubeVideo } from 'vue-lazy-youtube-video';
+import 'vue-lazy-youtube-video/dist/style.css';
+import Classroom from '@/models/management/Classroom';
+import Document from '@/models/management/Document';
 
-  const STATUS_INITIAL = 0,
+const STATUS_INITIAL = 0,
   STATUS_SAVING = 1,
   STATUS_SUCCESS = 2,
   STATUS_FAILED = 3;

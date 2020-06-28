@@ -167,5 +167,4 @@ export default new Vuex.Store({
       return state.loading;
     }
   }
-
 });
