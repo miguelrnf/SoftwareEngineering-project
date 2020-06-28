@@ -383,6 +383,15 @@
           </v-list-item>
         </v-list-group>
 
+        <v-list-item to="/shopConfig" v-if="isAdmin">
+          <v-list-item-action>
+            <v-icon>fas fa-cogs</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+            Shop
+          </v-list-item-content>
+        </v-list-item>
+
         <!-- Management Group-->
         <v-list-group
           prepend-icon="fas fa-file-alt"
@@ -595,6 +604,14 @@
           </v-list-item-action>
           <v-list-item-content class="mobileTitle">
             Classroom
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item to="/themes" v-if="isStudent && currentCourse">
+          <v-list-item-action>
+            <v-icon>fas fa-cogs</v-icon>
+          </v-list-item-action>
+          <v-list-item-content class="mobileTitle">
+            Themes
           </v-list-item-content>
         </v-list-item>
 
