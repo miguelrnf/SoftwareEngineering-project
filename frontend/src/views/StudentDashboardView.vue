@@ -12,7 +12,7 @@
         :isReal="isReal"
       >
       </dashboard-home>
-      <v-row justify="end" class="px-12">
+      <v-row justify="end" class="mx-0 px-7">
         <v-btn color="primary" @click="closeDashboardSearchDialog">
           Close
         </v-btn>
