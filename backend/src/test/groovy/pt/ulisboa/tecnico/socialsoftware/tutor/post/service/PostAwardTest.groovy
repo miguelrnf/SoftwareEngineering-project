@@ -149,7 +149,7 @@ class PostAwardTest extends Specification{
         VALID_P.setAnswer(VALID_PA)
         VALID_PQ.setPost(VALID_P)
         VALID_P.setPostPrivacy(false)
-        AWARD = new PostAwardItem();
+        AWARD = new PostAwardItem()
         AWARD.setType(PostAwardItem.Type.GOLD)
         AWARD.setId(1)
         AWARD.setName("Gold")
@@ -157,7 +157,7 @@ class PostAwardTest extends Specification{
         AWARD.setColor("yellow")
         AWARD.setDescription("Gold award")
         AWARD.setIcon("fas fa-star")
-        GOLD1 = new PostAwardItem();
+        GOLD1 = new PostAwardItem()
         GOLD1.setType(PostAwardItem.Type.GOLD)
         GOLD1.setId(4)
         GOLD1.setName("Gold")
@@ -165,7 +165,7 @@ class PostAwardTest extends Specification{
         GOLD1.setColor("yellow")
         GOLD1.setDescription("Gold award")
         GOLD1.setIcon("fas fa-star")
-        GOLD2 = new PostAwardItem();
+        GOLD2 = new PostAwardItem()
         GOLD2.setType(PostAwardItem.Type.GOLD)
         GOLD2.setId(2)
         GOLD2.setName("Gold")
@@ -173,7 +173,7 @@ class PostAwardTest extends Specification{
         GOLD2.setColor("yellow")
         GOLD2.setDescription("Gold award")
         GOLD2.setIcon("fas fa-star")
-        PLATINUM = new PostAwardItem();
+        PLATINUM = new PostAwardItem()
         PLATINUM.setType(PostAwardItem.Type.PLATINUM)
         PLATINUM.setId(3)
         PLATINUM.setName("Platinum")
@@ -225,7 +225,6 @@ class PostAwardTest extends Specification{
         postQuestion2.setPost(postNo)
         user1.addPostQuestion(postQuestion2)
         postNo.setPostPrivacy(false)
-        def award = new PostAwardItem();
         award.setType(PostAwardItem.Type.GOLD)
         award.setId(1)
         award.setName("Gold")
@@ -245,8 +244,6 @@ class PostAwardTest extends Specification{
 
     def "valid award"() {
         when:
-        def dto = new PostDto(VALID_P)
-        println(dto.awards)
 
         then:
         1 == 1

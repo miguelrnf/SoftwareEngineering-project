@@ -253,7 +253,6 @@ class CreateTournamentServiceSpockTest extends Specification {
 
         when:
         def result = tournamentService.createTournament(courseExecution.getId(), tournamentDto)
-        println(result.dump())
 
         then:"the return data are correct"
         result.id != null

@@ -463,7 +463,6 @@ export default class RemoteServices {
       })
       .catch(function(response) {
         //handle error
-        console.log(response);
       });
   }
 
@@ -1702,7 +1701,6 @@ export default class RemoteServices {
       await Store.dispatch('logout');
       return 'Unauthorized access or Expired token';
     } else {
-      console.log(error);
       return 'Unknown Error - Contact admin';
     }
   }
