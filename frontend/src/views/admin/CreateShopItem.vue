@@ -13,6 +13,7 @@
               label="*Name"
               counter
               maxlength="50"
+              @change="button = false"
             />
           </v-col>
           <v-col cols="2">
@@ -85,11 +86,39 @@
             >
           </v-col>
         </v-row>
-        <v-btn @click="createTheme" depressed :color="primary">
+        <v-btn
+          @click="createTheme"
+          :disabled="button"
+          depressed
+          :color="primary"
+        >
           Create item
         </v-btn>
       </v-container>
     </v-card>
+    <v-dialog
+      v-model="show"
+      transition="dialog-bottom-transition"
+      hide-overlay
+      width="300"
+    >
+      <v-card
+        class="pa-2"
+        style=" position: absolute; top: 9%"
+        max-width="25%"
+        color="success darken-2"
+      >
+        <v-card-text
+          style="font-size: large; font-weight: bold"
+          class="white--text pt-3"
+        >
+          Item created with success! <br />
+          It is now available in the shop!
+        </v-card-text>
+
+        <v-btn dark text @click="show = false">Close</v-btn>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -104,7 +133,7 @@ export default class CreateShopItem extends Vue {
   content: string = '';
   description: string = '';
   selected: number = 0;
-  price: number = 0;
+  price: number = 1;
   color: string = '#FFFFFF';
   primary: string = '#FFFFFF';
   secondary: string = '#FFFFFF';
@@ -115,6 +144,8 @@ export default class CreateShopItem extends Vue {
   error: string = '#FFFFFF';
   dark: boolean = false;
   shopItem: ShopItem | null = null;
+  show: boolean = false;
+  button: boolean = false;
 
   created() {
     if (this.$vuetify.theme.currentTheme.primary != undefined)
@@ -185,6 +216,8 @@ export default class CreateShopItem extends Vue {
 
     try {
       await RemoteServices.createShopTheme(this.shopItem);
+      this.button = true;
+      this.show = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
