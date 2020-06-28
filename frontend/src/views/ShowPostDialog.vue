@@ -18,7 +18,7 @@
                 <template v-slot:activator="{ on }">
                   <v-progress-linear
                     class=""
-                    color="primary lighten-4"
+                    color="success"
                     background-color="red lighten-4"
                     height="10"
                     :value="valueForProgress()"
