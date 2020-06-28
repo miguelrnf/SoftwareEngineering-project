@@ -52,7 +52,7 @@ public class LeaderboardsService {
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostQuizzesSolved = users.stream()
-                .sorted(Comparator.comparingInt((User u) -> u.getQuizzes().size()).reversed())
+                .sorted(Comparator.comparingInt((User u) -> u.getQuizAnswers().size()).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostTournamentsParticipated = users.stream()
@@ -62,7 +62,7 @@ public class LeaderboardsService {
         List<PostDto> mostUpvoted = posts.stream()
                 .sorted(Comparator.comparingInt(Post::getNumberOfUpVotes).reversed())
                 .limit(limit).map(PostDto::new).collect(Collectors.toList());
-        System.out.println(mostUpvoted);
+
         return new LeaderboardsDto(bestScores, mostApprovedSuggestions, mostPosts,
                 mostQuizzesSolved, mostTournamentsParticipated,mostUpvoted);
     }

@@ -51,7 +51,7 @@ public class UserDto implements Serializable {
         this.numberofsuggestions = user.getNumberOfSuggestions();
         this.numberofsuggestionsapproved = user.getNumberOfSuggestionsApproved();
         this.numberOfPostsSubmitted = user.getPostQuestions().size();
-        this.numberOfQuizzesSolved = user.getQuizzes().size();
+        this.numberOfQuizzesSolved = user.getQuizAnswers().size();
         this.numberOfPTournamentsParticipated = user.getTournaments().size();
 
         if (user.getCurrentTheme() == null || user.getCurrentTheme().isBlank() || user.getCurrentTheme().isEmpty()){

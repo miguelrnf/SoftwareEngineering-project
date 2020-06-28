@@ -146,14 +146,28 @@
   import Post from '@/models/management/Post';
   import { PostQuestion } from '@/models/management/PostQuestion';
   import { PostAnswer } from '@/models/management/PostAnswer';
+  import Course from '@/models/user/Course';
+  interface CourseMap {
+    [key: string]: Course[];
+  }
 
   @Component({
   components: {
     GChart
   }
 })
+
+
+
 export default class DashboardLeaderboardsView extends Vue {
-  stats: Leaderboards | null = new Leaderboards();
+  stats: Leaderboards  = {
+    bestScores: [],
+    mostApprovedSuggestions:  [],
+    mostPosts:  [],
+    mostQuizzesSolved:  [],
+    mostTournamentsParticipated:  [],
+    mostUpvotedPosts:  [],
+  }
   bestScoreStats: Array<Object> = [];
   mostPostsStats: Array<Object> = [];
   mostApprovedSuggestionsStats: Array<Object> = [];
@@ -161,8 +175,12 @@ export default class DashboardLeaderboardsView extends Vue {
   mostTournamentsParticipatedStats: Array<Object> = [];
   mostUpvotedPostsStats: Array<Object> = [];
 
+
+
   defaultUser : User = {
-    courses: undefined,
+    courses: new class implements CourseMap {
+      [key: string]: Course[];
+    },
     name :  'None',
     username: 'None',
     role: 'None',
@@ -177,7 +195,6 @@ export default class DashboardLeaderboardsView extends Vue {
     dashboardPrivate: false,
     postsUpvoted: [] ,
     postsDownvoted: []
-
 
   }
 
@@ -195,6 +212,7 @@ export default class DashboardLeaderboardsView extends Vue {
     downvotes: 0,
 
   }
+
 
 
   chartOptions = {
@@ -221,7 +239,7 @@ export default class DashboardLeaderboardsView extends Vue {
   }
 
   getStats() {
-    let bestScores: { name: string; score: number }[];
+    let bestScores: { name: string ; score: number  }[] ;
     this.stats?.bestScores !== undefined
       ? (bestScores = this.stats.bestScores)
       : (bestScores = []);
