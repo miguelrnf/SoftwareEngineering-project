@@ -16,8 +16,8 @@
               0
           "
         >
-          <v-chip label color="white" class="mt-3">
-            <v-icon color="grey darken-1">question_answer</v-icon>
+          <v-chip label color="primary" class="mt-3">
+            <v-icon color="white">question_answer</v-icon>
             <v-card-text class="headline"
               >{{
                 'Suggestions submitted: ' +
@@ -48,8 +48,8 @@
       </v-col>
       <v-col>
         <v-card v-if="this.stats.totalUniqueQuestions !== 0">
-          <v-chip label color="white" class="mt-3">
-            <v-icon color="grey darken-1">assignment</v-icon>
+          <v-chip label color="primary" class="mt-3">
+            <v-icon color="white">assignment</v-icon>
             <v-card-text class="headline"
               >{{ 'Unique questions seen: ' + this.stats.totalUniqueQuestions }}
             </v-card-text>
@@ -68,8 +68,8 @@
       </v-col>
       <v-col>
         <v-card v-if="this.correctAnswers !== 0 || this.wrongAnswers !== 0">
-          <v-chip label color="white" class="mt-3">
-            <v-icon color="grey darken-1">assignment</v-icon>
+          <v-chip label color="primary" class="mt-3">
+            <v-icon color="white">assignment</v-icon>
             <v-card-text class="headline"
               >{{ 'Total Quizzes Solved: ' + this.stats.totalQuizzes }}
             </v-card-text>
@@ -90,8 +90,8 @@
     <v-row class="d-inline-flex">
       <v-col>
         <v-card v-if="this.stats.tournamentDone !== 0">
-          <v-chip label color="white" class="mt-3">
-            <v-icon color="grey darken-1">fas fa-trophy</v-icon>
+          <v-chip label color="primary" class="mt-3">
+            <v-icon color="white">fas fa-trophy</v-icon>
             <v-card-text class="headline"
               >{{ 'Total tournaments done: ' + this.stats.tournamentDone }}
             </v-card-text>
@@ -110,8 +110,8 @@
       </v-col>
       <v-col>
         <v-card v-if="this.stats.postSubmitted !== 0">
-          <v-chip label color="white" class="mt-3">
-            <v-icon color="grey darken-1">fas fa-book</v-icon>
+          <v-chip label color="primary" class="mt-3">
+            <v-icon color="white">fas fa-book</v-icon>
             <v-card-text class="headline"
               >{{ 'Total posts submitted: ' + this.stats.postSubmitted }}
             </v-card-text>
@@ -144,7 +144,21 @@
   }
 })
 export default class DashboardStatsView extends Vue {
-  stats: StudentStats | null = null;
+    stats: StudentStats =  {
+      approveSuggestions: 0,
+      correctAnswers: 0,
+      improvedCorrectAnswers: 0,
+      pendingSuggestions: 0,
+      postSubmitted: 0,
+      rejectedSuggestions: 0,
+      totalAnswers: 0,
+      totalAvailableQuestions: 0,
+      totalQuizzes: 0,
+      totalUniqueQuestions: 0,
+      tournamentDone: 0,
+      uniqueCorrectAnswers: 0,
+      uniqueWrongAnswers: 0
+    }
   wrongAnswers: number | null = null;
   correctAnswers: number | null = null;
 

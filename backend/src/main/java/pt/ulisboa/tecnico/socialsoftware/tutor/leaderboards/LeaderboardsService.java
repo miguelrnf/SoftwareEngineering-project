@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.leaderboards.dto.LeaderboardsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.domain.Post;
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.post.repository.PostRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -34,8 +35,7 @@ public class LeaderboardsService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public LeaderboardsDto getCurrentLeaderboards(int courseExecutionId) {
-        //List<User> users = userRepository.findByCourseExecution(courseExecutionId);
-        // List<Post> posts = postRepository.findAll(); TODO - posts need votes
+        List<Post> posts = postRepository.findAll();
         List<User> users = userRepository.findAll();
         int limit = 5;
 
@@ -52,17 +52,18 @@ public class LeaderboardsService {
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostQuizzesSolved = users.stream()
-                .sorted(Comparator.comparingInt((User u) -> u.getQuizzes().size()).reversed())
+                .sorted(Comparator.comparingInt((User u) -> u.getQuizAnswers().size()).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
         List<UserDto> mostTournamentsParticipated = users.stream()
                 .sorted(Comparator.comparingInt((User u) -> u.getTournaments().size()).reversed())
                 .limit(limit).map(UserDto::new).collect(Collectors.toList());
 
-        // List<Post> mostUpvoted = posts.stream()
-        //        .sorted(Comparator.comparingInt(Post::getUpvotes)).limit(10).collect(Collectors.toList());
+        List<PostDto> mostUpvoted = posts.stream()
+                .sorted(Comparator.comparingInt(Post::getNumberOfUpVotes).reversed())
+                .limit(limit).map(PostDto::new).collect(Collectors.toList());
 
         return new LeaderboardsDto(bestScores, mostApprovedSuggestions, mostPosts,
-                mostQuizzesSolved, mostTournamentsParticipated);
+                mostQuizzesSolved, mostTournamentsParticipated,mostUpvoted);
     }
 }

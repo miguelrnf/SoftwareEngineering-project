@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.leaderboards.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.post.dto.PostDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.util.List;
@@ -10,17 +11,20 @@ public class LeaderboardsDto {
     private List<UserDto> mostPosts;
     private List<UserDto> mostQuizzesSolved;
     private List<UserDto> mostTournamentsParticipated;
+    private List<PostDto> mostUpvotedPosts;
 
     public LeaderboardsDto(List<UserDto> bestScores,
                            List<UserDto> mostApprovedSuggestions,
                            List<UserDto> mostPosts,
                            List<UserDto> mostQuizzesSolved,
-                           List<UserDto> mostTournamentsParticipated) {
+                           List<UserDto> mostTournamentsParticipated,
+                            List<PostDto> mostUpvotedPosts) {
         this.bestScores = bestScores;
         this.mostApprovedSuggestions = mostApprovedSuggestions;
         this.mostPosts = mostPosts;
         this.mostQuizzesSolved = mostQuizzesSolved;
         this.mostTournamentsParticipated = mostTournamentsParticipated;
+        this.mostUpvotedPosts = mostUpvotedPosts;
     }
 
     public LeaderboardsDto() {
@@ -64,6 +68,14 @@ public class LeaderboardsDto {
 
     public void setMostTournamentsParticipated(List<UserDto> mostTournamentsParticipated) {
         this.mostTournamentsParticipated = mostTournamentsParticipated;
+    }
+
+    public List<PostDto> getMostUpvotedPosts() {
+        return mostUpvotedPosts;
+    }
+
+    public void setMostUpvotedPosts(List<PostDto> mostUpvotedPosts) {
+        this.mostUpvotedPosts = mostUpvotedPosts;
     }
 
     @Override
