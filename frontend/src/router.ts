@@ -16,7 +16,6 @@ import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';
 import ResultsView from '@/views/student/quiz/ResultsView.vue';
-import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 import AvailableTournamentsView from '@/views/student/tournament/AvailableTournamentsView.vue';
 import OwnTournamentsView from '@/views/student/tournament/OwnTournamentsView.vue';
@@ -41,7 +40,6 @@ import StudyHomeView from '@/views/student/study/StudyHomeView.vue';
 import ThemeInventory from '@/views/ThemeInventory.vue';
 import CreateShopItem from '@/views/admin/CreateShopItem.vue';
 import ClassroomHomeView from '@/views/classroom/ClassroomHomeView.vue';
-import ClassroomGeneralView from '@/views/ClassroomGeneralView.vue';
 import StudentClassroomHomeView from '@/views/classroom/StudentClassroomHomeView.vue';
 
 Vue.use(Router);
@@ -332,7 +330,6 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Classroom',
             requiredAuth: 'Student'
-
           }
         }
       ]
