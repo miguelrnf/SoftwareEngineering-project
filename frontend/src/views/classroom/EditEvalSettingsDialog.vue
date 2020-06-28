@@ -9,7 +9,7 @@
       <v-card-title>Evaluation Settings</v-card-title>
 
       <v-container fluid>
-        <v-row align="center">
+        <v-row align="center" class="mx-0">
           <v-col cols="6">
             <v-subheader>Scale (0 - X)</v-subheader>
           </v-col>
