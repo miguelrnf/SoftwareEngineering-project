@@ -47,7 +47,7 @@
             </v-row>
             <v-row class="white--text pa-5 ml-0">
               <v-icon color="white" class="mr-12">fas fa-coins</v-icon>
-              {{ $store.getters.getUser.score + ' Achandos' }}
+              {{ getAchandos + ' Achandos' }}
             </v-row>
           </template>
         </v-navigation-drawer>
@@ -326,6 +326,12 @@ export default class ShopHomeView extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  getAchandos(): number {
+    if (this.$store.getters.getUser != null)
+      return this.$store.getters.getUser.score;
+    return 0;
   }
 }
 </script>

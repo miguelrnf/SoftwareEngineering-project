@@ -133,7 +133,11 @@ export default class ThemeInventory extends Vue {
   }
 
   isCurrent(theme: Theme): boolean {
-    return theme.userItemDto.name === this.$store.getters.getUser.currentTheme;
+    if (this.$store.getters.getUser != null)
+      return (
+        theme.userItemDto.name === this.$store.getters.getUser.currentTheme
+      );
+    return false;
   }
 }
 </script>
