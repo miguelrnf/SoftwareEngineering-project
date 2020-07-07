@@ -42,7 +42,7 @@
 				Além disso, o professor pode também agora selecionar quizzes específicos para avaliação, que juntamente com outros fatores (como por exemplo o número de sugestões aprovadas ou torneios realizados por cada aluno), e obter facilmente a avaliação dos seus alunos, onde apenas tem de indicar a escala desejada e o respetivo peso de cada um dos elementos na avaliação.
 
 #### Feature number 8: _Post Up vote and down vote_
-**Descrição**: Estudantes e professores podem classifiacar positivamente ou negativamente um post 
+**Descrição**: Estudantes e professores podem classificar positivamente ou negativamente um post 
 
 #### Feature number 8: _Dashboard_
 **Descrição**: A dashboard foi completamente remodelada e integrada com as estatitiscas dos alunos. 
