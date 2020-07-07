@@ -4,7 +4,7 @@
 
 #### Feature number 1: _Post awards_
 **Descrição**: 	É possível atribuir awards a posts.
-				**Power ups disponiveis:** 
+				**Post Awards disponiveis:** 
 										- Platinum;
 										- Gold;
 										- Silver.
