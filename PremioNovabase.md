@@ -4,7 +4,7 @@
 
 #### Feature number 1: _Post awards_
 **Descrição**: 	É possível atribuir awards a posts.
-				**Post Awards disponiveis:** 
+				**Post Awards disponíveis:** 
 										- Platinum;
 										- Gold;
 										- Silver.
@@ -12,7 +12,7 @@
 #### Feature number 2: _Power Ups_
 **Descrição**: 	É possível utilizar power ups em torneios criados por estudantes.
 				Os power ups têm de ser adquiridos na loja.
-				**Power ups disponiveis:** 
+				**Power ups disponíveis:** 
 										- Fifty-Fifty: Elimina duas opções erradas;
 										- Hint: Dá uma pista para responder a uma questão;
 										- Right Answer: Elimina todas as opções erradas.
