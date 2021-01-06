@@ -16,7 +16,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
     "@slate-editor/image-plugin": "^5.1.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chart.js": "^2.9.3",
     "hchs-vue-charts": "^1.2.8",
     "jquery": "^3.5.1",
